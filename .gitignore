@@ -1,0 +1,6 @@
+*.sublime-workspace
+*.DS_Store
+*.pyc
+*.pyo
+build*
+__pycache__

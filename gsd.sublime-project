@@ -1,0 +1,25 @@
+{
+	"folders":
+	[
+		{
+			"path": ".",
+            // ignore files that are not likely to be modified by hand
+            "folder_exclude_patterns": [".kdev4", ".settings",  "build*"],
+            "file_exclude_patterns": [".*project", "*.sublime-workspace", "*.kdev4"]
+		}
+	],
+    "settings":
+    {
+        // set auto indent for 4 spaces and switch to dumb auto modes
+        "tab_size": 4,
+        "auto_match_enabled": false,
+        "ensure_newline_at_eof_on_save": true,
+        "indent_to_bracket": true,
+        "smart_indent": false,
+        "spell_check": true,
+        "translate_tabs_to_spaces": true,
+        "trim_automatic_white_space": false,
+        "rulers": [120],
+        "detect_indentation": false
+    }
+}
