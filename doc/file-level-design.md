@@ -7,6 +7,7 @@ GSD file design and specifications {#design}
 
 ## Questions to think about
 
+* How many characters do we really need in a chunk name?  32 makes the index entry a bit large (82 bytes). Reducing to 22 would improve file open times by 12%.
 * Do we need to support read only and read/write open flags?
 * GSD stores 2D arrays (this is the most common: Nx3 pos, vel, Nx4 orientation, etc...). Would we ever need 3 dim arrays? More dims?
 
@@ -199,8 +200,43 @@ before opening it again.
 
 ### New index format benchmarks
 
+**Dali Value Storage (10GbE)**
+
+| Size | N   | Open time (s) | Write (MB/s) | Seq read (MB/s) | Seq read cached (MB/s) | Random read (MB/s) | Random read time (ms) |
+| :--- | :-- | :-----------   | :---------   | :-----------    | :-----------           | :-----------       | :-----------          |
+| 100 MiB | 32^2 | 0.028 | 56.02 | 245.6 | 404.6 | 398.6 | 0.069 |
+| 100 MiB | 100^2 | 0.006021 | 79.9 | 258.2 | 2584 | 2881 | 0.093 |
+| 100 MiB | 1000^2 | 0.004127 | 72.2 | 159 | 665.3 | 680.3 | 39 |
+| 1 GiB | 32^2 | 0.546 | 34.64 | 139.2 | 160.8 | 159.3 | 0.17 |
+| 1 GiB | 100^2 | 0.03965 | 79.7 | 228.9 | 2053 | 2279 | 0.12 |
+| 1 GiB | 1000^2 | 0.02002 | 79.9 | 204.4 | 2173 | 2374 | 11 |
+| 128 GiB | 100^2 | 0.3757 | 15 | 26.39 | 0 | 12.74 | 21 |
+| 128 GiB | 1000^2 | 0.04793 | 84.4 | 201.7 | 0 | 246.3 | 1.1e+02 |
+
+**Petry local HD**
+
+| Size | N   | Open time (s) | Write (MB/s) | Seq read (MB/s) | Seq read cached (MB/s) | Random read (MB/s) | Random read time (ms) |
+| :--- | :-- | :-----------   | :---------   | :-----------    | :-----------           | :-----------       | :-----------          |
+| 100 MiB | 32^2 | 0.0501 | 92.6 | 149.6 | 350.2 | 420.3 | 0.065 |
+| 100 MiB | 100^2 | 0.008953 | 211 | 171.6 | 1867 | 2481 | 0.11 |
+| 100 MiB | 1000^2 | 0.007202 | 173 | 139.7 | 526.4 | 575.9 | 46 |
+| 1 GiB | 32^2 | 0.534 | 28.11 | 112.9 | 128.3 | 127.7 | 0.21 |
+| 1 GiB | 100^2 | 0.04733 | 200 | 169.7 | 1945 | 2409 | 0.11 |
+| 1 GiB | 1000^2 | 0.01443 | 218 | 162.3 | 2010 | 2492 | 11 |
+| 128 GiB | 100^2 | 0.5796 | 14.3 | 33.52 | 0 | 15.39 | 17 |
+| 128 GiB | 1000^2 | 0.06517 | 154 | 153.4 | 0 | 157.2 | 1.7e+02 |
+
+These benchmarks show that the new index format does improve file open time significantly. The file open time is now
+bandwidth limited on the index block read. It can only be improved further by reducing the size of the index block
+(maybe the name width could be shorter?).
+
+However, compared to the previous format (below), raw bandwidth is down especially for the 128 GiB 100^2 test. The
+timing is consistent with 2 seeks at each frame write, which is what the current implementation does. This may be
+improved further with some slight tweaks to the index format.
 
 ### Previous version benchmarks
+
+**Petry local HD**
 
 | Size | N   | Open time (s) | Write (MB/s) | Seq read (MB/s) | Seq read cached (MB/s) | Random read (MB/s) | Random read time (ms) |
 | :--- | :-- | :-----------   | :---------   | :-----------    | :-----------           | :-----------       | :-----------          |
