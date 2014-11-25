@@ -9,19 +9,20 @@ import sys
 from subprocess import call, PIPE
 
 def write_frame(file, frame, position, orientation):
-    gsd.libgsd.gsd_write_chunk(file, "position", 3, position.shape[0], position.shape[1], frame, position);
-    gsd.libgsd.gsd_write_chunk(file, "orientation", 3, orientation.shape[0], orientation.shape[1], frame, orientation);
+    gsd.libgsd.gsd_write_chunk(file, "pos", 3, position.shape[0], position.shape[1], frame, position);
+    gsd.libgsd.gsd_write_chunk(file, "ori", 3, orientation.shape[0], orientation.shape[1], frame, orientation);
     gsd.libgsd.gsd_end_frame(file);
 
 def read_frame(file, frame, position, orientation):
-    pos_chunk = gsd.libgsd.gsd_find_chunk(file, frame, "position");
+    pos_chunk = gsd.libgsd.gsd_find_chunk(file, frame, "pos");
     gsd.libgsd.gsd_read_chunk(file, position, pos_chunk);
 
-    orientation_chunk = gsd.libgsd.gsd_find_chunk(file, frame, "orientation");
+    orientation_chunk = gsd.libgsd.gsd_find_chunk(file, frame, "ori");
     gsd.libgsd.gsd_read_chunk(file, orientation, orientation_chunk);
 
-def write_random_file(file, nframes, N):
-    step = int(nframes / 20);
+def write_random_file(file, nframes, N, position, orientation):
+    steps = compute_actual_size(N, nframes) / (250 * 1024**2)
+    step = int(nframes / steps);
     if step == 0:
         step = 1;
 
@@ -29,15 +30,11 @@ def write_random_file(file, nframes, N):
         if i % step == 0:
             print(i, "/", nframes, file=sys.stderr)
 
-        position = numpy.random.random((N,3)).astype('float32');
-        orientation = numpy.random.random((N,4)).astype('float32');
         write_frame(file, i, position, orientation);
 
-def read_sequential_file(file, nframes, N):
-    position = numpy.random.random((N,3)).astype('float32');
-    orientation = numpy.random.random((N,4)).astype('float32');
-
-    step = int(nframes / 20);
+def read_sequential_file(file, nframes, N, position, orientation):
+    steps = compute_actual_size(N, nframes) / (250 * 1024**2)
+    step = int(nframes / steps);
     if step == 0:
         step = 1;
 
@@ -47,11 +44,9 @@ def read_sequential_file(file, nframes, N):
 
         read_frame(file, i, position, orientation);
 
-def read_random_file(file, nframes, N):
-    position = numpy.random.random((N,3)).astype('float32');
-    orientation = numpy.random.random((N,4)).astype('float32');
-
-    step = int(nframes / 20);
+def read_random_file(file, nframes, N, position, orientation):
+    steps = compute_actual_size(N, nframes) / (250 * 1024**2)
+    step = int(nframes / steps);
     if step == 0:
         step = 1;
 
@@ -74,6 +69,8 @@ def compute_actual_size(N, nframes):
 ## Run all benchmarks with the given options
 def run_benchmarks(N, size):
     timings = {}
+    position = numpy.random.random((N,3)).astype('float32');
+    orientation = numpy.random.random((N,4)).astype('float32');
 
     nframes = compute_nframes(N, size);
     actual_size = compute_actual_size(N, nframes);
@@ -83,7 +80,7 @@ def run_benchmarks(N, size):
     start = time.time();
     gsd.libgsd.gsd_create('test.gsd', 'test', 'test', 1);
     file = gsd.libgsd.gsd_open('test.gsd', 1);
-    write_random_file(file, nframes, N);
+    write_random_file(file, nframes, N, position, orientation);
     gsd.libgsd.gsd_close(file);
     end = time.time();
 
@@ -104,7 +101,7 @@ def run_benchmarks(N, size):
     # Read the file sequentially and measure the time taken
     print("Sequential read file:", file=sys.stderr)
     start = time.time();
-    read_sequential_file(file, nframes, N);
+    read_sequential_file(file, nframes, N, position, orientation);
     end = time.time();
 
     timings['seq_read'] = actual_size / 1024**2 / (end - start);
@@ -113,7 +110,7 @@ def run_benchmarks(N, size):
     if size < 10*1024**3:
         print("Sequential read file: (cached)", file=sys.stderr)
         start = time.time();
-        read_sequential_file(file, nframes, N);
+        read_sequential_file(file, nframes, N, position, orientation);
         end = time.time();
 
         timings['seq_cache_read'] = actual_size / 1024**2 / (end - start);
@@ -123,7 +120,7 @@ def run_benchmarks(N, size):
     # Read the file randomly and measure the time taken
     print("Random read file:", file=sys.stderr)
     start = time.time();
-    read_random_file(file, nframes, N);
+    read_random_file(file, nframes, N, position, orientation);
     end = time.time();
 
     timings['random_read'] = actual_size / 1024**2 / (end - start);
@@ -143,12 +140,12 @@ def run_sweep(size, size_str):
 
     result = run_benchmarks(100*100, size)
 
-    print("| {0} | {1} | {2:.4g} | {3:.3g} | {4:.4g} | {5:.4g} | {6:.4g} | {7:.2g} |".format(size_str, "100^2", result['open_time'], result['write'], result['seq_read'], result['seq_cache_read'], result['random_read'], result['random_read_time']));
+    print("| {0} | {1} | {2:.3g} | {3:.4g} | {4:.4g} | {5:.4g} | {6:.4g} | {7:.2g} |".format(size_str, "100^2", result['open_time'], result['write'], result['seq_read'], result['seq_cache_read'], result['random_read'], result['random_read_time']));
     sys.stdout.flush();
 
     result = run_benchmarks(1000*1000, size)
 
-    print("| {0} | {1} | {2:.4g} | {3:.3g} | {4:.4g} | {5:.4g} | {6:.4g} | {7:.2g} |".format(size_str, "1000^2", result['open_time'], result['write'], result['seq_read'], result['seq_cache_read'], result['random_read'], result['random_read_time']));
+    print("| {0} | {1} | {2:.3g} | {3:.4g} | {4:.4g} | {5:.4g} | {6:.4g} | {7:.2g} |".format(size_str, "1000^2", result['open_time'], result['write'], result['seq_read'], result['seq_cache_read'], result['random_read'], result['random_read_time']));
     sys.stdout.flush();
 
 
