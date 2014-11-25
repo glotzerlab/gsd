@@ -91,8 +91,7 @@ struct gsd_header_t
     uint32_t schema_version;
     uint64_t index_location;
     uint64_t index_allocated_entries;
-    uint64_t index_num_entries;
-    char reserved[56];
+    char reserved[64];
     uint32_t check;    // = FD56FD56
     };
 ~~~~
