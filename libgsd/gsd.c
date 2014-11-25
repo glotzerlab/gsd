@@ -312,6 +312,8 @@ int gsd_end_frame(gsd_handle_t* handle)
                                      sizeof(gsd_index_entry_t)*entries_to_write);
         if (bytes_written != sizeof(gsd_index_entry_t) * entries_to_write)
             return -1;
+
+        handle->index_written_entries += entries_to_write;
         }
 
     return 0;
