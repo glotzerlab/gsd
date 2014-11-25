@@ -139,6 +139,7 @@ int gsd_create(const char *fname, const char *application, const char *schema, u
     }
 
 /*! \param fname File name to open
+    \param flags Either GSD_OPEN_READWRITE or GSD_OPEN_READONLY
 
     \pre The file name \a fname is a GSD file.
 
@@ -147,7 +148,7 @@ int gsd_create(const char *fname, const char *application, const char *schema, u
     \returns An allocated pointer on success, NULL on failure. Check errno for potential causes of the error.
     \ingroup c_api
 */
-gsd_handle_t* gsd_open(const char *fname)
+gsd_handle_t* gsd_open(const char *fname, const uint8_t flags)
     {
     // allocate the handle
     // printf("Allocating\n");
@@ -160,7 +161,16 @@ gsd_handle_t* gsd_open(const char *fname)
 
     // create the file
     // printf("Opening\n");
-    handle->fd = open(fname, O_RDWR);
+    if (flags == GSD_OPEN_READWRITE)
+        {
+        handle->fd = open(fname, O_RDWR);
+        handle->open_flags = GSD_OPEN_READWRITE;
+        }
+    else if (flags == GSD_OPEN_READONLY)
+        {
+        handle->fd = open(fname, O_RDONLY);
+        handle->open_flags = GSD_OPEN_READONLY;
+        }
 
     // check if the file was created
     if (handle->fd == -1)
@@ -258,6 +268,8 @@ int gsd_end_frame(gsd_handle_t* handle)
     {
     if (handle == NULL)
         return -2;
+    if (handle->open_flags == GSD_OPEN_READONLY)
+        return -2;
 
     // all data chunks have already been written to the file and the index updated in memory. To end a frame, all we
     // need to do is increment the frame counter
@@ -317,6 +329,8 @@ int gsd_write_chunk(gsd_handle_t* handle,
     if (data == NULL)
         return -2;
     if (N == 0 || M == 0)
+        return -2;
+    if (handle->open_flags == GSD_OPEN_READONLY)
         return -2;
 
     // populate fields in the index_entry data

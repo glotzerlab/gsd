@@ -20,7 +20,7 @@ _libgsd = CDLL(libfile, use_errno=True);
 _libgsd.gsd_create.argtypes = [c_char_p, c_char_p, c_char_p, c_uint];
 _libgsd.gsd_create.restype = c_int;
 
-_libgsd.gsd_open.argtypes = [c_char_p];
+_libgsd.gsd_open.argtypes = [c_char_p, c_ubyte];
 _libgsd.gsd_open.restype = c_void_p;
 
 _libgsd.gsd_close.argtypes = [c_void_p];

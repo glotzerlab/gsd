@@ -109,7 +109,10 @@ typedef struct gsd_handle_t
     uint64_t index_written_entries;
     uint64_t cur_frame;
     int64_t file_size;                  //!< File size (in bytes)
+    uint8_t open_flags;                 //!< Flags passed to gsd_open()
     } gsd_handle_t;
+
+// TODO: convert these to enums (need to wait for the cython wrap)
 
 //! ID for uint8_t type
 /*! \ingroup c_api
@@ -128,11 +131,21 @@ const uint8_t GSD_FLOAT_TYPE=3;
 */
 const uint8_t GSD_DOUBLE_TYPE=4;
 
+//! Flag for read/write open
+/*! \ingroup c_api
+*/
+const uint8_t GSD_OPEN_READWRITE=1;
+
+//! Flag for read only open
+/*! \ingroup c_api
+*/
+const uint8_t GSD_OPEN_READONLY=2;
+
 //! Create a GSD file
 int gsd_create(const char *fname, const char *application, const char *schema, uint32_t schema_version);
 
 //! Open a GSD file for read/write
-gsd_handle_t* gsd_open(const char *fname);
+gsd_handle_t* gsd_open(const char *fname, const uint8_t flags);
 
 //! Close a GSD file
 int gsd_close(gsd_handle_t* handle);

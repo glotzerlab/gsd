@@ -82,7 +82,7 @@ def run_benchmarks(N, size):
     print("Writing file: ", file=sys.stderr)
     start = time.time();
     gsd.libgsd.gsd_create('test.gsd', 'test', 'test', 1);
-    file = gsd.libgsd.gsd_open('test.gsd');
+    file = gsd.libgsd.gsd_open('test.gsd', 1);
     write_random_file(file, nframes, N);
     gsd.libgsd.gsd_close(file);
     end = time.time();
@@ -95,7 +95,7 @@ def run_benchmarks(N, size):
     # time how long it takes to open the file
     print("Opening file... ", file=sys.stderr, end='')
     start = time.time();
-    file = gsd.libgsd.gsd_open('test.gsd');
+    file = gsd.libgsd.gsd_open('test.gsd', 2);
     end = time.time();
     print(end - start, "s", file=sys.stderr);
 

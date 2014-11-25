@@ -9,7 +9,7 @@ int main()
     {
     uint32_t *data = new uint32_t[1];
 
-    gsd_handle_t *handle = gsd_open("test.gsd");
+    gsd_handle_t *handle = gsd_open("test.gsd", GSD_OPEN_READONLY);
     if (handle == NULL)
         {
         cout << "Unable to open file" << endl;

@@ -8,7 +8,6 @@ GSD file design and specifications {#design}
 ## Questions to think about
 
 * How many characters do we really need in a chunk name?  32 makes the index entry a bit large (82 bytes). Reducing to 22 would improve file open times by 12%.
-* Do we need to support read only and read/write open flags?
 * GSD stores 2D arrays (this is the most common: Nx3 pos, vel, Nx4 orientation, etc...). Would we ever need 3 dim arrays? More dims?
 
 ## Use-cases
@@ -154,7 +153,7 @@ The C-level API is object oriented through the use of the handle structure. In t
 cached index data in memory and so forth. A pointer to the handle will be passed in to every API call.
 
 * `int gsd_create(const char *fname, const char *application, const char *schema, uint32_t schema_version)` : Create a GSD file on disk, overwriting any existing file.
-* `gsd_handle_t* gsd_open(const char *fname)` : Open a GSD file and return an allocated handle.
+* `gsd_handle_t* gsd_open(const char *fname, const uint8_t flags)` : Open a GSD file and return an allocated handle.
 * `int gsd_close(gsd_handle_t* handle)` : Close a GSD file and free all memory associated with it.
 * `int gsd_end_frame(gsd_handle_t* handle)` : Start a new frame in the GSD file.
 * `int gsd_write_chunk(gsd_handle_t* handle, const char *name, uint8_t type, uint64_t N, uint64_t M, uint64_t step, const void *data)` : Write a chunk out to the current frame
