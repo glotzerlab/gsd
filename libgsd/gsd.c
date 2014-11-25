@@ -117,7 +117,6 @@ int gsd_create(const char *fname, const char *application, const char *schema, u
     header.schema_version = schema_version;
     header.index_location = sizeof(header);
     header.index_allocated_entries = 16;
-    header.index_num_entries = 0;
     memset(header.reserved, 0, sizeof(header.reserved));
     header.check = 0xFD56FD56;
 
@@ -207,11 +206,25 @@ gsd_handle_t* gsd_open(const char *fname, const uint8_t flags)
     if (bytes_read != sizeof(gsd_index_entry_t) * handle->header.index_allocated_entries)
         return NULL;
 
+    // determine the number of index entries (marked by location = 0)
+    // base case: the index is full
+    handle->index_num_entries = handle->header.index_allocated_entries;
+
+    // general case, find the first index entry with location 0
+    for (size_t i = 0; i < handle->header.index_allocated_entries; i++)
+        {
+        if (handle->index[i].location == 0)
+            {
+            handle->index_num_entries = i;
+            break;
+            }
+        }
+
     // determine the current frame counter
     handle->cur_frame = gsd_get_nframes(handle);
 
     // at this point, all valid index entries have been written to disk
-    handle->index_written_entries = handle->header.index_num_entries;
+    handle->index_written_entries = handle->index_num_entries;
 
     // printf("Returning handle %p\n", handle);
     return handle;
@@ -276,7 +289,7 @@ int gsd_end_frame(gsd_handle_t* handle)
     handle->cur_frame++;
 
     // and write unwritten index entries to the file (if there are any to write)
-    uint64_t entries_to_write = handle->header.index_num_entries - handle->index_written_entries;
+    uint64_t entries_to_write = handle->index_num_entries - handle->index_written_entries;
     if (entries_to_write > 0)
         {
         // write just those unwritten entries to the end of the index block
@@ -288,12 +301,6 @@ int gsd_end_frame(gsd_handle_t* handle)
                                      &(handle->index[handle->index_written_entries]),
                                      sizeof(gsd_index_entry_t)*entries_to_write);
         if (bytes_written != sizeof(gsd_index_entry_t) * entries_to_write)
-            return -1;
-
-        // and also update the header block with the new number of frames
-        lseek(handle->fd, 0, SEEK_SET);
-        bytes_written = write(handle->fd, &(handle->header), sizeof(gsd_header_t));
-        if (bytes_written != sizeof(gsd_header_t))
             return -1;
         }
 
@@ -359,7 +366,7 @@ int gsd_write_chunk(gsd_handle_t* handle,
 
     // update the index entry in the index
     // need to expand the index if it is already full
-    if (handle->header.index_num_entries >= handle->header.index_allocated_entries)
+    if (handle->index_num_entries >= handle->header.index_allocated_entries)
         {
         int retval = __gsd_expand_index(handle);
         if (retval != 0)
@@ -367,10 +374,9 @@ int gsd_write_chunk(gsd_handle_t* handle,
         }
 
     // once we get here, there is a free slot to add this entry to the index
-    handle->index[handle->header.index_num_entries] = index_entry;
-    handle->header.index_num_entries++;
+    handle->index[handle->index_num_entries] = index_entry;
+    handle->index_num_entries++;
 
-    // don't update the header yet, gsd_end_frame will do that
     return 0;
     }
 
@@ -386,7 +392,7 @@ uint64_t gsd_get_last_step(gsd_handle_t* handle)
     if (handle == NULL)
         return 0;
 
-    size_t index_entry = handle->header.index_num_entries;
+    size_t index_entry = handle->index_num_entries;
     if (index_entry == 0)
         return 0;
 
@@ -405,7 +411,7 @@ uint64_t gsd_get_nframes(gsd_handle_t* handle)
     if (handle == NULL)
         return 0;
 
-    size_t index_entry = handle->header.index_num_entries;
+    size_t index_entry = handle->index_num_entries;
     if (index_entry == 0)
         return 0;
 
@@ -435,7 +441,7 @@ gsd_index_entry_t* gsd_find_chunk(gsd_handle_t* handle, uint64_t frame, const ch
 
     // initial implementation: a dumb linear search among index entries
     // - a smarter implementation could use a binary search
-    for (cur_index = 0; cur_index < handle->header.index_num_entries; cur_index++)
+    for (cur_index = 0; cur_index < handle->index_num_entries; cur_index++)
         {
         // if the frame matches, check the name
         if (handle->index[cur_index].frame == frame)

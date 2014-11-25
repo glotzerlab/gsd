@@ -18,13 +18,13 @@ int main()
 
     cout << "Application: " << handle->header.application << endl;
     cout << "Version: " << handle->header.version << endl;
-    cout << "index_num_entries: " << handle->header.index_num_entries << endl;
+    cout << "index_num_entries: " << handle->index_num_entries << endl;
     cout << "index_allocated_entries: " << handle->header.index_allocated_entries << endl;
     cout << "index_location: " << handle->header.index_location << endl;
     cout << "index_written_entries: " << handle->index_written_entries << endl;
 
     cout << "Data:" << endl << endl;
-    for (unsigned int j= 0; j < handle->header.index_num_entries; j++)
+    for (unsigned int j= 0; j < handle->index_num_entries; j++)
         {
         string name(handle->index[j].name);
         uint8_t type = handle->index[j].type;

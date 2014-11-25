@@ -64,8 +64,7 @@ typedef struct gsd_header_t
     uint32_t schema_version;            //!< Schema version: 0xaabbcc => aa.bb.cc
     uint64_t index_location;
     uint64_t index_allocated_entries;
-    uint64_t index_num_entries;
-    char reserved[56];
+    char reserved[64];
     uint32_t check;
     } gsd_header_t;
 
@@ -107,6 +106,7 @@ typedef struct gsd_handle_t
     gsd_header_t header;                //!< GSD file header
     gsd_index_entry_t *index;
     uint64_t index_written_entries;
+    uint64_t index_num_entries;
     uint64_t cur_frame;
     int64_t file_size;                  //!< File size (in bytes)
     uint8_t open_flags;                 //!< Flags passed to gsd_open()
