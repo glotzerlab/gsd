@@ -48,7 +48,7 @@ static int __gsd_expand_index(gsd_handle_t *handle)
     {
     // multiply the index size by 16 each time it grows
     // this allows the index to grow rapidly to accommodate new frames
-    const int multiplication_factor = 16;
+    const int multiplication_factor = 2;
 
     // save the old size
     gsd_index_entry_t *old_array = handle->index;
