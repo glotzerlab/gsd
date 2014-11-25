@@ -257,10 +257,17 @@ int gsd_close(gsd_handle_t* handle)
     int fd = handle->fd;
 
     // zero and free memory allocated in the handle
-    memset(handle->index, 0, sizeof(gsd_index_entry_t)*handle->header.index_allocated_entries);
-    free(handle->index);
-    memset(handle, 0, sizeof(gsd_handle_t));
-    free(handle);
+    if (handle->index != NULL)
+        {
+        memset(handle->index, 0, sizeof(gsd_index_entry_t)*handle->header.index_allocated_entries);
+        free(handle->index);
+        handle->index = NULL;
+
+        // only try and free the handle if handle->index is valid
+        // this attempts to fail gracefully when calling gsd_close(handle) twice.
+        memset(handle, 0, sizeof(gsd_handle_t));
+        free(handle);
+        }
 
     // close the file
     int retval = close(fd);
