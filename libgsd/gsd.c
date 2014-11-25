@@ -211,7 +211,8 @@ gsd_handle_t* gsd_open(const char *fname, const uint8_t flags)
     handle->index_num_entries = handle->header.index_allocated_entries;
 
     // general case, find the first index entry with location 0
-    for (size_t i = 0; i < handle->header.index_allocated_entries; i++)
+    size_t i;
+    for (i = 0; i < handle->header.index_allocated_entries; i++)
         {
         if (handle->index[i].location == 0)
             {
