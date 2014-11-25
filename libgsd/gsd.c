@@ -60,7 +60,7 @@ static int __gsd_expand_index(gsd_handle_t *handle)
         return -1;
 
     // zero the memory
-    memset(handle->index, 0, sizeof(gsd_index_entry_t)*multiplication_factor);
+    memset(handle->index, 0, sizeof(gsd_index_entry_t) * old_size * multiplication_factor);
 
     // copy the old to the new slot and deallocate the old
     memcpy(handle->index, old_array, sizeof(gsd_index_entry_t) * old_size);
@@ -108,6 +108,8 @@ int gsd_create(const char *fname, const char *application, const char *schema, u
 
     // populate header fields
     gsd_header_t header;
+    memset(&header, 0, sizeof(header));
+
     header.magic = 0x65DF65DF;
     header.version = 0x000001;
     strncpy(header.application, application, sizeof(header.application)-1);
@@ -343,6 +345,7 @@ int gsd_write_chunk(gsd_handle_t* handle,
 
     // populate fields in the index_entry data
     gsd_index_entry_t index_entry;
+    memset(&index_entry, 0, sizeof(index_entry));
     index_entry.frame = handle->cur_frame;
     strncpy(index_entry.name, name, sizeof(index_entry.name)-1);
     index_entry.name[sizeof(index_entry.name)-1] = 0;
