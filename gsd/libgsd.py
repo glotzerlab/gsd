@@ -65,8 +65,8 @@ def gsd_create(fname, application, schema, schema_version):
         raise RuntimeError("Error creating GSD file: {0}".format(os.strerror(get_errno())))
     return retval
 
-def gsd_open(fname):
-    retval = _libgsd.gsd_open(_str_to_char_p(fname));
+def gsd_open(fname, flags):
+    retval = _libgsd.gsd_open(_str_to_char_p(fname), c_ubyte(flags));
     if retval is None:
         raise RuntimeError("Error opening GSD file: {0}".format(os.strerror(get_errno())))
 
