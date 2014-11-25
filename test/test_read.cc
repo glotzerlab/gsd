@@ -46,4 +46,5 @@ int main()
 
     int retval = gsd_close(handle);
     cout << retval << endl;
+    delete[] data;
     }
