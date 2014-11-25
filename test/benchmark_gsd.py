@@ -132,7 +132,9 @@ def run_benchmarks(N, size):
 
 def run_sweep(size, size_str):
 
-    if size < 10*1024**3:
+    #if size < 10*1024**3:
+    if True:
+
         result = run_benchmarks(32*32, size)
 
         print("| {0} | {1} | {2:.3g} | {3:.4g} | {4:.4g} | {5:.4g} | {6:.4g} | {7:.2g} |".format(size_str, "32^2", result['open_time'], result['write'], result['seq_read'], result['seq_cache_read'], result['random_read'], result['random_read_time']));
