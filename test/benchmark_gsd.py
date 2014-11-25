@@ -32,19 +32,19 @@ def write_random_file(file, nframes, N, position, orientation):
 
         write_frame(file, i, position, orientation);
 
-def read_sequential_file(file, nframes, N, position, orientation):
+def read_sequential_file(file, nframes, nframes_read, N, position, orientation):
     steps = compute_actual_size(N, nframes) / (250 * 1024**2)
     step = int(nframes / steps);
     if step == 0:
         step = 1;
 
-    for i in range(0,nframes):
+    for i in range(0,nframes_read):
         if i % step == 0:
             print(i, "/", nframes, file=sys.stderr)
 
         read_frame(file, i, position, orientation);
 
-def read_random_file(file, nframes, N, position, orientation):
+def read_random_file(file, nframes, nframes_read, N, position, orientation):
     steps = compute_actual_size(N, nframes) / (250 * 1024**2)
     step = int(nframes / steps);
     if step == 0:
@@ -53,7 +53,7 @@ def read_random_file(file, nframes, N, position, orientation):
     frames = list(range(0,nframes));
     random.shuffle(frames);
 
-    for i,f in enumerate(frames):
+    for i,f in enumerate(frames[:nframes_read]):
         if i % step == 0:
             print(i, "/", nframes, file=sys.stderr)
         read_frame(file, f, position, orientation);
@@ -68,12 +68,19 @@ def compute_actual_size(N, nframes):
 
 ## Run all benchmarks with the given options
 def run_benchmarks(N, size):
+    bmark_read_size = 0.25*1024**3;
+
     timings = {}
     position = numpy.random.random((N,3)).astype('float32');
     orientation = numpy.random.random((N,4)).astype('float32');
 
     nframes = compute_nframes(N, size);
     actual_size = compute_actual_size(N, nframes);
+    nframes_read = int(nframes * bmark_read_size / actual_size);
+    bmark_read_size = compute_actual_size(N, nframes_read);
+    if nframes_read > nframes:
+        nframes_read = nframes;
+        bmark_read_size = actual_size;
 
     # first, write the file and time how long it takes
     print("Writing file: ", file=sys.stderr)
@@ -101,30 +108,30 @@ def run_benchmarks(N, size):
     # Read the file sequentially and measure the time taken
     print("Sequential read file:", file=sys.stderr)
     start = time.time();
-    read_sequential_file(file, nframes, N, position, orientation);
+    read_sequential_file(file, nframes, nframes_read, N, position, orientation);
     end = time.time();
 
-    timings['seq_read'] = actual_size / 1024**2 / (end - start);
+    timings['seq_read'] = bmark_read_size / 1024**2 / (end - start);
 
     # If the size is small, read the file again (cached)
     if size < 10*1024**3:
         print("Sequential read file: (cached)", file=sys.stderr)
         start = time.time();
-        read_sequential_file(file, nframes, N, position, orientation);
+        read_sequential_file(file, nframes, nframes_read, N, position, orientation);
         end = time.time();
 
-        timings['seq_cache_read'] = actual_size / 1024**2 / (end - start);
+        timings['seq_cache_read'] = bmark_read_size / 1024**2 / (end - start);
     else:
         timings['seq_cache_read'] = 0;
 
     # Read the file randomly and measure the time taken
     print("Random read file:", file=sys.stderr)
     start = time.time();
-    read_random_file(file, nframes, N, position, orientation);
+    read_random_file(file, nframes, nframes_read, N, position, orientation);
     end = time.time();
 
-    timings['random_read'] = actual_size / 1024**2 / (end - start);
-    timings['random_read_time'] = (end - start) / nframes / 1e-3;
+    timings['random_read'] = bmark_read_size / 1024**2 / (end - start);
+    timings['random_read_time'] = (end - start) / nframes_read / 1e-3;
 
     gsd.libgsd.gsd_close(file);
     os.unlink('test.gsd')
