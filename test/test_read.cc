@@ -35,8 +35,14 @@ int main()
         int64_t location = handle->index[j].location;
 
         gsd_index_entry_t* chunk = gsd_find_chunk(handle, frame, name.c_str());
+        if (chunk == NULL)
+            {
+            cout << "Chunk not found" << endl;
+            continue;
+            }
+
         if (chunk != &(handle->index[j]))
-            cout << "No match found" << endl;
+            cout << "No match found: " << chunk - handle->index << " " << j << endl;
 
         int retval = gsd_read_chunk(handle, (void*)data, chunk);
         if (retval != 0)
