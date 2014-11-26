@@ -84,15 +84,26 @@ def run_benchmarks(N, size):
 
     # first, write the file and time how long it takes
     print("Writing file: ", file=sys.stderr)
-    start = time.time();
+
+    # if the file size is small, write it once to warm up the disk
+    if size < 64*1024**3:
+        gsd.libgsd.gsd_create('test.gsd', 'test', 'test', 1);
+        file = gsd.libgsd.gsd_open('test.gsd', 1);
+        write_random_file(file, nframes, N, position, orientation);
+        gsd.libgsd.gsd_close(file);
+
+    # write it again and time this one
     gsd.libgsd.gsd_create('test.gsd', 'test', 'test', 1);
     file = gsd.libgsd.gsd_open('test.gsd', 1);
+
+    start = time.time();
     write_random_file(file, nframes, N, position, orientation);
     gsd.libgsd.gsd_close(file);
     end = time.time();
 
     timings['write'] = actual_size / 1024**2 / (end - start);
 
+    # drop file system cache
     call(['sudo', '/bin/sync']);
     call(['sudo', '/sbin/sysctl', 'vm.drop_caches=3'], stdout=PIPE);
 
@@ -113,16 +124,9 @@ def run_benchmarks(N, size):
 
     timings['seq_read'] = bmark_read_size / 1024**2 / (end - start);
 
-    # If the size is small, read the file again (cached)
-    if size < 10*1024**3:
-        print("Sequential read file: (cached)", file=sys.stderr)
-        start = time.time();
-        read_sequential_file(file, nframes, nframes_read, N, position, orientation);
-        end = time.time();
-
-        timings['seq_cache_read'] = bmark_read_size / 1024**2 / (end - start);
-    else:
-        timings['seq_cache_read'] = 0;
+    # drop the file system cache
+    call(['sudo', '/bin/sync']);
+    call(['sudo', '/sbin/sysctl', 'vm.drop_caches=3'], stdout=PIPE);
 
     # Read the file randomly and measure the time taken
     print("Random read file:", file=sys.stderr)
@@ -141,27 +145,27 @@ def run_sweep(size, size_str):
 
     #if size < 10*1024**3:
     if True:
-
         result = run_benchmarks(32*32, size)
 
-        print("| {0} | {1} | {2:.3g} | {3:.4g} | {4:.4g} | {5:.4g} | {6:.4g} | {7:.2g} |".format(size_str, "32^2", result['open_time'], result['write'], result['seq_read'], result['seq_cache_read'], result['random_read'], result['random_read_time']));
+        print("| {0} | {1} | {2:.3g} | {3:.4g} | {4:.4g} | {5:.4g} | {6:.2g} |".format(size_str, "32^2", result['open_time'], result['write'], result['seq_read'], result['random_read'], result['random_read_time']));
         sys.stdout.flush();
 
     result = run_benchmarks(100*100, size)
 
-    print("| {0} | {1} | {2:.3g} | {3:.4g} | {4:.4g} | {5:.4g} | {6:.4g} | {7:.2g} |".format(size_str, "100^2", result['open_time'], result['write'], result['seq_read'], result['seq_cache_read'], result['random_read'], result['random_read_time']));
+    print("| {0} | {1} | {2:.3g} | {3:.4g} | {4:.4g} | {5:.4g} | {6:.2g} |".format(size_str, "100^2", result['open_time'], result['write'], result['seq_read'], result['random_read'], result['random_read_time']));
     sys.stdout.flush();
 
     result = run_benchmarks(1000*1000, size)
 
-    print("| {0} | {1} | {2:.3g} | {3:.4g} | {4:.4g} | {5:.4g} | {6:.4g} | {7:.2g} |".format(size_str, "1000^2", result['open_time'], result['write'], result['seq_read'], result['seq_cache_read'], result['random_read'], result['random_read_time']));
+    print("| {0} | {1} | {2:.3g} | {3:.4g} | {4:.4g} | {5:.4g} | {6:.2g} |".format(size_str, "1000^2", result['open_time'], result['write'], result['seq_read'], result['random_read'], result['random_read_time']));
     sys.stdout.flush();
 
 
 print("""
-| Size | N   | Open time (s) | Write (MB/s) | Seq read (MB/s) | Seq read cached (MB/s) | Random read (MB/s) | Random read time (ms) |
-| :--- | :-- | :-----------   | :---------   | :-----------    | :-----------           | :-----------       | :-----------          |""");
+| Size | N   | Open time (s) | Write (MB/s) | Seq read (MB/s) | Random read (MB/s) | Random read time (ms) |
+| :--- | :-- | :-----------   | :---------   | :-----------    | :-----------       | :-----------          |""");
 
 run_sweep(100*1024**2, "100 MiB");
 run_sweep(1*1024**3, "1 GiB");
-run_sweep(128*1024**3, "128 GiB");
+run_sweep(10*1024**3, "10 GiB");
+# run_sweep(128*1024**3, "128 GiB");
