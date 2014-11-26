@@ -450,19 +450,31 @@ gsd_index_entry_t* gsd_find_chunk(gsd_handle_t* handle, uint64_t frame, const ch
     if (frame >= gsd_get_nframes(handle))
         return NULL;
 
+    // binary search for the first index entry at the requested frame
+    size_t L = 0;
+    size_t R = handle->index_num_entries;
+
+    // progressively narrow the search window by halves
+    do
+        {
+        size_t m = (L+R)/2;
+
+        if (frame < handle->index[m].frame)
+            R = m;
+        else
+            L = m;
+        } while ((R-L) > 1);
+
+    // this finds L = the rightmost index with the desired frame
     size_t cur_index;
 
-    // initial implementation: a dumb linear search among index entries
-    // - a smarter implementation could use a binary search
-    for (cur_index = 0; cur_index < handle->index_num_entries; cur_index++)
+    // search all index entries with the matching frame
+    for (cur_index = L; (cur_index >= 0) && (handle->index[cur_index].frame == frame); cur_index--)
         {
         // if the frame matches, check the name
-        if (handle->index[cur_index].frame == frame)
+        if (0 == strncmp(name, handle->index[cur_index].name, sizeof(handle->index[cur_index].name)))
             {
-            if (0 == strncmp(name, handle->index[cur_index].name, sizeof(handle->index[cur_index].name)))
-                {
-                return &(handle->index[cur_index]);
-                }
+            return &(handle->index[cur_index]);
             }
         }
 
