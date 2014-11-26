@@ -196,7 +196,47 @@ guards against corrupt file headers
 Here are initial performance tests. The benchmark script flushed the file system cache after writing the file but
 before opening it again.
 
-### New index format benchmarks
+### Current version (11eff0) benchmarks
+
+**Warhol Value Storage (10GbE)**
+
+| Size | N   | Open time (s) | Write (MB/s) | Seq read (MB/s) | Seq read cached (MB/s) | Random read (MB/s) | Random read time (ms) |
+| :--- | :-- | :-----------   | :---------   | :-----------    | :-----------           | :-----------       | :-----------          |
+| 100 MiB | 32^2 | 0.0119 | 48.48 | 252.1 | 343 | 340.4 | 0.08 |
+| 100 MiB | 100^2 | 0.00449 | 102.2 | 246.7 | 2454 | 2823 | 0.095 |
+| 100 MiB | 1000^2 | 0.00262 | 104.2 | 201.6 | 3083 | 3662 | 7.3 |
+| 1 GiB | 32^2 | 0.142 | 89.71 | 210.3 | 287.7 | 13.81 | 2 |
+| 1 GiB | 100^2 | 0.00652 | 102.9 | 244.5 | 2296 | 77.55 | 3.4 |
+| 1 GiB | 1000^2 | 0.0033 | 104.8 | 239 | 3092 | 339.6 | 79 |
+| 128 GiB | 32^2 | 5.64 | 90.58 | 198.9 | 0 | 0.3384 | 81 |
+| 128 GiB | 100^2 | 0.402 | 106.7 | 191.1 | 0 | 19.2 | 14 |
+| 128 GiB | 1000^2 | 0.0174 | 106.5 | 78.87 | 0 | 215.6 | 1.2e+02 |
+
+**Petry local HD**
+
+| Size | N   | Open time (s) | Write (MB/s) | Seq read (MB/s) | Seq read cached (MB/s) | Random read (MB/s) | Random read time (ms) |
+| :--- | :-- | :-----------   | :---------   | :-----------    | :-----------           | :-----------       | :-----------          |
+| 100 MiB | 32^2 | 0.0398 | 139.1 | 162.4 | 424.7 | 421.8 | 0.065 |
+| 100 MiB | 100^2 | 0.0353 | 1043 | 150.1 | 2017 | 2646 | 0.1 |
+| 100 MiB | 1000^2 | 0.0176 | 1088 | 162.9 | 2535 | 3265 | 8.2 |
+| 1 GiB | 32^2 | 0.109 | 323.3 | 118.5 | 308.2 | 5.169 | 5.3 |
+| 1 GiB | 100^2 | 0.0423 | 1003 | 159 | 2159 | 41.87 | 6.4 |
+| 1 GiB | 1000^2 | 0.015 | 1166 | 160.2 | 2401 | 153 | 1.7e+02 |
+| 128 GiB | 32^2 | 8.76 | 124.7 | 157 | 0 | 0.2728 | 1e+02 |
+| 128 GiB | 100^2 | 0.793 | 90.93 | 137 | 0 | 9.882 | 27 |
+| 128 GiB | 1000^2 | 0.0465 | 98.8 | 127.6 | 0 | 107.1 | 2.5e+02 |
+
+Over the previous version, 11eff0 fixes several bugs.
+
+    * Reduction in file open time for some file sizes. (1GiB 32^2 down from 0.546 to 0.109)
+    * Much faster write bandwidth in systems with lots of frames (128 GiB 100^2 up from 14.3 MB/s to 90.93 MB/s)
+
+Issues that need investigating via profiling:
+
+    * On petry, 128Gb 1000^2 write and sequential read performance is down 50%
+    * On files with lots of frames, random read performance is lower than expected (possibly need the binary search?)
+
+### Previous benchmarks
 
 **Dali Value Storage (10GbE)**
 
@@ -231,20 +271,4 @@ bandwidth limited on the index block read. It can only be improved further by re
 However, compared to the previous format (below), raw bandwidth is down especially for the 128 GiB 100^2 test. The
 timing is consistent with 2 seeks at each frame write, which is what the current implementation does. This may be
 improved further with some slight tweaks to the index format.
-
-### Previous version benchmarks
-
-**Petry local HD**
-
-| Size | N   | Open time (s) | Write (MB/s) | Seq read (MB/s) | Seq read cached (MB/s) | Random read (MB/s) | Random read time (ms) |
-| :--- | :-- | :-----------   | :---------   | :-----------    | :-----------           | :-----------       | :-----------          |
-| 100 MiB | 32^2 | 0.559 | 113 | 173.7 | 521.7 | 548.4 | 0.05 |
-| 100 MiB | 100^2 | 0.09826 | 218 | 171.9 | 2089 | 2584 | 0.1 |
-| 100 MiB | 1000^2 | 0.01672 | 172 | 128.5 | 556.5 | 578.7 | 46 |
-| 1 GiB | 32^2 | 5.42 | 143.5 | 175.6 | 426 | 416.6 | 0.066 |
-| 1 GiB | 100^2 | 1.042 | 220 | 179.4 | 2535 | 3090 | 0.086 |
-| 1 GiB | 1000^2 | 0.04654 | 221 | 170.2 | 2137 | 2540 | 11 |
-| 128 GiB | 100^2 | 127.9 | 177 | 173.6 | 0 | 26.96 | 9.9 |
-| 128 GiB | 1000^2 | 1.256 | 179 | 177.9 | 0 | 178 | 1.5e+02 |
-
 
