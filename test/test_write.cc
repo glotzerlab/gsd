@@ -13,10 +13,10 @@ int main()
         exit(1);
         }
 
-    gsd_handle_t *handle = gsd_open("test.gsd");
+    gsd_handle_t *handle = gsd_open("test.gsd", GSD_OPEN_READWRITE);
     if (handle == NULL)
         {
-        cout << "Error reading gsd file" << endl;
+        cout << "Error writing gsd file" << endl;
         exit(1);
         }
 
@@ -25,9 +25,24 @@ int main()
         int value = i*10;
         int value2 = i*100;
 
-        gsd_write_chunk(handle, "value", GSD_UINT32_TYPE, 1, 1, i, (void*)&value);
-        gsd_write_chunk(handle, "v2", GSD_UINT32_TYPE, 1, 1, i, (void*)&value2);
-        gsd_end_frame(handle);
+        int err = gsd_write_chunk(handle, "value", GSD_UINT32_TYPE, 1, 1, i, (void*)&value);
+        if (err != 0)
+            {
+            cout << "Error writing gsd file" << endl;
+            exit(1);
+            }
+        err = gsd_write_chunk(handle, "v2", GSD_UINT32_TYPE, 1, 1, i, (void*)&value2);
+        if (err != 0)
+            {
+            cout << "Error writing gsd file" << endl;
+            exit(1);
+            }
+        err = gsd_end_frame(handle);
+        if (err != 0)
+            {
+            cout << "Error writing gsd file" << endl;
+            exit(1);
+            }
         }
 
     gsd_close(handle);
