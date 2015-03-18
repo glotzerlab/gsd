@@ -5,11 +5,6 @@ GSD file design and specifications {#design}
 
 *General simulation data* file-level design and rationale.
 
-## Questions to think about
-
-* How many characters do we really need in a chunk name?  32 makes the index entry a bit large (82 bytes). Reducing to 22 would improve file open times by 12%.
-* GSD stores 2D arrays (this is the most common: Nx3 pos, vel, Nx4 orientation, etc...). Would we ever need 3 dim arrays? More dims?
-
 ## Use-cases
 
 * efficiently store many frames of data from simulation runs
@@ -34,25 +29,33 @@ GSD file design and specifications {#design}
     * write data to named chunk in the current frame
     * end frame and commit to disk
 
-These low level capabilities should enable a simple and rich higher level format for storing particle data. The
+These low level capabilities should enable a simple and rich higher schema for storing particle data. The
 higher level specifications determine which named chunks exist and what they mean.
+
+## Planned use-cases
+
+* compressed chunks
+
+Need to find an easily embeddable compression library though.
 
 ## Non use-cases
 
 These capabilities are use-cases that GSD does **not** support, by design.
 
 1. Modify data in the file: GSD is designed to capture simulation data, that raw data should not be modifiable.
-1. Add chunks to frames in the middle of a file: See (1). Users wishing to store computed data should store it in a separate file (which could be HDF5, ..., or even GSD with a custom schema).
-1. Transparent conversion between float and double: Higher level APIs can take care of this.
+1. Add chunks to frames in the middle of a file: See (1).
+1. Transparent conversion between float and double: Callers must take care of this.
 
 ## Dependencies
 
-The low level file layer is implemented in C (not C++) with as few dependencies as possible to enable the simplest
-installation and incorporation into existing projects. If possible, a single header and C file completely implement
+The low level file layer is implemented in C (not C++) with no dependencies to enable trivial
+installation and incorporation into existing projects. A single header and C file completely implement
 the file-level layer.
 
-A high level python API will enable easy access to read/write GSD files by non-technical users. The python API will
-provide simplified classes/methods for working with the hoomd schema including particles, types, etc....
+The file layer is exported to python. A higher level python API for specific schemas enables easy access to read/write
+GSD files by non-technical users. The python API provices simplified classes/methods for working with the hoomd schema
+including particles, types, etc....
+
 Boost will **not** be used to enable the python API on the widest possible number of systems. Instead, the low
 level C library will be wrapped with ctypes or probably cython. A python setup.py file will provide simple installation
 on as many systems as possible.
@@ -174,11 +177,11 @@ completely written in a self-consistent way.
 
 ## Failure modes
 
-GSD is somewhat resistant to failures. The code aggressively checks for failures in memory allocations,
+GSD is resistant to failures. The code aggressively checks for failures in memory allocations,
 and verifies that `write()` and `read()` return the correct number of bytes after each call. Any time an error
-condition hits, the current function cal aborts.
+condition hits, the current function call aborts.
 
-GSD has a few protections against invalid data in files. A specially constructed file may still be able to cause
+GSD has a protections against invalid data in files. A specially constructed file may still be able to cause
 problems, but at GSD tries to stop if corrupt data is present in a variety of ways.
 
 * The header has a magic number at the start and end. If either is invalid, GSD reports an error on open. This
