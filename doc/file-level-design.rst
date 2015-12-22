@@ -1,17 +1,15 @@
-File level
+File layer
 ==========
 
 .. highlight:: c
 
-*General simulation data* file-level design and rationale. These are notes written during the initial design of GSD.
-They serve as background information and an explanation for the design. They are not intended to be a detailed
-specification. See *TODO ref* for full specifications.
+General simulation data (GSD) **file layer** design and rationale. These use cases and design specifications
+define the low level GSD file format.
 
 Use-cases
 ---------
 
 * capabilities
-
     * efficiently store many frames of data from simulation runs
     * high performance file read and write
     * support arbitrary chunks of data in each frame (position, orientation, type, etc...)
@@ -24,29 +22,20 @@ Use-cases
     * append frames to an existing file with a monotonically increasing frame number
     * each frame has an associated time step
     * resilient to job kills
-
 * queries
-
     * last time step written
     * number of frames
     * is named chunk present in frame *i*
     * type and size of named chunk in frame *i*
     * read data for named chunk in frame *i*
-
+    * read only a portion of a chunk
 * writes
-
     * write data to named chunk in the current frame
+    * write a single data chunk from multiple MPI ranks
     * end frame and commit to disk
 
-These low level capabilities should enable a simple and rich higher schema for storing particle data. The
-higher level specifications determine which named chunks exist and what they mean.
-
-Planned use-cases
------------------
-
-* compressed chunks
-
-Need to find an easily embeddable compression library though.
+These capabilities should enable a simple and rich higher level schema for storing particle and other types of
+data. The schema determine which named chunks exist in a given file and what they mean.
 
 Non use-cases
 -------------
@@ -56,49 +45,49 @@ These capabilities are use-cases that GSD does **not** support, by design.
 #. Modify data in the file: GSD is designed to capture simulation data, that raw data should not be modifiable.
 #. Add chunks to frames in the middle of a file: See (1).
 #. Transparent conversion between float and double: Callers must take care of this.
+#. Transparent compression - this gets in the way of parallel I/O. Disk space is cheap.
 
 Dependencies
 ------------
 
-The low level file layer is implemented in C (not C++) with no dependencies to enable trivial
+The file layer is implemented in C (*not C++*) with no dependencies to enable trivial
 installation and incorporation into existing projects. A single header and C file completely implement
-the file-level layer.
+the entire file layer in a few hundred lines of code.
 
-The file layer is exported to python. A higher level python API for specific schemas enables easy access to read/write
-GSD files by non-technical users. The python API provices simplified classes/methods for working with the hoomd schema
-including particles, types, etc....
+A python interface to the file layer allows reference implementations and convenience methods for schemas.
+Most non-technical users of GSD will probably use these reference implementations directly in their scripts.
 
 Boost will **not** be used to enable the python API on the widest possible number of systems. Instead, the low
-level C library will be wrapped with ctypes or probably cython. A python setup.py file will provide simple installation
-on as many systems as possible.
+level C library will be wrapped with cython. A python setup.py file will provide simple installation
+on as many systems as possible. Cython c++ output is checked in to the repository so users do not even need
+cython as a dependency.
 
-File level format
------------------
+File format
+-----------
 
-There are three types of data blocks in a GSD file.
+There are four types of data blocks in a GSD file.
 
 #. Header block
-
-    * Overall header for the entire file, contains the magic cookie, name of the generating application,
-      and a version number, the high level schema, and its version. Some bytes in the header are reserved
+    * Overall header for the entire file, contains the magic cookie, a format version, the name of the generating
+      application, the schema name, and its version. Some bytes in the header are reserved
       for future use. Header size: 256 bytes. The header block also includes a pointer to the index, the number
-      of allocated entries and the number of used entries in the index.
+      of allocated entries, the number of used entries in the index, a pointer to the name list, the size of the name list, and the number of entries used in the name list.
     * The header is the first 256 bytes in the file.
-
 #. Index block
-
-    * Index the frame data, size information, location, names, etc...
-    * The index contains space for any number of index_entry structs, the header indicates how many slots are used.
+    * Index the frame data, size information, location, name id, etc...
+    * The index contains space for any number of `index_entry` structs, the header indicates how many slots are used.
     * When the index fills up, a new index block is allocated at the end of the file with more space and all
       current index entries are rewritten there.
-    * Index entry size: 82 bytes
-
+    * Index entry size: 45 bytes
+#. Name list
+    * List of string names used by index entries.
+    * Each name is a `name_entry` struct, which holds up to 128 characters.
+    * The header stores the total number of names available in the list and the number of name slots used.
 #. Data chunk
+    * Raw binary data stored for the named frame data blocks.
 
-    * Raw binary data stored for the named frame data blocks
-
-Header and index blocks are stored in memory as C structs (or arrays of C structs) and written to disk in whole
-chunks.
+Header index, and name blocks are stored in memory as C structs (or arrays of C structs) and written to disk in
+whole chunks.
 
 Header block
 ^^^^^^^^^^^^
@@ -107,29 +96,29 @@ This is the header block::
 
     struct gsd_header_t
         {
-        uint64_t magic;     // = 0x65DF65DF65DF65DF
+        uint64_t magic;
         uint32_t gsd_version;
         char application[64];
         char schema[64];
         uint32_t schema_version;
         uint64_t index_location;
         uint64_t index_allocated_entries;
-        char reserved[64];
-        uint64_t checksum;
-        };
+        uint64_t namelist_location;
+        uint64_t namelist_allocated_entries;
+        char reserved[80];
+        } gsd_header_t;
 
 
-* ``magic`` is the magic number identifying this as a GSD file
-* ``application`` is the generating application's name
-* ``version`` indicates the version of the file format and may be used by future readers to choose what type of
-  blocks to read for backwards compatibility.
-* ``schema`` defines the high level schema used in this gsd file
-* ``schema_version`` is the version of the scheme contained within
-* ``index_location`` is the location in the file of the index block
+* ``magic`` is the magic number identifying this as a GSD file (``0x65DF65DF65DF65DF``)
+* ``gsd_version`` is the version number of the gsd file layer (``0xaaaabbbb => aaaa.bbbb``)
+* ``application`` is the name of the generating application
+* ``schema`` is the name of the schema for data in this gsd file
+* ``schema_version`` is the version of the schema (``0xaaaabbbb => aaaa.bbbb``)
+* ``index_location`` is the file location f the index block
 * ``index_allocated_entries`` is the number of entries allocated in the index block
-* ``index_num_entries`` is the number of populated entries in the index (``index_num_entries`` <= ``index_allocated_entries``)
+* ``namelist_location`` is the file location of the namelist block
+* ``namelist_allocated_entries`` is the number of entries allocated in the namelist block
 * ``reserved`` are bytes saved for future use
-* ``checksum`` is a checksum to verify the header is read correctly, it is gsd_version+schema_version+index_location+index_allocated_entries
 
 Index block
 ^^^^^^^^^^^
@@ -139,26 +128,22 @@ An Index block is made of a number of line items that store a pointer to a singl
     struct gsd_index_entry_t
         {
         uint64_t frame;
-
         uint64_t N;
         uint64_t M;
         uint64_t step;
-
         int64_t location;
-        int64_t checksum;
-
-        char name[33];
+        uint32_t id;
         uint8_t type;
         };
 
 
 * ``frame`` is the index of the frame this chunk belongs to
-* ``name`` is the string name
-* ``type`` is the type of the data (char, int, float, double) indicated by index values
 * ``N`` and ``M`` define the dimensions of the data matrix (NxM in C ordering with M as the fast index).
 * ``step`` is the time step the data is saved at
 * ``location`` is the location of the data chunk in the file
-* ``checksum`` is ``type + N + M + step + location`` and is to check if this entry is valid
+* ``id`` is the index of the name of this entry in the namelist.
+* ``type`` is the type of the data (char, int, float, double) indicated by index values
+
 
 Many ``gsd_index_entry_t`` structs are combined into one index block. They are stored densely packed and in the same order
 as the corresponding data chunks are written to the file.

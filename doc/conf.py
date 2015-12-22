@@ -101,11 +101,11 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'classic'
-html_theme_options = {
-    "codebgcolor": "#EEEEEE",
-    "codetextcolor": "#000000"
-    }
+html_theme = 'sphinx_rtd_theme'
+# html_theme_options = {
+#    "codebgcolor": "#EEEEEE",
+#    "codetextcolor": "#000000"
+#    }
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the

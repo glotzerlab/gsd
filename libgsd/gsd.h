@@ -64,8 +64,9 @@ typedef struct gsd_header_t
     uint32_t schema_version;            //!< Schema version: 0xaaaabbbb => aaaa.bbbb
     uint64_t index_location;
     uint64_t index_allocated_entries;
-    char reserved[64];
-    uint64_t checksum;
+    uint64_t namelist_location;
+    uint64_t namelist_allocated_entries;
+    char reserved[80];
     } gsd_header_t;
 
 //! Index entry
@@ -80,15 +81,11 @@ typedef struct gsd_header_t
 typedef struct gsd_index_entry_t
     {
     uint64_t frame;     //!< Frame index of the chunk
-
     uint64_t N;         //!< Number of rows in the chunk
     uint64_t M;         //!< Number of columns in the chunk
     uint64_t step;      //!< Timestep the chunk was saved at
-
     int64_t location;
-    uint64_t checksum;
-
-    char name[33];      //!< Name of the chunk
+    uint32_t id;
     uint8_t type;       //!< Data type of the chunk
     } gsd_index_entry_t;
 
