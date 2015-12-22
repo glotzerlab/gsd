@@ -57,15 +57,15 @@ extern "C" {
 */
 typedef struct gsd_header_t
     {
-    uint32_t magic;
+    uint64_t magic;
+    uint32_t gsd_version;               //!< File format version: 0xaaaabbbb => aaaa.bbbb
     char application[64];               //!< Name of generating application
-    uint32_t version;                   //!< File format version: 0xaabbcc => aa.bb.cc
     char schema[64];                    //!< Name of schema defining stored data
-    uint32_t schema_version;            //!< Schema version: 0xaabbcc => aa.bb.cc
+    uint32_t schema_version;            //!< Schema version: 0xaaaabbbb => aaaa.bbbb
     uint64_t index_location;
     uint64_t index_allocated_entries;
     char reserved[64];
-    uint32_t check;
+    uint64_t checksum;
     } gsd_header_t;
 
 //! Index entry
@@ -81,14 +81,15 @@ typedef struct gsd_index_entry_t
     {
     uint64_t frame;     //!< Frame index of the chunk
 
-    char name[33];      //!< Name of the chunk
-    uint8_t type;       //!< Data type of the chunk
     uint64_t N;         //!< Number of rows in the chunk
     uint64_t M;         //!< Number of columns in the chunk
     uint64_t step;      //!< Timestep the chunk was saved at
 
     int64_t location;
     uint64_t checksum;
+
+    char name[33];      //!< Name of the chunk
+    uint8_t type;       //!< Data type of the chunk
     } gsd_index_entry_t;
 
 //! File handle
@@ -111,8 +112,6 @@ typedef struct gsd_handle_t
     int64_t file_size;                  //!< File size (in bytes)
     uint8_t open_flags;                 //!< Flags passed to gsd_open()
     } gsd_handle_t;
-
-// TODO: convert these to enums (need to wait for the cython wrap)
 
 //! ID for uint8_t type
 /*! \ingroup c_api

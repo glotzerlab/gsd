@@ -46,7 +46,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 static int __gsd_expand_index(gsd_handle_t *handle)
     {
-    // multiply the index size by 16 each time it grows
+    // multiply the index size each time it grows
     // this allows the index to grow rapidly to accommodate new frames
     const int multiplication_factor = 2;
 
@@ -77,6 +77,11 @@ static int __gsd_expand_index(gsd_handle_t *handle)
     handle->file_size = handle->header.index_location + bytes_written;
 
     // write the new header out
+    handle->header.checksum = handle->header.gsd_version +
+                              handle->header.schema_version +
+                              handle->header.index_location +
+                              handle->header.index_allocated_entries;
+
     lseek(handle->fd, 0, SEEK_SET);
     bytes_written = write(handle->fd, &(handle->header), sizeof(gsd_header_t));
     if (bytes_written != sizeof(gsd_header_t))
@@ -110,8 +115,8 @@ int gsd_create(const char *fname, const char *application, const char *schema, u
     gsd_header_t header;
     memset(&header, 0, sizeof(header));
 
-    header.magic = 0x65DF65DF;
-    header.version = 0x000001;
+    header.magic = 0x65DF65DF65DF65DF;
+    header.version = 0x00000001;
     strncpy(header.application, application, sizeof(header.application)-1);
     header.application[sizeof(header.application)-1] = 0;
     strncpy(header.schema, schema, sizeof(header.schema)-1);
@@ -120,7 +125,7 @@ int gsd_create(const char *fname, const char *application, const char *schema, u
     header.index_location = sizeof(header);
     header.index_allocated_entries = 16;
     memset(header.reserved, 0, sizeof(header.reserved));
-    header.check = 0xFD56FD56;
+    header.checksum = header.gsd_version + header.schema_version + header.index_location + header.index_allocated_entries;
 
     // write the header out
     size_t bytes_written = write(fd, &header, sizeof(header));
@@ -185,9 +190,9 @@ gsd_handle_t* gsd_open(const char *fname, const uint8_t flags)
 
     // validate the header
     // printf("Validating header\n");
-    if (handle->header.magic != 0x65DF65DF)
+    if (handle->header.magic != 0x65DF65DF65DF65DF)
         return NULL;
-    if (handle->header.check != 0xFD56FD56)
+    if (handle->header.checksum != header.gsd_version + header.schema_version + header.index_location + header.index_allocated_entries)
         return NULL;
 
     // determine the file size
