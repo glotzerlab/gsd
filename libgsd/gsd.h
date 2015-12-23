@@ -1,32 +1,6 @@
-/*
-General Simulation Data (GSD)
-Copyright (c) 2014, The Regents of the University of Michigan
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
-1. Redistributions of source code must retain the above copyright notice,
-   this list of conditions and the following disclaimer.
-
-2. Redistributions in binary form must reproduce the above copyright notice,
-   this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution.
-
-3. Neither the name of the copyright holder nor the names of its contributors
-   may be used to endorse or promote products derived from this software without
-   specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
-ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+/* Copyright (c) The Regents of the University of Michigan
+This file is part of the General Simulation Data (GSD) project, released under the BSD 2-Clause License:
+(http://opensource.org/licenses/BSD-2-Clause).
 */
 
 #ifndef __GSD_H__
@@ -43,99 +17,93 @@ extern "C" {
     \brief Declare GSD data types and C API
 */
 
-/*! \defgroup c_api C API
-*/
-
 //! GSD file header
-/*! Defines the file header for GSD files.
+/*! The GSD file header.
 
-    \warning All members are **read-only** to the caller. Only GSD API calls may modify members.
-
-    \note Some fields are for internal use and are not shown in this documentation. See \ref design for full specifications.
-
-    \ingroup c_api
+    \warning All members are **read-only** to the caller.
 */
-typedef struct gsd_header_t
+struct gsd_header
     {
     uint64_t magic;
     uint32_t gsd_version;               //!< File format version: 0xaaaabbbb => aaaa.bbbb
     char application[64];               //!< Name of generating application
-    char schema[64];                    //!< Name of schema defining stored data
+    char schema[64];                    //!< Name of data schema
     uint32_t schema_version;            //!< Schema version: 0xaaaabbbb => aaaa.bbbb
     uint64_t index_location;
     uint64_t index_allocated_entries;
     uint64_t namelist_location;
     uint64_t namelist_allocated_entries;
     char reserved[80];
-    } gsd_header_t;
+    };
 
 //! Index entry
-/*! Defines an index entry for a single data chunk.
+/*! An index entry for a single chunk of data.
 
-    \warning All members are **read-only** to the caller. Only GSD API calls may modify members.
-
-    \note Some fields are for internal use and are not shown in this documentation. See \ref design for full specifications.
-
-    \ingroup c_api
+    \warning All members are **read-only** to the caller.
 */
-typedef struct gsd_index_entry_t
+struct gsd_index_entry
     {
     uint64_t frame;     //!< Frame index of the chunk
     uint64_t N;         //!< Number of rows in the chunk
-    uint64_t M;         //!< Number of columns in the chunk
-    uint64_t step;      //!< Timestep the chunk was saved at
     int64_t location;
-    uint32_t id;
+    uint16_t id;
+    uint8_t M;          //!< Number of columns in the chunk
     uint8_t type;       //!< Data type of the chunk
-    } gsd_index_entry_t;
+    };
+
+//! Namelist entry
+/*! An entry in the list of data chunk names
+
+    \warning All members are **read-only** to the caller.
+*/
+struct gsd_namelist_entry
+    {
+    char name[128];     //!< Entry name
+    };
 
 //! File handle
-/*! Defines a handle to an open GSD file.
+/*! A handle to an open GSD file.
 
-    \warning All members are **read-only** to the caller. Only GSD API calls may modify members.
+    This handle is obtained when opening a GSD file and is passed into every method that operates on the file.
 
-    \note Some fields are for internal use and are not shown in this documentation. See \ref design for full specifications.
-
-    \ingroup c_api
+    \warning All members are **read-only** to the caller.
 */
-typedef struct gsd_handle_t
+struct gsd_handle
     {
     int fd;
     gsd_header_t header;                //!< GSD file header
     gsd_index_entry_t *index;
+    gsd_namelist_entry_t *namelist;
+    uint64_t namelist_written_entries;
+    uint64_t namelist_num_entries;
     uint64_t index_written_entries;
     uint64_t index_num_entries;
     uint64_t cur_frame;
     int64_t file_size;                  //!< File size (in bytes)
     uint8_t open_flags;                 //!< Flags passed to gsd_open()
-    } gsd_handle_t;
+    };
 
-//! ID for uint8_t type
-/*! \ingroup c_api
-*/
-const uint8_t GSD_UINT8_TYPE=1;
-//! ID for uint32_t type
-/*! \ingroup c_api
-*/
-const uint8_t GSD_UINT32_TYPE=2;
-//! ID for float type
-/*! \ingroup c_api
-*/
-const uint8_t GSD_FLOAT_TYPE=3;
-//! ID for double type
-/*! \ingroup c_api
-*/
-const uint8_t GSD_DOUBLE_TYPE=4;
+//! Identifiers for the gsd data chunk element types
+enum gsd_type
+    {
+    GSD_TYPE_UINT8=1;
+    GSD_TYPE_UINT16;
+    GSD_TYPE_UINT32;
+    GSD_TYPE_UINT64;
+    GSD_TYPE_INT8;
+    GSD_TYPE_INT16;
+    GSD_TYPE_INT32;
+    GSD_TYPE_INT64;
+    GSD_TYPE_FLOAT;
+    GSD_TYPE_DOUBLE;
+    };
 
-//! Flag for read/write open
-/*! \ingroup c_api
-*/
-const uint8_t GSD_OPEN_READWRITE=1;
-
-//! Flag for read only open
-/*! \ingroup c_api
-*/
-const uint8_t GSD_OPEN_READONLY=2;
+//! Flag for GSD file open options
+enum gsd_open_flag
+    {
+    GSD_OPEN_READWRITE=1;
+    GSD_OPEN_READONLY;
+    };
 
 //! Create a GSD file
 int gsd_create(const char *fname, const char *application, const char *schema, uint32_t schema_version);
@@ -177,5 +145,4 @@ size_t gsd_sizeof_type(uint8_t type);
 }
 #endif
 
-#endif
-
+#endif  // #ifndef __GSD_H__

@@ -20,10 +20,8 @@ Use-cases
     * generic use case: binary blob of N bytes
     * easy to integrate into other tools
     * append frames to an existing file with a monotonically increasing frame number
-    * each frame has an associated time step
     * resilient to job kills
 * queries
-    * last time step written
     * number of frames
     * is named chunk present in frame *i*
     * type and size of named chunk in frame *i*
@@ -46,6 +44,24 @@ These capabilities are use-cases that GSD does **not** support, by design.
 #. Add chunks to frames in the middle of a file: See (1).
 #. Transparent conversion between float and double: Callers must take care of this.
 #. Transparent compression - this gets in the way of parallel I/O. Disk space is cheap.
+
+Specifications
+--------------
+
+Support:
+
+* Files as large as the underlying filesystem allows (up to 64-bit address limits)
+* Data chunk names up to 127 characters
+* Reference up to 65536 different chunk names within a file
+* Application and scheme names up to 63 characters
+* Store as many frames as can fit in a file up to file size limits
+* Data chunks up to (64-bit) x (8-bit) elements
+
+The limits on only 16-bit name indices and 8-bit column indices are to keep the size of each index entry as small as
+possible to avoid wasting space in the file index. The primary use cases in mind for column indices are Nx3 and Nx4
+arrays for position and quaternion values. Schemas that wish to store larger truly n-dimensional arrays can store
+their dimensionality in metadata in another chunk and store as an Nx1 index entry. Or use a file format more suited
+to N-dimensional arrays such as HDF5.
 
 Dependencies
 ------------
@@ -71,14 +87,15 @@ There are four types of data blocks in a GSD file.
     * Overall header for the entire file, contains the magic cookie, a format version, the name of the generating
       application, the schema name, and its version. Some bytes in the header are reserved
       for future use. Header size: 256 bytes. The header block also includes a pointer to the index, the number
-      of allocated entries, the number of used entries in the index, a pointer to the name list, the size of the name list, and the number of entries used in the name list.
+      of allocated entries, the number of used entries in the index, a pointer to the name list, the size of the name
+      list, and the number of entries used in the name list.
     * The header is the first 256 bytes in the file.
 #. Index block
     * Index the frame data, size information, location, name id, etc...
     * The index contains space for any number of `index_entry` structs, the header indicates how many slots are used.
     * When the index fills up, a new index block is allocated at the end of the file with more space and all
       current index entries are rewritten there.
-    * Index entry size: 45 bytes
+    * Index entry size: 28 bytes
 #. Name list
     * List of string names used by index entries.
     * Each name is a `name_entry` struct, which holds up to 128 characters.
@@ -125,30 +142,39 @@ Index block
 
 An Index block is made of a number of line items that store a pointer to a single data chunk::
 
-    struct gsd_index_entry_t
+    typedef struct gsd_index_entry_t
         {
         uint64_t frame;
         uint64_t N;
-        uint64_t M;
-        uint64_t step;
         int64_t location;
-        uint32_t id;
+        uint16_t id;
+        uint8_t M;
         uint8_t type;
-        };
-
+        } gsd_index_entry_t;
 
 * ``frame`` is the index of the frame this chunk belongs to
 * ``N`` and ``M`` define the dimensions of the data matrix (NxM in C ordering with M as the fast index).
-* ``step`` is the time step the data is saved at
 * ``location`` is the location of the data chunk in the file
 * ``id`` is the index of the name of this entry in the namelist.
 * ``type`` is the type of the data (char, int, float, double) indicated by index values
 
 
-Many ``gsd_index_entry_t`` structs are combined into one index block. They are stored densely packed and in the same order
-as the corresponding data chunks are written to the file.
+Many ``gsd_index_entry_t`` structs are combined into one index block. They are stored densely packed and in the same
+order as the corresponding data chunks are written to the file.
 
 The frame index must monotonically increase from one index entry to the next. The GSD API ensures this.
+
+Namelist block
+^^^^^^^^^^^^^^
+
+An namelist block is made of a number of line items that store the string name of a data chunk entry::
+
+    struct gsd_namelist_entry
+        {
+        char name[128];
+        };
+
+The ``id`` field of the index entry refers to the index of the name within the namelist entry.
 
 Data block
 ^^^^^^^^^^
@@ -162,15 +188,15 @@ API and implementation thoughts
 The C-level API is object oriented through the use of the handle structure. In the handle, the API will store
 cached index data in memory and so forth. A pointer to the handle will be passed in to every API call.
 
-* ``int gsd_create(const char *fname, const char *application, const char *schema, uint32_t schema_version)`` : Create a GSD file on disk, overwriting any existing file.
-* ``gsd_handle_t* gsd_open(const char *fname, const uint8_t flags)`` : Open a GSD file and return an allocated handle.
-* ``int gsd_close(gsd_handle_t* handle)`` : Close a GSD file and free all memory associated with it.
-* ``int gsd_end_frame(gsd_handle_t* handle)`` : Start a new frame in the GSD file.
-* ``int gsd_write_chunk(gsd_handle_t* handle, const char *name, uint8_t type, uint64_t N, uint64_t M, uint64_t step, const void *data)`` : Write a chunk out to the current frame
-* ``uint64_t gsd_get_last_step(gsd_handle_t* handle)`` : Get the value of the timestep last written to the file
-* ``uint64_t gsd_get_nframes(gsd_handle_t* handle)`` : Get the number of frames written to the file
-* ``gsd_index_entry_t* gsd_find_chunk(gsd_handle_t* handle, uint64_t frame, char *name)`` : Find a chunk with the given name in the given frame.
-* ``int gsd_read_chunk(gsd_handle_t* handle, void* data, const gsd_index_entry_t* chunk)`` : Read data from a given chunk (must find the chunk first with ``gsd_find_chunk``).
+* ``int gsd_create()`` : Create a GSD file on disk, overwriting any existing file.
+* ``gsd_handle_t* gsd_open()`` : Open a GSD file and return an allocated handle.
+* ``int gsd_close()`` : Close a GSD file and free all memory associated with it.
+* ``int gsd_end_frame()`` : Complete writing the current frame and flush it to disk. This automatically
+                            starts a new frame.
+* ``int gsd_write_chunk()`` : Write a chunk out to the current frame
+* ``uint64_t gsd_get_nframes()`` : Get the number of frames written to the file
+* ``int gsd_index_entry_t* gsd_find_chunk()`` : Find a chunk with the given name in the given frame.
+* ``int gsd_read_chunk()`` : Read data from a given chunk (must find the chunk first with ``gsd_find_chunk``).
 
 ``gsd_open`` will open the file, read all of the index blocks in to memory, and determine some things it will need later.
 The index block is stored in memory to facilitate fast lookup of frames and named data chunks in frames.
@@ -193,12 +219,11 @@ condition hits, the current function call aborts.
 GSD has a protections against invalid data in files. A specially constructed file may still be able to cause
 problems, but at GSD tries to stop if corrupt data is present in a variety of ways.
 
-* The header has a magic number at the start and end. If either is invalid, GSD reports an error on open. This
+* The header has a magic number. If it is invalid, GSD reports an error on open. This
   guards against corrupt file headers.
 * Before allocating memory for the index block, GSD verifies that the index block is contained within the file.
 * When writing chunks, data is appended to the end of the file and the index is updated *in memory*. After all chunks
   for the current frame are written, the user calls ``gsd_end_frame()`` which writes out the updated index and header.
   This way, if the process is killed in the middle of writing out a frame, the index will not contain entries for the
   partially written data. Such a file could still be appended to safely.
-* Each index entry is checksummed. If the checksum does not verify, ``read_chunk`` will return an error.
 * If an index entry lists a size that goes past the end of the file, ``read_chunk`` will return an error.
