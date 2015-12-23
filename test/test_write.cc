@@ -6,17 +6,17 @@ using namespace std;
 
 int main()
     {
-    int retval  = gsd_create("test.gsd", "test", "test", 0x000001);
+    int retval  = gsd_create("test.gsd", "test", "test", gsd_make_version(0,4));
     if (retval != 0)
         {
         cout << "Error creating gsd file" << endl;
         exit(1);
         }
 
-    gsd_handle_t *handle = gsd_open("test.gsd", GSD_OPEN_READWRITE);
+    struct gsd_handle *handle = gsd_open("test.gsd", GSD_OPEN_READWRITE);
     if (handle == NULL)
         {
-        cout << "Error writing gsd file" << endl;
+        cout << "Error opening gsd file" << endl;
         exit(1);
         }
 
@@ -25,22 +25,22 @@ int main()
         int value = i*10;
         int value2 = i*100;
 
-        int err = gsd_write_chunk(handle, "value", GSD_UINT32_TYPE, 1, 1, i, (void*)&value);
+        int err = gsd_write_chunk(handle, "value", GSD_TYPE_UINT32, 1, 1, (void*)&value);
         if (err != 0)
             {
             cout << "Error writing gsd file" << endl;
             exit(1);
             }
-        err = gsd_write_chunk(handle, "v2", GSD_UINT32_TYPE, 1, 1, i, (void*)&value2);
+        err = gsd_write_chunk(handle, "v2", GSD_TYPE_UINT32, 1, 1, (void*)&value2);
         if (err != 0)
             {
-            cout << "Error writing gsd file" << endl;
+            cout << "Error writing gsd file 2" << endl;
             exit(1);
             }
         err = gsd_end_frame(handle);
         if (err != 0)
             {
-            cout << "Error writing gsd file" << endl;
+            cout << "Error writing gsd file 3" << endl;
             exit(1);
             }
         }

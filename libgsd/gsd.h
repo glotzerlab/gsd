@@ -58,7 +58,7 @@ struct gsd_index_entry
 */
 struct gsd_namelist_entry
     {
-    char name[128];     //!< Entry name
+    char name[64];      //!< Entry name
     };
 
 //! File handle
@@ -71,10 +71,9 @@ struct gsd_namelist_entry
 struct gsd_handle
     {
     int fd;
-    gsd_header_t header;                //!< GSD file header
-    gsd_index_entry_t *index;
-    gsd_namelist_entry_t *namelist;
-    uint64_t namelist_written_entries;
+    struct gsd_header header;           //!< GSD file header
+    struct gsd_index_entry *index;
+    struct gsd_namelist_entry *namelist;
     uint64_t namelist_num_entries;
     uint64_t index_written_entries;
     uint64_t index_num_entries;
@@ -86,60 +85,62 @@ struct gsd_handle
 //! Identifiers for the gsd data chunk element types
 enum gsd_type
     {
-    GSD_TYPE_UINT8=1;
-    GSD_TYPE_UINT16;
-    GSD_TYPE_UINT32;
-    GSD_TYPE_UINT64;
-    GSD_TYPE_INT8;
-    GSD_TYPE_INT16;
-    GSD_TYPE_INT32;
-    GSD_TYPE_INT64;
-    GSD_TYPE_FLOAT;
-    GSD_TYPE_DOUBLE;
+    GSD_TYPE_UINT8=1,
+    GSD_TYPE_UINT16,
+    GSD_TYPE_UINT32,
+    GSD_TYPE_UINT64,
+    GSD_TYPE_INT8,
+    GSD_TYPE_INT16,
+    GSD_TYPE_INT32,
+    GSD_TYPE_INT64,
+    GSD_TYPE_FLOAT,
+    GSD_TYPE_DOUBLE
     };
 
 //! Flag for GSD file open options
 enum gsd_open_flag
     {
-    GSD_OPEN_READWRITE=1;
-    GSD_OPEN_READONLY;
+    GSD_OPEN_READWRITE=1,
+    GSD_OPEN_READONLY
     };
+
+//! Specify a version
+uint32_t gsd_make_version(unsigned int major, unsigned int minor);
 
 //! Create a GSD file
 int gsd_create(const char *fname, const char *application, const char *schema, uint32_t schema_version);
 
-//! Open a GSD file for read/write
-gsd_handle_t* gsd_open(const char *fname, const uint8_t flags);
+//! Open a GSD file
+struct gsd_handle* gsd_open(const char *fname, const enum gsd_open_flag flags);
 
 //! Close a GSD file
-int gsd_close(gsd_handle_t* handle);
+int gsd_close(struct gsd_handle* handle);
 
 //! Move on to the next frame
-int gsd_end_frame(gsd_handle_t* handle);
+int gsd_end_frame(struct gsd_handle* handle);
 
 //! Write a data chunk to the current frame
-int gsd_write_chunk(gsd_handle_t* handle,
-                     const char *name,
-                     uint8_t type,
-                     uint64_t N,
-                     uint64_t M,
-                     uint64_t step,
-                     const void *data);
+int gsd_write_chunk(struct gsd_handle* handle,
+                    const char *name,
+                    enum gsd_type type,
+                    uint64_t N,
+                    uint8_t M,
+                    const void *data);
 
 //! Find a chunk in the GSD file
-gsd_index_entry_t* gsd_find_chunk(gsd_handle_t* handle, uint64_t frame, const char *name);
+const struct gsd_index_entry* gsd_find_chunk(struct gsd_handle* handle, uint64_t frame, const char *name);
 
 //! Read a chunk from the GSD file
-int gsd_read_chunk(gsd_handle_t* handle, void* data, const gsd_index_entry_t* chunk);
+int gsd_read_chunk(struct gsd_handle* handle, void* data, const struct gsd_index_entry* chunk);
 
 //! Query the last time step in the GSD file
-uint64_t gsd_get_last_step(gsd_handle_t* handle);
+uint64_t gsd_get_last_step(struct gsd_handle* handle);
 
 //! Get the number of frames in the GSD file
-uint64_t gsd_get_nframes(gsd_handle_t* handle);
+uint64_t gsd_get_nframes(struct gsd_handle* handle);
 
 //! Query size of a GSD type ID
-size_t gsd_sizeof_type(uint8_t type);
+size_t gsd_sizeof_type(enum gsd_type type);
 
 #ifdef __cplusplus
 }

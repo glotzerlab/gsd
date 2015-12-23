@@ -98,7 +98,7 @@ There are four types of data blocks in a GSD file.
     * Index entry size: 28 bytes
 #. Name list
     * List of string names used by index entries.
-    * Each name is a `name_entry` struct, which holds up to 128 characters.
+    * Each name is a `name_entry` struct, which holds up to 63 characters.
     * The header stores the total number of names available in the list and the number of name slots used.
 #. Data chunk
     * Raw binary data stored for the named frame data blocks.
@@ -171,7 +171,7 @@ An namelist block is made of a number of line items that store the string name o
 
     struct gsd_namelist_entry
         {
-        char name[128];
+        char name[64];
         };
 
 The ``id`` field of the index entry refers to the index of the name within the namelist entry.
