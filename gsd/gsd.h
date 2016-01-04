@@ -17,6 +17,28 @@ extern "C" {
     \brief Declare GSD data types and C API
 */
 
+//! Identifiers for the gsd data chunk element types
+enum gsd_type
+    {
+    GSD_TYPE_UINT8=1,
+    GSD_TYPE_UINT16,
+    GSD_TYPE_UINT32,
+    GSD_TYPE_UINT64,
+    GSD_TYPE_INT8,
+    GSD_TYPE_INT16,
+    GSD_TYPE_INT32,
+    GSD_TYPE_INT64,
+    GSD_TYPE_FLOAT,
+    GSD_TYPE_DOUBLE
+    };
+
+//! Flag for GSD file open options
+enum gsd_open_flag
+    {
+    GSD_OPEN_READWRITE=1,
+    GSD_OPEN_READONLY
+    };
+
 //! GSD file header
 /*! The GSD file header.
 
@@ -79,29 +101,7 @@ struct gsd_handle
     uint64_t index_num_entries;
     uint64_t cur_frame;
     int64_t file_size;                  //!< File size (in bytes)
-    uint8_t open_flags;                 //!< Flags passed to gsd_open()
-    };
-
-//! Identifiers for the gsd data chunk element types
-enum gsd_type
-    {
-    GSD_TYPE_UINT8=1,
-    GSD_TYPE_UINT16,
-    GSD_TYPE_UINT32,
-    GSD_TYPE_UINT64,
-    GSD_TYPE_INT8,
-    GSD_TYPE_INT16,
-    GSD_TYPE_INT32,
-    GSD_TYPE_INT64,
-    GSD_TYPE_FLOAT,
-    GSD_TYPE_DOUBLE
-    };
-
-//! Flag for GSD file open options
-enum gsd_open_flag
-    {
-    GSD_OPEN_READWRITE=1,
-    GSD_OPEN_READONLY
+    enum gsd_open_flag open_flags;      //!< Flags passed to gsd_open()
     };
 
 //! Specify a version
@@ -132,9 +132,6 @@ const struct gsd_index_entry* gsd_find_chunk(struct gsd_handle* handle, uint64_t
 
 //! Read a chunk from the GSD file
 int gsd_read_chunk(struct gsd_handle* handle, void* data, const struct gsd_index_entry* chunk);
-
-//! Query the last time step in the GSD file
-uint64_t gsd_get_last_step(struct gsd_handle* handle);
 
 //! Get the number of frames in the GSD file
 uint64_t gsd_get_nframes(struct gsd_handle* handle);
