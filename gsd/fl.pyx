@@ -1,3 +1,5 @@
+""" GSD file layer API"""
+
 from libc.stdint cimport uint32_t, int64_t
 cimport libgsd
 
@@ -21,11 +23,11 @@ cdef class GSDFile:
         elif flags == 'r':
             c_flags = libgsd.GSD_OPEN_READONLY;
         else:
-            raise ValueError('flags must be r or w');
+            raise ValueError("flags must be 'r' or 'w'");
 
-        cdef char *c_fname = fname.encode('utf-8');
-        self.__handle = libgsd.gsd_open(fname, c_flags);
+        self.__handle = libgsd.gsd_open(fname.encode('utf-8'), c_flags);
 
     def __dealloc__(self):
+        print('closing file')
         if self.__handle is not NULL:
             libgsd.gsd_close(self.__handle)
