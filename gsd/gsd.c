@@ -65,7 +65,7 @@ static int __gsd_expand_index(struct gsd_handle *handle)
     \param name string name
     \param append Set to true to allow appending new names into the index, false to disallow
 
-    \returns the id assigned to the name, or UINT16_MAX if not found and append is false
+    \return the id assigned to the name, or UINT16_MAX if not found and append is false
 */
 uint16_t __gsd_get_id(struct gsd_handle *handle, const char *name, uint8_t append)
     {
@@ -105,7 +105,7 @@ uint16_t __gsd_get_id(struct gsd_handle *handle, const char *name, uint8_t appen
 /*! \param major major version
     \param minor minor version
 
-    Returns a packed version number aaaa.bbbb suitable for storing in a gsd file version entry.
+    \return a packed version number aaaa.bbbb suitable for storing in a gsd file version entry.
 */
 uint32_t gsd_make_version(unsigned int major, unsigned int minor)
     {
@@ -117,11 +117,11 @@ uint32_t gsd_make_version(unsigned int major, unsigned int minor)
     \param schema Schema name for data to be written in this GSD file (truncated to 63 chars)
     \param schema_version Version of the scheme data to be written (make with gsd_make_version())
 
-    \post Creates an empty gsd file in a file of the given name. Overwrites any existing file at that location.
+    \post Create an empty gsd file in a file of the given name. Overwrite any existing file at that location.
 
     The generated gsd file is not opened. Call gsd_open() to open it for writing.
 
-    \returns 0 on success, -1 on a file IO failure - see errno for details
+    \return 0 on success, -1 on a file IO failure - see errno for details
 */
 int gsd_create(const char *fname, const char *application, const char *schema, uint32_t schema_version)
     {
@@ -175,29 +175,30 @@ int gsd_create(const char *fname, const char *application, const char *schema, u
     return 0;
     }
 
-/*! \param fname File name to open
+/*! \param handle Handle to open
+    \param fname File name to open
     \param flags Either GSD_OPEN_READWRITE or GSD_OPEN_READONLY
 
     \pre The file name \a fname is a GSD file.
 
-    \post Opens a GSD file and populates the handle for use by API calls.
+    \post Open a GSD file and populates the handle for use by API calls.
 
-    \returns An allocated pointer on success, NULL on failure. Check errno for potential causes of the error.
+    \return 0 on success. Negative value on failure:
+        * -1: IO error (check errno)
+        * -2: Not a GSD file
+        * -3: Invalid GSD file version
+        * -4: Corrupt file
+        * -5: Unable to allocate memory
 */
-struct gsd_handle* gsd_open(const char *fname, const enum gsd_open_flag flags)
+int gsd_open(struct gsd_handle* handle, const char *fname, const enum gsd_open_flag flags)
     {
     // allocate the handle
-    // printf("Allocating\n");
-    struct gsd_handle *handle = (struct gsd_handle *)malloc(sizeof(struct gsd_handle));
-    if (handle == NULL)
-        return NULL;
     memset(handle, 0, sizeof(struct gsd_handle));
     handle->index = NULL;
     handle->namelist = NULL;
     handle->cur_frame = 0;
 
     // create the file
-    // printf("Opening\n");
     if (flags == GSD_OPEN_READWRITE)
         {
         handle->fd = open(fname, O_RDWR);
@@ -211,39 +212,36 @@ struct gsd_handle* gsd_open(const char *fname, const enum gsd_open_flag flags)
 
     // check if the file was created
     if (handle->fd == -1)
-        return NULL;
+        return -1;
 
     // read the header
-    // printf("Reading header\n");
     size_t bytes_read = read(handle->fd, &handle->header, sizeof(struct gsd_header));
     if (bytes_read != sizeof(struct gsd_header))
-        return NULL;
+        return -1;
 
     // validate the header
-    // printf("Validating header\n");
     if (handle->header.magic != 0x65DF65DF65DF65DF)
-        return NULL;
+        return -2;
 
     if (handle->header.gsd_version != gsd_make_version(0,2))
-        return NULL;
+        return -3;
 
     // determine the file size
     handle->file_size = lseek(handle->fd, 0, SEEK_END);
 
     // validate that the index block exists inside the file
     if (handle->header.index_location + sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries > handle->file_size)
-        return NULL;
+        return -4;
 
     // read the index block
-    // printf("Reading index\n");
     handle->index = (struct gsd_index_entry *)malloc(sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries);
     if (handle->index == NULL)
-        return NULL;
+        return -5;
 
     lseek(handle->fd, handle->header.index_location, SEEK_SET);
     bytes_read = read(handle->fd, handle->index, sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries);
     if (bytes_read != sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries)
-        return NULL;
+        return -1;
 
     // determine the number of index entries (marked by location = 0)
     // base case: the index is full
@@ -262,18 +260,17 @@ struct gsd_handle* gsd_open(const char *fname, const enum gsd_open_flag flags)
 
     // validate that the namelist block exists inside the file
     if (handle->header.namelist_location + sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries > handle->file_size)
-        return NULL;
+        return -4;
 
     // read the namelist block
-    // printf("Reading namelist\n");
     handle->namelist = (struct gsd_namelist_entry *)malloc(sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries);
     if (handle->namelist == NULL)
-        return NULL;
+        return -5;
 
     lseek(handle->fd, handle->header.namelist_location, SEEK_SET);
     bytes_read = read(handle->fd, handle->namelist, sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries);
     if (bytes_read != sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries)
-        return NULL;
+        return -1;
 
     // determine the number of namelist entries (marked by location = 0)
     // base case: the namelist is full
@@ -296,8 +293,7 @@ struct gsd_handle* gsd_open(const char *fname, const enum gsd_open_flag flags)
     // at this point, all valid index entries have been written to disk
     handle->index_written_entries = handle->index_num_entries;
 
-    // printf("Returning handle %p\n", handle);
-    return handle;
+    return 0;
     }
 
 /*! \param handle Handle to an open GSD file
@@ -312,7 +308,7 @@ struct gsd_handle* gsd_open(const char *fname, const enum gsd_open_flag flags)
     This will result in data loss. Data chunks written by gsd_write_chunk() are not updated in the index until
     gsd_end_frame() is called. This is by design to prevent partial frames in files.
 
-    \returns 0 on success, -1 on a file IO failure - see errno for details, and -2 on invalid input
+    \return 0 on success, -1 on a file IO failure - see errno for details, and -2 on invalid input
 */
 int gsd_close(struct gsd_handle* handle)
     {
@@ -357,7 +353,7 @@ int gsd_close(struct gsd_handle* handle)
 
     \post The current frame counter is increased by 1 and cached indexes are written to disk.
 
-    \returns 0 on success, -1 on a file IO failure - see errno for details, and -2 on invalid input
+    \return 0 on success, -1 on a file IO failure - see errno for details, and -2 on invalid input
 */
 int gsd_end_frame(struct gsd_handle* handle)
     {
@@ -404,7 +400,7 @@ int gsd_end_frame(struct gsd_handle* handle)
 
     \post The given data chunk is written to the end of the file and its location is updated in the in-memory index.
 
-    \returns 0 on success, -1 on a file IO failure - see errno for details, and -2 on invalid input
+    \return 0 on success, -1 on a file IO failure - see errno for details, and -2 on invalid input
 */
 int gsd_write_chunk(struct gsd_handle* handle,
                     const char *name,
@@ -435,7 +431,6 @@ int gsd_write_chunk(struct gsd_handle* handle,
     index_entry.location = lseek(handle->fd, 0, SEEK_END);
 
     // write the data
-    // printf("Writing %d bytes\n", size);
     size_t bytes_written = write(handle->fd, data, size);
     if (bytes_written != size)
         return -1;
@@ -463,7 +458,7 @@ int gsd_write_chunk(struct gsd_handle* handle,
 
     \pre \a handle was opened by gsd_open().
 
-    \returns The number of frames in the file, or 0 on error
+    \return The number of frames in the file, or 0 on error
 */
 uint64_t gsd_get_nframes(struct gsd_handle* handle)
     {
@@ -484,7 +479,7 @@ uint64_t gsd_get_nframes(struct gsd_handle* handle)
 
     \pre \a handle was opened by gsd_open().
 
-    \returns A pointer to the found chunk, or NULL if not found
+    \return A pointer to the found chunk, or NULL if not found
 */
 const struct gsd_index_entry* gsd_find_chunk(struct gsd_handle* handle, uint64_t frame, const char *name)
     {
@@ -540,7 +535,7 @@ const struct gsd_index_entry* gsd_find_chunk(struct gsd_handle* handle, uint64_t
     \pre \a chunk was found by gsd_find_chunk().
     \pre \a data points to an allocated buffer with at least `N * M * gsd_sizeof_type(type)` bytes.
 
-    \returns 0 on success, -1 on a file IO failure - see errno for details, and -2 on invalid input
+    \return 0 on success, -1 on a file IO failure - see errno for details, and -2 on invalid input
 */
 int gsd_read_chunk(struct gsd_handle* handle, void* data, const struct gsd_index_entry* chunk)
     {
@@ -560,11 +555,9 @@ int gsd_read_chunk(struct gsd_handle* handle, void* data, const struct gsd_index
     // validate that we don't read past the end of the file
     if ((chunk->location + size) > handle->file_size)
         {
-        // data chunk asks us to read pas the end of the file, error out
         return -2;
         }
 
-    // printf("Reading %d bytes\n", chunk->size);
     lseek(handle->fd, chunk->location, SEEK_SET);
     size_t bytes_read = read(handle->fd, data, size);
     if (bytes_read != size)
@@ -575,7 +568,7 @@ int gsd_read_chunk(struct gsd_handle* handle, void* data, const struct gsd_index
 
 /*! \param type Type ID to query
 
-    \returns Size of the given type, or 1 for an unknown type ID.
+    \return Size of the given type, or 1 for an unknown type ID.
 */
 size_t gsd_sizeof_type(enum gsd_type type)
     {

@@ -58,7 +58,7 @@ cdef extern from "gsd.h":
 
     uint32_t gsd_make_version(unsigned int major, unsigned int minor);
     int gsd_create(const char *fname, const char *application, const char *schema, uint32_t schema_version);
-    gsd_handle* gsd_open(const char *fname, const gsd_open_flag flags);
+    int gsd_open(gsd_handle* handle, const char *fname, const gsd_open_flag flags);
     int gsd_close(gsd_handle* handle);
     int gsd_end_frame(gsd_handle* handle);
     int gsd_write_chunk(gsd_handle* handle,
