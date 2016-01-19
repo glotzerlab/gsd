@@ -289,8 +289,10 @@ cdef class GSDFile:
             name (str): Name of the chunk
 
         Returns:
-            numpy.ndarray[type, ndim=2, mode='c']: Data read from file.
-            ``type`` is determined by the chunk metadata.
+            numpy.ndarray[type, ndim=?, mode='c']: Data read from file.
+            ``type`` is determined by the chunk metadata. If the data is
+            NxM in the file, return a 2D array. If the data is Nx1,
+            return a 1D array.
 
         Warning:
             Each call to read_chunk() invokes a disk read and allocation of a
@@ -368,7 +370,10 @@ cdef class GSDFile:
         elif retval != 0:
             raise RuntimeError("Unknown error");
 
-        return data_array;
+        if index_entry.M == 1:
+            return data_array.reshape([index_entry.N]);
+        else:
+            return data_array;
 
     def __enter__(self):
         return self;
