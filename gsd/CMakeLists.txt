@@ -1,5 +1,10 @@
 ############### cython based modules
-add_library(fl SHARED gsd.c fl.c)
+if (PYTHON_VERSION VERSION_GREATER 3)
+    add_library(fl SHARED gsd.c fl3.c)
+else()
+    add_library(fl SHARED gsd.c fl2.c)
+endif()
+
 set_target_properties(fl PROPERTIES PREFIX "" OUTPUT_NAME "fl")
 if(APPLE)
     set_target_properties(fl PROPERTIES SUFFIX ".so")

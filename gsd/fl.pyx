@@ -1,4 +1,4 @@
-""" GSD file layer API"""
+""" GSD file layer API """
 
 from libc.stdint cimport uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, uint64_t, int64_t
 from libc.errno cimport errno
@@ -87,6 +87,12 @@ cdef class GSDFile:
     Attributes:
         name (str): Name of the open file.
         mode (str): Mode of the open file.
+        gsd_version (list[int]): GSD file layer version number [major, minor].
+        application (str): Name of the generating application.
+        schema (str): Name of the data schema.
+        schema_version (list[int]): Schema version number [major, minor].
+        file_size (int): File size in bytes.
+        nframes (int): Number of frames.
     """
 
     cdef libgsd.gsd_handle __handle;
@@ -156,7 +162,7 @@ cdef class GSDFile:
             raise RuntimeError("Unknown error");
 
     def write_chunk(self, name, data):
-        """ Writes a data chunk to the file.
+        """ Write a data chunk to the file.
 
         write_chunk() writes the provided data to a named chunk in the file.
         After writing all chunks in the current frame, call end_frame().
@@ -166,6 +172,12 @@ cdef class GSDFile:
             data (numpy array): Data to write into the chunk. Must be a numpy
                                 array, or array-like, with 2 or fewer
                                 dimensions.
+
+        Warning:
+            write_chunk() will implicitly convert array-like and non-contiguous
+            numpy arrays to contiguous numpy arrays with
+            numpy.ascontiguousarray(data). This may or may not produce desired
+            data types in the output file and incurs overhead.
         """
 
         if not self.__is_open:
@@ -242,6 +254,121 @@ cdef class GSDFile:
             raise IOError(*__format_errno(name));
         elif retval == -2:
             raise RuntimeError("GSD file is opened read only: " + self.name);
+        elif retval != 0:
+            raise RuntimeError("Unknown error");
+
+    def chunk_exists(self, frame, name):
+        """ Test if a chunk exists.
+
+        Returns:
+            True if the chunk exists in the file. False if it does not.
+        """
+
+        cdef const libgsd.gsd_index_entry* index_entry;
+        cdef char * c_name;
+        name_e = name.encode('utf-8')
+        c_name = name_e;
+        cdef int64_t c_frame;
+        c_frame = frame;
+
+        logger.debug('chunk exists: ' + self.name + ' / ' + name);
+
+        with nogil:
+            index_entry = libgsd.gsd_find_chunk(&self.__handle, c_frame, c_name)
+
+        return index_entry != NULL;
+
+    def read_chunk(self, frame, name):
+        """ Read a data chunk from the file.
+
+        read_chunk() finds the named chunk at the given frame, reads the data
+        in and returns it in a numpy array.
+
+        Args:
+            frame (int): Index of the frame to read
+            name (str): Name of the chunk
+
+        Returns:
+            numpy.ndarray[type, ndim=2, mode='c']: Data read from file.
+            ``type`` is determined by the chunk metadata.
+
+        Warning:
+            Each call to read_chunk() invokes a disk read and allocation of a
+            new numpy array for storage. To avoid overhead, don't call
+            read_chunk() on the same chunk repeatedly. Cache the arrays
+            instead.
+        """
+
+        if not self.__is_open:
+            raise ValueError("File is not open");
+
+        cdef const libgsd.gsd_index_entry* index_entry;
+        cdef char * c_name;
+        name_e = name.encode('utf-8')
+        c_name = name_e;
+        cdef int64_t c_frame;
+        c_frame = frame;
+
+        with nogil:
+            index_entry = libgsd.gsd_find_chunk(&self.__handle, c_frame, c_name)
+
+        if index_entry == NULL:
+            raise KeyError("frame " + str(frame) + " / chunk " + name + " not found in: " + self.name);
+
+        cdef libgsd.gsd_type gsd_type;
+        gsd_type = <libgsd.gsd_type>index_entry.type;
+
+        cdef void *data_ptr;
+        if gsd_type == libgsd.GSD_TYPE_UINT8:
+            data_array = numpy.empty(dtype=numpy.uint8, shape=[index_entry.N, index_entry.M])
+            data_ptr = __get_ptr_uint8(data_array)
+        elif gsd_type == libgsd.GSD_TYPE_UINT16:
+            data_array = numpy.empty(dtype=numpy.uint16, shape=[index_entry.N, index_entry.M])
+            data_ptr = __get_ptr_uint16(data_array)
+        elif gsd_type == libgsd.GSD_TYPE_UINT32:
+            data_array = numpy.empty(dtype=numpy.uint32, shape=[index_entry.N, index_entry.M])
+            data_ptr = __get_ptr_uint32(data_array)
+        elif gsd_type == libgsd.GSD_TYPE_UINT64:
+            data_array = numpy.empty(dtype=numpy.uint64, shape=[index_entry.N, index_entry.M])
+            data_ptr = __get_ptr_uint64(data_array)
+        elif gsd_type == libgsd.GSD_TYPE_INT8:
+            data_array = numpy.empty(dtype=numpy.int8, shape=[index_entry.N, index_entry.M])
+            data_ptr = __get_ptr_int8(data_array)
+        elif gsd_type == libgsd.GSD_TYPE_INT16:
+            data_array = numpy.empty(dtype=numpy.int16, shape=[index_entry.N, index_entry.M])
+            data_ptr = __get_ptr_int16(data_array)
+        elif gsd_type == libgsd.GSD_TYPE_INT32:
+            data_array = numpy.empty(dtype=numpy.int32, shape=[index_entry.N, index_entry.M])
+            data_ptr = __get_ptr_int32(data_array)
+        elif gsd_type == libgsd.GSD_TYPE_INT64:
+            data_array = numpy.empty(dtype=numpy.int64, shape=[index_entry.N, index_entry.M])
+            data_ptr = __get_ptr_int64(data_array)
+        elif gsd_type == libgsd.GSD_TYPE_FLOAT:
+            data_array = numpy.empty(dtype=numpy.float32, shape=[index_entry.N, index_entry.M])
+            data_ptr = __get_ptr_float32(data_array)
+        elif gsd_type == libgsd.GSD_TYPE_DOUBLE:
+            data_array = numpy.empty(dtype=numpy.float64, shape=[index_entry.N, index_entry.M])
+            data_ptr = __get_ptr_float64(data_array)
+        else:
+            raise ValueError("invalid type for chunk: " + name);
+
+        logger.debug('read chunk: ' + self.name + ' / ' + str(frame) + ' / ' + name);
+
+        with nogil:
+            retval = libgsd.gsd_read_chunk(&self.__handle,
+                                           data_ptr,
+                                           index_entry);
+
+        if retval == -1:
+            raise IOError(*__format_errno(name));
+        elif retval == -2:
+            raise RuntimeError("Programming error: " + self.name);
+        elif retval == -3:
+            raise RuntimeError("Corrupt chunk: " + str(frame) + " / " + name + " in file" + self.name);
+        elif retval != 0:
+            raise RuntimeError("Unknown error");
+
+        return data_array;
 
     def __enter__(self):
         return self;
@@ -262,6 +389,30 @@ cdef class GSDFile:
             cdef uint32_t v = self.__handle.header.gsd_version;
             return (v >> 16, v & 0xffff);
 
+    property schema_version:
+        def __get__(self):
+            cdef uint32_t v = self.__handle.header.schema_version;
+            return (v >> 16, v & 0xffff);
+
+    property schema:
+        def __get__(self):
+            return self.__handle.header.schema;
+
+    property application:
+        def __get__(self):
+            return str(self.__handle.header.application);
+
+    property file_size:
+        def __get__(self):
+            return self.__handle.file_size;
+
+    property nframes:
+        def __get__(self):
+            if not self.__is_open:
+                raise ValueError("File is not open");
+
+            return libgsd.gsd_get_nframes(&self.__handle);
+
     def __dealloc__(self):
         if self.__is_open:
             logger.info('closing file: ' + self.name);
@@ -271,7 +422,7 @@ cdef class GSDFile:
 def create(name, application, schema, schema_version):
     """ Create a GSD file.
 
-    create() creates an empty GSD file on disk.
+    create() creates an empty GSD file on the filesystem.
 
     Args:
         name (str): File name to open.

@@ -547,14 +547,14 @@ int gsd_read_chunk(struct gsd_handle* handle, void* data, const struct gsd_index
 
     size_t size = chunk->N * chunk->M * gsd_sizeof_type(chunk->type);
     if (size == 0)
-        return -2;
+        return -3;
     if (chunk->location == 0)
-        return -2;
+        return -3;
 
     // validate that we don't read past the end of the file
     if ((chunk->location + size) > handle->file_size)
         {
-        return -2;
+        return -3;
         }
 
     lseek(handle->fd, chunk->location, SEEK_SET);
