@@ -4,7 +4,7 @@
 
 from libc.stdint cimport uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, uint64_t, int64_t
 
-cdef extern from "gsd.h":
+cdef extern from "gsd.h" nogil:
     cdef enum gsd_type:
         GSD_TYPE_UINT8=1
         GSD_TYPE_UINT16

@@ -53,3 +53,29 @@ run_python("import site\; print(site.USER_SITE)" PYTHON_USER_SITE)
 
 INCLUDE(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(Python DEFAULT_MSG PYTHON_EXECUTABLE PYTHON_INCLUDE_DIR PYTHON_SYSTEM_SITE PYTHON_USER_SITE)
+
+#### Setup numpy
+if (PYTHON_VERSION VERSION_GREATER 3)
+    run_python("import numpy\; print(numpy.get_include())" NUMPY_INCLUDE_GUESS)
+else()
+    run_python("import numpy\; print numpy.get_include()" NUMPY_INCLUDE_GUESS)
+endif()
+
+# We use the full path name (including numpy on the end), but
+# Double-check that all is well with that choice.
+find_path(
+    NUMPY_INCLUDE_DIR
+    numpy/arrayobject.h
+    HINTS
+    ${NUMPY_INCLUDE_GUESS}
+    )
+
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(numpy DEFAULT_MSG NUMPY_INCLUDE_DIR)
+
+if (NUMPY_INCLUDE_DIR)
+mark_as_advanced(NUMPY_INCLUDE_DIR)
+endif (NUMPY_INCLUDE_DIR)
+
+include_directories(${NUMPY_INCLUDE_DIR})
+#add_definitions(-DPY_ARRAY_UNIQUE_SYMBOL=PyArrayHandle)
+# add_definitions(-DNPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION)

@@ -332,10 +332,9 @@ int gsd_close(struct gsd_handle* handle)
         free(handle->index);
         handle->index = NULL;
 
-        // only try and free the handle if handle->index is valid
+        // only close the file if handle->index is valid
         // this attempts to fail gracefully when calling gsd_close(handle) twice.
         memset(handle, 0, sizeof(struct gsd_handle));
-        free(handle);
 
         // close the file
         int retval = close(fd);
