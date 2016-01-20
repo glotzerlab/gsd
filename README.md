@@ -4,18 +4,18 @@
 
 GSD (General Simulation Data) is a file format specification and a library to read and write it.
 
-    * Efficiently store many frames of data from simulation runs.
-    * High performance file read and write.
-    * Support arbitrary chunks of data in each frame (position, orientation, type, etc...).
-    * Append frames to an existing file with a monotonically increasing frame number.
-    * Resilient to job kills.
-    * Variable number of named chunks in each frame.
-    * Variable size of chunks in each frame.
-    * Each chunk identifies data type.
-    * Common use cases: NxM arrays in double, float, int, char types.
-    * Generic use case: binary blob of N bytes.
-    * Easy to integrate into other tools with python, or a C API (< 1k lines).
-    * Fast random access to frames.
+* Efficiently store many frames of data from simulation runs.
+* High performance file read and write.
+* Support arbitrary chunks of data in each frame (position, orientation, type, etc...).
+* Append frames to an existing file with a monotonically increasing frame number.
+* Resilient to job kills.
+* Variable number of named chunks in each frame.
+* Variable size of chunks in each frame.
+* Each chunk identifies data type.
+* Common use cases: NxM arrays in double, float, int, char types.
+* Generic use case: binary blob of N bytes.
+* Easy to integrate into other tools with python, or a C API (< 1k lines).
+* Fast random access to frames.
 
 ## Installing the python module
 
@@ -34,20 +34,20 @@ TODO: It is not actually available yet.
 
 ## Examples
 
-~~~
+```python
 with GSDFile(name='file.gsd', mode='w') as f:
     f.write_chunk(name='position', data=numpy.array([[1,2,3],[4,5,6]], dtype=numpy.float32));
     f.write_chunk(name='angle', data=numpy.array([0, 1], dtype=numpy.float32));
     f.write_chunk(name='box', data=numpy.array([10, 10, 10], dtype=numpy.float32));
     f.end_frame()
-~~~
+```
 
-~~~
+```python
 with GSDFile(name='file.gsd', mode='r') as f:
     for i in range(1,f.nframes):
         position = f.read_chunk(frame=i, name='position');
         do_something(position);
-~~~
+```
 
 ## Compiling the python module
 
@@ -61,45 +61,45 @@ with GSDFile(name='file.gsd', mode='r') as f:
 Use ``python setup.py`` to install the python module with distutils. For example, to install into
 your home directory, execute:
 
-~~~
+```bash
 python setup.py install --user
-~~~
+```
 
 ### Build with cmake for development
 
 You can assemble a functional python module in the build directory using cmake:
 
-~~~
+```bash
 mkdir build
 cd build
 make
-~~~
+```
 
 Then add the directory to your PYTHONPATH temporarily for testing.
 
-~~~
+```bash
 export PYTHONPATH=/path/to/build:$PYTHONPATH
-~~~
+```
 
 ### Run unit tests
 
 Run `nosetests` in the source directory to execute all unit tests. This requires that the
 python module is on the python path.
 
-~~~
+```bash
 nosetests
-~~~
+```
 
 ### Build Documentation
 
 Documentation builds with sphinx and requires that the python module is on the python path.
 To build the documentation:
 
-~~~
+```bash
 cd doc
 make html
 open _build/html/index.html
-~~~
+```
 
 ## Using the C library
 
