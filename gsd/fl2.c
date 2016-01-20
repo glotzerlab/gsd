@@ -1205,7 +1205,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_6write_chunk(struct __pyx_obj_3gsd_2
 static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_8chunk_exists(struct __pyx_obj_3gsd_2fl_GSDFile *__pyx_v_self, PyObject *__pyx_v_frame, PyObject *__pyx_v_name); /* proto */
 static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_10read_chunk(struct __pyx_obj_3gsd_2fl_GSDFile *__pyx_v_self, PyObject *__pyx_v_frame, PyObject *__pyx_v_name); /* proto */
 static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_12__enter__(struct __pyx_obj_3gsd_2fl_GSDFile *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_14__exit__(struct __pyx_obj_3gsd_2fl_GSDFile *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_14__exit__(struct __pyx_obj_3gsd_2fl_GSDFile *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v_exc_type, CYTHON_UNUSED PyObject *__pyx_v_exc_value, CYTHON_UNUSED PyObject *__pyx_v_traceback); /* proto */
 static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_4name___get__(struct __pyx_obj_3gsd_2fl_GSDFile *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_4mode___get__(struct __pyx_obj_3gsd_2fl_GSDFile *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_11gsd_version___get__(struct __pyx_obj_3gsd_2fl_GSDFile *__pyx_v_self); /* proto */
@@ -1281,9 +1281,12 @@ static char __pyx_k_logging[] = "logging";
 static char __pyx_k_reshape[] = "reshape";
 static char __pyx_k_warning[] = "warning";
 static char __pyx_k_KeyError[] = "KeyError";
+static char __pyx_k_exc_type[] = "exc_type";
 static char __pyx_k_strerror[] = "strerror";
 static char __pyx_k_end_frame[] = "end frame: ";
+static char __pyx_k_exc_value[] = "exc_value";
 static char __pyx_k_getLogger[] = "getLogger";
+static char __pyx_k_traceback[] = "traceback";
 static char __pyx_k_with_mode[] = " with mode: ";
 static char __pyx_k_ValueError[] = "ValueError";
 static char __pyx_k_read_chunk[] = "read chunk: ";
@@ -1354,6 +1357,8 @@ static PyObject *__pyx_n_s_dtype;
 static PyObject *__pyx_n_s_empty;
 static PyObject *__pyx_n_s_encode;
 static PyObject *__pyx_kp_s_end_frame;
+static PyObject *__pyx_n_s_exc_type;
+static PyObject *__pyx_n_s_exc_value;
 static PyObject *__pyx_n_s_float32;
 static PyObject *__pyx_n_s_float64;
 static PyObject *__pyx_n_s_frame;
@@ -1392,6 +1397,7 @@ static PyObject *__pyx_n_s_schema_version;
 static PyObject *__pyx_n_s_shape;
 static PyObject *__pyx_n_s_strerror;
 static PyObject *__pyx_n_s_test;
+static PyObject *__pyx_n_s_traceback;
 static PyObject *__pyx_n_s_uint16;
 static PyObject *__pyx_n_s_uint32;
 static PyObject *__pyx_n_s_uint64;
@@ -6060,7 +6066,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_12__enter__(struct __pyx_obj_3gsd_2f
  *     def __enter__(self):
  *         return self;             # <<<<<<<<<<<<<<
  * 
- *     def __exit__(self):
+ *     def __exit__(self, exc_type, exc_value, traceback):
  */
   __Pyx_XDECREF(__pyx_r);
   __Pyx_INCREF(((PyObject *)__pyx_v_self));
@@ -6085,25 +6091,82 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_12__enter__(struct __pyx_obj_3gsd_2f
 /* "gsd/fl.pyx":507
  *         return self;
  * 
- *     def __exit__(self):             # <<<<<<<<<<<<<<
+ *     def __exit__(self, exc_type, exc_value, traceback):             # <<<<<<<<<<<<<<
  *         self.close()
  * 
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3gsd_2fl_7GSDFile_15__exit__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyObject *__pyx_pw_3gsd_2fl_7GSDFile_15__exit__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_3gsd_2fl_7GSDFile_15__exit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_3gsd_2fl_7GSDFile_15__exit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  CYTHON_UNUSED PyObject *__pyx_v_exc_type = 0;
+  CYTHON_UNUSED PyObject *__pyx_v_exc_value = 0;
+  CYTHON_UNUSED PyObject *__pyx_v_traceback = 0;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__exit__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_3gsd_2fl_7GSDFile_14__exit__(((struct __pyx_obj_3gsd_2fl_GSDFile *)__pyx_v_self));
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_exc_type,&__pyx_n_s_exc_value,&__pyx_n_s_traceback,0};
+    PyObject* values[3] = {0,0,0};
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_exc_type)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        case  1:
+        if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_exc_value)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("__exit__", 1, 3, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 507; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        }
+        case  2:
+        if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_traceback)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("__exit__", 1, 3, 3, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 507; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__exit__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 507; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      }
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+      values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+    }
+    __pyx_v_exc_type = values[0];
+    __pyx_v_exc_value = values[1];
+    __pyx_v_traceback = values[2];
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("__exit__", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 507; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("gsd.fl.GSDFile.__exit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_3gsd_2fl_7GSDFile_14__exit__(((struct __pyx_obj_3gsd_2fl_GSDFile *)__pyx_v_self), __pyx_v_exc_type, __pyx_v_exc_value, __pyx_v_traceback);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_14__exit__(struct __pyx_obj_3gsd_2fl_GSDFile *__pyx_v_self) {
+static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_14__exit__(struct __pyx_obj_3gsd_2fl_GSDFile *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v_exc_type, CYTHON_UNUSED PyObject *__pyx_v_exc_value, CYTHON_UNUSED PyObject *__pyx_v_traceback) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -6116,7 +6179,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_14__exit__(struct __pyx_obj_3gsd_2fl
 
   /* "gsd/fl.pyx":508
  * 
- *     def __exit__(self):
+ *     def __exit__(self, exc_type, exc_value, traceback):
  *         self.close()             # <<<<<<<<<<<<<<
  * 
  *     property name:
@@ -6146,7 +6209,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_14__exit__(struct __pyx_obj_3gsd_2fl
   /* "gsd/fl.pyx":507
  *         return self;
  * 
- *     def __exit__(self):             # <<<<<<<<<<<<<<
+ *     def __exit__(self, exc_type, exc_value, traceback):             # <<<<<<<<<<<<<<
  *         self.close()
  * 
  */
@@ -9170,7 +9233,7 @@ static PyMethodDef __pyx_methods_3gsd_2fl_GSDFile[] = {
   {"chunk_exists", (PyCFunction)__pyx_pw_3gsd_2fl_7GSDFile_9chunk_exists, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3gsd_2fl_7GSDFile_8chunk_exists},
   {"read_chunk", (PyCFunction)__pyx_pw_3gsd_2fl_7GSDFile_11read_chunk, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3gsd_2fl_7GSDFile_10read_chunk},
   {"__enter__", (PyCFunction)__pyx_pw_3gsd_2fl_7GSDFile_13__enter__, METH_NOARGS, 0},
-  {"__exit__", (PyCFunction)__pyx_pw_3gsd_2fl_7GSDFile_15__exit__, METH_NOARGS, 0},
+  {"__exit__", (PyCFunction)__pyx_pw_3gsd_2fl_7GSDFile_15__exit__, METH_VARARGS|METH_KEYWORDS, 0},
   {0, 0, 0, 0}
 };
 
@@ -9300,6 +9363,8 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_empty, __pyx_k_empty, sizeof(__pyx_k_empty), 0, 0, 1, 1},
   {&__pyx_n_s_encode, __pyx_k_encode, sizeof(__pyx_k_encode), 0, 0, 1, 1},
   {&__pyx_kp_s_end_frame, __pyx_k_end_frame, sizeof(__pyx_k_end_frame), 0, 0, 1, 0},
+  {&__pyx_n_s_exc_type, __pyx_k_exc_type, sizeof(__pyx_k_exc_type), 0, 0, 1, 1},
+  {&__pyx_n_s_exc_value, __pyx_k_exc_value, sizeof(__pyx_k_exc_value), 0, 0, 1, 1},
   {&__pyx_n_s_float32, __pyx_k_float32, sizeof(__pyx_k_float32), 0, 0, 1, 1},
   {&__pyx_n_s_float64, __pyx_k_float64, sizeof(__pyx_k_float64), 0, 0, 1, 1},
   {&__pyx_n_s_frame, __pyx_k_frame, sizeof(__pyx_k_frame), 0, 0, 1, 1},
@@ -9338,6 +9403,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_shape, __pyx_k_shape, sizeof(__pyx_k_shape), 0, 0, 1, 1},
   {&__pyx_n_s_strerror, __pyx_k_strerror, sizeof(__pyx_k_strerror), 0, 0, 1, 1},
   {&__pyx_n_s_test, __pyx_k_test, sizeof(__pyx_k_test), 0, 0, 1, 1},
+  {&__pyx_n_s_traceback, __pyx_k_traceback, sizeof(__pyx_k_traceback), 0, 0, 1, 1},
   {&__pyx_n_s_uint16, __pyx_k_uint16, sizeof(__pyx_k_uint16), 0, 0, 1, 1},
   {&__pyx_n_s_uint32, __pyx_k_uint32, sizeof(__pyx_k_uint32), 0, 0, 1, 1},
   {&__pyx_n_s_uint64, __pyx_k_uint64, sizeof(__pyx_k_uint64), 0, 0, 1, 1},
