@@ -577,12 +577,16 @@ size_t gsd_sizeof_type(enum gsd_type type)
         return 2;
     else if (type == GSD_TYPE_UINT32)
         return 4;
+    else if (type == GSD_TYPE_UINT64)
+        return 8;
     else if (type == GSD_TYPE_INT8)
         return 1;
     else if (type == GSD_TYPE_INT16)
         return 2;
     else if (type == GSD_TYPE_INT32)
         return 4;
+    else if (type == GSD_TYPE_INT64)
+        return 8;
     else if (type == GSD_TYPE_FLOAT)
         return 4;
     else if (type == GSD_TYPE_DOUBLE)
