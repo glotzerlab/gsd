@@ -1,24 +1,35 @@
-Python API
-==========
+GSD python package
+==================
 
 GSD comes with an optional python API. This is the most convenient way for
 users to read and write GSD files. Developers, or users not working with
-the python language, may want to use the `c_api_` directly.
+the python language, may want to use the :ref:`c_api_` directly.
 
-The main package :py:mod:`gsd` is the root package. It holds the submodules
-and does not import them. Users import the modules they need into their python
-script::
+Submodules
+----------
 
-    import gsd.fl
-    f = gsd.fl.GSDFile('filename', 'r');
+.. toctree::
+   :maxdepth: 3
+
+   python-module-gsd.fl
+
+Package contents
+---------------
 
 .. automodule:: gsd
     :synopsis: GSD main module.
     :members:
 
-**Modules:**
+Logging
+-------
 
-.. toctree::
-   :maxdepth: 2
+All python modules in GSD use the python standard library module :py:mod:`logging`
+to log events. Use this module to control the verbosity and output destination::
 
-   python-module-gsd.fl
+    import logging
+    logging.basicConfig(level=logging.INFO)
+
+.. seealso::
+
+    Module :py:mod:`logging`
+        Documenation of the :py:mod:`logging` standard module.

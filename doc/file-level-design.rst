@@ -51,7 +51,7 @@ Specifications
 Support:
 
 * Files as large as the underlying filesystem allows (up to 64-bit address limits)
-* Data chunk names up to 127 characters
+* Data chunk names up to 63 characters
 * Reference up to 65536 different chunk names within a file
 * Application and scheme names up to 63 characters
 * Store as many frames as can fit in a file up to file size limits
@@ -73,7 +73,7 @@ the entire file layer in a few hundred lines of code.
 A python interface to the file layer allows reference implementations and convenience methods for schemas.
 Most non-technical users of GSD will probably use these reference implementations directly in their scripts.
 
-Boost will **not** be used to enable the python API on the widest possible number of systems. Instead, the low
+Boost will **not** be used so the python API will work on the widest possible number of systems. Instead, the low
 level C library will be wrapped with cython. A python setup.py file will provide simple installation
 on as many systems as possible. Cython c++ output is checked in to the repository so users do not even need
 cython as a dependency.

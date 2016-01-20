@@ -1,5 +1,5 @@
 GSD documentation
-===============================
++++++++++++++++++
 
 Contents:
 
@@ -9,6 +9,4 @@ Contents:
    python-api
    c-api
    design-notes
-
-* :ref:`genindex`
-* :ref:`modindex`
+   index
