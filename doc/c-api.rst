@@ -1,10 +1,15 @@
+.. _c_api_:
+
 C API
 =====
 
 Functions
 ---------
 
-.. c:function:: int gsd_create(const char *fname, const char *application, const char *schema, uint32_t schema_version);
+.. c:function:: int gsd_create(const char *fname,
+                               const char *application,
+                               const char *schema,
+                               uint32_t schema_version);
 
     Create a GSD file.
 

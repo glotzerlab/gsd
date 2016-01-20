@@ -1,4 +1,10 @@
-""" GSD file layer API """
+""" GSD file layer API.
+
+Implement classes and methods for low level access to gsd files.
+
+* :py:func:`create` - Create a gsd file.
+* :py:class:`GSDFile` - Read and write gsd files.
+"""
 
 from libc.stdint cimport uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, uint64_t, int64_t
 from libc.errno cimport errno
@@ -74,7 +80,7 @@ cdef void * __get_ptr_float64(data):
 cdef class GSDFile:
     """ GSD file access interface.
 
-    GSDFile implements a python object oriented class interface to the GSD file
+    GSDFile implements an object oriented class interface to the GSD file
     layer. It can be used as a single use context manager::
 
         with GSDFile(filename, 'r') as f:
@@ -85,14 +91,14 @@ cdef class GSDFile:
         mode (str): 'r' for read only access, 'w' for read-write access.
 
     Attributes:
-        name (str): Name of the open file.
-        mode (str): Mode of the open file.
-        gsd_version (list[int]): GSD file layer version number [major, minor].
-        application (str): Name of the generating application.
-        schema (str): Name of the data schema.
-        schema_version (list[int]): Schema version number [major, minor].
-        file_size (int): File size in bytes.
-        nframes (int): Number of frames.
+        name (str): Name of the open file **(read only)**.
+        mode (str): Mode of the open file **(read only)**.
+        gsd_version (list[int]): GSD file layer version number [major, minor] **(read only)**.
+        application (str): Name of the generating application **(read only)**.
+        schema (str): Name of the data schema **(read only)**.
+        schema_version (list[int]): Schema version number [major, minor] **(read only)**.
+        file_size (int): File size in bytes **(read only)**.
+        nframes (int): Number of frames **(read only)**.
     """
 
     cdef libgsd.gsd_handle __handle;
@@ -134,7 +140,7 @@ cdef class GSDFile:
         """ Close the file.
 
         Once closed, any other operation on the file object will result in a
-        `ValueError`. close() may be called more than once.
+        `ValueError`. :py:meth:`close()` may be called more than once.
         """
         if self.__is_open:
             logger.info('closing file: ' + self.name);
@@ -144,8 +150,14 @@ cdef class GSDFile:
     def end_frame(self):
         """ Complete writing the current frame.
 
-        end_frame() completes the current frame. After calling end_frame()
-        future calls to write_chunk() will write to the next frame in the file.
+        Complete the current frame. After calling :py:meth:`end_frame()`
+        future calls to :py:meth:`write_chunk()` will write to the **next** frame in the file.
+
+        .. danger::
+            Call :py:meth:`end_frame()` to complete the current frame
+            **before** closing the file. If you fail to call
+            :py:meth:`end_frame()`, the last frame may not be written
+            to disk.
         """
 
         if not self.__is_open:
@@ -164,8 +176,8 @@ cdef class GSDFile:
     def write_chunk(self, name, data):
         """ Write a data chunk to the file.
 
-        write_chunk() writes the provided data to a named chunk in the file.
-        After writing all chunks in the current frame, call end_frame().
+        Write the provided data to a named chunk in the file.
+        After writing all chunks in the current frame, call :py:meth:`end_frame()`.
 
         Args:
             name (str): Name of the chunk
@@ -174,10 +186,10 @@ cdef class GSDFile:
                                 dimensions.
 
         Warning:
-            write_chunk() will implicitly convert array-like and non-contiguous
-            numpy arrays to contiguous numpy arrays with
-            numpy.ascontiguousarray(data). This may or may not produce desired
-            data types in the output file and incurs overhead.
+            :py:meth:`write_chunk()` will implicitly converts array-like and
+            non-contiguous numpy arrays to contiguous numpy arrays with
+            ``numpy.ascontiguousarray(data)``. This may or may not produce
+            desired data types in the output file and incurs overhead.
         """
 
         if not self.__is_open:
@@ -260,8 +272,12 @@ cdef class GSDFile:
     def chunk_exists(self, frame, name):
         """ Test if a chunk exists.
 
+        Args:
+            frame (int): Index of the frame to check
+            name (str): Name of the chunk
+
         Returns:
-            True if the chunk exists in the file. False if it does not.
+            bool: True if the chunk exists in the file. False if it does not.
         """
 
         cdef const libgsd.gsd_index_entry* index_entry;
@@ -281,8 +297,8 @@ cdef class GSDFile:
     def read_chunk(self, frame, name):
         """ Read a data chunk from the file.
 
-        read_chunk() finds the named chunk at the given frame, reads the data
-        in and returns it in a numpy array.
+        Finds the named chunk at the given frame, read the data from the file
+        and return it as a numpy array.
 
         Args:
             frame (int): Index of the frame to read
@@ -291,14 +307,14 @@ cdef class GSDFile:
         Returns:
             numpy.ndarray[type, ndim=?, mode='c']: Data read from file.
             ``type`` is determined by the chunk metadata. If the data is
-            NxM in the file, return a 2D array. If the data is Nx1,
-            return a 1D array.
+            NxM in the file (m > 1), return a 2D array. If the data is
+            Nx1, return a 1D array.
 
-        Warning:
-            Each call to read_chunk() invokes a disk read and allocation of a
+        .. tip::
+            Each call to invokes a disk read and allocation of a
             new numpy array for storage. To avoid overhead, don't call
-            read_chunk() on the same chunk repeatedly. Cache the arrays
-            instead.
+            :py:meth:`read_chunk()` on the same chunk repeatedly. Cache the
+            arrays instead.
         """
 
         if not self.__is_open:
@@ -435,7 +451,7 @@ def create(name, application, schema, schema_version):
         schema (str): Name of the data schema.
         schema_version (list[int]): Schema version number [major, minor].
 
-    Warning:
+    .. danger::
         The file *name* is overwritten if it already exists.
     """
 

@@ -6,14 +6,9 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   gsd-c-api
+   python-api
+   c-api
    design-notes
-
-
-Indices and tables
-==================
 
 * :ref:`genindex`
 * :ref:`modindex`
-* :ref:`search`
-
