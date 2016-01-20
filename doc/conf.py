@@ -36,6 +36,7 @@ extensions = [
 ]
 
 intersphinx_mapping = {'python': ('https://docs.python.org/3', None)}
+autodoc_docstring_signature = True;
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

@@ -14,7 +14,7 @@ Submodules
    python-module-gsd.fl
 
 Package contents
----------------
+----------------
 
 .. automodule:: gsd
     :synopsis: GSD main module.

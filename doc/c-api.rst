@@ -3,57 +3,131 @@
 C API
 =====
 
+The GSD C API consists of a single header and source file (less than 1k lines of
+code). It does not build as a shared library. Instead, it is intended that
+developers simply drop the implementation into any package that needs it.
+
 Functions
 ---------
 
-.. c:function:: int gsd_create(const char *fname,
-                               const char *application,
-                               const char *schema,
-                               uint32_t schema_version);
+.. c:function:: int gsd_create(const char *fname, const char *application, const char *schema, uint32_t schema_version)
 
-    Create a GSD file.
+    Create an empty gsd file in a file of the given name. Overwrite any existing file at that location.
+    The generated gsd file is not opened. Call gsd_open() to open it for writing.
 
-.. c:function:: gsd_handle_t* gsd_open(const char *fname, const uint8_t flags);
+    :param fname: File name
+    :param application: Generating application name (truncated to 63 chars)
+    :param schema: Schema name for data to be written in this GSD file (truncated to 63 chars)
+    :param schema_version: Version of the scheme data to be written (make with :c:func:`gsd_make_version()`)
 
-    Open a GSD file for read/write.
+    :return: 0 on success, -1 on a file IO failure - see errno for details
 
-.. c:function:: int gsd_close(gsd_handle_t* handle);
+.. c:function:: int gsd_open(struct gsd_handle* handle, const char *fname, const enum gsd_open_flag flags)
 
-    Close a GSD file.
+    Open a GSD file and populates the handle for use by later API calls.
 
-.. c:function:: int gsd_end_frame(gsd_handle_t* handle);
+    :param handle: Handle to open.
+    :param fname: File name to open.
+    :param flags: Either ``GSD_OPEN_READWRITE`` or ``GSD_OPEN_READONLY``.
 
-    Move on to the next frame.
+    :return: 0 on success. Negative value on failure:
 
-.. c:function:: int gsd_write_chunk(gsd_handle_t* handle, \
-                     const char *name, \
-                     uint8_t type, \
-                     uint64_t N, \
-                     uint64_t M, \
-                     uint64_t step, \
-                     const void *data);
+        * -1: IO error (check errno)
+        * -2: Not a GSD file
+        * -3: Invalid GSD file version
+        * -4: Corrupt file
+        * -5: Unable to allocate memory
 
-    Write a data chunk to the current frame.
+.. c:function:: int gsd_close(gsd_handle_t* handle)
 
-.. c:function:: gsd_index_entry_t* gsd_find_chunk(gsd_handle_t* handle, uint64_t frame, const char *name);
+    Close a GSD file opened by :c:func:`gsd_open()`.
+    Call :c:func:`gsd_end_frame()` after the last call to :c:func:`gsd_write_chunk()` **before** closing
+    the file.
 
-    Find a chunk in the GSD file.
+    :param handle: Handle to close.
 
-.. c:function:: int gsd_read_chunk(gsd_handle_t* handle, void* data, const gsd_index_entry_t* chunk);
+    .. warning::
+        Do not write chunks to the file with gsd_write_chunk() and then immediately close the file with
+        :c:func:`gsd_close()`. This will result in data loss. Data chunks written by :c:func:`gsd_write_chunk()`
+        are not updated in the index until :c:func:`gsd_end_frame()` is called. This is by design to
+        prevent partial frames in files.
 
-    Read a chunk from the GSD file.
+    :return: 0 on success, -1 on a file IO failure - see errno for details, and -2 on invalid input
 
-.. c:function:: uint64_t gsd_get_last_step(gsd_handle_t* handle);
+.. c:function:: int gsd_end_frame(gsd_handle_t* handle)
 
-    Query the last time step in the GSD file.
+    Move on to the next frame after writing 1 or more chunks with :c:func:`gsd_write_chunk()`.
+    Increase the frame counter by 1 and flush the cached index to disk.
 
-.. c:function:: uint64_t gsd_get_nframes(gsd_handle_t* handle);
+    :param handle: Handle to an open GSD file.
+
+    :return: 0 on success, -1 on a file IO failure - see errno for details, and -2 on invalid input
+
+.. c:function:: int gsd_write_chunk(struct gsd_handle* handle, const char *name, enum gsd_type type,      uint64_t N, uint8_t M, const void *data)
+
+    Write a data chunk to the current frame. The chunk name must be unique within each frame.
+    The given data chunk is written to the end of the file and its location is updated in the in-memory index.
+    The data pointer must be allocated and contain at least contains at least ``N * M * gsd_sizeof_type(type)`` bytes.
+
+    :param handle: Handle to an open GSD file.
+    :param name: Name of the data chunk (truncated to 63 chars).
+    :param type: type ID that identifies the type of data in data.
+    :param N: Number of rows in the data.
+    :param M: Number of columns in the data.
+    :param data: Data buffer.
+
+    :return: 0 on success, -1 on a file IO failure - see errno for details, and -2 on invalid input
+
+.. c:function:: const struct gsd_index_entry* gsd_find_chunk(struct gsd_handle* handle, uint64_t frame, const char *name)
+
+    Find a chunk in the GSD file. The found entry contains size and type metadata and can be passed to
+    :c:func:`gsd_read_chunk()` to read the data.
+
+    :param handle: Handle to an open GSD file
+    :param frame: Frame to look for chunk
+    :param name: Name of the chunk to find
+
+    :return: A pointer to the found chunk, or NULL if not found.
+
+.. c:function:: int gsd_read_chunk(gsd_handle_t* handle, void* data, const gsd_index_entry_t* chunk)
+
+    Read a chunk from the GSD file. The index entry must first be found by :c:func:`gsd_find_chunk()`.
+    ``data`` must point to an allocated buffer with at least ``N * M * gsd_sizeof_type(type)`` bytes.
+
+    :param handle: Handle to an open GSD file
+    :param data: Data buffer to read into
+    :param chunk: Chunk to read
+
+    :return: 0 on success
+
+        * -1 on a file IO failure - see errno for details
+        * -2 on invalid input
+        * -3 on invalid file data
+
+.. c:function:: uint64_t gsd_get_nframes(gsd_handle_t* handle)
 
     Get the number of frames in the GSD file.
 
-.. c:function:: size_t gsd_sizeof_type(uint8_t type);
+    :param handle: Handle to an open GSD file.
+
+    :return: The number of frames in the file, or 0 on error.
+
+.. c:function:: size_t gsd_sizeof_type(enum gsd_type type)
 
     Query size of a GSD type ID.
+
+    :param type: Type ID to query
+
+    :return: Size of the given type, or 1 for an unknown type ID.
+
+.. c:function:: uint32_t gsd_make_version(unsigned int major, unsigned int minor)
+
+    Specify a version number.
+
+    :param major: major version.
+    :param minor: minor version.
+
+    :return: a packed version number aaaa.bbbb suitable for storing in a gsd file version entry.
 
 Constants
 ---------
@@ -63,19 +137,43 @@ Constants
 Data types
 ^^^^^^^^^^
 
-.. c:var:: uint8_t GSD_UINT8_TYPE
+.. c:var:: gsd_type GSD_TYPE_UINT8
 
     Type ID: 8-bit unsigned integer.
 
-.. c:var:: uint8_t GSD_UINT32_TYPE
+.. c:var:: gsd_type GSD_TYPE_UINT16
+
+    Type ID: 16-bit unsigned integer.
+
+.. c:var:: gsd_type GSD_TYPE_UINT32
 
     Type ID: 32-bit unsigned integer.
 
-.. c:var:: uint8_t GSD_FLOAT_TYPE
+.. c:var:: gsd_type GSD_TYPE_UINT64
+
+    Type ID: 64-bit unsigned integer.
+
+.. c:var:: gsd_type GSD_TYPE_INT8
+
+    Type ID: 8-bit signed integer.
+
+.. c:var:: gsd_type GSD_TYPE_INT16
+
+    Type ID: 16-bit signed integer.
+
+.. c:var:: gsd_type GSD_TYPE_INT32
+
+    Type ID: 32-bit signed integer.
+
+.. c:var:: gsd_type GSD_TYPE_INT64
+
+    Type ID: 64-bit signed integer.
+
+.. c:var:: gsd_type GSD_TYPE_FLOAT
 
     Type ID: 32-bit single precision floating point.
 
-.. c:var:: uint8_t GSD_DOUBLE_TYPE
+.. c:var:: gsd_type GSD_TYPE_DOUBLE
 
     Type ID: 64-bit double precision floating point.
 
@@ -84,11 +182,11 @@ Data types
 Open flags
 ^^^^^^^^^^
 
-.. c:var:: uint8_t GSD_OPEN_READWRITE
+.. c:var:: gsd_open_flag GSD_OPEN_READWRITE
 
     Open file in **read/write**  mode.
 
-.. c:var:: uint8_t GSD_OPEN_READONLY
+.. c:var:: gsd_open_flag GSD_OPEN_READONLY
 
     Open file in **read only** mode.
 
@@ -98,7 +196,7 @@ Data structures
 
 .. c:type:: gsd_handle_t
 
-    Handle to an open GSD file. All members are **read-only**.
+    Handle to an open GSD file. All members are **read-only**. Only public members are documented here.
 
     .. c:member:: gsd_header_t header
 
@@ -106,9 +204,9 @@ Data structures
 
     .. c:member:: int64_t file_size
 
-        Size of the open file.
+        Size of the open file in bytes.
 
-    .. c:member:: uint8_t open_flags
+    .. c:member:: gsd_open_flag open_flags
 
         Flags used to open the file.
 
@@ -144,17 +242,9 @@ Data structures
 
         Number of rows in the chunk data.
 
-    .. c:member:: uint64_t M
+    .. c:member:: uint8_t M
 
         Number of columns in the chunk.
-
-    .. c:member:: uint64_t step
-
-        Timestep the chunk was saved at.
-
-    .. c:member:: char name[33]
-
-        Name of the chunk.
 
     .. c:member:: uint8_t type
 

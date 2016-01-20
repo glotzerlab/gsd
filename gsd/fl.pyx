@@ -79,7 +79,9 @@ cdef void * __get_ptr_float64(data):
     return <void*>&data_array_float64[0,0];
 
 cdef class GSDFile:
-    """ GSD file access interface.
+    """ GSDFile(name, mode)
+
+    GSD file access interface.
 
     Args:
 
@@ -165,7 +167,9 @@ cdef class GSDFile:
         self.__is_open = True;
 
     def close(self):
-        """ Close the file.
+        """ close()
+
+        Close the file.
 
         Once closed, any other operation on the file object will result in a
         `ValueError`. :py:meth:`close()` may be called more than once.
@@ -178,7 +182,9 @@ cdef class GSDFile:
             self.__is_open == False;
 
     def end_frame(self):
-        """ Complete writing the current frame. After calling :py:meth:`end_frame()`
+        """ end_frame()
+
+        Complete writing the current frame. After calling :py:meth:`end_frame()`
         future calls to :py:meth:`write_chunk()` will write to the **next** frame
         in the file.
 
@@ -221,7 +227,9 @@ cdef class GSDFile:
             raise RuntimeError("Unknown error");
 
     def write_chunk(self, name, data):
-        """ Write a data chunk to the file. After writing all chunks in the
+        """ write_chunk(name, data)
+
+        Write a data chunk to the file. After writing all chunks in the
         current frame, call :py:meth:`end_frame()`.
 
         Args:
@@ -339,7 +347,9 @@ cdef class GSDFile:
             raise RuntimeError("Unknown error");
 
     def chunk_exists(self, frame, name):
-        """ Test if a chunk exists.
+        """ chunk_exists(frame, name)
+
+        Test if a chunk exists.
 
         Args:
             frame (int): Index of the frame to check
@@ -374,7 +384,9 @@ cdef class GSDFile:
         return index_entry != NULL;
 
     def read_chunk(self, frame, name):
-        """ Read a data chunk from the file and return it as a numpy array.
+        """ read_chunk(frame, name)
+
+        Read a data chunk from the file and return it as a numpy array.
 
         Args:
             frame (int): Index of the frame to read
@@ -539,7 +551,9 @@ cdef class GSDFile:
             self.__is_open = False;
 
 def create(name, application, schema, schema_version):
-    """ Create an empty GSD file on the filesystem. To write to the file, open it
+    """ create(name, application, schema, schema_version)
+
+    Create an empty GSD file on the filesystem. To write to the file, open it
     with :py:class:`GSDFile` after creating it.
 
     Args:
