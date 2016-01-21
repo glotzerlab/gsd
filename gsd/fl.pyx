@@ -126,10 +126,10 @@ cdef class GSDFile:
 
         name (str): Name of the open file **(read only)**.
         mode (str): Mode of the open file **(read only)**.
-        gsd_version (list[int]): GSD file layer version number [major, minor] **(read only)**.
+        gsd_version (tuple[int]): GSD file layer version number [major, minor] **(read only)**.
         application (str): Name of the generating application **(read only)**.
         schema (str): Name of the data schema **(read only)**.
-        schema_version (list[int]): Schema version number [major, minor] **(read only)**.
+        schema_version (tuple[int]): Schema version number [major, minor] **(read only)**.
         file_size (int): File size in bytes **(read only)**.
         nframes (int): Number of frames **(read only)**.
     """
@@ -530,11 +530,11 @@ cdef class GSDFile:
 
     property schema:
         def __get__(self):
-            return self.__handle.header.schema;
+            return self.__handle.header.schema.decode('utf-8');
 
     property application:
         def __get__(self):
-            return str(self.__handle.header.application);
+            return self.__handle.header.application.decode('utf-8');
 
     property file_size:
         def __get__(self):
