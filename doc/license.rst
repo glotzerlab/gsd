@@ -1,16 +1,9 @@
 .. Copyright (c) 2016 The Regents of the University of Michigan
 .. This file is part of the General Simulation Data (GSD) project, released under the BSD 2-Clause License.
 
-GSD documentation
-+++++++++++++++++
+License
+=======
 
-Contents:
+GSD is available under the following license.
 
-.. toctree::
-   :maxdepth: 2
-
-   python-api
-   c-api
-   specification
-   license
-   index
+.. literalinclude:: ../LICENSE

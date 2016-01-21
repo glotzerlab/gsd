@@ -1,9 +1,12 @@
-GSD python package
+.. Copyright (c) 2016 The Regents of the University of Michigan
+.. This file is part of the General Simulation Data (GSD) project, released under the BSD 2-Clause License.
+
+gsd python package
 ==================
 
-GSD comes with an optional python API. This is the most convenient way for
+GSD provides an optional python API. This is the most convenient way for
 users to read and write GSD files. Developers, or users not working with
-the python language, may want to use the :ref:`c_api_` directly.
+the python language, may want to use the :ref:`c_api_`.
 
 Submodules
 ----------
