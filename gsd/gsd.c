@@ -590,5 +590,5 @@ size_t gsd_sizeof_type(enum gsd_type type)
     else if (type == GSD_TYPE_DOUBLE)
         return 8;
     else
-        return 1;
+        return 0;
     }
