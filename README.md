@@ -55,6 +55,7 @@ with GSDFile(name='file.gsd', mode='r') as f:
 
     * A standards compliant C compiler
     * Python >= 2.7
+    * Cython >= ?? (optional for tagged releases)
 
 ### Install with distutils
 
@@ -62,7 +63,7 @@ Use ``python setup.py`` to install the python module with distutils. For example
 your home directory, execute:
 
 ```bash
-python setup.py install --user
+$ python setup.py install --user
 ```
 
 ### Build with cmake for development
@@ -70,9 +71,10 @@ python setup.py install --user
 You can assemble a functional python module in the build directory using cmake:
 
 ```bash
-mkdir build
-cd build
-make
+$ mkdir build
+$ cd build
+$ cmake ../
+$ make
 ```
 
 Then add the directory to your PYTHONPATH temporarily for testing.
@@ -81,13 +83,26 @@ Then add the directory to your PYTHONPATH temporarily for testing.
 export PYTHONPATH=/path/to/build:$PYTHONPATH
 ```
 
+### Install with cmake
+
+The cmake build scripts expect ``${CMAKE_INSTALL_PREFIX}`` to be a valid python site directory.
+You can set the prefix automatically with **one** of the following cmake options:
+
+    * ``INSTALL_USER``, install into the user site (like ``setup.py install --user``)
+    * ``INSTALL_SITE``, install into the system site (like ``setup.py install``)
+
+```bash
+$ cmake ../ -D INSTALL_USER=on
+$ make install
+```
+
 ### Run unit tests
 
 Run `nosetests` in the source directory to execute all unit tests. This requires that the
 python module is on the python path.
 
 ```bash
-nosetests
+$ nosetests
 ```
 
 ### Build Documentation
@@ -96,9 +111,9 @@ Documentation builds with sphinx and requires that the python module is on the p
 To build the documentation:
 
 ```bash
-cd doc
-make html
-open _build/html/index.html
+$ cd doc
+$ make html
+$ open _build/html/index.html
 ```
 
 ## Using the C library

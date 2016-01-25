@@ -1,9 +1,22 @@
 ############### cython based modules
-if (PYTHON_VERSION VERSION_GREATER 3)
-    add_library(fl SHARED gsd.c fl3.c)
+
+if (CYTHON_EXECUTABLE)
+    add_custom_command (
+        OUTPUT fl.c
+        DEPENDS fl.pyx libgsd.pxd
+        COMMAND    ${CYTHON_EXECUTABLE}
+        ARGS       -${PYTHON_VERSION_MAJOR} -I ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/fl.pyx -o ${CMAKE_CURRENT_BINARY_DIR}/fl.c
+        COMMENT    "Cythonizing fl.pyx"
+    )
+
+    set(FL_SRC fl.c)
 else()
-    add_library(fl SHARED gsd.c fl2.c)
+    set(FL_SRC "fl${PYTHON_VERSION_MAJOR}.c")
 endif()
+
+set_source_files_properties(${FL_SRC} PROPERTIES COMPILE_DEFINITIONS NO_IMPORT)
+
+add_library(fl SHARED gsd.c ${FL_SRC})
 
 set_target_properties(fl PROPERTIES PREFIX "" OUTPUT_NAME "fl")
 if(APPLE)
@@ -13,7 +26,7 @@ endif(APPLE)
 ################ Python only modules
 # copy python modules to the build directory to make it a working python package
 MACRO(copy_file file)
-    ADD_CUSTOM_COMMAND (
+    add_custom_command (
         OUTPUT ${file}
         DEPENDS ${file}
         POST_BUILD
@@ -23,7 +36,7 @@ MACRO(copy_file file)
     )
 ENDMACRO(copy_file)
 
-set(files "__init__.py")
+set(files __init__.py hoomd.py)
 
 foreach(file ${files})
     copy_file(${file})

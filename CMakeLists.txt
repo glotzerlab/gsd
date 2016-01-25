@@ -1,8 +1,11 @@
 cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
+project(gsd)
+
+add_subdirectory(CMake)
+include(CFlagsSetup)
 
 #############################################################################################
 # Find libraries
-add_subdirectory(CMake)
 include(PythonSetup)
 include_directories(${PYTHON_INCLUDE_DIR})
 
@@ -21,9 +24,6 @@ ENDIF()
 
 #############################################################################################
 ### Add project subdirs
-project(gsd)
 include_directories(gsd)
 add_subdirectory(gsd)
 add_subdirectory(test)
-
-# install(DIRECTORY gsd DESTINATION gsd)

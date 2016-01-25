@@ -15,6 +15,7 @@
 
 import sys
 import os
+import gsd
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -33,6 +34,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
     'sphinx.ext.intersphinx',
+    'sphinx.ext.mathjax',
 ]
 
 intersphinx_mapping = {'python': ('https://docs.python.org/3', None)}
@@ -59,7 +61,7 @@ copyright = '2016, The Regents of the University of Michigan'
 # built documents.
 #
 # The short X.Y version.
-version = '0.0.1'
+version = gsd.__version__
 # The full version, including alpha/beta/rc tags.
 release = version;
 
@@ -268,3 +270,9 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
+
+### Add custom directives
+def setup(app):
+    app.add_object_type('chunk', 'chunk',
+                        objname='Data chunk',
+                        indextemplate='single: %s (data chunk)')
