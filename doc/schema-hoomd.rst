@@ -4,64 +4,279 @@
 HOOMD Schema
 ============
 
-HOOMD-blue now supports a wide variety of per particle attributes and properties. Particles, bonds, and types can be
-dynamically added and removed during simulation runs. We need a file schema capable of handling all of these situations
-in a reasonably space efficient and high performance manner. When there is a conflict, performance comes first.
+HOOMD-blue supports a wide variety of per particle attributes and properties. Particles, bonds, and types can be
+dynamically added and removed during simulation runs. The ``hoomd`` schema can handle all of these situations
+in a reasonably space efficient and high performance manner.
 
-For now, rigid body storage is not planned. With the flexibility of GSD, it should be easy to add later. When we know
-what form the future rigid body support in hoomd will have.
+:Schema name: ``hoomd``
+:Schema version: 0.1
+
+.. warning::
+    This schema is a draft version subject to testing. No backward or forward compatibility is planned with a final
+    1.0 schema.
 
 Use-cases
 ---------
 
-There are a few problems with XML, DCD, and other dump files that this design wants to solve.
+There are a few problems with XML, DCD, and other dump files that the GSD schema ``hoomd`` solves.
 
-# Every frame of GSD output should be viable for restart from ``init.read_gsd``, with the exception that dynamic
-  properties can optionally be disabled.
-# No need for a separate topology file - everything is in one ``.gsd`` file.
-# Support varying numbers of particles, bonds, etc...
-# Support varying attributes (type, mass, etc...)
-# Support orientation, angular momentum, and other fields that
-# Simple interface for dump - limited number of options that produce valid files
+#. Every frame of GSD output is viable for restart from ``init.read_gsd``
+#. No need for a separate topology file - everything is in one ``.gsd`` file.
+#. Support varying numbers of particles, bonds, etc...
+#. Support varying attributes (type, mass, etc...)
+#. Support orientation, angular momentum, and other fields that DCD cannot.
+#. Simple interface for dump - limited number of options that produce valid files
+#. Binary format on disk
+#. High performance file read and write
 
-Storage.
+Data chunks
+-----------
 
-* Store per particle quantities
+Each frame the ``hoomd`` schema may contain one or more data chunks. The layout and names of the chunks
+match that of the binary snapshot API in HOOMD-blue itself (at least at the time of inception).
+Data chunks are organized in categories. These categories have no meaning in the ``hoomd`` schema
+specification, and are simply an organizational tool. Some file writers may implement options that act on
+categories (i.e. write **attributes** out to every frame, or just frame 0).
 
-    * Attributes
 
-        * type
-        * tag
+========================== ========= ====== ==== ======= ================
+Name                       Category  Type   Size Default Units
+========================== ========= ====== ==== ======= ================
+**Configuration**
+configuration/step         -         uint64 1x1  0       number
+configuration/dimensions   -         uint8  1x1  3       number
+configuration/box          -         float  3x3  -       *varies*
+**Particle data**
+particles/N                attribute uint32 1x1  0       number
+particles/typename         attribute int8   NTxM A,B,... UTF-8
+particles/typeid           attribute uint32 Nx1  0       number
+particles/mass             attribute float  Nx1  1.0     mass
+particles/charge           attribute float  Nx1  0.0     charge
+particles/diameter         attribute float  Nx1  1.0     length
+particles/moment_inertia   attribute float  Nx3  0,0,0   mass * length^2
+particles/position         property  float  Nx3  0,0,0   length
+particles/orientation      property  float  Nx4  1,0,0,0 unit quaternion
+particles/velocity         momentum  float  Nx3  0,0,0   length/time
+particles/angmom           momentum  float  Nx4  0,0,0,0 quaternion (??)
+particles/image            momentum  int32  Nx3  0,0,0   number
+**Bond data**
+bonds/N                    topology  uint32 1x1  0       number
+bonds/typename             topology  int8   NTxM A,B,... UTF-8
+bonds/typeid               topology  uint32 Nx1  0       number
+bonds/group                topology  uint32 Nx2  0,0     number
+**Angle data**
+angles/N                   topology  uint32 1x1  0       number
+angles/typename            topology  int8   NTxM A,B,... UTF-8
+angles/typeid              topology  uint32 Nx1  0       number
+angles/group               topology  uint32 Nx3  0,0     number
+**Dihedral data**
+dihedrals/N                topology  uint32 1x1  0       number
+dihedrals/typename         topology  int8   NTxM A,B,... UTF-8
+dihedrals/typeid           topology  uint32 Nx1  0       number
+dihedrals/group            topology  uint32 Nx4  0,0     number
+**Improper data**
+impropers/N                topology  uint32 1x1  0       number
+impropers/typename         topology  int8   NTxM A,B,... UTF-8
+impropers/typeid           topology  uint32 Nx1  0       number
+impropers/group            topology  uint32 Nx4  0,0     number
+========================== ========= ====== ==== ======= ================
 
-    * Fixed attributes
-        * mass
-        * charge
-        * diameter
-        * moment_inertia
+Configuration
+-------------
 
-    * Properties
+.. chunk:: configuration/step
 
-        * position
-        * image
-        * orientation
+    :Type: uint64
+    :Size: 1x1
+    :Default: 0
+    :Units: number
 
-    * Dynamic properties
+    Simulation time step.
 
-        * velocity
-        * angular_momentum
+.. chunk:: configuration/dimensions
 
-* Store topology
+    :Type: uint8
+    :Size: 1x1
+    :Default: 3
+    :Units: number
+
+    Number of dimensions in the simulation. Must be 2 or 3.
+
+.. chunk:: configuration/box
+
+    :Type: float
+    :Size: 6x1
+    :Default: [1,1,1,0,0,0]
+    :Units: *varies*
+
+    Simulation box. Each array element defines a different box property. See the hoomd documentation for
+    a full description on how these box parameters map to a triclinic geometry.
+
+    * `box[0:3]`: :math:`(l_x, l_y, l_z)` the box length in each direction, in length units
+    * `box[3:]`: :math:`(xy, xz, yz)` the tilt factors, unitless values
+
+
+Particle data
+-------------
+
+Within a single frame, the number of particles *N* and *NT* are fixed for all chunks. *N* and *NT* may vary from
+one frame to the next. All values are stored in hoomd native units.
+
+Attributes
+^^^^^^^^^^
+
+.. chunk:: particles/N
+
+    :Type: uint32
+    :Size: 1x1
+    :Default: 0
+    :Units: number
+
+    Define *N*, the number of particles, for all data chunks ``particles/*``.
+
+.. chunk:: particles/typename
+
+    :Type: int8
+    :Size: NTxM
+    :Default: A,B,...
+    :Units: UTF-8
+
+    Implicitly define *NT*, the number of particle types, for all data chunks ``particles/*``.
+    *M* must be large enough to accommodate each type name as a null terminated UTF-8
+    character string. Row *i* of the 2D matrix is the type name for particle type *i*.
+
+.. chunk:: particles/typeid
+
+    :Type: uint32
+    :Size: Nx1
+    :Default: 0
+    :Units: number
+
+    Store the type id of each particle. All id's must be less than *NT*. A particle with
+    type *id* has a type name matching the corresponding row in :chunk:`particles/typename`.
+
+.. chunk:: particles/mass
+
+    :Type: float (32-bit)
+    :Size: Nx1
+    :Default: 1.0
+    :Units: mass
+
+    Store the mass of each particle.
+
+.. chunk:: particles/charge
+
+    :Type: float (32-bit)
+    :Size: Nx1
+    :Default: 0.0
+    :Units: charge
+
+    Store the charge of each particle.
+
+.. chunk:: particles/diameter
+
+    :Type: float (32-bit)
+    :Size: Nx1
+    :Default: 1.0
+    :Units: length
+
+    Store the diameter of each particle.
+
+.. chunk:: particles/moment_inertia
+
+    :Type: float (32-bit)
+    :Size: Nx3
+    :Default: 0,0,0
+    :Units: mass * length^2
+
+    Store the moment_inertia of each particle :math:`(I_{xx}, I_{yy}, I_{zz})`. This inertia tensor
+    is diagonal in the body frame of the particle. The default value is for point particles.
+
+Properties
+^^^^^^^^^^
+
+.. chunk:: particles/position
+
+    :Type: float (32-bit)
+    :Size: Nx3
+    :Default: 0,0,0
+    :Units: length
+
+    Store the position of each particle (*x*, *y*, *z*).
+
+    All particles in the simulation are referenced by a tag. The position data chunk (and all other
+    per particle data chunks) list particles in tag order. The first particle listed has tag 0,
+    the second has tag 1, ..., and the last has tag N-1 where N is the number of particles in the
+    simulation.
+
+    All particles must be inside the box:
+
+    * :math:`x > -l_x/2 + (xz-xy \cdot yz) \cdot z + xy  \cdot  y` and :math:`x < l_x/2 + (xz-xy \cdot yz) \cdot z + xy  \cdot  y`
+    * :math:`y > -l_y/2 + yz  \cdot  z` and :math:`y < l_y/2 + yz \cdot z`
+    * :math:`z > -l_z/2` and :math:`z < l_z/2`
+
+
+.. chunk:: particles/orientation
+
+    :Type: float (32-bit)
+    :Size: Nx4
+    :Default: 1,0,0,0
+    :Units: unit quaternion
+
+    Store the orientation of each particle. In scalar + vector notation, this is
+    :math:`(r, a_x, a_y, a_z)`,
+    where the quaternion is :math:`q = r + a_xi + a_yj + a_zk`. A unit quaternion
+    has the property: :math:`\sqrt{r^2 + a_x^2 + a_y^2 + a_z^2} = 1`.
+
+Momenta
+^^^^^^^^
+
+.. chunk:: particles/velocity
+
+    :Type: float (32-bit)
+    :Size: Nx3
+    :Default: 0,0,0
+    :Units: length/time
+
+    Store the velocity of each particle :math:`(v_x, v_y, v_z)`.
+
+.. chunk:: particles/angmom
+
+    :Type: float (32-bit)
+    :Size: Nx4
+    :Default: 0,0,0,0
+    :Units: quaternion (??)
+
+    Store the angular momentum of each particle. TODO: document format.
+
+.. chunk:: particles/image
+
+    :Type: int32
+    :Size: Nx3
+    :Default: 0,0,0
+    :Units: number
+
+    Store the number of times each particle has wrapped around the box :math:`(i_x, i_y, i_z)`.
+    In constant volume simulations, the unwrapped position in the particle's full trajectory
+    is
+
+    * :math:`x_u = x + i_x \cdot l_x + xy \cdot i_y \cdot l_y + xz \cdot i_z \cdot l_z`
+    * :math:`y_u = y + i_y \cdot l_y + yz \cdot i_z * l_z`
+    * :math:`z_u = z + i_z * l_z
+`.
+
+Topology
+--------
 
     * bond
     * angle
     * dihedral
     * improper
 
-* Other
+Restart data
+------------
 
-    * Store simulation box
-    * Store type name mappings
-    * Store restart data from other classes
+    * restart data from other classes
 
 Variable N support is implemented by always storing particle tag information. Particles may be added or removed between
 frames. Within the limits of tag recycling, particles with the same tag from frame to frame are the same particle.

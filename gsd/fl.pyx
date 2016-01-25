@@ -182,7 +182,7 @@ cdef class GSDFile:
         if self.__is_open:
             logger.info('closing file: ' + self.name);
             libgsd.gsd_close(&self.__handle);
-            self.__is_open == False;
+            self.__is_open = False;
 
     def end_frame(self):
         """ end_frame()
