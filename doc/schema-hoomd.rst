@@ -43,12 +43,12 @@ categories (i.e. write **attributes** out to every frame, or just frame 0).
 Name                       Category  Type   Size Default Units
 ========================== ========= ====== ==== ======= ================
 **Configuration**
-configuration/step         -         uint64 1x1  0       number
-configuration/dimensions   -         uint8  1x1  3       number
-configuration/box          -         float  3x3  -       *varies*
+configuration/step                   uint64 1x1  0       number
+configuration/dimensions             uint8  1x1  3       number
+configuration/box                    float  6x1          *varies*
 **Particle data**
 particles/N                attribute uint32 1x1  0       number
-particles/typename         attribute int8   NTxM A,B,... UTF-8
+particles/types         attribute int8   NTxM A       UTF-8
 particles/typeid           attribute uint32 Nx1  0       number
 particles/mass             attribute float  Nx1  1.0     mass
 particles/charge           attribute float  Nx1  0.0     charge
@@ -61,22 +61,22 @@ particles/angmom           momentum  float  Nx4  0,0,0,0 quaternion (??)
 particles/image            momentum  int32  Nx3  0,0,0   number
 **Bond data**
 bonds/N                    topology  uint32 1x1  0       number
-bonds/typename             topology  int8   NTxM A,B,... UTF-8
+bonds/types             topology  int8   NTxM         UTF-8
 bonds/typeid               topology  uint32 Nx1  0       number
 bonds/group                topology  uint32 Nx2  0,0     number
 **Angle data**
 angles/N                   topology  uint32 1x1  0       number
-angles/typename            topology  int8   NTxM A,B,... UTF-8
+angles/types            topology  int8   NTxM         UTF-8
 angles/typeid              topology  uint32 Nx1  0       number
 angles/group               topology  uint32 Nx3  0,0     number
 **Dihedral data**
 dihedrals/N                topology  uint32 1x1  0       number
-dihedrals/typename         topology  int8   NTxM A,B,... UTF-8
+dihedrals/types         topology  int8   NTxM         UTF-8
 dihedrals/typeid           topology  uint32 Nx1  0       number
 dihedrals/group            topology  uint32 Nx4  0,0     number
 **Improper data**
 impropers/N                topology  uint32 1x1  0       number
-impropers/typename         topology  int8   NTxM A,B,... UTF-8
+impropers/types         topology  int8   NTxM         UTF-8
 impropers/typeid           topology  uint32 Nx1  0       number
 impropers/group            topology  uint32 Nx4  0,0     number
 ========================== ========= ====== ==== ======= ================
@@ -134,7 +134,7 @@ Attributes
 
     Define *N*, the number of particles, for all data chunks ``particles/*``.
 
-.. chunk:: particles/typename
+.. chunk:: particles/types
 
     :Type: int8
     :Size: NTxM
@@ -153,7 +153,7 @@ Attributes
     :Units: number
 
     Store the type id of each particle. All id's must be less than *NT*. A particle with
-    type *id* has a type name matching the corresponding row in :chunk:`particles/typename`.
+    type *id* has a type name matching the corresponding row in :chunk:`particles/types`.
 
 .. chunk:: particles/mass
 
@@ -262,8 +262,7 @@ Momenta
 
     * :math:`x_u = x + i_x \cdot l_x + xy \cdot i_y \cdot l_y + xz \cdot i_z \cdot l_z`
     * :math:`y_u = y + i_y \cdot l_y + yz \cdot i_z * l_z`
-    * :math:`z_u = z + i_z * l_z
-`.
+    * :math:`z_u = z + i_z \cdot l_z`
 
 Topology
 --------
