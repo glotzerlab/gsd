@@ -6,14 +6,17 @@ HOOMD Schema
 
 HOOMD-blue supports a wide variety of per particle attributes and properties. Particles, bonds, and types can be
 dynamically added and removed during simulation runs. The ``hoomd`` schema can handle all of these situations
-in a reasonably space efficient and high performance manner.
+in a reasonably space efficient and high performance manner. It is also backwards compatible with previous versions
+of itself, as we only add new additional data chunks in new versions and do not change the interpretation
+of the existing data chunks. Any newer reader will initialize new data chunks with default values when they are
+not present in an older version file.
 
 :Schema name: ``hoomd``
 :Schema version: 0.1
 
 .. warning::
-    This schema is a draft version subject to testing. No backward or forward compatibility is planned with a final
-    1.0 schema.
+    This particular schema is a draft version subject to testing. No backward or forward compatibility is
+    planned with a final 1.0 schema.
 
 Use-cases
 ---------
@@ -33,11 +36,17 @@ Data chunks
 -----------
 
 Each frame the ``hoomd`` schema may contain one or more data chunks. The layout and names of the chunks
-match that of the binary snapshot API in HOOMD-blue itself (at least at the time of inception).
+closely match that of the binary snapshot API in HOOMD-blue itself (at least at the time of inception).
 Data chunks are organized in categories. These categories have no meaning in the ``hoomd`` schema
 specification, and are simply an organizational tool. Some file writers may implement options that act on
 categories (i.e. write **attributes** out to every frame, or just frame 0).
 
+Values are well defined for all fields at all frames. When a data chunk is present in frame *i*, it defines
+the values for the frame. When it is not present, the data chunk of the same name at frame 0
+defines the values for frame *i* (when *N* is equal between the frames). If the data chunk is not present in
+frame 0, or *N* differs between frames, values are assumed default. Default values allow files sizes to
+remain small. For example, a simulation with point particles where orientation is always (1,0,0,0) would
+not write any orientation chunk to the file.
 
 ========================== ========= ====== ==== ======= ================
 Name                       Category  Type   Size Default Units
@@ -48,7 +57,7 @@ configuration/dimensions             uint8  1x1  3       number
 configuration/box                    float  6x1          *varies*
 **Particle data**
 particles/N                attribute uint32 1x1  0       number
-particles/types         attribute int8   NTxM A       UTF-8
+particles/types            attribute int8   NTxM ['A']   UTF-8
 particles/typeid           attribute uint32 Nx1  0       number
 particles/mass             attribute float  Nx1  1.0     mass
 particles/charge           attribute float  Nx1  0.0     charge
@@ -61,24 +70,24 @@ particles/angmom           momentum  float  Nx4  0,0,0,0 quaternion (??)
 particles/image            momentum  int32  Nx3  0,0,0   number
 **Bond data**
 bonds/N                    topology  uint32 1x1  0       number
-bonds/types             topology  int8   NTxM         UTF-8
+bonds/types                topology  int8   NTxM         UTF-8
 bonds/typeid               topology  uint32 Nx1  0       number
 bonds/group                topology  uint32 Nx2  0,0     number
 **Angle data**
 angles/N                   topology  uint32 1x1  0       number
-angles/types            topology  int8   NTxM         UTF-8
+angles/types               topology  int8   NTxM         UTF-8
 angles/typeid              topology  uint32 Nx1  0       number
-angles/group               topology  uint32 Nx3  0,0     number
+angles/group               topology  uint32 Nx3  0,0,0   number
 **Dihedral data**
 dihedrals/N                topology  uint32 1x1  0       number
-dihedrals/types         topology  int8   NTxM         UTF-8
+dihedrals/types            topology  int8   NTxM         UTF-8
 dihedrals/typeid           topology  uint32 Nx1  0       number
-dihedrals/group            topology  uint32 Nx4  0,0     number
+dihedrals/group            topology  uint32 Nx4  0,0,0,0 number
 **Improper data**
 impropers/N                topology  uint32 1x1  0       number
-impropers/types         topology  int8   NTxM         UTF-8
+impropers/types            topology  int8   NTxM         UTF-8
 impropers/typeid           topology  uint32 Nx1  0       number
-impropers/group            topology  uint32 Nx4  0,0     number
+impropers/group            topology  uint32 Nx4  0,0,0,0 number
 ========================== ========= ====== ==== ======= ================
 
 Configuration
@@ -138,7 +147,7 @@ Attributes
 
     :Type: int8
     :Size: NTxM
-    :Default: A,B,...
+    :Default: ['A']
     :Units: UTF-8
 
     Implicitly define *NT*, the number of particle types, for all data chunks ``particles/*``.
@@ -267,46 +276,169 @@ Momenta
 Topology
 --------
 
-    * bond
-    * angle
-    * dihedral
-    * improper
+.. chunk:: bonds/N
+
+    :Type: uint32
+    :Size: 1x1
+    :Default: 0
+    :Units: number
+
+    Define *N*, the number of bonds, for all data chunks ``bonds/*``.
+
+.. chunk:: bonds/types
+
+    :Type: int8
+    :Size: NTxM
+    :Default: *empty*
+    :Units: UTF-8
+
+    Implicitly define *NT*, the number of particle types, for all data chunks ``bonds/*``.
+    *M* must be large enough to accommodate each type name as a null terminated UTF-8
+    character string. Row *i* of the 2D matrix is the type name for particle type *i*.
+    By default, there are 0 bond types.
+
+.. chunk:: bonds/typeid
+
+    :Type: uint32
+    :Size: Nx1
+    :Default: 0
+    :Units: number
+
+    Store the type id of each bond. All id's must be less than *NT*. A bond with
+    type *id* has a type name matching the corresponding row in :chunk:`bonds/types`.
+
+.. chunk:: bonds/group
+
+    :Type: uint32
+    :Size: Nx2
+    :Default: 0,0
+    :Units: number
+
+    Store the particle tags in each bond.
+
+.. chunk:: angles/N
+
+    :Type: uint32
+    :Size: 1x1
+    :Default: 0
+    :Units: number
+
+    Define *N*, the number of angles, for all data chunks ``angles/*``.
+
+.. chunk:: angles/types
+
+    :Type: int8
+    :Size: NTxM
+    :Default: *empty*
+    :Units: UTF-8
+
+    Implicitly define *NT*, the number of particle types, for all data chunks ``angles/*``.
+    *M* must be large enough to accommodate each type name as a null terminated UTF-8
+    character string. Row *i* of the 2D matrix is the type name for particle type *i*.
+    By default, there are 0 angle types.
+
+.. chunk:: angles/typeid
+
+    :Type: uint32
+    :Size: Nx1
+    :Default: 0
+    :Units: number
+
+    Store the type id of each angle. All id's must be less than *NT*. A angle with
+    type *id* has a type name matching the corresponding row in :chunk:`angles/types`.
+
+.. chunk:: angles/group
+
+    :Type: uint32
+    :Size: Nx2
+    :Default: 0,0
+    :Units: number
+
+    Store the particle tags in each angle.
+
+.. chunk:: dihedrals/N
+
+    :Type: uint32
+    :Size: 1x1
+    :Default: 0
+    :Units: number
+
+    Define *N*, the number of dihedrals, for all data chunks ``dihedrals/*``.
+
+.. chunk:: dihedrals/types
+
+    :Type: int8
+    :Size: NTxM
+    :Default: *empty*
+    :Units: UTF-8
+
+    Implicitly define *NT*, the number of particle types, for all data chunks ``dihedrals/*``.
+    *M* must be large enough to accommodate each type name as a null terminated UTF-8
+    character string. Row *i* of the 2D matrix is the type name for particle type *i*.
+    By default, there are 0 dihedral types.
+
+.. chunk:: dihedrals/typeid
+
+    :Type: uint32
+    :Size: Nx1
+    :Default: 0
+    :Units: number
+
+    Store the type id of each dihedral. All id's must be less than *NT*. A dihedral with
+    type *id* has a type name matching the corresponding row in :chunk:`dihedrals/types`.
+
+.. chunk:: dihedrals/group
+
+    :Type: uint32
+    :Size: Nx2
+    :Default: 0,0
+    :Units: number
+
+    Store the particle tags in each dihedral.
+
+.. chunk:: impropers/N
+
+    :Type: uint32
+    :Size: 1x1
+    :Default: 0
+    :Units: number
+
+    Define *N*, the number of impropers, for all data chunks ``impropers/*``.
+
+.. chunk:: impropers/types
+
+    :Type: int8
+    :Size: NTxM
+    :Default: *empty*
+    :Units: UTF-8
+
+    Implicitly define *NT*, the number of particle types, for all data chunks ``impropers/*``.
+    *M* must be large enough to accommodate each type name as a null terminated UTF-8
+    character string. Row *i* of the 2D matrix is the type name for particle type *i*.
+    By default, there are 0 improper types.
+
+.. chunk:: impropers/typeid
+
+    :Type: uint32
+    :Size: Nx1
+    :Default: 0
+    :Units: number
+
+    Store the type id of each improper. All id's must be less than *NT*. A improper with
+    type *id* has a type name matching the corresponding row in :chunk:`impropers/types`.
+
+.. chunk:: impropers/group
+
+    :Type: uint32
+    :Size: Nx2
+    :Default: 0,0
+    :Units: number
+
+    Store the particle tags in each improper.
 
 Restart data
 ------------
 
-    * restart data from other classes
-
-Variable N support is implemented by always storing particle tag information. Particles may be added or removed between
-frames. Within the limits of tag recycling, particles with the same tag from frame to frame are the same particle.
-However, because tags are recycled, attributes such as type, moment_inertia, etc... cannot always be determined from
-previous frames. These need to be output new on each frame. In the more typical case of constant N, however, it would
-be a waste of disk space to do so. To keep this simple, the GSD hoomd schema will come in two variants. "hoomd" will
-always write out all quantities on every frame. "hoomd.fixed" only supports fixed N, fixed number of bonds, fixed
-topology, etc... and only writes out attributes and properties on each frame (with the option of including dynamic
-properties). Fixed attributes and topology are only written to the 0 frame.
-
-Default values and compression are needed to keep file sizes down. Even "hoomd.fixed" could be very wasteful if (for example)
-you only have simulations of spheres and don't need to write out orientation. User intervention should not be required
-to choose what to output, most of the time users won't think about it or get it right. The output writer in hoomd
-will do this in a smart way. First, every per particle property will have an assigned default value. If that property
-is not present in the gsd file, the reader should treat every particle as having the default value. The number of
-particles is determined from (TODO....). The HOOMD dump writer for GSD will be intelligent. It will scan the particle
-properties each time it writes. If all values are at the default, it will skip writing the properties.
-
-Still, in the "hpmc" schema - topology fields will waste a lot of space for every frame. There is not much that can
-be done about this and still maintain the flexibility of varying N or varying topology. Perhaps, compression can
-reduce the size of this data significantly because of the repeated values. The library liblzg looks to be a promising
-candidate for an embedded compression library. It's decompression performance is extremely fast. Some benchmarks will
-help decide if that is worthwhile. In any case, I'm not sure if it will make sense to compress the data while writing
-it from HOOMD. Ideas for scalable writes are not compatible with this idea. Or reads, for that matter....... Maybe
-we just need to live without compression. The only way it could work in a scalable fashion is if we compressed small
-chunks of data - possibly requiring a single list of bonds or types to be broken up into multiple compressed chunks.
-
-Not everything can be automatically determined, though. We don't want to force users to store velocity if they don't
-want it..... Or do we? With the current plan, position (12b) + image (6b) + type (2b) + tag (4b) = 24b. Adding velocity
-only increases by another 12b (50%). That is only 36b/particle or 36MB for a 1 million particle frame. Disk space and
-memory are plentiful, what's a little extra storage to fully ensure that every frame is restartable, and the user
-may find that velocity data is useful.
-
-This leaves only one option to users when they want to write a gsd file: Used the fixed schema or not.
+HOOMD restart files store additional information in ``restart/*`` data chunks.
+The format of this data varies from class to class and is not defined in this
+specification. All restart data is meant for internal use by hoomd only.
