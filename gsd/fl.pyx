@@ -151,8 +151,12 @@ cdef class GSDFile:
         self.mode = mode;
 
         logger.info('opening file: ' + name + ' with mode: ' + mode);
+        cdef char * c_name;
+        name_e = name.encode('utf-8')
+        c_name = name_e;
 
-        retval = libgsd.gsd_open(&self.__handle, name.encode('utf-8'), c_flags);
+        with nogil:
+            retval = libgsd.gsd_open(&self.__handle, c_name, c_flags);
 
         if retval == -1:
             raise IOError(*__format_errno(name));
@@ -181,7 +185,8 @@ cdef class GSDFile:
         """
         if self.__is_open:
             logger.info('closing file: ' + self.name);
-            libgsd.gsd_close(&self.__handle);
+            with nogil:
+                libgsd.gsd_close(&self.__handle);
             self.__is_open = False;
 
     def end_frame(self):
@@ -220,7 +225,9 @@ cdef class GSDFile:
             raise ValueError("File is not open");
 
         logger.debug('end frame: ' + self.name);
-        retval = libgsd.gsd_end_frame(&self.__handle)
+
+        with nogil:
+            retval = libgsd.gsd_end_frame(&self.__handle)
 
         if retval == -1:
             raise IOError(*__format_errno(self.name));
@@ -329,7 +336,7 @@ cdef class GSDFile:
         else:
             raise ValueError("invalid type for chunk: " + name);
 
-        logger.debug('write chunk: ' + self.name + ' / ' + name);
+        logger.debug('write chunk: ' + self.name + ' - ' + name);
 
         cdef char * c_name;
         name_e = name.encode('utf-8')
@@ -379,7 +386,7 @@ cdef class GSDFile:
         cdef int64_t c_frame;
         c_frame = frame;
 
-        logger.debug('chunk exists: ' + self.name + ' / ' + name);
+        logger.debug('chunk exists: ' + self.name + ' - ' + name);
 
         with nogil:
             index_entry = libgsd.gsd_find_chunk(&self.__handle, c_frame, c_name)
@@ -483,7 +490,7 @@ cdef class GSDFile:
         else:
             raise ValueError("invalid type for chunk: " + name);
 
-        logger.debug('read chunk: ' + self.name + ' / ' + str(frame) + ' / ' + name);
+        logger.debug('read chunk: ' + self.name + ' - ' + str(frame) + ' - ' + name);
 
         with nogil:
             retval = libgsd.gsd_read_chunk(&self.__handle,
