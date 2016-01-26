@@ -16,12 +16,40 @@ import logging
 
 logger = logging.getLogger('gsd.hoomd')
 
-__default_values = {};
-__default_values['configuration/step'] = numpy.uint64(0);
-__default_values['configuration/dimensions'] = numpy.uint8(3);
-__default_values['configuration/box'] = numpy.array([1,1,1,0,0,0], dtype=numpy.float32);
 
-class SnapshotParticleData:
+class Configuration:
+
+    _default_value = OrderedDict();
+    _default_value['step'] = numpy.uint64(0);
+    _default_value['dimensions'] = numpy.uint8(3);
+    _default_value['box'] = numpy.array([1,1,1,0,0,0], dtype=numpy.float32);
+
+    def __init__(self):
+        self.step = None;
+        self.dimensions = None;
+        self.box = None;
+
+    def validate(self):
+        """ Validate all attributes.
+
+        First, convert every array attribute to a numpy array of the
+        proper type. Then validate that all attributes have the correct
+        dimensions.
+
+        Ignore any attributes that are ``None``.
+
+        Warning:
+            Array attributes that are not contiguous numpy arrays will
+            be replaced with contiguous numpy arrays of the appropriate type.
+        """
+
+        logger.debug('Validating Configuration');
+
+        if self.box is not None:
+            self.position = numpy.ascontiguousarray(self.box, dtype=numpy.float32);
+            self.position = self.position.reshape([6,])
+
+class ParticleData:
     """ Store particle data chunks.
 
     Instances resulting from file read operations will always store per particle
@@ -89,7 +117,7 @@ class SnapshotParticleData:
             be replaced with contiguous numpy arrays of the appropriate type.
         """
 
-        logger.debug('Validating SnapshotParticleData');
+        logger.debug('Validating ParticleData');
 
         if self.position is not None:
             self.position = numpy.ascontiguousarray(self.position, dtype=numpy.float32);
@@ -126,11 +154,12 @@ class Snapshot:
     """ Top level snapshot container.
 
     Attributes:
-        particles (:py:class:`SnapshotParticleData`): Particle data snapshot.
+        particles (:py:class:`ParticleData`): Particle data snapshot.
     """
 
     def __init__(self):
-        self.particles = SnapshotParticleData();
+        self.configuration = Configuration();
+        self.particles = ParticleData();
 
     def validate(self):
         """ Validate all contained snapshot data.
@@ -138,6 +167,7 @@ class Snapshot:
 
         logger.debug('Validating Snapshot');
 
+        self.configuration.validate();
         self.particles.validate();
 
 class HOOMDTrajectory:
@@ -189,7 +219,7 @@ class HOOMDTrajectory:
         if self._initial_frame is None and len(self) > 0:
             self.read_frame(0);
 
-        for path in ['particles']:
+        for path in ['configuration', 'particles']:
             container = getattr(snapshot, path);
             for name in container._default_value:
                 if self._should_write(path, name, snapshot):
@@ -198,6 +228,10 @@ class HOOMDTrajectory:
 
                     if name == 'N':
                         data = numpy.array([data], dtype=numpy.uint32);
+                    if name == 'step':
+                        data = numpy.array([data], dtype=numpy.uint64);
+                    if name == 'dimensions':
+                        data = numpy.array([data], dtype=numpy.uint8);
                     if name == 'types':
                         wid = max(len(w) for w in data)+1;
                         b = numpy.array(data, dtype=numpy.dtype((bytes, wid)));
@@ -273,6 +307,34 @@ class HOOMDTrajectory:
             self.read_frame(0);
 
         snap = Snapshot();
+        # read configuration first
+        if self.file.chunk_exists(frame=idx, name='configuration/step'):
+            step_arr = self.file.read_chunk(frame=idx, name='configuration/step');
+            snap.configuration.step = step_arr[0];
+        else:
+            if self._initial_frame is not None:
+                snap.configuration.step = self._initial_frame.configuration.step;
+            else:
+                snap.configuration.step = snap.configuration._default_value['step'];
+
+        if self.file.chunk_exists(frame=idx, name='configuration/dimensions'):
+            dimensions_arr = self.file.read_chunk(frame=idx, name='configuration/dimensions');
+            snap.configuration.dimensions = dimensions_arr[0];
+        else:
+            if self._initial_frame is not None:
+                snap.configuration.dimensions = self._initial_frame.configuration.dimensions;
+            else:
+                snap.configuration.dimensions = snap.configuration._default_value['dimensions'];
+
+        if self.file.chunk_exists(frame=idx, name='configuration/box'):
+            snap.configuration.box = self.file.read_chunk(frame=idx, name='configuration/box');
+        else:
+            if self._initial_frame is not None:
+                snap.configuration.box = self._initial_frame.configuration.box;
+            else:
+                snap.configuration.box = snap.configuration._default_value['box'];
+
+        # then read all groups that have N, types, etc...
         for path in ['particles']:
             container = getattr(snap, path);
             if self._initial_frame is not None:
@@ -284,7 +346,7 @@ class HOOMDTrajectory:
                 container.N = N_arr[0];
             else:
                 if self._initial_frame is not None:
-                    container.N = self._initial_frame.particles.N;
+                    container.N = initial_frame_container.N;
 
             # type names
             if self.file.chunk_exists(frame=idx, name='particles/' + 'types'):
@@ -294,7 +356,7 @@ class HOOMDTrajectory:
                 container.types = list(a.decode('UTF-8') for a in tmp)
             else:
                 if self._initial_frame is not None:
-                    container.types = self._initial_frame.particles.types;
+                    container.types = initial_frame_container.types;
                 else:
                     container.types = container._default_value['types'];
 
@@ -306,7 +368,7 @@ class HOOMDTrajectory:
                 if self.file.chunk_exists(frame=idx, name='particles/' + name):
                     container.__dict__[name] = self.file.read_chunk(frame=idx, name='particles/' + name);
                 else:
-                    if self._initial_frame is not None and self._initial_frame.particles.N == container.N:
+                    if self._initial_frame is not None and initial_frame_container.N == container.N:
                         # read default from initial frame
                         container.__dict__[name] = self._initial_frame.particles.__dict__[name];
                     else:
@@ -323,6 +385,29 @@ class HOOMDTrajectory:
             self._initial_frame = snap;
 
         return snap;
+
+    def __getitem__(self, key):
+        """ Index trajectory frames.
+
+        The index can be a positive integer, negative integer, or slice and is interpreted the same
+        as :py:class:`list` indexing.
+
+        Warning:
+            As you loop over frames, each frame is read from the file when
+            it is reached in the iteration. Multiple passes may lead to
+            multiple disk reads if the file does not fit in cache.
+        """
+
+        if isinstance(key, slice) :
+            return (self.read_frame(i) for i in range(*key.indices(len(self))));
+        elif isinstance(key, int) :
+            if key < 0:
+                key += len(self)
+            if key >= len(self):
+                raise IndexError();
+            return self.read_frame(key);
+        else:
+            raise TypeError;
 
 def create(name, snapshot):
     """ Create a hoomd gsd file from the given snapshot.
