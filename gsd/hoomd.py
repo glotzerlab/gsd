@@ -17,7 +17,7 @@ import logging
 logger = logging.getLogger('gsd.hoomd')
 
 
-class Configuration:
+class ConfigurationData(object):
 
     _default_value = OrderedDict();
     _default_value['step'] = numpy.uint64(0);
@@ -43,13 +43,13 @@ class Configuration:
             be replaced with contiguous numpy arrays of the appropriate type.
         """
 
-        logger.debug('Validating Configuration');
+        logger.debug('Validating ConfigurationData');
 
         if self.box is not None:
             self.position = numpy.ascontiguousarray(self.box, dtype=numpy.float32);
             self.position = self.position.reshape([6,])
 
-class ParticleData:
+class ParticleData(object):
     """ Store particle data chunks.
 
     Instances resulting from file read operations will always store per particle
@@ -72,7 +72,7 @@ class ParticleData:
         moment_inertia (numpy.ndarray[float, ndim=2, mode='c']): Nx3 array defining particle moments of inertia.
         velocity (numpy.ndarray[float, ndim=2, mode='c']): Nx3 array defining particle velocities.
         angmom (numpy.ndarray[float, ndim=2, mode='c']): Nx4 array defining particle angular momenta.
-        angmom (numpy.ndarray[int32, ndim=2, mode='c']): Nx3 array defining particle images.
+        image (numpy.ndarray[int32, ndim=2, mode='c']): Nx3 array defining particle images.
     """
 
     _default_value = OrderedDict();
@@ -139,7 +139,7 @@ class ParticleData:
             self.diameter = self.diameter.reshape([self.N])
         if self.moment_inertia is not None:
             self.moment_inertia = numpy.ascontiguousarray(self.moment_inertia, dtype=numpy.float32);
-            self.moment_inertia = self.moment_interia.reshape([self.N, 3]);
+            self.moment_inertia = self.moment_inertia.reshape([self.N, 3]);
         if self.velocity is not None:
             self.velocity = numpy.ascontiguousarray(self.velocity, dtype=numpy.float32);
             self.velocity = self.velocity.reshape([self.N, 3]);
@@ -150,7 +150,73 @@ class ParticleData:
             self.image = numpy.ascontiguousarray(self.image, dtype=numpy.int32);
             self.image = self.image.reshape([self.N, 3]);
 
-class Snapshot:
+class BondData(object):
+    """ Store bond data chunks.
+
+    Instances resulting from file read operations will always store per bond
+    quantities in numpy arrays of the defined types. User created snapshots can
+    provide input data as python lists, tuples, numpy arrays of different types,
+    etc... Such input elements will be converted to the appropriate array type
+    by :py:meth:`validate()` which is called when writing a frame.
+
+    Examples:
+
+    Attributes:
+        N (int): Number of particles in the snapshot.
+        types (list[str]): Names of the particle types.
+        typeid (numpy.ndarray[uint32, ndim=1, mode='c']): N length array defining bond type ids.
+        group (numpy.ndarray[uint32, ndim=2, mode='c']): NxM array defining tags in the particle bonds.
+
+    Note:
+        *M* varies depending on the type of bond. The same python class represents all types of bonds.
+
+        ======= ===
+        Type    *M*
+        ======= ===
+        Bond     2
+        Angle    3
+        Dihedral 4
+        Improper 4
+        ======= ===
+    """
+
+    def __init__(self, M):
+        self.M = M;
+        self.N = 0;
+        self.types = None;
+        self.typeid = None;
+        self.group = None;
+
+        self._default_value = OrderedDict();
+        self._default_value['N'] = numpy.uint32(0);
+        self._default_value['types'] = [];
+        self._default_value['typeid'] = numpy.uint32(0);
+        self._default_value['group'] = numpy.array([0]*M, dtype=numpy.int32);
+
+    def validate(self):
+        """ Validate all attributes.
+
+        First, convert every per bond attribute to a numpy array of the
+        proper type. Then validate that all attributes have the correct
+        dimensions.
+
+        Ignore any attributes that are ``None``.
+
+        Warning:
+            Per bond attributes that are not contiguous numpy arrays will
+            be replaced with contiguous numpy arrays of the appropriate type.
+        """
+
+        logger.debug('Validating BondData');
+
+        if self.typeid is not None:
+            self.typeid = numpy.ascontiguousarray(self.typeid, dtype=numpy.uint32);
+            self.typeid = self.typeid.reshape([self.N])
+        if self.group is not None:
+            self.group = numpy.ascontiguousarray(self.group, dtype=numpy.int32);
+            self.group = self.group.reshape([self.N, self.M]);
+
+class Snapshot(object):
     """ Top level snapshot container.
 
     Attributes:
@@ -158,8 +224,12 @@ class Snapshot:
     """
 
     def __init__(self):
-        self.configuration = Configuration();
+        self.configuration = ConfigurationData();
         self.particles = ParticleData();
+        self.bonds = BondData(2);
+        self.angles = BondData(3);
+        self.dihedrals = BondData(4);
+        self.impropers = BondData(4);
 
     def validate(self):
         """ Validate all contained snapshot data.
@@ -169,8 +239,12 @@ class Snapshot:
 
         self.configuration.validate();
         self.particles.validate();
+        self.bonds.validate();
+        self.angles.validate();
+        self.dihedrals.validate();
+        self.impropers.validate();
 
-class HOOMDTrajectory:
+class HOOMDTrajectory(object):
     """ Read and/or write hoomd gsd files.
 
     Args:
@@ -219,7 +293,7 @@ class HOOMDTrajectory:
         if self._initial_frame is None and len(self) > 0:
             self.read_frame(0);
 
-        for path in ['configuration', 'particles']:
+        for path in ['configuration', 'particles', 'bonds', 'angles', 'dihedrals', 'impropers']:
             container = getattr(snapshot, path);
             for name in container._default_value:
                 if self._should_write(path, name, snapshot):
@@ -335,22 +409,22 @@ class HOOMDTrajectory:
                 snap.configuration.box = snap.configuration._default_value['box'];
 
         # then read all groups that have N, types, etc...
-        for path in ['particles']:
+        for path in ['particles', 'bonds', 'angles', 'dihedrals', 'impropers']:
             container = getattr(snap, path);
             if self._initial_frame is not None:
-                initial_frame_container = getattr(snap, path);
+                initial_frame_container = getattr(self._initial_frame, path);
 
             container.N = 0;
-            if self.file.chunk_exists(frame=idx, name='particles/N'):
-                N_arr = self.file.read_chunk(frame=idx, name='particles/N');
+            if self.file.chunk_exists(frame=idx, name=path+'/N'):
+                N_arr = self.file.read_chunk(frame=idx, name=path+'/N');
                 container.N = N_arr[0];
             else:
                 if self._initial_frame is not None:
                     container.N = initial_frame_container.N;
 
             # type names
-            if self.file.chunk_exists(frame=idx, name='particles/' + 'types'):
-                tmp = self.file.read_chunk(frame=idx, name='particles/' + 'types');
+            if self.file.chunk_exists(frame=idx, name=path + '/types'):
+                tmp = self.file.read_chunk(frame=idx, name=path + '/types');
                 tmp = tmp.view(dtype=numpy.dtype((bytes, tmp.shape[1])));
                 tmp = tmp.reshape([tmp.shape[0]]);
                 container.types = list(a.decode('UTF-8') for a in tmp)
@@ -364,13 +438,13 @@ class HOOMDTrajectory:
                 if name == 'N' or name == 'types':
                     continue;
 
-                # per particle quantities
-                if self.file.chunk_exists(frame=idx, name='particles/' + name):
-                    container.__dict__[name] = self.file.read_chunk(frame=idx, name='particles/' + name);
+                # per particle/bond quantities
+                if self.file.chunk_exists(frame=idx, name=path + '/' + name):
+                    container.__dict__[name] = self.file.read_chunk(frame=idx, name=path + '/' + name);
                 else:
                     if self._initial_frame is not None and initial_frame_container.N == container.N:
                         # read default from initial frame
-                        container.__dict__[name] = self._initial_frame.particles.__dict__[name];
+                        container.__dict__[name] = initial_frame_container.__dict__[name];
                     else:
                         # initialize from default value
                         tmp = numpy.array([container._default_value[name]]);
@@ -378,7 +452,7 @@ class HOOMDTrajectory:
                         s[0] = container.N;
                         container.__dict__[name] = numpy.resize(tmp, new_shape=s);
 
-                    snap.particles.__dict__[name].flags.writeable = False;
+                    container.__dict__[name].flags.writeable = False;
 
         # store initial frame
         if self._initial_frame is None and idx == 0:
