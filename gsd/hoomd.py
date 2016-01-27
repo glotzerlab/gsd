@@ -480,7 +480,8 @@ class HOOMDTrajectory(object):
                         tmp = numpy.array([container._default_value[name]]);
                         s = list(tmp.shape);
                         s[0] = container.N;
-                        container.__dict__[name] = numpy.resize(tmp, new_shape=s);
+                        container.__dict__[name] = numpy.empty(shape=s, dtype=tmp.dtype);
+                        container.__dict__[name][:] = tmp;
 
                     container.__dict__[name].flags.writeable = False;
 
