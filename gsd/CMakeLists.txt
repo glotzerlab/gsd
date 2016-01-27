@@ -11,7 +11,15 @@ if (CYTHON_EXECUTABLE)
 
     set(FL_SRC fl.c)
 else()
-    set(FL_SRC "fl${PYTHON_VERSION_MAJOR}.c")
+    file(READ "fl.pyx.sha256" __input)
+    string(STRIP ${__input} __original_hash)
+    file(SHA256 "${CMAKE_CURRENT_SOURCE_DIR}/fl.pyx" __current_hash)
+
+    if ("${__current_hash}" STREQUAL "${__original_hash}")
+        set(FL_SRC "fl${PYTHON_VERSION_MAJOR}.c")
+    else()
+        message(SEND_ERROR "fl.pyx updated, embedded c files out of date. Build with cython enabled.")
+    endif()
 endif()
 
 set_source_files_properties(${FL_SRC} PROPERTIES COMPILE_DEFINITIONS NO_IMPORT)

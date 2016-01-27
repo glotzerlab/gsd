@@ -85,3 +85,7 @@ include_directories(${NUMPY_INCLUDE_DIR})
 find_program(CYTHON_EXECUTABLE NAMES cython)
 mark_as_advanced(CYTHON_EXECUTABLE)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(cython DEFAULT_MSG CYTHON_EXECUTABLE)
+
+if (NOT CYTHON_EXECUTABLE)
+    message(STATUS "cython not found, will fall back on embedded .c files")
+endif()
