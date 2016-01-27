@@ -197,10 +197,10 @@ htmlhelp_basename = 'GSDdoc'
 
 latex_elements = {
 # The paper size ('letterpaper' or 'a4paper').
-#'papersize': 'letterpaper',
+'papersize': 'letterpaper',
 
 # The font size ('10pt', '11pt' or '12pt').
-#'pointsize': '10pt',
+'pointsize': '10pt',
 
 # Additional stuff for the LaTeX preamble.
 #'preamble': '',
@@ -210,7 +210,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'GSD.tex', 'GSD Documentation',
+  ('root', 'GSD.tex', 'GSD Documentation',
    'The Regents of the University of Michigan', 'manual'),
 ]
 
