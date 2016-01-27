@@ -55,11 +55,11 @@ with GSDFile(name='file.gsd', mode='r') as f:
 
     * A standards compliant C compiler
     * Python >= 2.7
-    * Cython >= ?? (optional for tagged releases)
+    * Cython >= 0.22 (not needed to build tagged releases)
 
-### Install with distutils
+### Install with setuptools
 
-Use ``python setup.py`` to install the python module with distutils. For example, to install into
+Use ``python setup.py`` to install the python module with setuptools. For example, to install into
 your home directory, execute:
 
 ```bash
