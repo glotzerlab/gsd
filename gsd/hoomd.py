@@ -6,6 +6,14 @@
 The main package :py:mod:`gsd.hoomd` is a reference implementation of the
 GSD schema ``hoomd``. It is a simple, but high performance and memory
 efficient, reader and writer for the schema.
+
+* :py:func:`create` - Create a hoomd schema GSD file.
+* :py:class:`HOOMDTrajectory` - Read and write hoomd schema GSD files.
+* :py:class:`Snapshot` - Store the state of a single frame.
+
+    * :py:class:`ConfigurationData` - Store configuration data in a snapshot.
+    * :py:class:`ParticleData` - Store particle data in a snapshot.
+    * :py:class:`BondData` - Store particle data in a snapshot.
 """
 
 import numpy
@@ -18,6 +26,17 @@ logger = logging.getLogger('gsd.hoomd')
 
 
 class ConfigurationData(object):
+    """ Store configuration data.
+
+    Users should not need to instantiate this class. Use the ``configuration``
+    attribute of a :py:class:`Snapshot`.
+
+    Attributes:
+        step (int): Time step of this frame (:chunk:`configuration/step`).
+        dimensions (int): Number of dimensions (:chunk:`configuration/dimensions`).
+        box (numpy.ndarray[float, ndim=1, mode='c']): Box dimensions (:chunk:`configuration/box`)
+                                                      - [lx, ly, lz, xy, xz, yz].
+    """
 
     _default_value = OrderedDict();
     _default_value['step'] = numpy.uint64(0);
@@ -52,6 +71,9 @@ class ConfigurationData(object):
 class ParticleData(object):
     """ Store particle data chunks.
 
+    Users should not need to instantiate this class. Use the ``particles``
+    attribute of a :py:class:`Snapshot`.
+
     Instances resulting from file read operations will always store per particle
     quantities in numpy arrays of the defined types. User created snapshots can
     provide input data as python lists, tuples, numpy arrays of different types,
@@ -61,18 +83,18 @@ class ParticleData(object):
     Examples:
 
     Attributes:
-        N (int): Number of particles in the snapshot.
-        types (list[str]): Names of the particle types.
-        position (numpy.ndarray[float, ndim=2, mode='c']): Nx3 array defining particle position.
-        orientation (numpy.ndarray[float, ndim=2, mode='c']): Nx4 array defining particle position.
-        typeid (numpy.ndarray[uint32, ndim=1, mode='c']): N length array defining particle type ids.
-        mass (numpy.ndarray[float, ndim=1, mode='c']): N length array defining particle masses.
-        charge (numpy.ndarray[float, ndim=1, mode='c']): N length array defining particle charges.
-        diameter (numpy.ndarray[float, ndim=1, mode='c']): N length array defining particle diameters.
-        moment_inertia (numpy.ndarray[float, ndim=2, mode='c']): Nx3 array defining particle moments of inertia.
-        velocity (numpy.ndarray[float, ndim=2, mode='c']): Nx3 array defining particle velocities.
-        angmom (numpy.ndarray[float, ndim=2, mode='c']): Nx4 array defining particle angular momenta.
-        image (numpy.ndarray[int32, ndim=2, mode='c']): Nx3 array defining particle images.
+        N (int): Number of particles in the snapshot (:chunk:`particles/N`).
+        types (list[str]): Names of the particle types (:chunk:`particles/types`).
+        position (numpy.ndarray[float, ndim=2, mode='c']): Nx3 array defining particle position (:chunk:`particles/position`).
+        orientation (numpy.ndarray[float, ndim=2, mode='c']): Nx4 array defining particle position (:chunk:`particles/orientation`).
+        typeid (numpy.ndarray[uint32, ndim=1, mode='c']): N length array defining particle type ids (:chunk:`particles/typeid`).
+        mass (numpy.ndarray[float, ndim=1, mode='c']): N length array defining particle masses (:chunk:`particles/mass`).
+        charge (numpy.ndarray[float, ndim=1, mode='c']): N length array defining particle charges (:chunk:`particles/charge`).
+        diameter (numpy.ndarray[float, ndim=1, mode='c']): N length array defining particle diameters (:chunk:`particles/diameter`).
+        moment_inertia (numpy.ndarray[float, ndim=2, mode='c']): Nx3 array defining particle moments of inertia (:chunk:`particles/moment_inertia`).
+        velocity (numpy.ndarray[float, ndim=2, mode='c']): Nx3 array defining particle velocities (:chunk:`particles/velocity`).
+        angmom (numpy.ndarray[float, ndim=2, mode='c']): Nx4 array defining particle angular momenta (:chunk:`particles/angmom`).
+        image (numpy.ndarray[int32, ndim=2, mode='c']): Nx3 array defining particle images (:chunk:`particles/image`).
     """
 
     _default_value = OrderedDict();
@@ -153,6 +175,9 @@ class ParticleData(object):
 class BondData(object):
     """ Store bond data chunks.
 
+    Users should not need to instantiate this class. Use the ``bonds``,
+    ``angles``, ``dihedrals``, or ``impropers`` attribute of a :py:class:`Snapshot`.
+
     Instances resulting from file read operations will always store per bond
     quantities in numpy arrays of the defined types. User created snapshots can
     provide input data as python lists, tuples, numpy arrays of different types,
@@ -161,23 +186,23 @@ class BondData(object):
 
     Examples:
 
-    Attributes:
-        N (int): Number of particles in the snapshot.
-        types (list[str]): Names of the particle types.
-        typeid (numpy.ndarray[uint32, ndim=1, mode='c']): N length array defining bond type ids.
-        group (numpy.ndarray[uint32, ndim=2, mode='c']): NxM array defining tags in the particle bonds.
-
     Note:
         *M* varies depending on the type of bond. The same python class represents all types of bonds.
 
-        ======= ===
-        Type    *M*
-        ======= ===
-        Bond     2
-        Angle    3
-        Dihedral 4
-        Improper 4
-        ======= ===
+        ======== ===
+        Type     *M*
+        ======== ===
+        Bond      2
+        Angle     3
+        Dihedral  4
+        Improper  4
+        ======== ===
+
+    Attributes:
+        N (int): Number of particles in the snapshot (:chunk:`bonds/N`, :chunk:`angles/N`, :chunk:`dihedrals/N`, :chunk:`impropers/N`).
+        types (list[str]): Names of the particle types (:chunk:`bonds/types`, :chunk:`angles/types`, :chunk:`dihedrals/types`, :chunk:`impropers/types`).
+        typeid (numpy.ndarray[uint32, ndim=1, mode='c']): N length array defining bond type ids (:chunk:`bonds/typeid`, :chunk:`angles/typeid`, :chunk:`dihedrals/typeid`, :chunk:`impropers/typeid`).
+        group (numpy.ndarray[uint32, ndim=2, mode='c']): NxM array defining tags in the particle bonds (:chunk:`bonds/group`, :chunk:`angles/group`, :chunk:`dihedrals/group`, :chunk:`impropers/group`).
     """
 
     def __init__(self, M):
@@ -220,7 +245,12 @@ class Snapshot(object):
     """ Top level snapshot container.
 
     Attributes:
+        configuration (:py:class:`ConfigurationData`): Configuration data.
         particles (:py:class:`ParticleData`): Particle data snapshot.
+        bonds (:py:class:`BondData`): Bond data snapshot.
+        angles (:py:class:`BondData`): Angle data snapshot.
+        dihedrals (:py:class:`BondData`): Dihedral data snapshot.
+        impropers (:py:class:`BondData`): Improper data snapshot.
     """
 
     def __init__(self):
@@ -245,7 +275,7 @@ class Snapshot(object):
         self.impropers.validate();
 
 class HOOMDTrajectory(object):
-    """ Read and/or write hoomd gsd files.
+    """ Read and write hoomd gsd files.
 
     Args:
         file (:py:class:`gsd.fl.GSDFile`): File to access.
@@ -483,12 +513,12 @@ class HOOMDTrajectory(object):
         else:
             raise TypeError;
 
-def create(name, snapshot):
+def create(name, snapshot=None):
     """ Create a hoomd gsd file from the given snapshot.
 
     Args:
         name (str): File name.
-        snapshot (:py:class:`Snapshot`): Snapshot to write to frame 0.
+        snapshot (:py:class:`Snapshot`): Snapshot to write to frame 0. No frame is written if snapshot is ``None``.
 
     .. danger::
         The file is overwritten if it already exists.
@@ -499,4 +529,5 @@ def create(name, snapshot):
     gsd.fl.create(name=name, application='gsd.hoomd ' + gsd.__version__, schema='hoomd', schema_version=[0,1]);
     with gsd.fl.GSDFile(name, 'w') as f:
         traj = HOOMDTrajectory(f);
-        traj.append(snapshot);
+        if snapshot is not None:
+            traj.append(snapshot);

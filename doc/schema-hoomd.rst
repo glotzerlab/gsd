@@ -48,47 +48,48 @@ frame 0, or *N* differs between frames, values are assumed default. Default valu
 remain small. For example, a simulation with point particles where orientation is always (1,0,0,0) would
 not write any orientation chunk to the file.
 
-========================== ========= ====== ==== ======= ================
-Name                       Category  Type   Size Default Units
-========================== ========= ====== ==== ======= ================
+================================= ========= ====== ==== ======= ================
+Name                              Category  Type   Size Default Units
+================================= ========= ====== ==== ======= ================
 **Configuration**
-configuration/step                   uint64 1x1  0       number
-configuration/dimensions             uint8  1x1  3       number
-configuration/box                    float  6x1          *varies*
+:chunk:`configuration/step`                 uint64 1x1  0       number
+:chunk:`configuration/dimensions`           uint8  1x1  3       number
+:chunk:`configuration/box`                  float  6x1          *varies*
 **Particle data**
-particles/N                attribute uint32 1x1  0       number
-particles/types            attribute int8   NTxM ['A']   UTF-8
-particles/typeid           attribute uint32 Nx1  0       number
-particles/mass             attribute float  Nx1  1.0     mass
-particles/charge           attribute float  Nx1  0.0     charge
-particles/diameter         attribute float  Nx1  1.0     length
-particles/moment_inertia   attribute float  Nx3  0,0,0   mass * length^2
-particles/position         property  float  Nx3  0,0,0   length
-particles/orientation      property  float  Nx4  1,0,0,0 unit quaternion
-particles/velocity         momentum  float  Nx3  0,0,0   length/time
-particles/angmom           momentum  float  Nx4  0,0,0,0 quaternion (??)
-particles/image            momentum  int32  Nx3  0,0,0   number
+:chunk:`particles/N`              attribute uint32 1x1  0       number
+:chunk:`particles/types`          attribute int8   NTxM ['A']   UTF-8
+:chunk:`particles/typeid`         attribute uint32 Nx1  0       number
+:chunk:`particles/mass`           attribute float  Nx1  1.0     mass
+:chunk:`particles/charge`         attribute float  Nx1  0.0     charge
+:chunk:`particles/diameter`       attribute float  Nx1  1.0     length
+:chunk:`particles/moment_inertia` attribute float  Nx3  0,0,0   mass * length^2
+:chunk:`particles/position`       property  float  Nx3  0,0,0   length
+:chunk:`particles/orientation`    property  float  Nx4  1,0,0,0 unit quaternion
+:chunk:`particles/velocity`       momentum  float  Nx3  0,0,0   length/time
+:chunk:`particles/angmom`         momentum  float  Nx4  0,0,0,0 quaternion (??)
+:chunk:`particles/image`          momentum  int32  Nx3  0,0,0   number
 **Bond data**
-bonds/N                    topology  uint32 1x1  0       number
-bonds/types                topology  int8   NTxM         UTF-8
-bonds/typeid               topology  uint32 Nx1  0       number
-bonds/group                topology  uint32 Nx2  0,0     number
+:chunk:`bonds/N`                  topology  uint32 1x1  0       number
+:chunk:`bonds/types`              topology  int8   NTxM         UTF-8
+:chunk:`bonds/typeid`             topology  uint32 Nx1  0       number
+:chunk:`bonds/group`              topology  uint32 Nx2  0,0     number
 **Angle data**
-angles/N                   topology  uint32 1x1  0       number
-angles/types               topology  int8   NTxM         UTF-8
-angles/typeid              topology  uint32 Nx1  0       number
-angles/group               topology  uint32 Nx3  0,0,0   number
+:chunk:`angles/N`                 topology  uint32 1x1  0       number
+:chunk:`angles/types`             topology  int8   NTxM         UTF-8
+:chunk:`angles/typeid`            topology  uint32 Nx1  0       number
+:chunk:`angles/group`             topology  uint32 Nx3  0,0,0   number
 **Dihedral data**
-dihedrals/N                topology  uint32 1x1  0       number
-dihedrals/types            topology  int8   NTxM         UTF-8
-dihedrals/typeid           topology  uint32 Nx1  0       number
-dihedrals/group            topology  uint32 Nx4  0,0,0,0 number
+:chunk:`dihedrals/N`              topology  uint32 1x1  0       number
+:chunk:`dihedrals/types`          topology  int8   NTxM         UTF-8
+:chunk:`dihedrals/typeid`         topology  uint32 Nx1  0       number
+:chunk:`dihedrals/group`          topology  uint32 Nx4  0,0,0,0 number
 **Improper data**
-impropers/N                topology  uint32 1x1  0       number
-impropers/types            topology  int8   NTxM         UTF-8
-impropers/typeid           topology  uint32 Nx1  0       number
-impropers/group            topology  uint32 Nx4  0,0,0,0 number
-========================== ========= ====== ==== ======= ================
+:chunk:`impropers/N`              topology  uint32 1x1  0       number
+:chunk:`impropers/types`          topology  int8   NTxM         UTF-8
+:chunk:`impropers/typeid`         topology  uint32 Nx1  0       number
+:chunk:`impropers/group`          topology  uint32 Nx4  0,0,0,0 number
+================================= ========= ====== ==== ======= ================
+
 
 Configuration
 -------------
