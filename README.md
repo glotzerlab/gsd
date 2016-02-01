@@ -83,19 +83,6 @@ Then add the directory to your PYTHONPATH temporarily for testing.
 export PYTHONPATH=/path/to/build:$PYTHONPATH
 ```
 
-### Install with cmake
-
-The cmake build scripts expect ``${CMAKE_INSTALL_PREFIX}`` to be a valid python site directory.
-You can set the prefix automatically with **one** of the following cmake options:
-
-    * ``INSTALL_USER``, install into the user site (like ``setup.py install --user``)
-    * ``INSTALL_SITE``, install into the system site (like ``setup.py install``)
-
-```bash
-$ cmake ../ -D INSTALL_USER=on
-$ make install
-```
-
 ### Run unit tests
 
 Run `nosetests` in the source directory to execute all unit tests. This requires that the
