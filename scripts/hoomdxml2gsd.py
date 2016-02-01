@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 import argparse
 import xml.dom.minidom
 import gsd.fl
@@ -233,7 +234,7 @@ if __name__ == '__main__':
                         help='Output file')
     args = parser.parse_args()
 
-    print('Reading input file...', flush=True)
+    print('Reading input file...')
     snap = read_xml(args.input[0]);
-    print('Writing output file...', flush=True)
+    print('Writing output file...')
     gsd.hoomd.create(args.output[0], snap);
