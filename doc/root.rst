@@ -12,5 +12,6 @@ Contents:
    python-api
    c-api
    specification
+   scripts
    license
    index
