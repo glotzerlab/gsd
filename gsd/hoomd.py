@@ -290,6 +290,58 @@ class BondData(object):
             self.group = numpy.ascontiguousarray(self.group, dtype=numpy.int32);
             self.group = self.group.reshape([self.N, self.M]);
 
+class ConstraintData(object):
+    """ Store constraint data chunks.
+
+    Users should not need to instantiate this class. Use the ``constraints``,
+    attribute of a :py:class:`Snapshot`.
+
+    Instances resulting from file read operations will always store per constraint
+    quantities in numpy arrays of the defined types. User created snapshots can
+    provide input data as python lists, tuples, numpy arrays of different types,
+    etc... Such input elements will be converted to the appropriate array type
+    by :py:meth:`validate()` which is called when writing a frame.
+
+    Attributes:
+        N (int): Number of particles in the snapshot (:chunk:`constraints/N`).
+        value (numpy.ndarray[float32, ndim=1, mode='c']): N length array defining constraint lengths (:chunk:`constraints/value`).
+        group (numpy.ndarray[uint32, ndim=2, mode='c']): Nx2 array defining tags in the particle constraints (:chunk:`constraints/group`).
+    """
+
+    def __init__(self):
+        self.M = 2;
+        self.N = 0;
+        self.value = None;
+        self.group = None;
+
+        self._default_value = OrderedDict();
+        self._default_value['N'] = numpy.uint32(0);
+        self._default_value['value'] = numpy.float32(0);
+        self._default_value['group'] = numpy.array([0]*self.M, dtype=numpy.int32);
+
+    def validate(self):
+        """ Validate all attributes.
+
+        First, convert every per constraint attribute to a numpy array of the
+        proper type. Then validate that all attributes have the correct
+        dimensions.
+
+        Ignore any attributes that are ``None``.
+
+        Warning:
+            Per bond attributes that are not contiguous numpy arrays will
+            be replaced with contiguous numpy arrays of the appropriate type.
+        """
+
+        logger.debug('Validating ConstraintData');
+
+        if self.value is not None:
+            self.value = numpy.ascontiguousarray(self.value, dtype=numpy.float32);
+            self.value = self.value.reshape([self.N])
+        if self.group is not None:
+            self.group = numpy.ascontiguousarray(self.group, dtype=numpy.int32);
+            self.group = self.group.reshape([self.N, self.M]);
+
 class Snapshot(object):
     """ Top level snapshot container.
 
@@ -309,6 +361,7 @@ class Snapshot(object):
         self.angles = BondData(3);
         self.dihedrals = BondData(4);
         self.impropers = BondData(4);
+        self.constraints = ConstraintData();
 
     def validate(self):
         """ Validate all contained snapshot data.
@@ -322,6 +375,7 @@ class Snapshot(object):
         self.angles.validate();
         self.dihedrals.validate();
         self.impropers.validate();
+        self.constraints.validate();
 
 class HOOMDTrajectory(object):
     """ Read and write hoomd gsd files.
@@ -372,7 +426,7 @@ class HOOMDTrajectory(object):
         if self._initial_frame is None and len(self) > 0:
             self.read_frame(0);
 
-        for path in ['configuration', 'particles', 'bonds', 'angles', 'dihedrals', 'impropers']:
+        for path in ['configuration', 'particles', 'bonds', 'angles', 'dihedrals', 'impropers', 'constraints']:
             container = getattr(snapshot, path);
             for name in container._default_value:
                 if self._should_write(path, name, snapshot):
@@ -495,7 +549,7 @@ class HOOMDTrajectory(object):
                 snap.configuration.box = snap.configuration._default_value['box'];
 
         # then read all groups that have N, types, etc...
-        for path in ['particles', 'bonds', 'angles', 'dihedrals', 'impropers']:
+        for path in ['particles', 'bonds', 'angles', 'dihedrals', 'impropers', 'constraints']:
             container = getattr(snap, path);
             if self._initial_frame is not None:
                 initial_frame_container = getattr(self._initial_frame, path);
@@ -509,16 +563,17 @@ class HOOMDTrajectory(object):
                     container.N = initial_frame_container.N;
 
             # type names
-            if self.file.chunk_exists(frame=idx, name=path + '/types'):
-                tmp = self.file.read_chunk(frame=idx, name=path + '/types');
-                tmp = tmp.view(dtype=numpy.dtype((bytes, tmp.shape[1])));
-                tmp = tmp.reshape([tmp.shape[0]]);
-                container.types = list(a.decode('UTF-8') for a in tmp)
-            else:
-                if self._initial_frame is not None:
-                    container.types = initial_frame_container.types;
+            if 'types' in container._default_value:
+                if self.file.chunk_exists(frame=idx, name=path + '/types'):
+                    tmp = self.file.read_chunk(frame=idx, name=path + '/types');
+                    tmp = tmp.view(dtype=numpy.dtype((bytes, tmp.shape[1])));
+                    tmp = tmp.reshape([tmp.shape[0]]);
+                    container.types = list(a.decode('UTF-8') for a in tmp)
                 else:
-                    container.types = container._default_value['types'];
+                    if self._initial_frame is not None:
+                        container.types = initial_frame_container.types;
+                    else:
+                        container.types = container._default_value['types'];
 
             for name in container._default_value:
                 if name == 'N' or name == 'types':

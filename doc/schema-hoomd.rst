@@ -88,6 +88,10 @@ Name                              Category  Type   Size Default Units
 :chunk:`impropers/types`          topology  int8   NTxM         UTF-8
 :chunk:`impropers/typeid`         topology  uint32 Nx1  0       number
 :chunk:`impropers/group`          topology  uint32 Nx4  0,0,0,0 number
+**Constraint data**
+:chunk:`constraints/N`            topology  uint32 1x1  0       number
+:chunk:`constraints/value`        topology  float  Nx1  0       length
+:chunk:`constraints/group`        topology  uint32 Nx2  0,0     number
 ================================= ========= ====== ==== ======= ================
 
 
@@ -436,6 +440,34 @@ Topology
     :Units: number
 
     Store the particle tags in each improper.
+
+.. chunk:: constraints/N
+
+    :Type: uint32
+    :Size: 1x1
+    :Default: 0
+    :Units: number
+
+    Define *N*, the number of constraints, for all data chunks ``constraints/*``.
+
+.. chunk:: constraints/value
+
+    :Type: float
+    :Size: Nx1
+    :Default: 0
+    :Units: length
+
+    Store the distance of each constraint. Each constraint defines a fixed distance
+    between two particles.
+
+.. chunk:: constraints/group
+
+    :Type: uint32
+    :Size: Nx2
+    :Default: 0,0
+    :Units: number
+
+    Store the particle tags in each constraint.
 
 Restart data
 ------------

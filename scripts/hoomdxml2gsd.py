@@ -33,7 +33,20 @@ def parse_bonds(obj, bond_node, n):
         obj.typeid, obj.types = parse_typenames(type_names);
         obj.group = numpy.array(bond_arr[:,1:], dtype=numpy.int32)
 
-        print(obj.typeid, obj.types)
+def parse_constraints(obj, constraint_node, n):
+    constraint_text = constraint_node.childNodes[0].data;
+    constraint_list = constraint_text.split();
+    if len(constraint_list) > 0:
+        constraint_arr = numpy.array(constraint_list);
+        constraint_arr = constraint_arr.reshape((len(constraint_list)/(n+1), n+1))
+
+        value = constraint_arr[:,0];
+
+        obj.N = len(value);
+        obj.value = numpy.array(value, dtype=numpy.float32)
+        obj.group = numpy.array(constraint_arr[:,1:], dtype=numpy.int32)
+
+        print(obj.value, obj.group)
 
 def read_xml(name):
     snap = gsd.hoomd.Snapshot();
@@ -205,6 +218,10 @@ def read_xml(name):
     improper_nodes = configuration.getElementsByTagName('improper');
     if len(improper_nodes) == 1:
         parse_bonds(snap.impropers, improper_nodes[0], 4);
+
+    constraint_nodes = configuration.getElementsByTagName('constraint');
+    if len(constraint_nodes) == 1:
+        parse_constraints(snap.constraints, constraint_nodes[0], 2);
 
     return snap;
 

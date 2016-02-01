@@ -59,6 +59,7 @@ def test_defaults():
         snap.angles.N = 4;
         snap.dihedrals.N = 5;
         snap.impropers.N = 6;
+        snap.constraints.N = 4;
         gsd.hoomd.create(name=d+"/test_defaults.gsd", snapshot=snap);
 
         with gsd.fl.GSDFile(name=d+"/test_defaults.gsd", mode='r') as f:
@@ -101,6 +102,10 @@ def test_defaults():
             numpy.testing.assert_array_equal(s.impropers.typeid, numpy.array([0,0,0,0,0,0], dtype=numpy.uint32));
             numpy.testing.assert_array_equal(s.impropers.group, numpy.array([[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]], dtype=numpy.uint32));
 
+            eq_(s.constraints.N, 4);
+            numpy.testing.assert_array_equal(s.constraints.value, numpy.array([0,0,0,0], dtype=numpy.float32));
+            numpy.testing.assert_array_equal(s.constraints.group, numpy.array([[0,0],[0,0],[0,0], [0,0]], dtype=numpy.uint32));
+
 def test_fallback():
     with tempfile.TemporaryDirectory() as d:
         snap0 = gsd.hoomd.Snapshot();
@@ -140,6 +145,10 @@ def test_fallback():
         snap0.impropers.types = ['improperA', 'improperB']
         snap0.impropers.group = [[1, 0, 0, 1]];
 
+        snap0.constraints.N = 1;
+        snap0.constraints.value = [1.1];
+        snap0.constraints.group = [[0,1]];
+
         snap1 = gsd.hoomd.Snapshot();
         snap1.particles.N = 2;
         snap1.particles.position = [[-2, -1, 0], [1, 3.0, 0.5]];
@@ -151,6 +160,7 @@ def test_fallback():
         snap2.angles.N = 4;
         snap2.dihedrals.N = 5;
         snap2.impropers.N = 6;
+        snap2.constraints.N = 4;
 
         gsd.hoomd.create(name=d+"/test_fallback.gsd");
 
@@ -199,6 +209,10 @@ def test_fallback():
             numpy.testing.assert_array_equal(s.impropers.typeid, snap0.impropers.typeid);
             numpy.testing.assert_array_equal(s.impropers.group, snap0.impropers.group);
 
+            eq_(s.constraints.N, snap0.constraints.N);
+            numpy.testing.assert_array_equal(s.constraints.value, snap0.constraints.value);
+            numpy.testing.assert_array_equal(s.constraints.group, snap0.constraints.group);
+
             # test that everything but position remained the same in frame 1
             s = hf.read_frame(1);
 
@@ -238,6 +252,10 @@ def test_fallback():
             numpy.testing.assert_array_equal(s.impropers.typeid, snap0.impropers.typeid);
             numpy.testing.assert_array_equal(s.impropers.group, snap0.impropers.group);
 
+            eq_(s.constraints.N, snap0.constraints.N);
+            numpy.testing.assert_array_equal(s.constraints.value, snap0.constraints.value);
+            numpy.testing.assert_array_equal(s.constraints.group, snap0.constraints.group);
+
             # check that the third frame goes back to defaults because it has a different N
             s = hf.read_frame(2);
 
@@ -273,6 +291,10 @@ def test_fallback():
             eq_(s.impropers.types, snap0.impropers.types);
             numpy.testing.assert_array_equal(s.impropers.typeid, numpy.array([0,0,0,0,0,0], dtype=numpy.uint32));
             numpy.testing.assert_array_equal(s.impropers.group, numpy.array([[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]], dtype=numpy.uint32));
+
+            eq_(s.constraints.N, 4);
+            numpy.testing.assert_array_equal(s.constraints.value, numpy.array([0,0,0,0], dtype=numpy.float32));
+            numpy.testing.assert_array_equal(s.constraints.group, numpy.array([[0,0],[0,0],[0,0], [0,0]], dtype=numpy.uint32));
 
 def test_fallback2():
     with tempfile.TemporaryDirectory() as d:
