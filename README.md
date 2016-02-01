@@ -2,7 +2,8 @@
 
 ## Overview
 
-GSD (General Simulation Data) is a file format specification and a library to read and write it.
+GSD (General Simulation Data) is a file format specification and a library to read and write it. The package also
+contains a python module that reads and writes hoomd schema gsd files with an easy to use syntax.
 
 * Efficiently store many frames of data from simulation runs.
 * High performance file read and write.
@@ -32,7 +33,64 @@ $ conda install gsd
 
 TODO: It is not actually available yet.
 
-## Examples
+## HOOMD examples
+
+Create a hoomd gsd file.
+```python
+>>> s = gsd.hoomd.Snapshot()
+>>> s.particles.N = 4
+>>> s.particles.types = ['A', 'B']
+>>> s.particles.typeid = [0,0,1,1]
+>>> s.particles.position = [[0,0,0],[1,1,1], [-1,-1,-1], [1,-1,-1]]
+>>> s.configuration.box = [3, 3, 3, 0, 0, 0]
+>>> gsd.hoomd.create(name='test.gsd', snapshot=s)
+```
+
+Append frames to a gsd file:
+```python
+>>> def create_frame(i):
+...     s = gsd.hoomd.Snapshot();
+...     s.configuration.step = i;
+...     s.particles.N = 4+i;
+...     s.particles.position = numpy.random.random(size=(4+i,3))
+...     return s;
+>>> with gsd.fl.GSDFile('test.gsd', 'w') as f:
+...     t = gsd.hoomd.HOOMDTrajectory(f);
+...     t.extend( (create_frame(i) for i in range(10)) )
+...     print(len(t))
+11
+```
+
+Randomly index frames:
+```python
+>>> with gsd.fl.GSDFile('test.gsd', 'w') as f:
+...     t = gsd.hoomd.HOOMDTrajectory(f);
+...     snap = t[5]
+...     print(snap.configuration.step)
+4
+...     print(snap.particles.N)
+8
+...     print(snap.particles.position)
+[[ 0.56993282  0.42243481  0.5502916 ]
+ [ 0.36892486  0.38167036  0.27310368]
+ [ 0.04739023  0.13603486  0.196539  ]
+ [ 0.120232    0.91591144  0.99463677]
+ [ 0.79806316  0.16991436  0.15228257]
+ [ 0.13724308  0.14253527  0.02505   ]
+ [ 0.39287439  0.82519054  0.01613089]
+ [ 0.23150323  0.95167434  0.7715748 ]]
+```
+
+Slice frames:
+```python
+>>> with gsd.fl.GSDFile('test.gsd', 'w') as f:
+...     t = gsd.hoomd.HOOMDTrajectory(f);
+...     for s in t[5:-2]:
+...         print(s.configuration.step, end=' ')
+4 5 6 7
+```
+
+## File layer examples
 
 ```python
 with GSDFile(name='file.gsd', mode='w') as f:
