@@ -80,7 +80,8 @@ uint16_t __gsd_get_id(struct gsd_handle *handle, const char *name, uint8_t appen
         handle->open_flags == GSD_OPEN_READWRITE &&
         handle->namelist_num_entries < handle->header.namelist_allocated_entries)
         {
-        strncpy(handle->namelist[handle->namelist_num_entries].name, name, sizeof(struct gsd_namelist_entry));
+        strncpy(handle->namelist[handle->namelist_num_entries].name, name, sizeof(struct gsd_namelist_entry)-1);
+        handle->namelist[handle->namelist_num_entries].name[sizeof(struct gsd_namelist_entry)-1] = 0;
 
         // update the namelist on disk
         lseek(handle->fd,
