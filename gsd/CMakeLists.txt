@@ -22,7 +22,7 @@ else()
     endif()
 endif()
 
-set_source_files_properties(${FL_SRC} PROPERTIES COMPILE_DEFINITIONS NO_IMPORT)
+set_source_files_properties(${FL_SRC} PROPERTIES COMPILE_DEFINITIONS NO_IMPORT_ARRAY)
 
 add_library(fl SHARED gsd.c ${FL_SRC})
 
