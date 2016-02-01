@@ -41,6 +41,26 @@ Functions
         * -4: Corrupt file
         * -5: Unable to allocate memory
 
+.. c:function:: int gsd_truncate(gsd_handle_t* handle)
+
+    Truncate a GSD file opened by :c:func:`gsd_open()`.
+
+    After truncating, a file will have no frames and no data chunks. The file
+    size will be that of a newly created gsd file. The application, schema,
+    and schema version metadata will be kept. Truncate does not close and
+    reopen the file, so it is suitable for writing restart files on Lustre
+    file systems without any metadata access.
+
+    :param handle: Handle to truncate.
+
+    :return: 0 on success. Negative value on failure:
+
+        * -1: IO error (check errno)
+        * -2: Not a GSD file
+        * -3: Invalid GSD file version
+        * -4: Corrupt file
+        * -5: Unable to allocate memory
+
 .. c:function:: int gsd_close(gsd_handle_t* handle)
 
     Close a GSD file opened by :c:func:`gsd_open()`.
