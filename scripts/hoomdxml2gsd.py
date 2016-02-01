@@ -1,10 +1,39 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 import argparse
 import xml.dom.minidom
 import gsd.fl
 import gsd.hoomd
 import numpy
+from collections import OrderedDict
+
+def parse_typenames(typename_list):
+    ntypes = 0;
+    mapping = OrderedDict();
+
+    for t in typename_list:
+        if t not in mapping:
+            mapping[t] = ntypes;
+            ntypes = ntypes+1;
+
+    typeid = numpy.array([mapping[t] for t in typename_list], dtype=numpy.uint32)
+
+    return typeid, list(mapping)
+
+def parse_bonds(obj, bond_node, n):
+    bond_text = bond_node.childNodes[0].data;
+    bond_list = bond_text.split();
+    if len(bond_list) > 0:
+        bond_arr = numpy.array(bond_list);
+        bond_arr = bond_arr.reshape((len(bond_list)/(n+1), n+1))
+
+        type_names = bond_arr[:,0];
+
+        obj.N = len(type_names);
+        obj.typeid, obj.types = parse_typenames(type_names);
+        obj.group = numpy.array(bond_arr[:,1:], dtype=numpy.int32)
+
+        print(obj.typeid, obj.types)
 
 def read_xml(name):
     snap = gsd.hoomd.Snapshot();
@@ -74,10 +103,10 @@ def read_xml(name):
         type_names = type_text.split();
         if len(type_names) != snap.particles.N:
             raise RuntimeError("wrong number of types found in xml file")
+
+        snap.particles.typeid, snap.particles.types = parse_typenames(type_names);
     else:
         raise RuntimeError("type tag not found in xml file")
-
-    # TODO: assign type names to type ids
 
     # parse the particle masses
     mass_nodes = configuration.getElementsByTagName('mass');
@@ -160,6 +189,22 @@ def read_xml(name):
 
         snap.particles.angmomg = numpy.array(angmom_list, dtype=numpy.float32);
         snap.particles.angmomg = snap.particles.angmomg.reshape((snap.particles.N,4))
+
+    bond_nodes = configuration.getElementsByTagName('bond');
+    if len(bond_nodes) == 1:
+        parse_bonds(snap.bonds, bond_nodes[0], 2);
+
+    angle_nodes = configuration.getElementsByTagName('angle');
+    if len(angle_nodes) == 1:
+        parse_bonds(snap.angles, angle_nodes[0], 3);
+
+    dihedral_nodes = configuration.getElementsByTagName('dihedral');
+    if len(dihedral_nodes) == 1:
+        parse_bonds(snap.dihedrals, dihedral_nodes[0], 4);
+
+    improper_nodes = configuration.getElementsByTagName('improper');
+    if len(improper_nodes) == 1:
+        parse_bonds(snap.impropers, improper_nodes[0], 4);
 
     return snap;
 
