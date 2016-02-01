@@ -111,6 +111,9 @@ int gsd_create(const char *fname, const char *application, const char *schema, u
 //! Open a GSD file
 int gsd_open(struct gsd_handle* handle, const char *fname, const enum gsd_open_flag flags);
 
+//! Truncate a GSD file
+int gsd_truncate(struct gsd_handle* handle);
+
 //! Close a GSD file
 int gsd_close(struct gsd_handle* handle);
 

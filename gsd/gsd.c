@@ -100,35 +100,20 @@ uint16_t __gsd_get_id(struct gsd_handle *handle, const char *name, uint8_t appen
         }
     }
 
-/*! \param major major version
-    \param minor minor version
+/*! \param fd file descriptor to initialize
 
-    \return a packed version number aaaa.bbbb suitable for storing in a gsd file version entry.
+    Truncate the file and write a new gsd header.
 */
-uint32_t gsd_make_version(unsigned int major, unsigned int minor)
+int __gsd_initialize_file(int fd, const char *application, const char *schema, uint32_t schema_version)
     {
-    return major << 16 | minor;
-    }
-
-/*! \param fname File name
-    \param application Generating application name (truncated to 63 chars)
-    \param schema Schema name for data to be written in this GSD file (truncated to 63 chars)
-    \param schema_version Version of the scheme data to be written (make with gsd_make_version())
-
-    \post Create an empty gsd file in a file of the given name. Overwrite any existing file at that location.
-
-    The generated gsd file is not opened. Call gsd_open() to open it for writing.
-
-    \return 0 on success, -1 on a file IO failure - see errno for details
-*/
-int gsd_create(const char *fname, const char *application, const char *schema, uint32_t schema_version)
-    {
-    // create the file
-    int fd = open(fname, O_RDWR | O_CREAT | O_TRUNC,  S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
-
     // check if the file was created
     if (fd == -1)
         return -1;
+
+    int retval = ftruncate(fd, 0);
+    lseek(fd, 0, SEEK_SET);
+    if (retval != 0)
+        return retval;
 
     // populate header fields
     struct gsd_header header;
@@ -177,42 +162,19 @@ int gsd_create(const char *fname, const char *application, const char *schema, u
     \param fname File name to open
     \param flags Either GSD_OPEN_READWRITE or GSD_OPEN_READONLY
 
-    \pre The file name \a fname is a GSD file.
+    \pre handle->fd is an open file.
+    \pre handle->open_flags is set.
 
-    \post Open a GSD file and populates the handle for use by API calls.
-
-    \return 0 on success. Negative value on failure:
-        * -1: IO error (check errno)
-        * -2: Not a GSD file
-        * -3: Invalid GSD file version
-        * -4: Corrupt file
-        * -5: Unable to allocate memory
+    Read in the file index.
 */
-int gsd_open(struct gsd_handle* handle, const char *fname, const enum gsd_open_flag flags)
+int __gsd_read_header(struct gsd_handle* handle)
     {
-    // allocate the handle
-    memset(handle, 0, sizeof(struct gsd_handle));
-    handle->index = NULL;
-    handle->namelist = NULL;
-    handle->cur_frame = 0;
-
-    // create the file
-    if (flags == GSD_OPEN_READWRITE)
-        {
-        handle->fd = open(fname, O_RDWR);
-        handle->open_flags = GSD_OPEN_READWRITE;
-        }
-    else if (flags == GSD_OPEN_READONLY)
-        {
-        handle->fd = open(fname, O_RDONLY);
-        handle->open_flags = GSD_OPEN_READONLY;
-        }
-
     // check if the file was created
     if (handle->fd == -1)
         return -1;
 
     // read the header
+    lseek(handle->fd, 0, SEEK_SET);
     size_t bytes_read = read(handle->fd, &handle->header, sizeof(struct gsd_header));
     if (bytes_read != sizeof(struct gsd_header))
         return -1;
@@ -292,6 +254,120 @@ int gsd_open(struct gsd_handle* handle, const char *fname, const enum gsd_open_f
     handle->index_written_entries = handle->index_num_entries;
 
     return 0;
+    }
+
+/*! \param major major version
+    \param minor minor version
+
+    \return a packed version number aaaa.bbbb suitable for storing in a gsd file version entry.
+*/
+uint32_t gsd_make_version(unsigned int major, unsigned int minor)
+    {
+    return major << 16 | minor;
+    }
+
+/*! \param fname File name
+    \param application Generating application name (truncated to 63 chars)
+    \param schema Schema name for data to be written in this GSD file (truncated to 63 chars)
+    \param schema_version Version of the scheme data to be written (make with gsd_make_version())
+
+    \post Create an empty gsd file in a file of the given name. Overwrite any existing file at that location.
+
+    The generated gsd file is not opened. Call gsd_open() to open it for writing.
+
+    \return 0 on success, -1 on a file IO failure - see errno for details
+*/
+int gsd_create(const char *fname, const char *application, const char *schema, uint32_t schema_version)
+    {
+    // create the file
+    int fd = open(fname, O_RDWR | O_CREAT | O_TRUNC,  S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
+    return __gsd_initialize_file(fd, application, schema, schema_version);
+    }
+
+/*! \param handle Handle to open
+    \param fname File name to open
+    \param flags Either GSD_OPEN_READWRITE or GSD_OPEN_READONLY
+
+    \pre The file name \a fname is a GSD file.
+
+    \post Open a GSD file and populates the handle for use by API calls.
+
+    \return 0 on success. Negative value on failure:
+        * -1: IO error (check errno)
+        * -2: Not a GSD file
+        * -3: Invalid GSD file version
+        * -4: Corrupt file
+        * -5: Unable to allocate memory
+*/
+int gsd_open(struct gsd_handle* handle, const char *fname, const enum gsd_open_flag flags)
+    {
+    // allocate the handle
+    memset(handle, 0, sizeof(struct gsd_handle));
+    handle->index = NULL;
+    handle->namelist = NULL;
+    handle->cur_frame = 0;
+
+    // create the file
+    if (flags == GSD_OPEN_READWRITE)
+        {
+        handle->fd = open(fname, O_RDWR);
+        handle->open_flags = GSD_OPEN_READWRITE;
+        }
+    else if (flags == GSD_OPEN_READONLY)
+        {
+        handle->fd = open(fname, O_RDONLY);
+        handle->open_flags = GSD_OPEN_READONLY;
+        }
+
+    return __gsd_read_header(handle);
+    }
+
+/*! \param handle Handle to an open GSD file
+
+    Truncate the gsd file, then write a new header. Truncating a file removes all frames and data chunks. The
+    application, schema, and schema version are not modified. Truncating may be useful when writing restart files
+    to reduce the metadata load on Lustre file servers.
+
+    \return 0 on success. Negative value on failure:
+        * -1: IO error (check errno)
+        * -2: Invalid input
+        * -3: Invalid GSD file version
+        * -4: Corrupt file
+        * -5: Unable to allocate memory
+*/
+int gsd_truncate(struct gsd_handle* handle)
+    {
+    if (handle == NULL)
+        return -2;
+    if (handle->open_flags == GSD_OPEN_READONLY)
+        return -2;
+
+    // deallocate indices
+    if (handle->namelist != NULL)
+        {
+        memset(handle->namelist, 0, sizeof(struct gsd_namelist_entry)*handle->header.namelist_allocated_entries);
+        free(handle->namelist);
+        handle->namelist = NULL;
+        }
+
+    if (handle->index != NULL)
+        {
+        memset(handle->index, 0, sizeof(struct gsd_index_entry)*handle->header.index_allocated_entries);
+        free(handle->index);
+        handle->index = NULL;
+        }
+
+    // keep a copy of the old header
+    struct gsd_header old_header = handle->header;
+    int retval = __gsd_initialize_file(handle->fd,
+                                       old_header.application,
+                                       old_header.schema,
+                                       old_header.schema_version);
+
+    if (retval != 0)
+        return retval;
+
+    return __gsd_read_header(handle);
     }
 
 /*! \param handle Handle to an open GSD file

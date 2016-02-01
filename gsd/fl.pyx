@@ -189,6 +189,35 @@ cdef class GSDFile:
                 libgsd.gsd_close(&self.__handle);
             self.__is_open = False;
 
+    def truncate(self):
+        """ truncate()
+
+        Truncate all data from the file. After truncation, the file has no
+        frames and no data chunks. The application, schema, and schema version
+        remain the same.
+        """
+
+        if not self.__is_open:
+            raise ValueError("File is not open");
+
+        logger.info('truncating file: ' + self.name);
+        with nogil:
+            retval = libgsd.gsd_truncate(&self.__handle);
+
+        if retval == -1:
+            raise IOError(*__format_errno(self.name));
+        elif retval == -2:
+            raise RuntimeError("Not a GSD file: " + self.name);
+        elif retval == -3:
+            raise RuntimeError("Unsupported GSD file version: " + self.name);
+        elif retval == -4:
+            raise RuntimeError("Corrupt GSD file: " + self.name);
+        elif retval == -5:
+            raise MemoryError("Unable to allocate GSD index: " + self.name);
+        elif retval != 0:
+            raise RuntimeError("Unknown error");
+
+
     def end_frame(self):
         """ end_frame()
 

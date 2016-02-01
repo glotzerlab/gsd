@@ -333,3 +333,19 @@ def test_iteration():
             snaps = hf[15:-3];
             steps = [snap.configuration.step for snap in snaps];
             eq_(steps, [16,17]);
+
+def test_truncate():
+    with tempfile.TemporaryDirectory() as d:
+        gsd.hoomd.create(name=d+"/test_iteration.gsd");
+
+        with gsd.fl.GSDFile(name=d+"/test_iteration.gsd", mode='w') as f:
+            hf = gsd.hoomd.HOOMDTrajectory(f);
+            hf.extend((create_frame(i) for i in range(20)));
+
+            eq_(len(hf), 20);
+            s = hf[10];
+            ok_(hf._initial_frame is not None);
+
+            hf.truncate();
+            eq_(len(hf), 0);
+            ok_(hf._initial_frame is None);

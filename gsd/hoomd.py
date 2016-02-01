@@ -394,6 +394,13 @@ class HOOMDTrajectory(object):
 
         self.file.end_frame();
 
+    def truncate(self):
+        """ Remove all frames from the file.
+        """
+
+        self.file.truncate();
+        self._initial_frame = None;
+
     def _should_write(self, path, name, snapshot):
         """ Test if we should write a given data chunk.
 

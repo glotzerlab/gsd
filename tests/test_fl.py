@@ -159,3 +159,38 @@ def test_dtype_errors():
             with gsd.fl.GSDFile(name=d+'/test_dtype_errors.gsd', mode='w') as f:
                 f.write_chunk(name='chunk1', data=data);
                 f.end_frame();
+
+def test_truncate():
+    with tempfile.TemporaryDirectory() as d:
+        gsd.fl.create(name=d+'/test_truncate.gsd', application='test_truncate', schema='none', schema_version=[1,2]);
+
+        data = numpy.ascontiguousarray(numpy.random.random(size=(1000,3)), dtype=numpy.float32);
+        with gsd.fl.GSDFile(name=d+'/test_truncate.gsd', mode='w') as f:
+            eq_(f.mode, 'w');
+            for i in range(10):
+                f.write_chunk(name='data', data=data);
+                f.end_frame();
+
+            large_file_size = f.file_size;
+
+            eq_(f.nframes, 10);
+
+            f.truncate();
+            eq_(f.nframes, 0);
+            eq_(f.application, 'test_truncate');
+            eq_(f.schema, 'none');
+            eq_(f.schema_version, (1,2));
+
+            f.write_chunk(name='data', data=data);
+            f.end_frame();
+
+        with gsd.fl.GSDFile(name=d+'/test_truncate.gsd', mode='r') as f:
+            small_file_size = f.file_size;
+            ok_(large_file_size > small_file_size);
+
+            eq_(f.name, d+'/test_truncate.gsd');
+            eq_(f.mode, 'r');
+            eq_(f.application, 'test_truncate');
+            eq_(f.schema, 'none');
+            eq_(f.schema_version, (1,2));
+            eq_(f.nframes, 1);
