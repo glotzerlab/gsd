@@ -13,5 +13,6 @@ Contents:
    c-api
    specification
    scripts
+   benchmark
    license
    index
