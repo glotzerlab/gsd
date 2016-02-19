@@ -8,6 +8,8 @@ and reads them as a GSD formatted file. Use if you are reading GSD files from in
 etc... For regular files on the filesystem, or for writing gsd files, yse :py:mod:`gsd.fl`.
 """
 
+__version__ = "0.0.2";
+
 import logging
 import numpy
 import struct
