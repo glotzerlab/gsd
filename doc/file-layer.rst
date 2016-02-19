@@ -58,9 +58,9 @@ Support:
 * Reference up to 65536 different chunk names within a file
 * Application and scheme names up to 63 characters
 * Store as many frames as can fit in a file up to file size limits
-* Data chunks up to (64-bit) x (8-bit) elements
+* Data chunks up to (64-bit) x (32-bit) elements
 
-The limits on only 16-bit name indices and 8-bit column indices are to keep the size of each index entry as small as
+The limits on only 16-bit name indices and 32-bit column indices are to keep the size of each index entry as small as
 possible to avoid wasting space in the file index. The primary use cases in mind for column indices are Nx3 and Nx4
 arrays for position and quaternion values. Schemas that wish to store larger truly n-dimensional arrays can store
 their dimensionality in metadata in another chunk and store as an Nx1 index entry. Or use a file format more suited
@@ -71,7 +71,8 @@ Dependencies
 
 The file layer is implemented in C (*not C++*) with no dependencies to enable trivial
 installation and incorporation into existing projects. A single header and C file completely implement
-the entire file layer in a few hundred lines of code.
+the entire file layer in a few hundred lines of code. Python based projects that need only read access can use
+:py:mod:`gsd.flpy`, a pure python gsd reader implementation.
 
 A python interface to the file layer allows reference implementations and convenience methods for schemas.
 Most non-technical users of GSD will probably use these reference implementations directly in their scripts.
@@ -98,7 +99,7 @@ There are four types of data blocks in a GSD file.
     * The index contains space for any number of `index_entry` structs, the header indicates how many slots are used.
     * When the index fills up, a new index block is allocated at the end of the file with more space and all
       current index entries are rewritten there.
-    * Index entry size: 28 bytes
+    * Index entry size: 32 bytes
 #. Name list
     * List of string names used by index entries.
     * Each name is a `name_entry` struct, which holds up to 63 characters.
@@ -114,19 +115,19 @@ Header block
 
 This is the header block::
 
-    struct gsd_header_t
+    struct gsd_header
         {
         uint64_t magic;
-        uint32_t gsd_version;
-        char application[64];
-        char schema[64];
-        uint32_t schema_version;
         uint64_t index_location;
         uint64_t index_allocated_entries;
         uint64_t namelist_location;
         uint64_t namelist_allocated_entries;
+        uint32_t schema_version;
+        uint32_t gsd_version;
+        char application[64];
+        char schema[64];
         char reserved[80];
-        } gsd_header_t;
+        };
 
 
 * ``magic`` is the magic number identifying this as a GSD file (``0x65DF65DF65DF65DF``)
@@ -140,30 +141,38 @@ This is the header block::
 * ``namelist_allocated_entries`` is the number of entries allocated in the namelist block
 * ``reserved`` are bytes saved for future use
 
+This structure is ordered so that all known compilers at the time of writing produced a tightly packed 256-byte header.
+Some compilers may required non-standard packing attributes or pragmas to enforce this.
+
 Index block
 ^^^^^^^^^^^
 
 An Index block is made of a number of line items that store a pointer to a single data chunk::
 
-    typedef struct gsd_index_entry_t
+    struct gsd_index_entry
         {
         uint64_t frame;
         uint64_t N;
         int64_t location;
+        uint32_t M;
         uint16_t id;
-        uint8_t M;
         uint8_t type;
-        } gsd_index_entry_t;
+        uint8_t flags;
+        };
 
 * ``frame`` is the index of the frame this chunk belongs to
 * ``N`` and ``M`` define the dimensions of the data matrix (NxM in C ordering with M as the fast index).
 * ``location`` is the location of the data chunk in the file
 * ``id`` is the index of the name of this entry in the namelist.
 * ``type`` is the type of the data (char, int, float, double) indicated by index values
+* ``flags`` is reserved for future use (it rounds the struct size out to 32 bytes).
 
 
 Many ``gsd_index_entry_t`` structs are combined into one index block. They are stored densely packed and in the same
 order as the corresponding data chunks are written to the file.
+
+This structure is ordered so that all known compilers at the time of writing produced a tightly packed 32-byte entry.
+Some compilers may required non-standard packing attributes or pragmas to enforce this.
 
 The frame index must monotonically increase from one index entry to the next. The GSD API ensures this.
 

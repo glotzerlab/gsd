@@ -376,6 +376,7 @@ cdef class GSDFile:
                                            gsd_type,
                                            N,
                                            M,
+                                           0,
                                            data_ptr);
 
         if retval == -1:

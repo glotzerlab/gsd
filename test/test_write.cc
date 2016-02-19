@@ -26,13 +26,13 @@ int main()
         int value = i*10;
         int value2 = i*100;
 
-        int err = gsd_write_chunk(&handle, "value", GSD_TYPE_UINT32, 1, 1, (void*)&value);
+        int err = gsd_write_chunk(&handle, "value", GSD_TYPE_UINT32, 1, 1, 0, (void*)&value);
         if (err != 0)
             {
             cout << "Error writing gsd file" << endl;
             exit(1);
             }
-        err = gsd_write_chunk(&handle, "v2", GSD_TYPE_UINT32, 1, 1, (void*)&value2);
+        err = gsd_write_chunk(&handle, "v2", GSD_TYPE_UINT32, 1, 1, 0, (void*)&value2);
         if (err != 0)
             {
             cout << "Error writing gsd file 2" << endl;

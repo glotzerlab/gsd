@@ -121,7 +121,7 @@ int __gsd_initialize_file(int fd, const char *application, const char *schema, u
     memset(&header, 0, sizeof(header));
 
     header.magic = 0x65DF65DF65DF65DF;
-    header.gsd_version = gsd_make_version(0,2);
+    header.gsd_version = gsd_make_version(0,3);
     strncpy(header.application, application, sizeof(header.application)-1);
     header.application[sizeof(header.application)-1] = 0;
     strncpy(header.schema, schema, sizeof(header.schema)-1);
@@ -184,7 +184,7 @@ int __gsd_read_header(struct gsd_handle* handle)
     if (handle->header.magic != 0x65DF65DF65DF65DF)
         return -2;
 
-    if (handle->header.gsd_version != gsd_make_version(0,2))
+    if (handle->header.gsd_version != gsd_make_version(0,3))
         return -3;
 
     // determine the file size
@@ -466,6 +466,7 @@ int gsd_end_frame(struct gsd_handle* handle)
     \param type type ID that identifies the type of data in \a data
     \param N Number of rows in the data
     \param M Number of columns in the data
+    \param flags set to 0, non-zero values reserved for future use
     \param data Data buffer
 
     \pre \a handle was opened by gsd_open().
@@ -480,7 +481,8 @@ int gsd_write_chunk(struct gsd_handle* handle,
                     const char *name,
                     enum gsd_type type,
                     uint64_t N,
-                    uint8_t M,
+                    uint32_t M,
+                    uint8_t flags,
                     const void *data)
     {
     // validate input

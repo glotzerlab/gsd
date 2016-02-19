@@ -66,6 +66,7 @@ cdef extern from "gsd.h" nogil:
                     gsd_type type,
                     uint64_t N,
                     uint8_t M,
+                    uint8_t flags,
                     const void *data);
     const gsd_index_entry* gsd_find_chunk(gsd_handle* handle, uint64_t frame, const char *name);
     int gsd_read_chunk(gsd_handle* handle, void* data, const gsd_index_entry* chunk);

@@ -45,14 +45,14 @@ enum gsd_open_flag
 struct gsd_header
     {
     uint64_t magic;
-    uint32_t gsd_version;               //!< File format version: 0xaaaabbbb => aaaa.bbbb
-    char application[64];               //!< Name of generating application
-    char schema[64];                    //!< Name of data schema
-    uint32_t schema_version;            //!< Schema version: 0xaaaabbbb => aaaa.bbbb
     uint64_t index_location;
     uint64_t index_allocated_entries;
     uint64_t namelist_location;
     uint64_t namelist_allocated_entries;
+    uint32_t schema_version;            //!< Schema version: 0xaaaabbbb => aaaa.bbbb
+    uint32_t gsd_version;               //!< File format version: 0xaaaabbbb => aaaa.bbbb
+    char application[64];               //!< Name of generating application
+    char schema[64];                    //!< Name of data schema
     char reserved[80];
     };
 
@@ -66,9 +66,10 @@ struct gsd_index_entry
     uint64_t frame;     //!< Frame index of the chunk
     uint64_t N;         //!< Number of rows in the chunk
     int64_t location;
+    uint32_t M;         //!< Number of columns in the chunk
     uint16_t id;
-    uint8_t M;          //!< Number of columns in the chunk
     uint8_t type;       //!< Data type of the chunk
+    uint8_t flags;
     };
 
 //! Namelist entry
@@ -125,7 +126,8 @@ int gsd_write_chunk(struct gsd_handle* handle,
                     const char *name,
                     enum gsd_type type,
                     uint64_t N,
-                    uint8_t M,
+                    uint32_t M,
+                    uint8_t flags,
                     const void *data);
 
 //! Find a chunk in the GSD file
