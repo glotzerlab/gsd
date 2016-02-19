@@ -24,17 +24,18 @@ gsd_index_entry_struct = struct.Struct('QQqIHBB');
 gsd_namelist_entry = namedtuple('gsd_namelist_entry', 'name');
 gsd_namelist_entry_struct = struct.Struct('64s');
 
-gsd_type_mapping = {};
-gsd_type_mapping[1] = numpy.dtype('uint8');  # GSD_TYPE_UINT8
-gsd_type_mapping[2] = numpy.dtype('uint16');  # GSD_TYPE_UINT16
-gsd_type_mapping[3] = numpy.dtype('uint32');  # GSD_TYPE_UINT32
-gsd_type_mapping[4] = numpy.dtype('uint64');  # GSD_TYPE_UINT64
-gsd_type_mapping[5] = numpy.dtype('int8');  # GSD_TYPE_INT8
-gsd_type_mapping[6] = numpy.dtype('int16');  # GSD_TYPE_INT16
-gsd_type_mapping[7] = numpy.dtype('int32');  # GSD_TYPE_INT32
-gsd_type_mapping[8] = numpy.dtype('int64');  # GSD_TYPE_INT64
-gsd_type_mapping[9] = numpy.dtype('float32');  # GSD_TYPE_FLOAT
-gsd_type_mapping[10] = numpy.dtype('float64');  # GSD_TYPE_DOUBLE
+gsd_type_mapping = {
+    1: numpy.dtype('uint8'),
+    2: numpy.dtype('uint16'),
+    3: numpy.dtype('uint32'),
+    4: numpy.dtype('uint64'),
+    5: numpy.dtype('int8'),
+    6: numpy.dtype('int16'),
+    7: numpy.dtype('int32'),
+    8: numpy.dtype('int64'),
+    9: numpy.dtype('float32'),
+    10: numpy.dtype('float64'),
+    }
 
 class GSDFile(object):
     """ GSDFile(file)
