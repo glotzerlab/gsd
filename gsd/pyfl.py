@@ -65,7 +65,7 @@ class GSDFile(object):
         Access file **metadata**::
 
             f = GSDFile(open('file.gsd', mode='rb'));
-            print(f.name, f.mode, f.file_size, f.gsd_version);
+            print(f.name, f.mode, f.gsd_version);
             print(f.application, f.schema, f.schema_version);
             print(f.nframes);
 
@@ -83,7 +83,6 @@ class GSDFile(object):
         application (str): Name of the generating application **(read only)**.
         schema (str): Name of the data schema **(read only)**.
         schema_version (tuple[int]): Schema version number [major, minor] **(read only)**.
-        file_size (int): File size in bytes **(read only)**.
         nframes (int): Number of frames **(read only)**.
     """
 
@@ -107,7 +106,7 @@ class GSDFile(object):
             raise RuntimeError("Unsupported GSD file version: " + str(self.__file));
 
         # determine the file size (only works in python 3)
-        self.__file_size = self.__file.seek(0, 2);
+        self.__file.seek(0, 2);
 
         # read the index block. Since this is a read-only implementation, only read in the used entries
         self.__index = [];
@@ -336,12 +335,6 @@ class GSDFile(object):
     @property
     def application(self):
         return self.__header.application.rstrip(b'\x00').decode('utf-8');
-
-    @property
-    def file_size(self):
-        if self.__file_size is None:
-            raise RuntimeError;
-        return self.__file_size;
 
     @property
     def  nframes(self):

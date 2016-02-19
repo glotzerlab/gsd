@@ -106,7 +106,7 @@ cdef class GSDFile:
         Access file **metadata**::
 
             f = GSDFile(name=filename, mode='r');
-            print(f.name, f.mode, f.file_size, f.gsd_version);
+            print(f.name, f.mode, f.gsd_version);
             print(f.application, f.schema, f.schema_version);
             print(f.nframes);
 
@@ -130,7 +130,6 @@ cdef class GSDFile:
         application (str): Name of the generating application **(read only)**.
         schema (str): Name of the data schema **(read only)**.
         schema_version (tuple[int]): Schema version number [major, minor] **(read only)**.
-        file_size (int): File size in bytes **(read only)**.
         nframes (int): Number of frames **(read only)**.
     """
 
@@ -572,10 +571,6 @@ cdef class GSDFile:
     property application:
         def __get__(self):
             return self.__handle.header.application.decode('utf-8');
-
-    property file_size:
-        def __get__(self):
-            return self.__handle.file_size;
 
     property nframes:
         def __get__(self):

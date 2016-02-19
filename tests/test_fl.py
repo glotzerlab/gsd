@@ -65,7 +65,6 @@ def test_metadata():
             eq_(f.schema, 'none');
             eq_(f.schema_version, (1,2));
             eq_(f.nframes, 10);
-            ok_(f.file_size > 4096);
             ok_(f.gsd_version >= (0,2));
 
         # test again with pyfl
@@ -76,7 +75,6 @@ def test_metadata():
             eq_(f.schema, 'none');
             eq_(f.schema_version, (1,2));
             eq_(f.nframes, 10);
-            ok_(f.file_size > 4096);
             ok_(f.gsd_version >= (0,2));
 
 def test_chunk_exists():
@@ -230,8 +228,6 @@ def test_truncate():
                 f.write_chunk(name='data', data=data);
                 f.end_frame();
 
-            large_file_size = f.file_size;
-
             eq_(f.nframes, 10);
 
             f.truncate();
@@ -244,9 +240,6 @@ def test_truncate():
             f.end_frame();
 
         with gsd.fl.GSDFile(name=d+'/test_truncate.gsd', mode='r') as f:
-            small_file_size = f.file_size;
-            ok_(large_file_size > small_file_size);
-
             eq_(f.name, d+'/test_truncate.gsd');
             eq_(f.mode, 'r');
             eq_(f.application, 'test_truncate');
