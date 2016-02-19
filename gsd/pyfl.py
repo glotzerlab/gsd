@@ -36,7 +36,7 @@ gsd_type_mapping[8] = numpy.dtype('int64');  # GSD_TYPE_INT64
 gsd_type_mapping[9] = numpy.dtype('float32');  # GSD_TYPE_FLOAT
 gsd_type_mapping[10] = numpy.dtype('float64');  # GSD_TYPE_DOUBLE
 
-class GSDFile:
+class GSDFile(object):
     """ GSDFile(file)
 
     GSD file access interface. Implemented in pure python and accepts any python file-like object.
