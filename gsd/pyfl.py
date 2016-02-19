@@ -8,12 +8,15 @@ and reads them as a GSD formatted file. Use if you are reading GSD files from in
 etc... For regular files on the filesystem, or for writing gsd files, yse :py:mod:`gsd.fl`.
 """
 
-__version__ = "0.0.2";
-
+from __future__ import print_function
+from __future__ import division
 import logging
 import numpy
 import struct
 from collections import namedtuple
+import sys
+
+__version__ = "0.0.2";
 
 logger = logging.getLogger('gsd.pyfl')
 
@@ -93,7 +96,12 @@ class GSDFile(object):
 
         # read the header
         self.__file.seek(0);
-        header_raw = self.__file.read(gsd_header_struct.size);
+        try:
+            header_raw = self.__file.read(gsd_header_struct.size);
+        except UnicodeDecodeError:
+            print("\nDid you open the file in binary mode (rb)?\n", file=sys.stderr);
+            raise;
+
         if len(header_raw) != gsd_header_struct.size:
             raise IOError;
 
