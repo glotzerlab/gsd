@@ -115,8 +115,8 @@ def run_benchmarks(N, size):
     # time how long it takes to open the file
     print("Opening file... ", file=sys.stderr, flush=True, end='')
     start = time.time();
-    #with gsd.fl.GSDFile(name='test.gsd', mode='r') as f:
-    with gsd.pyfl.GSDFile(open('test.gsd', mode='rb')) as f:
+    with gsd.fl.GSDFile(name='test.gsd', mode='r') as f:
+    #with gsd.pyfl.GSDFile(open('test.gsd', mode='rb')) as f:
         hf = gsd.hoomd.HOOMDTrajectory(f);
         end = time.time();
 
