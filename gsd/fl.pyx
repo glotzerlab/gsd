@@ -181,7 +181,7 @@ cdef class GSDFile:
         Once closed, any other operation on the file object will result in a
         `ValueError`. :py:meth:`close()` may be called more than once.
         The file is automatically closed when garbage collected or when
-        the context manager exists.
+        the context manager exits.
         """
         if self.__is_open:
             logger.info('closing file: ' + self.name);
