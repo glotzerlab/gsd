@@ -194,3 +194,23 @@ def test_truncate():
             eq_(f.schema, 'none');
             eq_(f.schema_version, (1,2));
             eq_(f.nframes, 1);
+
+def test_namelen():
+    with tempfile.TemporaryDirectory() as d:
+        app_long = 'abcdefga'*100;
+        schema_long = 'ijklmnop'*100;
+        chunk_long = '12345678'*100;
+        gsd.fl.create(name=d+'/test_namelen.gsd', application=app_long, schema=schema_long, schema_version=[1,2]);
+
+        with gsd.fl.GSDFile(name=d+'/test_namelen.gsd', mode='w') as f:
+            eq_(f.application, app_long[0:63])
+            eq_(f.schema, schema_long[0:63])
+
+            data = numpy.array([1,2,3,4,5,10012], dtype=numpy.int64);
+            f.write_chunk(name=chunk_long, data=data);
+            f.end_frame();
+
+        with gsd.fl.GSDFile(name=d+'/test_namelen.gsd', mode='w') as f:
+            data_read = f.read_chunk(0, name=chunk_long[0:63]);
+            numpy.testing.assert_array_equal(data, data_read);
+
