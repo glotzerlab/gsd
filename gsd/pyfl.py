@@ -337,6 +337,8 @@ class GSDFile(object):
 
     @property
     def file_size(self):
+        if self.__file_size is None:
+            raise RuntimeError;
         return self.__file_size;
 
     @property
