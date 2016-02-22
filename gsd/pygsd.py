@@ -3,7 +3,7 @@
 
 """ pure python gsd reader
 
-The package :py:mod:`gsd.pyfl` is a pure python implementation of a reader that takes in file-like objects from python
+The package :py:mod:`gsd.pygsd` is a pure python implementation of a reader that takes in file-like objects from python
 and reads them as a GSD formatted file. Use if you are reading GSD files from in memory buffers, in-database grid files
 etc... For regular files on the filesystem, or for writing gsd files, yse :py:mod:`gsd.fl`.
 """
@@ -18,7 +18,7 @@ import sys
 
 __version__ = "0.0.2";
 
-logger = logging.getLogger('gsd.pyfl')
+logger = logging.getLogger('gsd.pygsd')
 
 gsd_header = namedtuple('gsd_header', 'magic index_location index_allocated_entries namelist_location namelist_allocated_entries schema_version gsd_version application schema reserved')
 gsd_header_struct = struct.Struct('QQQQQII64s64s80s');

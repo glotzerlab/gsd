@@ -2,7 +2,7 @@
 # This file is part of the General Simulation Data (GSD) project, released under the BSD 2-Clause License.
 
 import gsd.fl
-import gsd.pyfl
+import gsd.pygsd
 import tempfile
 import numpy
 from nose.tools import ok_, eq_, assert_raises
@@ -37,8 +37,8 @@ def check_dtype(typ):
             eq_(data2d.dtype, read_data2d.dtype);
             numpy.testing.assert_array_equal(data2d, read_data2d);
 
-        # test again with pyfl
-        with gsd.pyfl.GSDFile(file=open(d+"/test_dtype.gsd", mode='rb')) as f:
+        # test again with pygsd
+        with gsd.pygsd.GSDFile(file=open(d+"/test_dtype.gsd", mode='rb')) as f:
             read_data1d = f.read_chunk(frame=0, name='data1d');
             read_data2d = f.read_chunk(frame=0, name='data2d');
 
@@ -67,8 +67,8 @@ def test_metadata():
             eq_(f.nframes, 10);
             ok_(f.gsd_version >= (0,2));
 
-        # test again with pyfl
-        with gsd.pyfl.GSDFile(file=open(d+'/test_metadata.gsd', mode='rb')) as f:
+        # test again with pygsd
+        with gsd.pygsd.GSDFile(file=open(d+'/test_metadata.gsd', mode='rb')) as f:
             eq_(f.name, d+'/test_metadata.gsd');
             eq_(f.mode, 'r');
             eq_(f.application, 'test_metadata');
@@ -118,8 +118,8 @@ def test_chunk_exists():
             with assert_raises(Exception) as cm:
                 read_data = f.read_chunk(frame=1, name='test');
 
-        # test again with pyfl
-        with gsd.pyfl.GSDFile(file=open(d+'/test_chunk_exists.gsd', mode='rb')) as f:
+        # test again with pygsd
+        with gsd.pygsd.GSDFile(file=open(d+'/test_chunk_exists.gsd', mode='rb')) as f:
             ok_(f.chunk_exists(frame=0, name='chunk1'));
             read_data = f.read_chunk(frame=0, name='chunk1');
             ok_(f.chunk_exists(frame=1, name='abcdefg'));
@@ -165,8 +165,8 @@ def test_readonly_errors():
             with assert_raises(Exception) as cm:
                 f.write_chunk(name='chunk1', data=data);
 
-        # test again with pyfl
-        with gsd.pyfl.GSDFile(file=open(d+'/test_readonly_errors.gsd', mode='rb')) as f:
+        # test again with pygsd
+        with gsd.pygsd.GSDFile(file=open(d+'/test_readonly_errors.gsd', mode='rb')) as f:
             with assert_raises(Exception) as cm:
                 f.end_frame();
 
@@ -266,7 +266,7 @@ def test_namelen():
             data_read = f.read_chunk(0, name=chunk_long[0:63]);
             numpy.testing.assert_array_equal(data, data_read);
 
-        # test again with pyfl
-        with gsd.pyfl.GSDFile(file=open(d+'/test_namelen.gsd', mode='rb')) as f:
+        # test again with pygsd
+        with gsd.pygsd.GSDFile(file=open(d+'/test_namelen.gsd', mode='rb')) as f:
             data_read = f.read_chunk(0, name=chunk_long[0:63]);
             numpy.testing.assert_array_equal(data, data_read);

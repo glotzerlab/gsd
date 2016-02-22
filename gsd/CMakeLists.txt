@@ -45,7 +45,7 @@ MACRO(copy_file file)
     )
 ENDMACRO(copy_file)
 
-set(files __init__.py hoomd.py pyfl.py)
+set(files __init__.py hoomd.py pygsd.py)
 
 foreach(file ${files})
     copy_file(${file})

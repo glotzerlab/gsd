@@ -15,7 +15,7 @@ Submodules
    :maxdepth: 3
 
    python-module-gsd.fl
-   python-module-gsd.pyfl
+   python-module-gsd.pygsd
    python-module-gsd.hoomd
 
 Package contents

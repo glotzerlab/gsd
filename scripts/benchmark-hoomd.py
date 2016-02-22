@@ -1,6 +1,6 @@
 import time
 import gsd.fl
-import gsd.pyfl
+import gsd.pygsd
 import gsd.hoomd
 import os
 import math
@@ -116,7 +116,7 @@ def run_benchmarks(N, size):
     print("Opening file... ", file=sys.stderr, flush=True, end='')
     start = time.time();
     with gsd.fl.GSDFile(name='test.gsd', mode='r') as f:
-    #with gsd.pyfl.GSDFile(open('test.gsd', mode='rb')) as f:
+    #with gsd.pygsd.GSDFile(open('test.gsd', mode='rb')) as f:
         hf = gsd.hoomd.HOOMDTrajectory(f);
         end = time.time();
 
