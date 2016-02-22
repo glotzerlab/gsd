@@ -44,7 +44,7 @@ def test_metadata():
         data = numpy.array([1,2,3,4,5,10012], dtype=numpy.int64);
         with gsd.fl.GSDFile(name=d+'/test_metadata.gsd', mode='w') as f:
             eq_(f.mode, 'w');
-            for i in range(10):
+            for i in range(150):
                 f.write_chunk(name='data', data=data);
                 f.end_frame();
 
@@ -54,7 +54,7 @@ def test_metadata():
             eq_(f.application, 'test_metadata');
             eq_(f.schema, 'none');
             eq_(f.schema_version, (1,2));
-            eq_(f.nframes, 10);
+            eq_(f.nframes, 150);
             ok_(f.file_size > 4096);
             ok_(f.gsd_version >= (0,2));
 

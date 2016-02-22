@@ -24,7 +24,7 @@ endif()
 
 set_source_files_properties(${FL_SRC} PROPERTIES COMPILE_DEFINITIONS NO_IMPORT_ARRAY)
 
-add_library(fl SHARED gsd.c ${FL_SRC})
+add_library(fl SHARED gsd_mmap.c ${FL_SRC})
 
 set_target_properties(fl PROPERTIES PREFIX "" OUTPUT_NAME "fl")
 if(APPLE)

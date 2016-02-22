@@ -5,12 +5,48 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <sys/mman.h>
 
 #include "gsd.h"
 
-/*! \file gsd.c
-    \brief Implements the GSD C API
+/*! \file gsd_mmap.c
+    \brief Implements the GSD C API using mmap for efficient handling of large files
 */
+
+/*! \internal
+    \brief Utility function to remap file memory
+    \param handle handle to the open gsd file
+*/
+static int __gsd_remap(struct gsd_handle *handle)
+    {
+    // unmap the mapped region
+    if (handle->mapped_data != NULL)
+        {
+        printf("unmapping\n");
+        int result = munmap(handle->mapped_data, handle->mapped_size);
+        if (result != 0)
+            return result;
+        }
+
+    // map the file
+    int prot = 0;
+    if (handle->open_flags == GSD_OPEN_READWRITE)
+        prot = PROT_READ | PROT_WRITE;
+    else
+        prot = PROT_READ;
+
+    handle->mapped_size = handle->file_size;
+    printf("mapping\n");
+    handle->mapped_data = mmap(NULL, handle->file_size, prot, MAP_FILE | MAP_SHARED, handle->fd, 0);
+
+    if (handle->mapped_data == NULL)
+        return -1;
+
+    // pointer may have changed, update mappings
+    handle->index = (struct gsd_index_entry *) (((char *)handle->mapped_data) + handle->header.index_location);
+
+    return 0;
+    }
 
 /*! \internal
     \brief Utility function to expand the memory space for the index block
@@ -22,36 +58,36 @@ static int __gsd_expand_index(struct gsd_handle *handle)
     // this allows the index to grow rapidly to accommodate new frames
     const int multiplication_factor = 2;
 
-    // save the old size
-    struct gsd_index_entry *old_array = handle->index;
-    size_t old_size = handle->header.index_allocated_entries;
+    printf("Prev file size: %llu\n", handle->file_size);
 
-    // allocate the new larger index block
-    handle->index = (struct gsd_index_entry *)malloc(sizeof(struct gsd_index_entry) * old_size * multiplication_factor);
-    if (handle->index == NULL)
-        return -1;
-
-    // zero the memory
-    memset(handle->index, 0, sizeof(struct gsd_index_entry) * old_size * multiplication_factor);
-
-    // copy the old to the new slot and deallocate the old
-    memcpy(handle->index, old_array, sizeof(struct gsd_index_entry) * old_size);
-    handle->header.index_allocated_entries = old_size * multiplication_factor;
-    free(old_array);
-
-    // now, put the new larger index at the end of the file
+    // copy the current index to the end of the file
     handle->header.index_location = lseek(handle->fd, 0, SEEK_END);
     size_t bytes_written = write(handle->fd, handle->index, sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries);
     if (bytes_written != sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries)
         return -1;
-
-    // set the new file size
     handle->file_size = handle->header.index_location + bytes_written;
+    printf("New file size1: %llu\n", handle->file_size);
+
+    // make the index space at the end of the file bigger and fill with 0s
+    size_t old_num_entries = handle->header.index_allocated_entries;
+    handle->header.index_allocated_entries = old_num_entries * multiplication_factor;
+    handle->file_size += sizeof(struct gsd_index_entry) * (handle->header.index_allocated_entries - old_num_entries);
+    ftruncate(handle->fd, handle->file_size);
+    lseek(handle->fd, 0, SEEK_END);
+
+    printf("New index location: %llu\n", handle->header.index_location);
+    printf("New index size: %llu\n", sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries);
+    printf("New file size2: %llu\n", handle->file_size);
 
     // write the new header out
     lseek(handle->fd, 0, SEEK_SET);
     bytes_written = write(handle->fd, &(handle->header), sizeof(struct gsd_header));
     if (bytes_written != sizeof(struct gsd_header))
+        return -1;
+
+    // remap the file as the index has moved
+    int retval = __gsd_remap(handle);
+    if (retval != 0)
         return -1;
 
     return 0;
@@ -159,7 +195,7 @@ int __gsd_initialize_file(int fd, const char *application, const char *schema, u
     return 0;
     }
 
-/*! \param handle Handle to read the header
+/*! \param handle Open handle to read header information
 
     \pre handle->fd is an open file.
     \pre handle->open_flags is set.
@@ -192,15 +228,8 @@ int __gsd_read_header(struct gsd_handle* handle)
     if (handle->header.index_location + sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries > handle->file_size)
         return -4;
 
-    // read the index block
-    handle->index = (struct gsd_index_entry *)malloc(sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries);
-    if (handle->index == NULL)
-        return -5;
-
-    lseek(handle->fd, handle->header.index_location, SEEK_SET);
-    bytes_read = read(handle->fd, handle->index, sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries);
-    if (bytes_read != sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries)
-        return -1;
+    // map the file into memory
+    __gsd_remap(handle);
 
     // determine the number of index entries (marked by location = 0)
     // base case: the index is full
@@ -248,9 +277,6 @@ int __gsd_read_header(struct gsd_handle* handle)
 
     // determine the current frame counter
     handle->cur_frame = gsd_get_nframes(handle);
-
-    // at this point, all valid index entries have been written to disk
-    handle->index_written_entries = handle->index_num_entries;
 
     return 0;
     }
@@ -304,6 +330,8 @@ int gsd_open(struct gsd_handle* handle, const char *fname, const enum gsd_open_f
     memset(handle, 0, sizeof(struct gsd_handle));
     handle->index = NULL;
     handle->namelist = NULL;
+    handle->mapped_data = NULL;
+    handle->mapped_size = 0;
     handle->cur_frame = 0;
 
     // create the file
@@ -347,13 +375,6 @@ int gsd_truncate(struct gsd_handle* handle)
         memset(handle->namelist, 0, sizeof(struct gsd_namelist_entry)*handle->header.namelist_allocated_entries);
         free(handle->namelist);
         handle->namelist = NULL;
-        }
-
-    if (handle->index != NULL)
-        {
-        memset(handle->index, 0, sizeof(struct gsd_index_entry)*handle->header.index_allocated_entries);
-        free(handle->index);
-        handle->index = NULL;
         }
 
     // keep a copy of the old header
@@ -401,16 +422,19 @@ int gsd_close(struct gsd_handle* handle)
 
     if (handle->index != NULL)
         {
-        memset(handle->index, 0, sizeof(struct gsd_index_entry)*handle->header.index_allocated_entries);
-        free(handle->index);
         handle->index = NULL;
 
         // only close the file if handle->index is valid
         // this attempts to fail gracefully when calling gsd_close(handle) twice.
+        int retval = munmap(handle->mapped_data, handle->mapped_size);
+        handle->mapped_data = NULL;
+        if (retval != 0)
+            return -1;
+
         memset(handle, 0, sizeof(struct gsd_handle));
 
         // close the file
-        int retval = close(fd);
+        retval = close(fd);
         if (retval != 0)
             return -1;
         }
@@ -434,27 +458,9 @@ int gsd_end_frame(struct gsd_handle* handle)
     if (handle->open_flags == GSD_OPEN_READONLY)
         return -2;
 
-    // all data chunks have already been written to the file and the index updated in memory. To end a frame, all we
-    // need to do is increment the frame counter
+    // all data chunks have already been written to the file and the index updated in mapped memory. To end a frame,
+    // all we need to do is increment the frame counter
     handle->cur_frame++;
-
-    // and write unwritten index entries to the file (if there are any to write)
-    uint64_t entries_to_write = handle->index_num_entries - handle->index_written_entries;
-    if (entries_to_write > 0)
-        {
-        // write just those unwritten entries to the end of the index block
-        lseek(handle->fd,
-              handle->header.index_location + sizeof(struct gsd_index_entry)*handle->index_written_entries,
-              SEEK_SET);
-
-        size_t bytes_written = write(handle->fd,
-                                     &(handle->index[handle->index_written_entries]),
-                                     sizeof(struct gsd_index_entry)*entries_to_write);
-        if (bytes_written != sizeof(struct gsd_index_entry) * entries_to_write)
-            return -1;
-
-        handle->index_written_entries += entries_to_write;
-        }
 
     return 0;
     }
