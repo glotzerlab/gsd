@@ -22,7 +22,6 @@ static int __gsd_remap(struct gsd_handle *handle)
     // unmap the mapped region
     if (handle->mapped_data != NULL)
         {
-        printf("unmapping\n");
         int result = munmap(handle->mapped_data, handle->mapped_size);
         if (result != 0)
             return result;
@@ -31,15 +30,19 @@ static int __gsd_remap(struct gsd_handle *handle)
     // map the file
     int prot = 0;
     if (handle->open_flags == GSD_OPEN_READWRITE)
+        {
         prot = PROT_READ | PROT_WRITE;
+        }
     else
+        {
         prot = PROT_READ;
+        }
+    printf("prot: %d\n", prot);
 
     handle->mapped_size = handle->file_size;
-    printf("mapping\n");
-    handle->mapped_data = mmap(NULL, handle->file_size, prot, MAP_FILE | MAP_SHARED, handle->fd, 0);
+    handle->mapped_data = mmap(NULL, handle->mapped_size, prot, MAP_SHARED, handle->fd, 0);
 
-    if (handle->mapped_data == NULL)
+    if (handle->mapped_data == MAP_FAILED)
         return -1;
 
     // pointer may have changed, update mappings
@@ -58,26 +61,21 @@ static int __gsd_expand_index(struct gsd_handle *handle)
     // this allows the index to grow rapidly to accommodate new frames
     const int multiplication_factor = 2;
 
-    printf("Prev file size: %llu\n", handle->file_size);
-
     // copy the current index to the end of the file
     handle->header.index_location = lseek(handle->fd, 0, SEEK_END);
-    size_t bytes_written = write(handle->fd, handle->index, sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries);
+    size_t bytes_written = pwrite(handle->fd, handle->index, sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries, handle->header.index_location);
     if (bytes_written != sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries)
         return -1;
     handle->file_size = handle->header.index_location + bytes_written;
-    printf("New file size1: %llu\n", handle->file_size);
 
     // make the index space at the end of the file bigger and fill with 0s
     size_t old_num_entries = handle->header.index_allocated_entries;
     handle->header.index_allocated_entries = old_num_entries * multiplication_factor;
     handle->file_size += sizeof(struct gsd_index_entry) * (handle->header.index_allocated_entries - old_num_entries);
-    ftruncate(handle->fd, handle->file_size);
+    int retval = ftruncate(handle->fd, handle->file_size);
+    if (retval != 0)
+        return -1;
     lseek(handle->fd, 0, SEEK_END);
-
-    printf("New index location: %llu\n", handle->header.index_location);
-    printf("New index size: %llu\n", sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries);
-    printf("New file size2: %llu\n", handle->file_size);
 
     // write the new header out
     lseek(handle->fd, 0, SEEK_SET);
@@ -86,7 +84,7 @@ static int __gsd_expand_index(struct gsd_handle *handle)
         return -1;
 
     // remap the file as the index has moved
-    int retval = __gsd_remap(handle);
+    retval = __gsd_remap(handle);
     if (retval != 0)
         return -1;
 
@@ -462,6 +460,10 @@ int gsd_end_frame(struct gsd_handle* handle)
     // all we need to do is increment the frame counter
     handle->cur_frame++;
 
+    int retval = msync(handle->mapped_data, handle->mapped_size, MS_ASYNC);
+    if (retval != 0)
+        return -1;
+
     return 0;
     }
 
@@ -530,6 +532,7 @@ int gsd_write_chunk(struct gsd_handle* handle,
     // once we get here, there is a free slot to add this entry to the index
     handle->index[handle->index_num_entries] = index_entry;
     handle->index_num_entries++;
+    printf("wrote entry %llu at location %llu\n" , handle->index_num_entries-1, handle->index[handle->index_num_entries-1].location);
 
     return 0;
     }

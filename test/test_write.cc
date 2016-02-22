@@ -21,7 +21,7 @@ int main()
         exit(1);
         }
 
-    for (unsigned int i = 0; i < 150; i++)
+    for (unsigned int i = 0; i < 3000; i++)
         {
         int value = i*10;
         int value2 = i*100;
