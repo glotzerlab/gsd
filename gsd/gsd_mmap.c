@@ -5,7 +5,12 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <stdio.h>
+
+#define USE_MMAP 1
+
+#if USE_MMAP
 #include <sys/mman.h>
+#endif
 
 #include "gsd.h"
 
