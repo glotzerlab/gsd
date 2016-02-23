@@ -89,7 +89,7 @@ cdef class GSDFile:
     Args:
 
         name (str): File name to open.
-        mode (str): 'r' for read only access, 'w' for read-write access.
+        mode (str): 'rb' for read only access, 'wb' for read-write access.
 
     GSDFile implements an object oriented class interface to the GSD file
     layer. Use it to open an existing file in a **read-only** or
@@ -99,27 +99,27 @@ cdef class GSDFile:
 
         Open a file in **read-only** mode::
 
-            f = GSDFile(name=filename, mode='r');
+            f = GSDFile(name=filename, mode='rb');
             if f.chunk_exists(frame=0, name='chunk'):
                 data = f.read_chunk(frame=0, name='chunk');
 
         Access file **metadata**::
 
-            f = GSDFile(name=filename, mode='r');
+            f = GSDFile(name=filename, mode='rb');
             print(f.name, f.mode, f.gsd_version);
             print(f.application, f.schema, f.schema_version);
             print(f.nframes);
 
         Open a file in **read-write** mode::
 
-            f = GSDFile(name=filename, mode='w');
+            f = GSDFile(name=filename, mode='wb');
             f.write_chunk(name='chunk', data=data_write);
             f.end_frame()
             data_read = f.read_chunk(frame=0, name='chunk');
 
         Use as a **context manager**::
 
-            with GSDFile(filename, 'r') as f:
+            with GSDFile(filename, 'rb') as f:
                 data = f.read_chunk(frame=0, name='chunk');
 
     Attributes:
@@ -140,12 +140,12 @@ cdef class GSDFile:
 
     def __init__(self, name, mode):
         cdef libgsd.gsd_open_flag c_flags;
-        if mode == 'w':
+        if mode == 'wb':
             c_flags = libgsd.GSD_OPEN_READWRITE;
-        elif mode == 'r':
+        elif mode == 'rb':
             c_flags = libgsd.GSD_OPEN_READONLY;
         else:
-            raise ValueError("mode must be 'r' or 'w'");
+            raise ValueError("mode must be 'rb' or 'wb'");
         self.name = name;
         self.mode = mode;
 
@@ -228,7 +228,7 @@ cdef class GSDFile:
 
             Write several frames to the file::
 
-                with GSDFile(name=filename, mode='w') as f:
+                with GSDFile(name=filename, mode='wb') as f:
                     f.write_chunk(name='chunk', data=data);
                     f.end_frame()
                     f.write_chunk(name='chunk', data=data);
@@ -236,7 +236,7 @@ cdef class GSDFile:
                     f.write_chunk(name='chunk', data=data);
                     f.end_frame()
 
-                with GSDFile(name=filename, mode='r') as f:
+                with GSDFile(name=filename, mode='rb') as f:
                     f.chunk_exists(frame=0, name='chunk');  # True
                     f.chunk_exists(frame=1, name='chunk');  # True
                     f.chunk_exists(frame=2, name='chunk');  # True
@@ -281,18 +281,18 @@ cdef class GSDFile:
             Write 1D arrays::
 
                 data = numpy.array([1,2,3,4], dtype=numpy.float32);
-                with GSDFile(name=filename, mode='w') as f:
+                with GSDFile(name=filename, mode='wb') as f:
                     f.write_chunk(name='chunk1d', data);
 
             Write 2D arrays::
 
                 data = numpy.array([[1,2],[2,3],[3,4]], dtype=numpy.float32);
-                with GSDFile(name=filename, mode='w') as f:
+                with GSDFile(name=filename, mode='wb') as f:
                     f.write_chunk(name='chunk2d', data);
 
             Write several chunks to each frame::
 
-                with GSDFile(name=filename, mode='w') as f:
+                with GSDFile(name=filename, mode='wb') as f:
                     f.write_chunk(name='chunk1', data=[1,2,3,4]);
                     f.write_chunk(name='chunk2', data=[5,6,7,8]);
                     f.end_frame()
@@ -401,7 +401,7 @@ cdef class GSDFile:
 
             Handle non-existent chunks::
 
-                with GSDFile(name=filename, mode='r') as f:
+                with GSDFile(name=filename, mode='rb') as f:
                     if f.chunk_exists(frame=0, name='chunk'):
                         return f.read_chunk(frame=0, name='chunk');
                     else:
@@ -441,19 +441,19 @@ cdef class GSDFile:
 
             Read a 1D array::
 
-                with GSDFile(name=filename, mode='r') as f:
+                with GSDFile(name=filename, mode='rb') as f:
                     data = f.read_chunk(frame=0, name='chunk1d');
                     # data.shape == [N]
 
             Read a 2D array::
 
-                with GSDFile(name=filename, mode='r') as f:
+                with GSDFile(name=filename, mode='rb') as f:
                     data = f.read_chunk(frame=0, name='chunk2d');
                     # data.shape == [N,M]
 
             Read multiple frames::
 
-                with GSDFile(name=filename, mode='r') as f:
+                with GSDFile(name=filename, mode='rb') as f:
                     data0 = f.read_chunk(frame=0, name='chunk');
                     data1 = f.read_chunk(frame=1, name='chunk');
                     data2 = f.read_chunk(frame=2, name='chunk');
@@ -606,7 +606,7 @@ def create(name, application, schema, schema_version):
                    schema="My Schema",
                    schema_version=[1,0]);
 
-            with GSDFile(filename="file.gsd", mode='r') as f:
+            with GSDFile(filename="file.gsd", mode='rb') as f:
                 f.write_chunk(...);
 
     .. danger::

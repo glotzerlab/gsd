@@ -256,19 +256,19 @@ class GSDFile(object):
 
             Read a 1D array::
 
-                with GSDFile(name=filename, mode='r') as f:
+                with GSDFile(name=filename, mode='rb') as f:
                     data = f.read_chunk(frame=0, name='chunk1d');
                     # data.shape == [N]
 
             Read a 2D array::
 
-                with GSDFile(name=filename, mode='r') as f:
+                with GSDFile(name=filename, mode='rb') as f:
                     data = f.read_chunk(frame=0, name='chunk2d');
                     # data.shape == [N,M]
 
             Read multiple frames::
 
-                with GSDFile(name=filename, mode='r') as f:
+                with GSDFile(name=filename, mode='rb') as f:
                     data0 = f.read_chunk(frame=0, name='chunk');
                     data1 = f.read_chunk(frame=1, name='chunk');
                     data2 = f.read_chunk(frame=2, name='chunk');
@@ -324,7 +324,7 @@ class GSDFile(object):
 
     @property
     def mode(self):
-        return 'r';
+        return 'rb';
 
     @property
     def gsd_version(self):

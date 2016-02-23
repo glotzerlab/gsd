@@ -23,12 +23,12 @@ def check_dtype(typ):
     with tempfile.TemporaryDirectory() as d:
         gsd.fl.create(name=d+"/test_dtype.gsd", application="test_dtype", schema="none", schema_version=[1,2]);
 
-        with gsd.fl.GSDFile(name=d+"/test_dtype.gsd", mode='w') as f:
+        with gsd.fl.GSDFile(name=d+"/test_dtype.gsd", mode='wb') as f:
             f.write_chunk(name='data1d', data=data1d);
             f.write_chunk(name='data2d', data=data2d);
             f.end_frame();
 
-        with gsd.fl.GSDFile(name=d+"/test_dtype.gsd", mode='r') as f:
+        with gsd.fl.GSDFile(name=d+"/test_dtype.gsd", mode='rb') as f:
             read_data1d = f.read_chunk(frame=0, name='data1d');
             read_data2d = f.read_chunk(frame=0, name='data2d');
 
@@ -52,15 +52,15 @@ def test_metadata():
         gsd.fl.create(name=d+'/test_metadata.gsd', application='test_metadata', schema='none', schema_version=[1,2]);
 
         data = numpy.array([1,2,3,4,5,10012], dtype=numpy.int64);
-        with gsd.fl.GSDFile(name=d+'/test_metadata.gsd', mode='w') as f:
-            eq_(f.mode, 'w');
+        with gsd.fl.GSDFile(name=d+'/test_metadata.gsd', mode='wb') as f:
+            eq_(f.mode, 'wb');
             for i in range(10):
                 f.write_chunk(name='data', data=data);
                 f.end_frame();
 
-        with gsd.fl.GSDFile(name=d+'/test_metadata.gsd', mode='r') as f:
+        with gsd.fl.GSDFile(name=d+'/test_metadata.gsd', mode='rb') as f:
             eq_(f.name, d+'/test_metadata.gsd');
-            eq_(f.mode, 'r');
+            eq_(f.mode, 'rb');
             eq_(f.application, 'test_metadata');
             eq_(f.schema, 'none');
             eq_(f.schema_version, (1,2));
@@ -70,7 +70,7 @@ def test_metadata():
         # test again with pygsd
         with gsd.pygsd.GSDFile(file=open(d+'/test_metadata.gsd', mode='rb')) as f:
             eq_(f.name, d+'/test_metadata.gsd');
-            eq_(f.mode, 'r');
+            eq_(f.mode, 'rb');
             eq_(f.application, 'test_metadata');
             eq_(f.schema, 'none');
             eq_(f.schema_version, (1,2));
@@ -82,7 +82,7 @@ def test_chunk_exists():
         gsd.fl.create(name=d+'/test_chunk_exists.gsd', application='test_chunk_exists', schema='none', schema_version=[1,2]);
 
         data = numpy.array([1,2,3,4,5,10012], dtype=numpy.int64);
-        with gsd.fl.GSDFile(name=d+'/test_chunk_exists.gsd', mode='w') as f:
+        with gsd.fl.GSDFile(name=d+'/test_chunk_exists.gsd', mode='wb') as f:
             f.write_chunk(name='chunk1', data=data);
             f.end_frame();
             f.write_chunk(name='abcdefg', data=data);
@@ -90,7 +90,7 @@ def test_chunk_exists():
             f.write_chunk(name='test', data=data);
             f.end_frame();
 
-        with gsd.fl.GSDFile(name=d+'/test_chunk_exists.gsd', mode='r') as f:
+        with gsd.fl.GSDFile(name=d+'/test_chunk_exists.gsd', mode='rb') as f:
             ok_(f.chunk_exists(frame=0, name='chunk1'));
             read_data = f.read_chunk(frame=0, name='chunk1');
             ok_(f.chunk_exists(frame=1, name='abcdefg'));
@@ -152,13 +152,13 @@ def test_readonly_errors():
         gsd.fl.create(name=d+'/test_readonly_errors.gsd', application='test_readonly_errors', schema='none', schema_version=[1,2]);
 
         data = numpy.array([1,2,3,4,5,10012], dtype=numpy.int64);
-        with gsd.fl.GSDFile(name=d+'/test_readonly_errors.gsd', mode='w') as f:
+        with gsd.fl.GSDFile(name=d+'/test_readonly_errors.gsd', mode='wb') as f:
             for i in range(10):
                 f.write_chunk(name='chunk1', data=data);
                 f.end_frame();
 
         data = numpy.array([1,2,3,4,5,10012], dtype=numpy.int64);
-        with gsd.fl.GSDFile(name=d+'/test_readonly_errors.gsd', mode='r') as f:
+        with gsd.fl.GSDFile(name=d+'/test_readonly_errors.gsd', mode='rb') as f:
             with assert_raises(Exception) as cm:
                 f.end_frame();
 
@@ -179,11 +179,11 @@ def test_fileio_errors():
         gsd.fl.create(name='/this/file/does/not/exist', application='test_readonly_errors', schema='none', schema_version=[1,2]);
 
     with tempfile.TemporaryDirectory() as d:
-        with open(d+'/test_fileio_errors.gsd', 'w') as f:
-            f.write('test');
+        with open(d+'/test_fileio_errors.gsd', 'wb') as f:
+            f.write(b'test');
 
         with assert_raises(Exception) as cm:
-            f = gsd.fl.GSDFile(name=d+'/test_fileio_errors.gsd', mode='r');
+            f = gsd.fl.GSDFile(name=d+'/test_fileio_errors.gsd', mode='rb');
 
 def test_dtype_errors():
     with tempfile.TemporaryDirectory() as d:
@@ -192,28 +192,28 @@ def test_dtype_errors():
         with assert_raises(Exception) as cm:
             data = numpy.array([1,2,3,4,5,10012], dtype=numpy.bool_);
 
-            with gsd.fl.GSDFile(name=d+'/test_dtype_errors.gsd', mode='w') as f:
+            with gsd.fl.GSDFile(name=d+'/test_dtype_errors.gsd', mode='wb') as f:
                 f.write_chunk(name='chunk1', data=data);
                 f.end_frame();
 
         with assert_raises(Exception) as cm:
             data = numpy.array([1,2,3,4,5,10012], dtype=numpy.float16);
 
-            with gsd.fl.GSDFile(name=d+'/test_dtype_errors.gsd', mode='w') as f:
+            with gsd.fl.GSDFile(name=d+'/test_dtype_errors.gsd', mode='wb') as f:
                 f.write_chunk(name='chunk1', data=data);
                 f.end_frame();
 
         with assert_raises(Exception) as cm:
             data = numpy.array([1,2,3,4,5,10012], dtype=numpy.complex64);
 
-            with gsd.fl.GSDFile(name=d+'/test_dtype_errors.gsd', mode='w') as f:
+            with gsd.fl.GSDFile(name=d+'/test_dtype_errors.gsd', mode='wb') as f:
                 f.write_chunk(name='chunk1', data=data);
                 f.end_frame();
 
         with assert_raises(Exception) as cm:
             data = numpy.array([1,2,3,4,5,10012], dtype=numpy.complex128);
 
-            with gsd.fl.GSDFile(name=d+'/test_dtype_errors.gsd', mode='w') as f:
+            with gsd.fl.GSDFile(name=d+'/test_dtype_errors.gsd', mode='wb') as f:
                 f.write_chunk(name='chunk1', data=data);
                 f.end_frame();
 
@@ -222,8 +222,8 @@ def test_truncate():
         gsd.fl.create(name=d+'/test_truncate.gsd', application='test_truncate', schema='none', schema_version=[1,2]);
 
         data = numpy.ascontiguousarray(numpy.random.random(size=(1000,3)), dtype=numpy.float32);
-        with gsd.fl.GSDFile(name=d+'/test_truncate.gsd', mode='w') as f:
-            eq_(f.mode, 'w');
+        with gsd.fl.GSDFile(name=d+'/test_truncate.gsd', mode='wb') as f:
+            eq_(f.mode, 'wb');
             for i in range(10):
                 f.write_chunk(name='data', data=data);
                 f.end_frame();
@@ -239,9 +239,9 @@ def test_truncate():
             f.write_chunk(name='data', data=data);
             f.end_frame();
 
-        with gsd.fl.GSDFile(name=d+'/test_truncate.gsd', mode='r') as f:
+        with gsd.fl.GSDFile(name=d+'/test_truncate.gsd', mode='rb') as f:
             eq_(f.name, d+'/test_truncate.gsd');
-            eq_(f.mode, 'r');
+            eq_(f.mode, 'rb');
             eq_(f.application, 'test_truncate');
             eq_(f.schema, 'none');
             eq_(f.schema_version, (1,2));
@@ -254,7 +254,7 @@ def test_namelen():
         chunk_long = '12345678'*100;
         gsd.fl.create(name=d+'/test_namelen.gsd', application=app_long, schema=schema_long, schema_version=[1,2]);
 
-        with gsd.fl.GSDFile(name=d+'/test_namelen.gsd', mode='w') as f:
+        with gsd.fl.GSDFile(name=d+'/test_namelen.gsd', mode='wb') as f:
             eq_(f.application, app_long[0:63])
             eq_(f.schema, schema_long[0:63])
 
@@ -262,7 +262,7 @@ def test_namelen():
             f.write_chunk(name=chunk_long, data=data);
             f.end_frame();
 
-        with gsd.fl.GSDFile(name=d+'/test_namelen.gsd', mode='r') as f:
+        with gsd.fl.GSDFile(name=d+'/test_namelen.gsd', mode='rb') as f:
             data_read = f.read_chunk(0, name=chunk_long[0:63]);
             numpy.testing.assert_array_equal(data, data_read);
 

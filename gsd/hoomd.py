@@ -35,7 +35,7 @@ Examples:
     ...     s.particles.N = 4+i;
     ...     s.particles.position = numpy.random.random(size=(4+i,3))
     ...     return s;
-    >>> with gsd.fl.GSDFile('test.gsd', 'w') as f:
+    >>> with gsd.fl.GSDFile('test.gsd', 'wb') as f:
     ...     t = gsd.hoomd.HOOMDTrajectory(f);
     ...     t.extend( (create_frame(i) for i in range(10)) )
     ...     print(len(t))
@@ -43,7 +43,7 @@ Examples:
 
     Randomly index frames:
 
-    >>> with gsd.fl.GSDFile('test.gsd', 'w') as f:
+    >>> with gsd.fl.GSDFile('test.gsd', 'wb') as f:
     ...     t = gsd.hoomd.HOOMDTrajectory(f);
     ...     snap = t[5]
     ...     print(snap.configuration.step)
@@ -62,7 +62,7 @@ Examples:
 
     Slice frames:
 
-    >>> with gsd.fl.GSDFile('test.gsd', 'w') as f:
+    >>> with gsd.fl.GSDFile('test.gsd', 'wb') as f:
     ...     t = gsd.hoomd.HOOMDTrajectory(f);
     ...     for s in t[5:-2]:
     ...         print(s.configuration.step, end=' ')
@@ -639,7 +639,7 @@ def create(name, snapshot=None):
     logger.info('creating hoomd gsd file: ' + name);
 
     gsd.fl.create(name=name, application='gsd.hoomd ' + gsd.__version__, schema='hoomd', schema_version=[0,1]);
-    with gsd.fl.GSDFile(name, 'w') as f:
+    with gsd.fl.GSDFile(name, 'wb') as f:
         traj = HOOMDTrajectory(f);
         if snapshot is not None:
             traj.append(snapshot);

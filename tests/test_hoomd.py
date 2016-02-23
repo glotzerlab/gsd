@@ -11,7 +11,7 @@ def test_create():
     with tempfile.TemporaryDirectory() as d:
         gsd.hoomd.create(name=d+"/test_create.gsd", snapshot=None);
 
-        with gsd.fl.GSDFile(name=d+"/test_create.gsd", mode='r') as f:
+        with gsd.fl.GSDFile(name=d+"/test_create.gsd", mode='rb') as f:
             hf = gsd.hoomd.HOOMDTrajectory(f);
             eq_(f.schema, 'hoomd');
             ok_(f.schema_version >= (0,1));
@@ -22,13 +22,13 @@ def test_append():
         snap.particles.N = 10;
         gsd.hoomd.create(name=d+"/test_append.gsd", snapshot=snap);
 
-        with gsd.fl.GSDFile(name=d+"/test_append.gsd", mode='w') as f:
+        with gsd.fl.GSDFile(name=d+"/test_append.gsd", mode='wb') as f:
             hf = gsd.hoomd.HOOMDTrajectory(f);
             for i in range(5):
                 snap.configuration.step=i+1;
                 hf.append(snap);
 
-        with gsd.fl.GSDFile(name=d+"/test_append.gsd", mode='r') as f:
+        with gsd.fl.GSDFile(name=d+"/test_append.gsd", mode='rb') as f:
             hf = gsd.hoomd.HOOMDTrajectory(f);
             eq_(len(hf), 6);
 
@@ -43,11 +43,11 @@ def test_extend():
         snap.particles.N = 10;
         gsd.hoomd.create(name=d+"/test_extend.gsd", snapshot=snap);
 
-        with gsd.fl.GSDFile(name=d+"/test_extend.gsd", mode='w') as f:
+        with gsd.fl.GSDFile(name=d+"/test_extend.gsd", mode='wb') as f:
             hf = gsd.hoomd.HOOMDTrajectory(f);
             hf.extend((create_frame(i) for i in range(5)));
 
-        with gsd.fl.GSDFile(name=d+"/test_extend.gsd", mode='r') as f:
+        with gsd.fl.GSDFile(name=d+"/test_extend.gsd", mode='rb') as f:
             hf = gsd.hoomd.HOOMDTrajectory(f);
             eq_(len(hf), 6);
 
@@ -62,7 +62,7 @@ def test_defaults():
         snap.constraints.N = 4;
         gsd.hoomd.create(name=d+"/test_defaults.gsd", snapshot=snap);
 
-        with gsd.fl.GSDFile(name=d+"/test_defaults.gsd", mode='r') as f:
+        with gsd.fl.GSDFile(name=d+"/test_defaults.gsd", mode='rb') as f:
             hf = gsd.hoomd.HOOMDTrajectory(f);
             s = hf.read_frame(0);
 
@@ -164,11 +164,11 @@ def test_fallback():
 
         gsd.hoomd.create(name=d+"/test_fallback.gsd");
 
-        with gsd.fl.GSDFile(name=d+"/test_fallback.gsd", mode='w') as f:
+        with gsd.fl.GSDFile(name=d+"/test_fallback.gsd", mode='wb') as f:
             hf = gsd.hoomd.HOOMDTrajectory(f);
             hf.extend([snap0, snap1, snap2]);
 
-        with gsd.fl.GSDFile(name=d+"/test_fallback.gsd", mode='r') as f:
+        with gsd.fl.GSDFile(name=d+"/test_fallback.gsd", mode='rb') as f:
             hf = gsd.hoomd.HOOMDTrajectory(f);
             eq_(len(hf), 3);
             s = hf.read_frame(0);
@@ -311,11 +311,11 @@ def test_fallback2():
 
         gsd.hoomd.create(name=d+"/test_fallback2.gsd");
 
-        with gsd.fl.GSDFile(name=d+"/test_fallback2.gsd", mode='w') as f:
+        with gsd.fl.GSDFile(name=d+"/test_fallback2.gsd", mode='wb') as f:
             hf = gsd.hoomd.HOOMDTrajectory(f);
             hf.extend([snap0, snap1]);
 
-        with gsd.fl.GSDFile(name=d+"/test_fallback2.gsd", mode='r') as f:
+        with gsd.fl.GSDFile(name=d+"/test_fallback2.gsd", mode='rb') as f:
             hf = gsd.hoomd.HOOMDTrajectory(f);
             eq_(len(hf), 2);
 
@@ -326,11 +326,11 @@ def test_iteration():
     with tempfile.TemporaryDirectory() as d:
         gsd.hoomd.create(name=d+"/test_iteration.gsd");
 
-        with gsd.fl.GSDFile(name=d+"/test_iteration.gsd", mode='w') as f:
+        with gsd.fl.GSDFile(name=d+"/test_iteration.gsd", mode='wb') as f:
             hf = gsd.hoomd.HOOMDTrajectory(f);
             hf.extend((create_frame(i) for i in range(20)));
 
-        with gsd.fl.GSDFile(name=d+"/test_iteration.gsd", mode='r') as f:
+        with gsd.fl.GSDFile(name=d+"/test_iteration.gsd", mode='rb') as f:
             hf = gsd.hoomd.HOOMDTrajectory(f);
             step = hf[-1].configuration.step;
             eq_(step, 20);
@@ -360,7 +360,7 @@ def test_truncate():
     with tempfile.TemporaryDirectory() as d:
         gsd.hoomd.create(name=d+"/test_iteration.gsd");
 
-        with gsd.fl.GSDFile(name=d+"/test_iteration.gsd", mode='w') as f:
+        with gsd.fl.GSDFile(name=d+"/test_iteration.gsd", mode='wb') as f:
             hf = gsd.hoomd.HOOMDTrajectory(f);
             hf.extend((create_frame(i) for i in range(20)));
 
