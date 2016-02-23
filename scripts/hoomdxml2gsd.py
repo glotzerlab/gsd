@@ -53,7 +53,7 @@ def read_xml(name):
     snap = gsd.hoomd.Snapshot();
 
     # parse the XML file
-    dom = xml.dom.minidom.parse(open(name, 'r'));
+    dom = xml.dom.minidom.parse(open(name, 'rb'));
     hoomd_xml = dom.getElementsByTagName('hoomd_xml');
     if len(hoomd_xml) != 1:
         raise RuntimeError("hoomd_xml tag not found in xml file")
