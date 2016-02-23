@@ -239,19 +239,30 @@ int __gsd_read_header(struct gsd_handle* handle)
             return -1;
         }
 
-    // determine the number of index entries (marked by location = 0)
-    // base case: the index is full
-    handle->index_num_entries = handle->header.index_allocated_entries;
-
-    // general case, find the first index entry with location 0
-    size_t i;
-    for (i = 0; i < handle->header.index_allocated_entries; i++)
+    if (handle->index[0].location == 0)
         {
-        if (handle->index[i].location == 0)
+        handle->index_num_entries = 0;
+        }
+    else
+        {
+        // determine the number of index entries (marked by location = 0)
+        // binary search for the first index entry with location 0
+        size_t L = 0;
+        size_t R = handle->header.index_allocated_entries;
+
+        // progressively narrow the search window by halves
+        do
             {
-            handle->index_num_entries = i;
-            break;
-            }
+            size_t m = (L+R)/2;
+
+            if (handle->index[m].location != 0)
+                L = m;
+            else
+                R = m;
+            } while ((R-L) > 1);
+
+        // this finds R = the first index entry with location = 0
+        handle->index_num_entries = R;
         }
 
     // determine the number of namelist entries (marked by location = 0)
@@ -259,6 +270,7 @@ int __gsd_read_header(struct gsd_handle* handle)
     handle->namelist_num_entries = handle->header.namelist_allocated_entries;
 
     // general case, find the first namelist entry that is the empty string
+    size_t i;
     for (i = 0; i < handle->header.namelist_allocated_entries; i++)
         {
         if (handle->namelist[i].name[0] == 0)
