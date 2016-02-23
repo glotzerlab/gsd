@@ -480,13 +480,13 @@ int gsd_end_frame(struct gsd_handle* handle)
     if (entries_to_write > 0)
         {
         // write just those unwritten entries to the end of the index block
-        lseek(handle->fd,
-              handle->header.index_location + sizeof(struct gsd_index_entry)*handle->index_written_entries,
-              SEEK_SET);
+        int64_t write_pos = handle->header.index_location + sizeof(struct gsd_index_entry)*handle->index_written_entries;
 
-        size_t bytes_written = write(handle->fd,
+        size_t bytes_written = pwrite(handle->fd,
                                      &(handle->index[handle->index_written_entries]),
-                                     sizeof(struct gsd_index_entry)*entries_to_write);
+                                     sizeof(struct gsd_index_entry)*entries_to_write,
+                                     write_pos);
+
         if (bytes_written != sizeof(struct gsd_index_entry) * entries_to_write)
             return -1;
 
@@ -539,15 +539,15 @@ int gsd_write_chunk(struct gsd_handle* handle,
     size_t size = N * M * gsd_sizeof_type(type);
 
     // find the location at the end of the file for the chunk
-    index_entry.location = lseek(handle->fd, 0, SEEK_END);
+    index_entry.location = handle->file_size;
 
     // write the data
-    size_t bytes_written = write(handle->fd, data, size);
+    size_t bytes_written = pwrite(handle->fd, data, size, index_entry.location);
     if (bytes_written != size)
         return -1;
 
     // update the file_size in the handle
-    handle->file_size = index_entry.location + bytes_written;
+    handle->file_size += bytes_written;
 
     // update the index entry in the index
     // need to expand the index if it is already full
@@ -669,18 +669,9 @@ int gsd_read_chunk(struct gsd_handle* handle, void* data, const struct gsd_index
         return -3;
         }
 
-    if (handle->mapped_data != NULL)
-        {
-        void *read_ptr = (void *)((char *)handle->mapped_data + chunk->location);
-        memcpy(data, read_ptr, size);
-        }
-    else
-        {
-        lseek(handle->fd, chunk->location, SEEK_SET);
-        size_t bytes_read = read(handle->fd, data, size);
-        if (bytes_read != size)
-            return -1;
-        }
+    size_t bytes_read = pread(handle->fd, data, size, chunk->location);
+    if (bytes_read != size)
+        return -1;
 
     return 0;
     }
