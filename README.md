@@ -165,3 +165,8 @@ $ open _build/html/index.html
 
 GSD is implemented in less than 1k lines of C code. It doesn't build a shared library, just
 copy `gsd/gsd.h` and `gsd/gsd.c` into your project and compile it directly in.
+
+## Using the pure python reader
+
+If you only need to read files, you can skip installing and just extract the module modules `gsd/pygsd.py` and
+`gsd/hoomd.py`. Together, these implement a pure-python reader for GSD and hoomd files - no C compiler required.

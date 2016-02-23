@@ -2,7 +2,6 @@ from setuptools import setup, find_packages
 from setuptools.extension import Extension
 import numpy
 import sys
-import gsd
 import hashlib
 
 current_checksum = hashlib.sha256()
@@ -21,7 +20,7 @@ fl = Extension('gsd.fl',
                )
 
 setup(name = 'gsd',
-      version = gsd.__version__,
+      version = '0.0.2',
       description = 'General simulation data file format.',
       license = 'BSD - 2 clause',
       author = 'Joshua A. Anderson',
