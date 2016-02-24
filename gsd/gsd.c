@@ -361,11 +361,16 @@ int __gsd_read_header(struct gsd_handle* handle)
         {
         // in append mode, we need to tear down the temporary mapping and allocate a temporary buffer
         // to hold indices for a single frame
-        munmap(handle->mapped_data, handle->file_size);
+        int retval = munmap(handle->mapped_data, handle->file_size);
+        if (retval != 0)
+            return -1;
+
         handle->append_index_size = 1;
         handle->index = (struct gsd_index_entry *)malloc(sizeof(struct gsd_index_entry) * handle->append_index_size);
         if (handle->index == NULL)
             return -5;
+
+        handle->mapped_data = NULL;
         }
 
     return 0;

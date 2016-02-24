@@ -89,11 +89,11 @@ cdef class GSDFile:
     Args:
 
         name (str): File name to open.
-        mode (str): 'rb' for read only access, 'wb' for read-write access.
+        mode (str): 'rb' for read only access, 'wb' for read-write access, and 'ab' for append mode.
 
     GSDFile implements an object oriented class interface to the GSD file
-    layer. Use it to open an existing file in a **read-only** or
-    **read-write** mode.
+    layer. Use it to open an existing file in a **read-only**,
+    **read-write**, or append mode.
 
     Examples:
 
@@ -144,8 +144,10 @@ cdef class GSDFile:
             c_flags = libgsd.GSD_OPEN_READWRITE;
         elif mode == 'rb':
             c_flags = libgsd.GSD_OPEN_READONLY;
+        elif mode == 'ab':
+            c_flags = libgsd.GSD_OPEN_APPEND;
         else:
-            raise ValueError("mode must be 'rb' or 'wb'");
+            raise ValueError("mode must be 'rb', 'wb', or 'ab'");
         self.name = name;
         self.mode = mode;
 

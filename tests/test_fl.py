@@ -78,6 +78,38 @@ def test_metadata():
             eq_(f.nframes, 150);
             ok_(f.gsd_version >= (0,2));
 
+def test_append():
+    with tempfile.TemporaryDirectory() as d:
+        gsd.fl.create(name=d+'/test_append.gsd', application='test_append', schema='none', schema_version=[1,2]);
+
+        data = numpy.array([10], dtype=numpy.int64);
+
+        with gsd.fl.GSDFile(name=d+'/test_append.gsd', mode='ab') as f:
+            eq_(f.mode, 'ab');
+            for i in range(1000):
+                data[0] = i;
+                f.write_chunk(name='data1', data=data);
+                data[0] = i*10
+                f.write_chunk(name='data10', data=data);
+                f.end_frame();
+
+        with gsd.fl.GSDFile(name=d+'/test_append.gsd', mode='rb') as f:
+            eq_(f.nframes, 1000);
+            for i in range(1000):
+                data1 = f.read_chunk(frame=i, name='data1');
+                data10 = f.read_chunk(frame=i, name='data1');
+                eq_(data1[0], i);
+                eq_(data10[0], i*10);
+
+        # test again with pygsd
+        with gsd.pygsd.GSDFile(file=open(d+'/test_append.gsd', mode='rb')) as f:
+            eq_(f.nframes, 1000);
+            for i in range(1000):
+                data1 = f.read_chunk(frame=i, name='data1');
+                data10 = f.read_chunk(frame=i, name='data1');
+                eq_(data1[0], i);
+                eq_(data10[0], i*10);
+
 def test_chunk_exists():
     with tempfile.TemporaryDirectory() as d:
         gsd.fl.create(name=d+'/test_chunk_exists.gsd', application='test_chunk_exists', schema='none', schema_version=[1,2]);

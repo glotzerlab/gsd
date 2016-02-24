@@ -19,6 +19,7 @@ cdef extern from "gsd.h" nogil:
     cdef enum gsd_open_flag:
         GSD_OPEN_READWRITE=1
         GSD_OPEN_READONLY
+        GSD_OPEN_APPEND
 
     cdef struct gsd_header:
         uint64_t magic;
@@ -36,9 +37,10 @@ cdef extern from "gsd.h" nogil:
         uint64_t frame;
         uint64_t N;
         int64_t location;
+        uint32_t M;
         uint16_t id;
-        uint8_t M;
         uint8_t type;
+        uint8_t flags;
 
     cdef struct gsd_namelist_entry:
         char name[64];
@@ -46,6 +48,8 @@ cdef extern from "gsd.h" nogil:
     cdef struct gsd_handle:
         int fd;
         gsd_header header;
+        void *mapped_data;
+        size_t append_index_size;
         gsd_index_entry *index;
         gsd_namelist_entry *namelist;
         uint64_t namelist_num_entries;
