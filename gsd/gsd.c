@@ -243,7 +243,8 @@ int __gsd_read_header(struct gsd_handle* handle)
     handle->file_size = lseek(handle->fd, 0, SEEK_END);
 
     // map the file in read only mode
-    if (handle->open_flags == GSD_OPEN_READONLY && GSD_USE_MMAP)
+    #if GSD_USE_MMAP
+    if (handle->open_flags == GSD_OPEN_READONLY)
         {
         handle->mapped_data = mmap(NULL, handle->file_size, PROT_READ, MAP_SHARED, handle->fd, 0);
 
@@ -254,6 +255,7 @@ int __gsd_read_header(struct gsd_handle* handle)
         handle->namelist = (struct gsd_namelist_entry *) (((char *)handle->mapped_data) + handle->header.namelist_location);
         }
     else if (handle->open_flags == GSD_OPEN_READWRITE)
+    #endif
         {
         // read the indices into our own memory
         handle->mapped_data = NULL;
@@ -272,6 +274,7 @@ int __gsd_read_header(struct gsd_handle* handle)
         if (bytes_read != sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries)
             return -1;
         }
+    #if GSD_USE_MMAP
     else if (handle->open_flags == GSD_OPEN_APPEND)
         {
         // in append mode, we want to avoid reading the entire index in memory, but we also don't want to bother
@@ -284,8 +287,9 @@ int __gsd_read_header(struct gsd_handle* handle)
 
         handle->index = (struct gsd_index_entry *) (((char *)handle->mapped_data) + handle->header.index_location);
         }
+    #endif
 
-    if (handle->open_flags == GSD_OPEN_READWRITE || handle->open_flags == GSD_OPEN_APPEND)
+    if (handle->open_flags == GSD_OPEN_READWRITE || handle->open_flags == GSD_OPEN_APPEND || !GSD_USE_MMAP)
         {
         // validate that the namelist block exists inside the file
         if (handle->header.namelist_location + sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries > handle->file_size)
@@ -359,11 +363,15 @@ int __gsd_read_header(struct gsd_handle* handle)
 
     if (handle->open_flags == GSD_OPEN_APPEND)
         {
+        #if GSD_USE_MMAP
         // in append mode, we need to tear down the temporary mapping and allocate a temporary buffer
         // to hold indices for a single frame
         int retval = munmap(handle->mapped_data, handle->file_size);
         if (retval != 0)
             return -1;
+        #else
+        free(handle->index);
+        #endif
 
         handle->append_index_size = 1;
         handle->index = (struct gsd_index_entry *)malloc(sizeof(struct gsd_index_entry) * handle->append_index_size);
@@ -516,6 +524,7 @@ int gsd_close(struct gsd_handle* handle)
     int fd = handle->fd;
 
     // zero and free memory allocated in the handle
+    #if GSD_USE_MMAP
     if (handle->mapped_data != NULL)
         {
         munmap(handle->mapped_data, handle->file_size);
@@ -530,6 +539,7 @@ int gsd_close(struct gsd_handle* handle)
             return -1;
         }
     else
+    #endif
         {
         if (handle->namelist != NULL)
             {
