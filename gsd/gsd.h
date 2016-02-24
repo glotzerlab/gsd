@@ -34,7 +34,8 @@ enum gsd_type
 enum gsd_open_flag
     {
     GSD_OPEN_READWRITE=1,
-    GSD_OPEN_READONLY
+    GSD_OPEN_READONLY,
+    GSD_OPEN_APPEND
     };
 
 //! GSD file header
@@ -94,7 +95,7 @@ struct gsd_handle
     int fd;
     struct gsd_header header;           //!< GSD file header
     void *mapped_data;
-    size_t mapped_size;
+    size_t append_index_size;
     struct gsd_index_entry *index;
     struct gsd_namelist_entry *namelist;
     uint64_t namelist_num_entries;
