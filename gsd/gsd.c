@@ -86,8 +86,8 @@ static int __gsd_expand_index(struct gsd_handle *handle)
         while (total_bytes_written < new_index_bytes)
             {
             size_t bytes_to_copy = buf_size;
-            if (old_index_bytes - total_bytes_written < buf_size)
-                bytes_to_copy = old_index_bytes - total_bytes_written;
+            if (new_index_bytes - total_bytes_written < buf_size)
+                bytes_to_copy = new_index_bytes - total_bytes_written;
 
             size_t bytes_written = pwrite(handle->fd, buf, bytes_to_copy, new_index_location + total_bytes_written);
             if (bytes_written != bytes_to_copy)
@@ -670,7 +670,7 @@ int gsd_write_chunk(struct gsd_handle* handle,
     if (handle->open_flags == GSD_OPEN_APPEND)
         {
         slot -= handle->index_written_entries;
-        if (slot > handle->append_index_size)
+        if (slot >= handle->append_index_size)
             {
             handle->append_index_size *= 2;
             handle->index = (struct gsd_index_entry *)realloc(handle->index, handle->append_index_size*sizeof(struct gsd_index_entry));

@@ -83,10 +83,11 @@ def test_append():
         gsd.fl.create(name=d+'/test_append.gsd', application='test_append', schema='none', schema_version=[1,2]);
 
         data = numpy.array([10], dtype=numpy.int64);
+        nframes = 257;
 
         with gsd.fl.GSDFile(name=d+'/test_append.gsd', mode='ab') as f:
             eq_(f.mode, 'ab');
-            for i in range(1000):
+            for i in range(nframes):
                 data[0] = i;
                 f.write_chunk(name='data1', data=data);
                 data[0] = i*10
@@ -94,19 +95,19 @@ def test_append():
                 f.end_frame();
 
         with gsd.fl.GSDFile(name=d+'/test_append.gsd', mode='rb') as f:
-            eq_(f.nframes, 1000);
-            for i in range(1000):
+            eq_(f.nframes, nframes);
+            for i in range(nframes):
                 data1 = f.read_chunk(frame=i, name='data1');
-                data10 = f.read_chunk(frame=i, name='data1');
+                data10 = f.read_chunk(frame=i, name='data10');
                 eq_(data1[0], i);
                 eq_(data10[0], i*10);
 
         # test again with pygsd
         with gsd.pygsd.GSDFile(file=open(d+'/test_append.gsd', mode='rb')) as f:
-            eq_(f.nframes, 1000);
-            for i in range(1000):
+            eq_(f.nframes, nframes);
+            for i in range(nframes):
                 data1 = f.read_chunk(frame=i, name='data1');
-                data10 = f.read_chunk(frame=i, name='data1');
+                data10 = f.read_chunk(frame=i, name='data10');
                 eq_(data1[0], i);
                 eq_(data10[0], i*10);
 
