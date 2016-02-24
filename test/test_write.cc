@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <stdlib.h>
+#include <errno.h>
 using namespace std;
 
 int main()
@@ -21,7 +22,7 @@ int main()
         exit(1);
         }
 
-    for (unsigned int i = 0; i < 40; i++)
+    for (unsigned int i = 0; i < 3000; i++)
         {
         int value = i*10;
         int value2 = i*100;
@@ -29,7 +30,7 @@ int main()
         int err = gsd_write_chunk(&handle, "value", GSD_TYPE_UINT32, 1, 1, 0, (void*)&value);
         if (err != 0)
             {
-            cout << "Error writing gsd file" << endl;
+            cout << "Error writing gsd file: " << strerror(errno) << endl;
             exit(1);
             }
         err = gsd_write_chunk(&handle, "v2", GSD_TYPE_UINT32, 1, 1, 0, (void*)&value2);

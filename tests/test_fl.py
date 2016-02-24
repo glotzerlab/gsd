@@ -52,9 +52,10 @@ def test_metadata():
         gsd.fl.create(name=d+'/test_metadata.gsd', application='test_metadata', schema='none', schema_version=[1,2]);
 
         data = numpy.array([1,2,3,4,5,10012], dtype=numpy.int64);
+
         with gsd.fl.GSDFile(name=d+'/test_metadata.gsd', mode='wb') as f:
             eq_(f.mode, 'wb');
-            for i in range(10):
+            for i in range(150):
                 f.write_chunk(name='data', data=data);
                 f.end_frame();
 
@@ -64,7 +65,7 @@ def test_metadata():
             eq_(f.application, 'test_metadata');
             eq_(f.schema, 'none');
             eq_(f.schema_version, (1,2));
-            eq_(f.nframes, 10);
+            eq_(f.nframes, 150);
             ok_(f.gsd_version >= (0,2));
 
         # test again with pygsd
@@ -74,7 +75,7 @@ def test_metadata():
             eq_(f.application, 'test_metadata');
             eq_(f.schema, 'none');
             eq_(f.schema_version, (1,2));
-            eq_(f.nframes, 10);
+            eq_(f.nframes, 150);
             ok_(f.gsd_version >= (0,2));
 
 def test_chunk_exists():

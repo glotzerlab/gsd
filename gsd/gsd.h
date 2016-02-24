@@ -93,6 +93,8 @@ struct gsd_handle
     {
     int fd;
     struct gsd_header header;           //!< GSD file header
+    void *mapped_data;
+    size_t mapped_size;
     struct gsd_index_entry *index;
     struct gsd_namelist_entry *namelist;
     uint64_t namelist_num_entries;

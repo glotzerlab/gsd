@@ -6,6 +6,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#define GSD_USE_MMAP 1
+
+#if GSD_USE_MMAP
+#include <sys/mman.h>
+#endif
+
 #include "gsd.h"
 
 /*! \file gsd.c
@@ -159,9 +165,7 @@ int __gsd_initialize_file(int fd, const char *application, const char *schema, u
     return 0;
     }
 
-/*! \param handle Handle to open
-    \param fname File name to open
-    \param flags Either GSD_OPEN_READWRITE or GSD_OPEN_READONLY
+/*! \param handle Handle to read the header
 
     \pre handle->fd is an open file.
     \pre handle->open_flags is set.
@@ -190,54 +194,83 @@ int __gsd_read_header(struct gsd_handle* handle)
     // determine the file size
     handle->file_size = lseek(handle->fd, 0, SEEK_END);
 
-    // validate that the index block exists inside the file
-    if (handle->header.index_location + sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries > handle->file_size)
-        return -4;
-
-    // read the index block
-    handle->index = (struct gsd_index_entry *)malloc(sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries);
-    if (handle->index == NULL)
-        return -5;
-
-    lseek(handle->fd, handle->header.index_location, SEEK_SET);
-    bytes_read = read(handle->fd, handle->index, sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries);
-    if (bytes_read != sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries)
-        return -1;
-
-    // determine the number of index entries (marked by location = 0)
-    // base case: the index is full
-    handle->index_num_entries = handle->header.index_allocated_entries;
-
-    // general case, find the first index entry with location 0
-    size_t i;
-    for (i = 0; i < handle->header.index_allocated_entries; i++)
+    // map the file in read only mode
+    if (handle->open_flags == GSD_OPEN_READONLY && GSD_USE_MMAP)
         {
-        if (handle->index[i].location == 0)
-            {
-            handle->index_num_entries = i;
-            break;
-            }
+        handle->mapped_data = mmap(NULL, handle->file_size, PROT_READ, MAP_SHARED, handle->fd, 0);
+
+        if (handle->mapped_data == MAP_FAILED)
+            return -1;
+
+        handle->index = (struct gsd_index_entry *) (((char *)handle->mapped_data) + handle->header.index_location);
+        handle->namelist = (struct gsd_namelist_entry *) (((char *)handle->mapped_data) + handle->header.namelist_location);
+        }
+    else
+        {
+        // read the indices into our own memory
+        handle->mapped_data = NULL;
+
+        // validate that the index block exists inside the file
+        if (handle->header.index_location + sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries > handle->file_size)
+            return -4;
+
+        // read the index block
+        handle->index = (struct gsd_index_entry *)malloc(sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries);
+        if (handle->index == NULL)
+            return -5;
+
+        lseek(handle->fd, handle->header.index_location, SEEK_SET);
+        bytes_read = read(handle->fd, handle->index, sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries);
+        if (bytes_read != sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries)
+            return -1;
+
+        // validate that the namelist block exists inside the file
+        if (handle->header.namelist_location + sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries > handle->file_size)
+            return -4;
+
+        // read the namelist block
+        handle->namelist = (struct gsd_namelist_entry *)malloc(sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries);
+        if (handle->namelist == NULL)
+            return -5;
+
+        lseek(handle->fd, handle->header.namelist_location, SEEK_SET);
+        bytes_read = read(handle->fd, handle->namelist, sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries);
+        if (bytes_read != sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries)
+            return -1;
         }
 
-    // validate that the namelist block exists inside the file
-    if (handle->header.namelist_location + sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries > handle->file_size)
-        return -4;
+    if (handle->index[0].location == 0)
+        {
+        handle->index_num_entries = 0;
+        }
+    else
+        {
+        // determine the number of index entries (marked by location = 0)
+        // binary search for the first index entry with location 0
+        size_t L = 0;
+        size_t R = handle->header.index_allocated_entries;
 
-    // read the namelist block
-    handle->namelist = (struct gsd_namelist_entry *)malloc(sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries);
-    if (handle->namelist == NULL)
-        return -5;
+        // progressively narrow the search window by halves
+        do
+            {
+            size_t m = (L+R)/2;
 
-    lseek(handle->fd, handle->header.namelist_location, SEEK_SET);
-    bytes_read = read(handle->fd, handle->namelist, sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries);
-    if (bytes_read != sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries)
-        return -1;
+            if (handle->index[m].location != 0)
+                L = m;
+            else
+                R = m;
+            } while ((R-L) > 1);
+
+        // this finds R = the first index entry with location = 0
+        handle->index_num_entries = R;
+        }
 
     // determine the number of namelist entries (marked by location = 0)
     // base case: the namelist is full
     handle->namelist_num_entries = handle->header.namelist_allocated_entries;
 
     // general case, find the first namelist entry that is the empty string
+    size_t i;
     for (i = 0; i < handle->header.namelist_allocated_entries; i++)
         {
         if (handle->namelist[i].name[0] == 0)
@@ -394,27 +427,41 @@ int gsd_close(struct gsd_handle* handle)
     int fd = handle->fd;
 
     // zero and free memory allocated in the handle
-    if (handle->namelist != NULL)
+    if (handle->mapped_data != NULL)
         {
-        memset(handle->namelist, 0, sizeof(struct gsd_namelist_entry)*handle->header.namelist_allocated_entries);
-        free(handle->namelist);
-        handle->namelist = NULL;
-        }
-
-    if (handle->index != NULL)
-        {
-        memset(handle->index, 0, sizeof(struct gsd_index_entry)*handle->header.index_allocated_entries);
-        free(handle->index);
+        munmap(handle->mapped_data, handle->file_size);
         handle->index = NULL;
+        handle->namelist = NULL;
 
-        // only close the file if handle->index is valid
-        // this attempts to fail gracefully when calling gsd_close(handle) twice.
         memset(handle, 0, sizeof(struct gsd_handle));
 
         // close the file
         int retval = close(fd);
         if (retval != 0)
             return -1;
+        }
+    else
+        {
+        if (handle->namelist != NULL)
+            {
+            memset(handle->namelist, 0, sizeof(struct gsd_namelist_entry)*handle->header.namelist_allocated_entries);
+            free(handle->namelist);
+            handle->namelist = NULL;
+            }
+
+        if (handle->index != NULL)
+            {
+            memset(handle->index, 0, sizeof(struct gsd_index_entry)*handle->header.index_allocated_entries);
+            free(handle->index);
+            handle->index = NULL;
+
+            memset(handle, 0, sizeof(struct gsd_handle));
+
+            // close the file
+            int retval = close(fd);
+            if (retval != 0)
+                return -1;
+            }
         }
 
     return 0;
@@ -445,13 +492,13 @@ int gsd_end_frame(struct gsd_handle* handle)
     if (entries_to_write > 0)
         {
         // write just those unwritten entries to the end of the index block
-        lseek(handle->fd,
-              handle->header.index_location + sizeof(struct gsd_index_entry)*handle->index_written_entries,
-              SEEK_SET);
+        int64_t write_pos = handle->header.index_location + sizeof(struct gsd_index_entry)*handle->index_written_entries;
 
-        size_t bytes_written = write(handle->fd,
+        size_t bytes_written = pwrite(handle->fd,
                                      &(handle->index[handle->index_written_entries]),
-                                     sizeof(struct gsd_index_entry)*entries_to_write);
+                                     sizeof(struct gsd_index_entry)*entries_to_write,
+                                     write_pos);
+
         if (bytes_written != sizeof(struct gsd_index_entry) * entries_to_write)
             return -1;
 
@@ -504,15 +551,15 @@ int gsd_write_chunk(struct gsd_handle* handle,
     size_t size = N * M * gsd_sizeof_type(type);
 
     // find the location at the end of the file for the chunk
-    index_entry.location = lseek(handle->fd, 0, SEEK_END);
+    index_entry.location = handle->file_size;
 
     // write the data
-    size_t bytes_written = write(handle->fd, data, size);
+    size_t bytes_written = pwrite(handle->fd, data, size, index_entry.location);
     if (bytes_written != size)
         return -1;
 
     // update the file_size in the handle
-    handle->file_size = index_entry.location + bytes_written;
+    handle->file_size += bytes_written;
 
     // update the index entry in the index
     // need to expand the index if it is already full
@@ -520,7 +567,7 @@ int gsd_write_chunk(struct gsd_handle* handle,
         {
         int retval = __gsd_expand_index(handle);
         if (retval != 0)
-            return 0;
+            return -1;
         }
 
     // once we get here, there is a free slot to add this entry to the index
@@ -634,8 +681,7 @@ int gsd_read_chunk(struct gsd_handle* handle, void* data, const struct gsd_index
         return -3;
         }
 
-    lseek(handle->fd, chunk->location, SEEK_SET);
-    size_t bytes_read = read(handle->fd, data, size);
+    size_t bytes_read = pread(handle->fd, data, size, chunk->location);
     if (bytes_read != size)
         return -1;
 
