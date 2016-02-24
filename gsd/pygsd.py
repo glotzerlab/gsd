@@ -1,11 +1,29 @@
 # Copyright (c) 2016 The Regents of the University of Michigan
 # This file is part of the General Simulation Data (GSD) project, released under the BSD 2-Clause License.
 
-""" pure python gsd reader
+""" GSD reader written in pure python
 
-The package :py:mod:`gsd.pygsd` is a pure python implementation of a reader that takes in file-like objects from python
-and reads them as a GSD formatted file. Use if you are reading GSD files from in memory buffers, in-database grid files
-etc... For regular files on the filesystem, or for writing gsd files, yse :py:mod:`gsd.fl`.
+:file:`pygsd.py` is a pure python implementation of a GSD reader. If your analysis tool is written in python and you
+want to embed a GSD reader without requiring C code compilation, then use the following python files from the
+:file:`gsd/` directory to make a pure python reader. It is not as high performance as the C reader, but is reasonable
+for files up to a few thousand frames.
+
+* :file:`gsd/`
+
+    * :file:`__init__.py`
+    * :file:`pygsd.py`
+    * :file:`hoomd.py`
+
+
+The reader reads from file-like python objects, which may be useful for reading from in memory buffers, in-database
+grid files, etc... For regular files on the filesystem, and for writing gsd files, use :py:mod:`gsd.fl`.
+
+The :py:class:`GSDFile` in this module can be used with the :py:class:`HOOMDTrajectory` hoomd reader:
+
+>>> with gsd.pygsd.GSDFile('test.gsd', 'rb') as f:
+...     t = gsd.hoomd.HOOMDTrajectory(f);
+...     pos = t[0].particles.position
+
 """
 
 from __future__ import print_function

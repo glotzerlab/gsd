@@ -31,7 +31,11 @@ Functions
 
     :param handle: Handle to open.
     :param fname: File name to open.
-    :param flags: Either ``GSD_OPEN_READWRITE`` or ``GSD_OPEN_READONLY``.
+    :param flags: Either ``GSD_OPEN_READWRITE``, ``GSD_OPEN_READONLY``, or ``GSD_OPEN_APPEND``.
+
+    Prefer the modes ``GSD_OPEN_APPEND`` for writing and ``GSD_OPEN_READONLY`` for reading. These modes are optimized
+    to only load as much of the index as needed. ``GSD_OPEN_READWRITE`` needs to store the entire index in memory: in
+    files with millions of chunks, this can add up to GiB.
 
     :return: 0 on success. Negative value on failure:
 
