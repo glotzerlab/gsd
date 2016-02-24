@@ -62,11 +62,12 @@ Name                              Category  Type   Size Default Units
 :chunk:`particles/mass`           attribute float  Nx1  1.0     mass
 :chunk:`particles/charge`         attribute float  Nx1  0.0     charge
 :chunk:`particles/diameter`       attribute float  Nx1  1.0     length
+:chunk:`particles/body`           attribute int32  Nx1  -1      number
 :chunk:`particles/moment_inertia` attribute float  Nx3  0,0,0   mass * length^2
 :chunk:`particles/position`       property  float  Nx3  0,0,0   length
 :chunk:`particles/orientation`    property  float  Nx4  1,0,0,0 unit quaternion
 :chunk:`particles/velocity`       momentum  float  Nx3  0,0,0   length/time
-:chunk:`particles/angmom`         momentum  float  Nx4  0,0,0,0 quaternion (??)
+:chunk:`particles/angmom`         momentum  float  Nx4  0,0,0,0 quaternion
 :chunk:`particles/image`          momentum  int32  Nx3  0,0,0   number
 **Bond data**
 :chunk:`bonds/N`                  topology  uint32 1x1  0       number
@@ -196,6 +197,16 @@ Attributes
 
     Store the diameter of each particle.
 
+.. chunk:: particles/body
+
+    :Type: int32
+    :Size: Nx1
+    :Default: -1
+    :Units: number
+
+    Store the composite body associated with each particle. The value -1 indicates no body. The body field may be left
+    out of input files, as hoomd will create the needed constituent particles.
+
 .. chunk:: particles/moment_inertia
 
     :Type: float (32-bit)
@@ -259,9 +270,10 @@ Momenta
     :Type: float (32-bit)
     :Size: Nx4
     :Default: 0,0,0,0
-    :Units: quaternion (??)
+    :Units: quaternion
 
-    Store the angular momentum of each particle. TODO: document format.
+    Store the angular momentum of each particle as a quaternion. See the HOOMD documentation for information on how to
+    convert to a vector representation.
 
 .. chunk:: particles/image
 

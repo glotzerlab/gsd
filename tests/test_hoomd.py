@@ -74,6 +74,7 @@ def test_defaults():
             numpy.testing.assert_array_equal(s.particles.typeid, numpy.array([0,0], dtype=numpy.uint32));
             numpy.testing.assert_array_equal(s.particles.mass, numpy.array([1,1], dtype=numpy.float32));
             numpy.testing.assert_array_equal(s.particles.diameter, numpy.array([1,1], dtype=numpy.float32));
+            numpy.testing.assert_array_equal(s.particles.body, numpy.array([-1,-1], dtype=numpy.int32));
             numpy.testing.assert_array_equal(s.particles.charge, numpy.array([0,0], dtype=numpy.float32));
             numpy.testing.assert_array_equal(s.particles.moment_inertia, numpy.array([[0,0,0],[0,0,0]], dtype=numpy.float32));
             numpy.testing.assert_array_equal(s.particles.position, numpy.array([[0,0,0],[0,0,0]], dtype=numpy.float32));
@@ -117,6 +118,7 @@ def test_fallback():
         snap0.particles.typeid = [1,2];
         snap0.particles.mass = [2,3];
         snap0.particles.diameter = [3,4];
+        snap0.particles.body = [10, 20];
         snap0.particles.charge = [0.5, 0.25];
         snap0.particles.moment_inertia = [[1,2,3], [3,2,1]];
         snap0.particles.position = [[0.1, 0.2, 0.3], [-1.0, -2.0, -3.0]];
@@ -181,6 +183,7 @@ def test_fallback():
             numpy.testing.assert_array_equal(s.particles.typeid, snap0.particles.typeid);
             numpy.testing.assert_array_equal(s.particles.mass, snap0.particles.mass);
             numpy.testing.assert_array_equal(s.particles.diameter, snap0.particles.diameter);
+            numpy.testing.assert_array_equal(s.particles.body, snap0.particles.body);
             numpy.testing.assert_array_equal(s.particles.charge, snap0.particles.charge);
             numpy.testing.assert_array_equal(s.particles.moment_inertia, snap0.particles.moment_inertia);
             numpy.testing.assert_array_equal(s.particles.position, snap0.particles.position);
@@ -224,6 +227,7 @@ def test_fallback():
             numpy.testing.assert_array_equal(s.particles.typeid, snap0.particles.typeid);
             numpy.testing.assert_array_equal(s.particles.mass, snap0.particles.mass);
             numpy.testing.assert_array_equal(s.particles.diameter, snap0.particles.diameter);
+            numpy.testing.assert_array_equal(s.particles.body, snap0.particles.body);
             numpy.testing.assert_array_equal(s.particles.charge, snap0.particles.charge);
             numpy.testing.assert_array_equal(s.particles.moment_inertia, snap0.particles.moment_inertia);
             numpy.testing.assert_array_equal(s.particles.position, snap1.particles.position);
@@ -264,6 +268,7 @@ def test_fallback():
             numpy.testing.assert_array_equal(s.particles.typeid, numpy.array([0,0,0], dtype=numpy.uint32));
             numpy.testing.assert_array_equal(s.particles.mass, numpy.array([1,1,1], dtype=numpy.float32));
             numpy.testing.assert_array_equal(s.particles.diameter, numpy.array([1,1,1], dtype=numpy.float32));
+            numpy.testing.assert_array_equal(s.particles.body, numpy.array([-1,-1,-1], dtype=numpy.float32));
             numpy.testing.assert_array_equal(s.particles.charge, numpy.array([0,0,0], dtype=numpy.float32));
             numpy.testing.assert_array_equal(s.particles.moment_inertia, numpy.array([[0,0,0],[0,0,0],[0,0,0]], dtype=numpy.float32));
             numpy.testing.assert_array_equal(s.particles.position, numpy.array([[0,0,0],[0,0,0],[0,0,0]], dtype=numpy.float32));

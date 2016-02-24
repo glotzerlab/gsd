@@ -142,6 +142,7 @@ class ParticleData(object):
         mass (numpy.ndarray[float, ndim=1, mode='c']): N length array defining particle masses (:chunk:`particles/mass`).
         charge (numpy.ndarray[float, ndim=1, mode='c']): N length array defining particle charges (:chunk:`particles/charge`).
         diameter (numpy.ndarray[float, ndim=1, mode='c']): N length array defining particle diameters (:chunk:`particles/diameter`).
+        body (numpy.ndarray[int32, ndim=1, mode='c']): N length array defining particle bodies (:chunk:`particles/body`).
         moment_inertia (numpy.ndarray[float, ndim=2, mode='c']): Nx3 array defining particle moments of inertia (:chunk:`particles/moment_inertia`).
         velocity (numpy.ndarray[float, ndim=2, mode='c']): Nx3 array defining particle velocities (:chunk:`particles/velocity`).
         angmom (numpy.ndarray[float, ndim=2, mode='c']): Nx4 array defining particle angular momenta (:chunk:`particles/angmom`).
@@ -155,6 +156,7 @@ class ParticleData(object):
     _default_value['mass'] = numpy.float32(1.0);
     _default_value['charge'] = numpy.float32(0);
     _default_value['diameter'] = numpy.float32(1.0);
+    _default_value['body'] = numpy.int32(-1);
     _default_value['moment_inertia'] = numpy.array([0,0,0], dtype=numpy.float32);
     _default_value['position'] = numpy.array([0,0,0], dtype=numpy.float32);
     _default_value['orientation'] = numpy.array([1,0,0,0], dtype=numpy.float32);
@@ -171,6 +173,7 @@ class ParticleData(object):
         self.mass = None;
         self.charge = None;
         self.diameter = None;
+        self.body = None;
         self.moment_inertia = None;
         self.velocity = None;
         self.angmom = None;
@@ -210,6 +213,9 @@ class ParticleData(object):
         if self.diameter is not None:
             self.diameter = numpy.ascontiguousarray(self.diameter, dtype=numpy.float32);
             self.diameter = self.diameter.reshape([self.N])
+        if self.body is not None:
+            self.body = numpy.ascontiguousarray(self.body, dtype=numpy.int32);
+            self.body = self.body.reshape([self.N])
         if self.moment_inertia is not None:
             self.moment_inertia = numpy.ascontiguousarray(self.moment_inertia, dtype=numpy.float32);
             self.moment_inertia = self.moment_inertia.reshape([self.N, 3]);
