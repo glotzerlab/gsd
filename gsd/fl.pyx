@@ -4,7 +4,8 @@
 """ GSD file layer API.
 
 Low level access to gsd files. :py:mod:`gsd.fl` allows direct access to create,
-read, and write ``gsd`` files.
+read, and write ``gsd`` files. The module is implemented in C and is optimized.
+See :ref:`fl-examples` for detailed example code.
 
 * :py:func:`create` - Create a gsd file.
 * :py:class:`GSDFile` - Read and write gsd files.
@@ -93,34 +94,25 @@ cdef class GSDFile:
 
     GSDFile implements an object oriented class interface to the GSD file
     layer. Use it to open an existing file in a **read-only**,
-    **read-write**, or append mode.
+    **read-write**, or **append** mode.
 
-    Examples:
+    Example:
 
-        Open a file in **read-only** mode::
+    .. ipython:: python
 
-            f = GSDFile(name=filename, mode='rb');
-            if f.chunk_exists(frame=0, name='chunk'):
-                data = f.read_chunk(frame=0, name='chunk');
+        gsd.fl.create(name="file.gsd",
+                      application="My application",
+                      schema="My Schema",
+                      schema_version=[1,0]);
 
-        Access file **metadata**::
+        with gsd.fl.GSDFile(name='file.gsd', mode='ab') as f:
+            f.write_chunk(name='chunk1', data=numpy.array([1,2,3,4], dtype=numpy.float32));
+            f.end_frame();
 
-            f = GSDFile(name=filename, mode='rb');
-            print(f.name, f.mode, f.gsd_version);
-            print(f.application, f.schema, f.schema_version);
-            print(f.nframes);
-
-        Open a file in **read-write** mode::
-
-            f = GSDFile(name=filename, mode='wb');
-            f.write_chunk(name='chunk', data=data_write);
-            f.end_frame()
-            data_read = f.read_chunk(frame=0, name='chunk');
-
-        Use as a **context manager**::
-
-            with GSDFile(filename, 'rb') as f:
-                data = f.read_chunk(frame=0, name='chunk');
+        f = gsd.fl.GSDFile(name='file.gsd', mode='rb');
+        if f.chunk_exists(frame=0, name='chunk1'):
+            data = f.read_chunk(frame=0, name='chunk1')
+        data
 
     Attributes:
 
@@ -226,24 +218,6 @@ cdef class GSDFile:
         future calls to :py:meth:`write_chunk()` will write to the **next** frame
         in the file.
 
-        Example:
-
-            Write several frames to the file::
-
-                with GSDFile(name=filename, mode='wb') as f:
-                    f.write_chunk(name='chunk', data=data);
-                    f.end_frame()
-                    f.write_chunk(name='chunk', data=data);
-                    f.end_frame()
-                    f.write_chunk(name='chunk', data=data);
-                    f.end_frame()
-
-                with GSDFile(name=filename, mode='rb') as f:
-                    f.chunk_exists(frame=0, name='chunk');  # True
-                    f.chunk_exists(frame=1, name='chunk');  # True
-                    f.chunk_exists(frame=2, name='chunk');  # True
-                    f.chunk_exists(frame=3, name='chunk');  # False (wrote only 3 frames)
-
         .. danger::
             Call :py:meth:`end_frame()` to complete the current frame
             **before** closing the file. If you fail to call
@@ -277,30 +251,6 @@ cdef class GSDFile:
             data (numpy array): Data to write into the chunk. Must be a numpy
                                 array, or array-like, with 2 or fewer
                                 dimensions.
-
-        Examples:
-
-            Write 1D arrays::
-
-                data = numpy.array([1,2,3,4], dtype=numpy.float32);
-                with GSDFile(name=filename, mode='wb') as f:
-                    f.write_chunk(name='chunk1d', data);
-
-            Write 2D arrays::
-
-                data = numpy.array([[1,2],[2,3],[3,4]], dtype=numpy.float32);
-                with GSDFile(name=filename, mode='wb') as f:
-                    f.write_chunk(name='chunk2d', data);
-
-            Write several chunks to each frame::
-
-                with GSDFile(name=filename, mode='wb') as f:
-                    f.write_chunk(name='chunk1', data=[1,2,3,4]);
-                    f.write_chunk(name='chunk2', data=[5,6,7,8]);
-                    f.end_frame()
-                    f.write_chunk(name='chunk1', data=[10,20]);
-                    f.write_chunk(name='chunk2', data=[30,40]);
-                    f.end_frame()
 
         Warning:
             :py:meth:`write_chunk()` will implicitly converts array-like and
@@ -398,16 +348,6 @@ cdef class GSDFile:
 
         Returns:
             bool: True if the chunk exists in the file. False if it does not.
-
-        Example:
-
-            Handle non-existent chunks::
-
-                with GSDFile(name=filename, mode='rb') as f:
-                    if f.chunk_exists(frame=0, name='chunk'):
-                        return f.read_chunk(frame=0, name='chunk');
-                    else:
-                        return None;
         """
 
         cdef const libgsd.gsd_index_entry* index_entry;
@@ -438,28 +378,6 @@ cdef class GSDFile:
             ``type`` is determined by the chunk metadata. If the data is
             NxM in the file and M > 1, return a 2D array. If the data is
             Nx1, return a 1D array.
-
-        Examples:
-
-            Read a 1D array::
-
-                with GSDFile(name=filename, mode='rb') as f:
-                    data = f.read_chunk(frame=0, name='chunk1d');
-                    # data.shape == [N]
-
-            Read a 2D array::
-
-                with GSDFile(name=filename, mode='rb') as f:
-                    data = f.read_chunk(frame=0, name='chunk2d');
-                    # data.shape == [N,M]
-
-            Read multiple frames::
-
-                with GSDFile(name=filename, mode='rb') as f:
-                    data0 = f.read_chunk(frame=0, name='chunk');
-                    data1 = f.read_chunk(frame=1, name='chunk');
-                    data2 = f.read_chunk(frame=2, name='chunk');
-                    data3 = f.read_chunk(frame=3, name='chunk');
 
         .. tip::
             Each call to invokes a disk read and allocation of a
@@ -601,15 +519,14 @@ def create(name, application, schema, schema_version):
 
     Example:
 
-        Create a gsd file::
+        Create a gsd file:
 
-            create(name="file.gsd",
-                   application="My application",
-                   schema="My Schema",
-                   schema_version=[1,0]);
+        .. ipython:: python
 
-            with GSDFile(filename="file.gsd", mode='rb') as f:
-                f.write_chunk(...);
+            gsd.fl.create(name="file.gsd",
+                          application="My application",
+                          schema="My Schema",
+                          schema_version=[1,0]);
 
     .. danger::
         The file is overwritten if it already exists.

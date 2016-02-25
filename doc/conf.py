@@ -35,6 +35,8 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.intersphinx',
     'sphinx.ext.mathjax',
+    'IPython.sphinxext.ipython_console_highlighting',
+    'IPython.sphinxext.ipython_directive'
 ]
 
 intersphinx_mapping = {'python': ('https://docs.python.org/3', None)}
@@ -276,3 +278,7 @@ def setup(app):
     app.add_object_type('chunk', 'chunk',
                         objname='Data chunk',
                         indextemplate='single: %s (data chunk)')
+
+###### IPython directive settings
+ipython_mplbackend = None;
+ipython_execlines = ['import gsd.fl', 'import gsd.hoomd', 'import numpy']

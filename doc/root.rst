@@ -9,6 +9,7 @@ Contents:
 .. toctree::
    :maxdepth: 3
 
+   examples
    python-api
    c-api
    specification

@@ -153,6 +153,7 @@ $ nosetests
 ### Build Documentation
 
 Documentation builds with sphinx and requires that the python module is on the python path.
+ipython is also required to build the documentation.
 To build the documentation:
 
 ```bash

@@ -2,7 +2,7 @@
 .. This file is part of the General Simulation Data (GSD) project, released under the BSD 2-Clause License.
 
 gsd.pygsd module
-----------------
+^^^^^^^^^^^^^^^^
 
 .. automodule:: gsd.pygsd
     :synopsis: pygsd provides a GSD reader written in pure python
