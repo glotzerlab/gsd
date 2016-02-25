@@ -5,7 +5,8 @@
 
 The main package :py:mod:`gsd.hoomd` is a reference implementation of the
 GSD schema ``hoomd``. It is a simple, but high performance and memory
-efficient, reader and writer for the schema.
+efficient, reader and writer for the schema. See :ref:`hoomd-examples`
+for full examples.
 
 * :py:func:`create` - Create a hoomd schema GSD file.
 * :py:class:`HOOMDTrajectory` - Read and write hoomd schema GSD files.
@@ -14,59 +15,6 @@ efficient, reader and writer for the schema.
     * :py:class:`ConfigurationData` - Store configuration data in a snapshot.
     * :py:class:`ParticleData` - Store particle data in a snapshot.
     * :py:class:`BondData` - Store particle data in a snapshot.
-
-Examples:
-
-    Create a hoomd gsd file with one frame:
-
-    >>> s = gsd.hoomd.Snapshot()
-    >>> s.particles.N = 4
-    >>> s.particles.types = ['A', 'B']
-    >>> s.particles.typeid = [0,0,1,1]
-    >>> s.particles.position = [[0,0,0],[1,1,1], [-1,-1,-1], [1,-1,-1]]
-    >>> s.configuration.box = [3, 3, 3, 0, 0, 0]
-    >>> gsd.hoomd.create(name='test.gsd', snapshot=s)
-
-    Append frames to a gsd file:
-
-    >>> def create_frame(i):
-    ...     s = gsd.hoomd.Snapshot();
-    ...     s.configuration.step = i;
-    ...     s.particles.N = 4+i;
-    ...     s.particles.position = numpy.random.random(size=(4+i,3))
-    ...     return s;
-    >>> with gsd.fl.GSDFile('test.gsd', 'wb') as f:
-    ...     t = gsd.hoomd.HOOMDTrajectory(f);
-    ...     t.extend( (create_frame(i) for i in range(10)) )
-    ...     print(len(t))
-    11
-
-    Randomly index frames:
-
-    >>> with gsd.fl.GSDFile('test.gsd', 'wb') as f:
-    ...     t = gsd.hoomd.HOOMDTrajectory(f);
-    ...     snap = t[5]
-    ...     print(snap.configuration.step)
-    4
-    ...     print(snap.particles.N)
-    8
-    ...     print(snap.particles.position)
-    [[ 0.56993282  0.42243481  0.5502916 ]
-     [ 0.36892486  0.38167036  0.27310368]
-     [ 0.04739023  0.13603486  0.196539  ]
-     [ 0.120232    0.91591144  0.99463677]
-     [ 0.79806316  0.16991436  0.15228257]
-     [ 0.13724308  0.14253527  0.02505   ]
-     [ 0.39287439  0.82519054  0.01613089]
-     [ 0.23150323  0.95167434  0.7715748 ]]
-
-    Slice frames:
-
-    >>> with gsd.fl.GSDFile('test.gsd', 'wb') as f:
-    ...     t = gsd.hoomd.HOOMDTrajectory(f);
-    ...     for s in t[5:-2]:
-    ...         print(s.configuration.step, end=' ')
-    4 5 6 7
 """
 
 import numpy

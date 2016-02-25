@@ -281,4 +281,4 @@ def setup(app):
 
 ###### IPython directive settings
 ipython_mplbackend = None;
-ipython_execlines = ['import gsd.fl', 'import gsd.hoomd', 'import numpy']
+ipython_execlines = ['import gsd.fl', 'import gsd.hoomd', 'import gsd.pygsd', 'import numpy']

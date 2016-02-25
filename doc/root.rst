@@ -4,7 +4,8 @@
 GSD documentation
 +++++++++++++++++
 
-Contents:
+See the README `GSD's bitbucket page <https://bitbucket.org/glotzer/gsd>`_ for an overview.
+Also use the bitbucket project page to report issues.
 
 .. toctree::
    :maxdepth: 3
