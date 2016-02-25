@@ -4,8 +4,8 @@ File layer
 ----------
 
 The file layer python module :py:mod:`gsd.fl` allows direct low level access to read and write
-gsd files of any schema. If you want to read hoomd schema files, you'll want to use the
-high level hoomd schema reader, see :ref:`hoomd-examples`.
+gsd files of any schema. The hoomd reader (:py:mod:`gsd.hoomd`) provides higher level access to
+hoomd schema files, see :ref:`hoomd-examples`.
 
 Create a gsd file
 ^^^^^^^^^^^^^^^^^
@@ -33,7 +33,7 @@ Write data
     f.end_frame();
     f.close();
 
-Open a :py:class:`gsd.fl.GSDFile` object to access gsd files on disk.
+Instantiate a :py:class:`gsd.fl.GSDFile` object to access gsd files on disk.
 Add any number of named data chunks to each frame in the file with
 :py:meth:`gsd.fl.GSDFile.write_chunk()`. The data must be a 1 or 2
 dimensional numpy array of a simple numeric type (or a data type that will automatically
@@ -41,7 +41,7 @@ convert when passed to ``numpy.array(data)``. Call :py:meth:`gsd.fl.GSDFile.end_
 to end the frame and start the next one.
 
 .. note:: While supported, implicit conversion to numpy arrays creates a 2nd copy of the data
-          in memory and adds overhead.
+          in memory and adds conversion overhead.
 
 .. warning:: Make sure to call ``end_frame()`` before closing the file, or the last frame is lost.
 
@@ -68,29 +68,32 @@ Test if a chunk exists
     f.chunk_exists(frame=2, name='chunk1')
     f.close()
 
+:py:meth:`gsd.fl.GSDFile.chunk_exists` tests to see if a chunk by the given name exists in the file
+at the given frame.
 
 Read-only access
 ^^^^^^^^^^^^^^^^
 
 .. ipython:: python
-    :okexcept:
 
     f = gsd.fl.GSDFile(name='file.gsd', mode='rb');
     if f.chunk_exists(frame=0, name='chunk1'):
         data = f.read_chunk(frame=0, name='chunk1')
     data
+    # Fails because the file is open read only
+    @okexcept
     f.write_chunk(name='error', data=numpy.array([1]))
 
-Files opened in read only (``rb``) mode can be read from, but not written to. When you are going
-to only read from a file, make sure to open it in this mode. The read-only mode is tuned for
-high performance reads with minimal memory impact and can easily handle files with tens of
-millions of data chunks.
+Files opened in read only (``rb``) mode can be read from, but not written to. The read-only
+mode is tuned for high performance reads with minimal memory impact and can easily handle
+files with tens of millions of data chunks.
 
 Access file metadata
 ^^^^^^^^^^^^^^^^^^^^
 
 .. ipython:: python
 
+    f = gsd.fl.GSDFile(name='file.gsd', mode='rb');
     f.name
     f.mode
     f.gsd_version
@@ -130,7 +133,7 @@ Write a file in append mode
 
 Append mode is extremely frugal with memory. It only caches data chunks for the frame about to
 be committed and clears the cache on a call to :py:meth:`gsd.fl.GSDFile.end_frame()`. This is
-especially useful on supercomputers where the memory per node is limited, but you may want to
+especially useful on supercomputers where memory per node is limited, but you may want to
 generate gsd files with millions of data chunks.
 
 Use as a context manager
@@ -142,9 +145,29 @@ Use as a context manager
         data = f.read_chunk(frame=1, name='chunk1');
     data
 
-:py:class:`gsd.fl.GSDFile` works as a context manager for guarunteed file closure and cleanup
-when exceptions occur. The examples would use this practice, except that the automatic
-ipython sphinx directive generates poor output in this case.
+:py:class:`gsd.fl.GSDFile` works as a context manager for guaranteed file closure and cleanup
+when exceptions occur.
+
+Store string chunks
+^^^^^^^^^^^^^^^^^^^
+
+.. ipython:: python
+
+    f = gsd.fl.GSDFile(name='file.gsd', mode='wb')
+    f.mode
+    s = "This is a string"
+    b = numpy.array([s], dtype=numpy.dtype((bytes, len(s)+1)))
+    b = b.view(dtype=numpy.int8)
+    b
+    f.write_chunk(name='string', data=b)
+    f.end_frame()
+    r = f.read_chunk(frame=4, name='string')
+    r
+    r = r.view(dtype=numpy.dtype((bytes, r.shape[0])));
+    r[0].decode('UTF-8')
+
+To store a string in a gsd file, convert it to a numpy array of bytes and store that data in
+the file. Decode the byte sequence to get back a string.
 
 Truncate
 ^^^^^^^^

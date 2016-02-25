@@ -97,22 +97,25 @@ cdef class GSDFile:
     **read-write**, or **append** mode.
 
     Example:
+        .. ipython:: python
 
-    .. ipython:: python
+            gsd.fl.create(name="file.gsd",
+                          application="My application",
+                          schema="My Schema",
+                          schema_version=[1,0]);
 
-        gsd.fl.create(name="file.gsd",
-                      application="My application",
-                      schema="My Schema",
-                      schema_version=[1,0]);
+            with gsd.fl.GSDFile(name='file.gsd', mode='ab') as f:
+                f.write_chunk(name='chunk1', data=numpy.array([1,2,3,4], dtype=numpy.float32));
+                f.write_chunk(name='chunk2', data=numpy.array([[5,6],[7,8]], dtype=numpy.float32));
+                f.end_frame();
+                f.write_chunk(name='chunk1', data=numpy.array([9,10,11,12], dtype=numpy.float32));
+                f.write_chunk(name='chunk2', data=numpy.array([[13,14],[15,16]], dtype=numpy.float32));
+                f.end_frame();
 
-        with gsd.fl.GSDFile(name='file.gsd', mode='ab') as f:
-            f.write_chunk(name='chunk1', data=numpy.array([1,2,3,4], dtype=numpy.float32));
-            f.end_frame();
-
-        f = gsd.fl.GSDFile(name='file.gsd', mode='rb');
-        if f.chunk_exists(frame=0, name='chunk1'):
-            data = f.read_chunk(frame=0, name='chunk1')
-        data
+            f = gsd.fl.GSDFile(name='file.gsd', mode='rb');
+            if f.chunk_exists(frame=0, name='chunk1'):
+                data = f.read_chunk(frame=0, name='chunk1')
+            data
 
     Attributes:
 
@@ -175,6 +178,17 @@ cdef class GSDFile:
         `ValueError`. :py:meth:`close()` may be called more than once.
         The file is automatically closed when garbage collected or when
         the context manager exits.
+
+        Example:
+            .. ipython:: python
+
+                f = gsd.fl.GSDFile(name='file.gsd', mode='rb');
+                data = f.read_chunk(frame=0, name='chunk1')
+                f.close()
+                # Read fails because the file is closed
+                @okexcept
+                data = f.read_chunk(frame=0, name='chunk1')
+
         """
         if self.__is_open:
             logger.info('closing file: ' + self.name);
@@ -188,6 +202,16 @@ cdef class GSDFile:
         Truncate all data from the file. After truncation, the file has no
         frames and no data chunks. The application, schema, and schema version
         remain the same.
+
+        Example:
+            .. ipython:: python
+
+                f = gsd.fl.GSDFile(name='file.gsd', mode='ab')
+                f.nframes
+                f.schema, f.schema_version, f.application
+                f.truncate()
+                f.nframes
+                f.schema, f.schema_version, f.application
         """
 
         if not self.__is_open:
@@ -223,6 +247,20 @@ cdef class GSDFile:
             **before** closing the file. If you fail to call
             :py:meth:`end_frame()`, the last frame may not be written
             to disk.
+
+        Example:
+            .. ipython:: python
+
+                f = gsd.fl.GSDFile(name='file.gsd', mode='ab');
+                f.truncate();
+                f.write_chunk(name='chunk1', data=numpy.array([1,2,3,4], dtype=numpy.float32));
+                f.end_frame();
+                f.write_chunk(name='chunk1', data=numpy.array([9,10,11,12], dtype=numpy.float32));
+                f.end_frame();
+                f.write_chunk(name='chunk1', data=numpy.array([13,14], dtype=numpy.float32));
+                f.end_frame();
+                f.nframes
+
         """
 
         if not self.__is_open:
@@ -257,6 +295,19 @@ cdef class GSDFile:
             non-contiguous numpy arrays to contiguous numpy arrays with
             ``numpy.ascontiguousarray(data)``. This may or may not produce
             desired data types in the output file and incurs overhead.
+
+        Example:
+            .. ipython:: python
+
+                f = gsd.fl.GSDFile(name='file.gsd', mode='ab');
+                f.truncate();
+                f.write_chunk(name='float1d', data=numpy.array([1,2,3,4], dtype=numpy.float32));
+                f.write_chunk(name='float2d', data=numpy.array([[13,14],[15,16],[17,19]], dtype=numpy.float32));
+                f.write_chunk(name='double2d', data=numpy.array([[1,4],[5,6],[7,9]], dtype=numpy.float64));
+                f.write_chunk(name='int1d', data=numpy.array([70,80,90], dtype=numpy.int64));
+                f.end_frame();
+                f.nframes
+                f.close()
         """
 
         if not self.__is_open:
@@ -348,6 +399,15 @@ cdef class GSDFile:
 
         Returns:
             bool: True if the chunk exists in the file. False if it does not.
+
+        Example:
+            .. ipython:: python
+
+                f = gsd.fl.GSDFile(name='file.gsd', mode='rb');
+                f.chunk_exists(frame=0, name='chunk1')
+                f.chunk_exists(frame=0, name='chunk2')
+                f.chunk_exists(frame=0, name='chunk3')
+                f.chunk_exists(frame=10, name='chunk1')
         """
 
         cdef const libgsd.gsd_index_entry* index_entry;
@@ -384,6 +444,14 @@ cdef class GSDFile:
             new numpy array for storage. To avoid overhead, don't call
             :py:meth:`read_chunk()` on the same chunk repeatedly. Cache the
             arrays instead.
+
+        Example:
+            .. ipython:: python
+
+                f = gsd.fl.GSDFile(name='file.gsd', mode='rb');
+                f.read_chunk(frame=0, name='chunk1')
+                f.read_chunk(frame=1, name='chunk1')
+                f.read_chunk(frame=2, name='chunk1')
         """
 
         if not self.__is_open:
