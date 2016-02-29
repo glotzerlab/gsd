@@ -26,10 +26,11 @@ set_source_files_properties(${FL_SRC} PROPERTIES COMPILE_DEFINITIONS NO_IMPORT_A
 
 add_library(fl SHARED gsd.c ${FL_SRC})
 
-set_target_properties(fl PROPERTIES PREFIX "" OUTPUT_NAME "fl")
+set_target_properties(fl PROPERTIES PREFIX "" OUTPUT_NAME "fl" MACOSX_RPATH "On")
 if(APPLE)
     set_target_properties(fl PROPERTIES SUFFIX ".so")
     target_link_libraries(fl ${PYTHON_LIBRARY})
+    fix_conda_python(fl)
 endif(APPLE)
 
 ################ Python only modules

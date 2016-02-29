@@ -18,9 +18,10 @@ include_directories(${PYTHON_INCLUDE_DIR})
 #     SET(CMAKE_INSTALL_PREFIX ${PYTHON_USER_SITE} CACHE PATH "Python site installation directory" FORCE)
 #     message(STATUS "Setting installation site dir: ${CMAKE_INSTALL_PREFIX}")
 # ELSEIF(INSTALL_SITE)
-#     SET(CMAKE_INSTALL_PREFIX ${PYTHON_SYSTEM_SITE} CACHE PATH "Python site installation directory" FORCE)
-#     message(STATUS "Setting installation site dir: ${CMAKE_INSTALL_PREFIX}")
-# ENDIF()
+if (INSTALL_SITE)
+    SET(CMAKE_INSTALL_PREFIX ${PYTHON_SYSTEM_SITE} CACHE PATH "Python site installation directory" FORCE)
+    message(STATUS "Setting installation site dir: ${CMAKE_INSTALL_PREFIX}")
+ENDIF()
 
 #############################################################################################
 ### Add project subdirs
