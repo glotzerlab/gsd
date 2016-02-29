@@ -113,7 +113,19 @@ with GSDFile(name='file.gsd', mode='r') as f:
 
     * A standards compliant C compiler
     * Python >= 2.7
-    * Cython >= 0.22 (not needed to build tagged releases)
+
+### Optional dependencies
+
+    * Cython >= 0.22 (only needed for non-tagged releases)
+    * nose (unit tests)
+    * sphinx (documentation)
+    * ipython (documentation)
+    * cmake (for development builds)
+
+Either install using your distributions package manager, by loading the appropriate module on a cluster or with a
+conda install in your home directory.
+
+    conda install cython nose sphinx ipython cmake
 
 ### Install with setuptools
 
@@ -122,6 +134,18 @@ your home directory, execute:
 
 ```bash
 $ python setup.py install --user
+```
+
+When using conda, you can install into your `conda` site-packages with:
+
+```bash
+$ python setup.py install --user
+```
+
+Uninstall using pip:
+
+```bash
+$ pip uninstall gsd
 ```
 
 ### Build with cmake for development
@@ -153,7 +177,7 @@ $ nosetests
 ### Build Documentation
 
 Documentation builds with sphinx and requires that the python module is on the python path.
-ipython is also required to build the documentation.
+`ipython` is also required to build the documentation.
 To build the documentation:
 
 ```bash
