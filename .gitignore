@@ -3,4 +3,6 @@
 *.pyc
 *.pyo
 build*
+dist
+gsd.egg-info
 __pycache__
