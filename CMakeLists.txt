@@ -26,4 +26,3 @@ include_directories(${PYTHON_INCLUDE_DIR})
 ### Add project subdirs
 include_directories(gsd)
 add_subdirectory(gsd)
-add_subdirectory(test)
