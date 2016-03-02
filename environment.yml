@@ -1,6 +1,5 @@
 name: gsd
 dependencies:
-- appnope=0.1.0=py27_0
 - decorator=4.0.9=py27_0
 - ipython=4.1.1=py27_0
 - ipython_genutils=0.1.0=py27_0
