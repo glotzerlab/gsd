@@ -111,6 +111,7 @@ with GSDFile(name='file.gsd', mode='r') as f:
 
     * A standards compliant C compiler
     * Python >= 2.7
+    * numpy
 
 ### Optional dependencies
 
