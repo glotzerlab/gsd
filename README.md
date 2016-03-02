@@ -31,8 +31,6 @@ $ conda config --add channels glotzer
 $ conda install gsd
 ```
 
-TODO: It is not actually available yet.
-
 ## HOOMD examples
 
 Create a hoomd gsd file.
