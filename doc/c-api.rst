@@ -90,7 +90,7 @@ Functions
 
     :return: 0 on success, -1 on a file IO failure - see errno for details, and -2 on invalid input
 
-.. c:function:: int gsd_write_chunk(struct gsd_handle* handle, const char *name, enum gsd_type type,      uint64_t N, uint8_t M, const void *data)
+.. c:function:: int gsd_write_chunk(struct gsd_handle* handle, const char *name, enum gsd_type type, uint64_t N, uint32_t M, uint8_t flags, const void *data)
 
     Write a data chunk to the current frame. The chunk name must be unique within each frame.
     The given data chunk is written to the end of the file and its location is updated in the in-memory index.
@@ -101,6 +101,7 @@ Functions
     :param type: type ID that identifies the type of data in data.
     :param N: Number of rows in the data.
     :param M: Number of columns in the data.
+    :param flags: Unused, set to 0
     :param data: Data buffer.
 
     :return: 0 on success, -1 on a file IO failure - see errno for details, and -2 on invalid input
