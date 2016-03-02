@@ -3,6 +3,7 @@
 
 GSD documentation
 +++++++++++++++++
+Version |version|
 
 See the README `GSD's bitbucket page <https://bitbucket.org/glotzer/gsd>`_ for an overview.
 Also use the bitbucket project page to report issues.
