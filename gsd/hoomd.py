@@ -19,8 +19,6 @@ for full examples.
 
 import numpy
 from collections import OrderedDict
-import gsd.fl
-import gsd
 import logging
 
 logger = logging.getLogger('gsd.hoomd')
@@ -344,12 +342,12 @@ class HOOMDTrajectory(object):
         self.file = file;
         self._initial_frame = None;
 
-        logger.info('opening HOOMDTrajectory: ' + self.file.name);
+        logger.info('opening HOOMDTrajectory: ' + str(self.file))
 
         if self.file.schema != 'hoomd':
-            raise RuntimeError('GSD file is not a hoomd schema file: ' + self.file.name);
+            raise RuntimeError('GSD file is not a hoomd schema file: ' + str(self.file));
         if self.file.schema_version != (0,1):
-            raise RuntimeError('Incompatible hoomd schema version ' + str(self.file.schema_version) + ' in: ' + self.file.name);
+            raise RuntimeError('Incompatible hoomd schema version ' + str(self.file.schema_version) + ' in: ' + str(self.file));
 
         logger.info('found ' + str(len(self)) + ' frames');
 
@@ -372,7 +370,7 @@ class HOOMDTrajectory(object):
         from the value at the initial frame or the default value.
         """
 
-        logger.debug('Appending snapshot to hoomd trajectory: ' + self.file.name);
+        logger.debug('Appending snapshot to hoomd trajectory: ' + str(self.file));
 
         snapshot.validate();
 
@@ -469,7 +467,7 @@ class HOOMDTrajectory(object):
         if idx >= len(self):
             raise IndexError;
 
-        logger.debug('reading frame ' + str(idx) + ' from: ' + self.file.name);
+        logger.debug('reading frame ' + str(idx) + ' from: ' + str(self.file));
 
         if self._initial_frame is None and idx != 0:
             self.read_frame(0);
@@ -589,6 +587,8 @@ def create(name, snapshot=None):
     .. danger::
         The file is overwritten if it already exists.
     """
+    import gsd.fl
+    import gsd
 
     logger.info('creating hoomd gsd file: ' + name);
 
