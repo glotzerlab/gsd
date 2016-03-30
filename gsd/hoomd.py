@@ -19,8 +19,6 @@ for full examples.
 
 import numpy
 from collections import OrderedDict
-import gsd.fl
-import gsd
 import logging
 
 logger = logging.getLogger('gsd.hoomd')
@@ -589,6 +587,8 @@ def create(name, snapshot=None):
     .. danger::
         The file is overwritten if it already exists.
     """
+    import gsd.fl
+    import gsd
 
     logger.info('creating hoomd gsd file: ' + name);
 
