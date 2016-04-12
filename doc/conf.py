@@ -212,7 +212,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('root', 'GSD.tex', 'GSD Documentation',
+  ('index', 'GSD.tex', 'GSD Documentation',
    'The Regents of the University of Michigan', 'manual'),
 ]
 
