@@ -1,5 +1,7 @@
 # GSD
 
+See the [full GSD documentation](http://gsd.readthedocs.org) at readthedocs.org.
+
 ## Overview
 
 GSD (General Simulation Data) is a file format specification and a library to read and write it. The package also
