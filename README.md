@@ -1,6 +1,6 @@
 # GSD
 
-See the [full GSD documentation](http://gsd.readthedocs.org) at readthedocs.org.
+See the [full GSD documentation](http://gsd.readthedocs.io) at readthedocs.io.
 
 ## Overview
 
