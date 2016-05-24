@@ -12,7 +12,7 @@ of the existing data chunks. Any newer reader will initialize new data chunks wi
 not present in an older version file.
 
 :Schema name: ``hoomd``
-:Schema version: 0.1
+:Schema version: 1.0
 
 .. warning::
     This particular schema is a draft version subject to testing. No backward or forward compatibility is

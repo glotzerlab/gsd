@@ -66,7 +66,7 @@ def test_metadata():
             eq_(f.schema, 'none');
             eq_(f.schema_version, (1,2));
             eq_(f.nframes, 150);
-            ok_(f.gsd_version >= (0,2));
+            ok_(f.gsd_version == (1,0));
 
         # test again with pygsd
         with gsd.pygsd.GSDFile(file=open(d+'/test_metadata.gsd', mode='rb')) as f:
@@ -76,7 +76,7 @@ def test_metadata():
             eq_(f.schema, 'none');
             eq_(f.schema_version, (1,2));
             eq_(f.nframes, 150);
-            ok_(f.gsd_version >= (0,2));
+            ok_(f.gsd_version == (1,0));
 
 def test_append():
     with tempfile.TemporaryDirectory() as d:

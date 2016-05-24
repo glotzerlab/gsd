@@ -6,6 +6,8 @@ File layer
 
 .. highlight:: c
 
+**Version: 1.0**
+
 General simulation data (GSD) **file layer** design and rationale. These use cases and design specifications
 define the low level GSD file format.
 

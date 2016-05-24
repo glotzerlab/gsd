@@ -346,7 +346,12 @@ class HOOMDTrajectory(object):
 
         if self.file.schema != 'hoomd':
             raise RuntimeError('GSD file is not a hoomd schema file: ' + str(self.file));
+        valid = False;
+        if self.file.schema_version < (2,0) and self.file.schema_version >= (1,0):
+            valid = True;
         if self.file.schema_version != (0,1):
+            valid = True;
+        if not valid:
             raise RuntimeError('Incompatible hoomd schema version ' + str(self.file.schema_version) + ' in: ' + str(self.file));
 
         logger.info('found ' + str(len(self)) + ' frames');
@@ -592,7 +597,7 @@ def create(name, snapshot=None):
 
     logger.info('creating hoomd gsd file: ' + name);
 
-    gsd.fl.create(name=name, application='gsd.hoomd ' + gsd.__version__, schema='hoomd', schema_version=[0,1]);
+    gsd.fl.create(name=name, application='gsd.hoomd ' + gsd.__version__, schema='hoomd', schema_version=[1,0]);
     with gsd.fl.GSDFile(name, 'wb') as f:
         traj = HOOMDTrajectory(f);
         if snapshot is not None:
