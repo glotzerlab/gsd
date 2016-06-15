@@ -20,7 +20,7 @@ fl = Extension('gsd.fl',
                )
 
 setup(name = 'gsd',
-      version = '1.0.0',
+      version = '1.0.1',
       description = 'General simulation data file format.',
       license = 'BSD - 2 clause',
       author = 'Joshua A. Anderson',
