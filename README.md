@@ -196,3 +196,7 @@ copy `gsd/gsd.h` and `gsd/gsd.c` into your project and compile it directly in.
 
 If you only need to read files, you can skip installing and just extract the module modules `gsd/pygsd.py` and
 `gsd/hoomd.py`. Together, these implement a pure-python reader for GSD and hoomd files - no C compiler required.
+
+# Change log
+
+See [ChangeLog.md](ChangeLog.md).
