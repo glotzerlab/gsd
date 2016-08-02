@@ -104,12 +104,14 @@ endif()
 
 #############################################################################################
 # Fixup conda linking, if this python appears to be a conda python
+if (${CMAKE_MAJOR_VERSION} GREATER 2)
 get_filename_component(_python_bin_dir ${PYTHON_EXECUTABLE} DIRECTORY)
 if (EXISTS "${_python_bin_dir}/conda")
     message("-- Detected conda python, activating workaround")
     set(_using_conda On)
 else()
     set(_using_conda Off)
+endif()
 endif()
 
 macro(fix_conda_python target)
