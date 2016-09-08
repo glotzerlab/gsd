@@ -14,10 +14,6 @@ not present in an older version file.
 :Schema name: ``hoomd``
 :Schema version: 1.0
 
-.. warning::
-    This particular schema is a draft version subject to testing. No backward or forward compatibility is
-    planned with a final 1.0 schema.
-
 Use-cases
 ---------
 
