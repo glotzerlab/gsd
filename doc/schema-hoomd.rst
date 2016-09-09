@@ -89,6 +89,11 @@ Name                              Category  Type   Size Default Units
 :chunk:`constraints/N`            topology  uint32 1x1  0       number
 :chunk:`constraints/value`        topology  float  Nx1  0       length
 :chunk:`constraints/group`        topology  uint32 Nx2  0,0     number
+**Special pairs data**
+:chunk:`pairs/N`                  topology  uint32 1x1  0       number
+:chunk:`pairs/types`              topology  int8   ntxm         utf-8
+:chunk:`pairs/typeid`             topology  uint32 nx1  0       number
+:chunk:`pairs/group`              topology  uint32 nx2  0,0     number
 ================================= ========= ====== ==== ======= ================
 
 
@@ -476,6 +481,47 @@ Topology
     :Units: number
 
     Store the particle tags in each constraint.
+
+.. chunk:: pairs/N
+
+    :Type: uint32
+    :Size: 1x1
+    :Default: 0
+    :Units: number
+
+    Define *N*, the number of special pair interactions, for all data chunks ``pairs/*``.
+
+.. chunk:: pairs/types
+
+    :Type: int8
+    :Size: NTxM
+    :Default: *empty*
+    :Units: UTF-8
+
+    Implicitly define *NT*, the number of particle types, for all data chunks ``pairs/*``.
+    *M* must be large enough to accommodate each type name as a null terminated UTF-8
+    character string. Row *i* of the 2D matrix is the type name for particle type *i*.
+    By default, there are 0 pair types.
+
+.. chunk:: pairs/typeid
+
+    :Type: uint32
+    :Size: Nx1
+    :Default: 0
+    :Units: number
+
+    Store the type id of each pair interaction. All id's must be less than *NT*. A pair with
+    type *id* has a type name matching the corresponding row in :chunk:`pairs/types`.
+
+.. chunk:: pairs/group
+
+    :Type: uint32
+    :Size: Nx2
+    :Default: 0,0
+    :Units: number
+
+    Store the particle tags in each special pair interaction.
+
 
 Restart data
 ------------

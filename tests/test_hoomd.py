@@ -60,6 +60,7 @@ def test_defaults():
         snap.dihedrals.N = 5;
         snap.impropers.N = 6;
         snap.constraints.N = 4;
+        snap.pairs.N = 7;
         gsd.hoomd.create(name=d+"/test_defaults.gsd", snapshot=snap);
 
         with gsd.fl.GSDFile(name=d+"/test_defaults.gsd", mode='rb') as f:
@@ -107,6 +108,12 @@ def test_defaults():
             numpy.testing.assert_array_equal(s.constraints.value, numpy.array([0,0,0,0], dtype=numpy.float32));
             numpy.testing.assert_array_equal(s.constraints.group, numpy.array([[0,0],[0,0],[0,0], [0,0]], dtype=numpy.uint32));
 
+            eq_(s.pairs.N, 7);
+            eq_(s.pairs.types, []);
+            numpy.testing.assert_array_equal(s.pairs.typeid, numpy.array([0]*7, dtype=numpy.uint32));
+            numpy.testing.assert_array_equal(s.pairs.group, numpy.array([[0,0]]*7, dtype=numpy.uint32));
+
+
 def test_fallback():
     with tempfile.TemporaryDirectory() as d:
         snap0 = gsd.hoomd.Snapshot();
@@ -151,6 +158,11 @@ def test_fallback():
         snap0.constraints.value = [1.1];
         snap0.constraints.group = [[0,1]];
 
+        snap0.pairs.N = 1;
+        snap0.pairs.types = ['pairA', 'pairB']
+        snap0.pairs.typeid = [1];
+        snap0.pairs.group = [[0,3]];
+
         snap1 = gsd.hoomd.Snapshot();
         snap1.particles.N = 2;
         snap1.particles.position = [[-2, -1, 0], [1, 3.0, 0.5]];
@@ -163,6 +175,7 @@ def test_fallback():
         snap2.dihedrals.N = 5;
         snap2.impropers.N = 6;
         snap2.constraints.N = 4;
+        snap2.pairs.N = 7;
 
         gsd.hoomd.create(name=d+"/test_fallback.gsd");
 
@@ -216,6 +229,11 @@ def test_fallback():
             numpy.testing.assert_array_equal(s.constraints.value, snap0.constraints.value);
             numpy.testing.assert_array_equal(s.constraints.group, snap0.constraints.group);
 
+            eq_(s.pairs.N, snap0.pairs.N);
+            eq_(s.pairs.types, snap0.pairs.types);
+            numpy.testing.assert_array_equal(s.pairs.typeid, snap0.pairs.typeid);
+            numpy.testing.assert_array_equal(s.pairs.group, snap0.pairs.group);
+
             # test that everything but position remained the same in frame 1
             s = hf.read_frame(1);
 
@@ -260,6 +278,11 @@ def test_fallback():
             numpy.testing.assert_array_equal(s.constraints.value, snap0.constraints.value);
             numpy.testing.assert_array_equal(s.constraints.group, snap0.constraints.group);
 
+            eq_(s.pairs.N, snap0.pairs.N);
+            eq_(s.pairs.types, snap0.pairs.types);
+            numpy.testing.assert_array_equal(s.pairs.typeid, snap0.pairs.typeid);
+            numpy.testing.assert_array_equal(s.pairs.group, snap0.pairs.group);
+
             # check that the third frame goes back to defaults because it has a different N
             s = hf.read_frame(2);
 
@@ -300,6 +323,12 @@ def test_fallback():
             eq_(s.constraints.N, 4);
             numpy.testing.assert_array_equal(s.constraints.value, numpy.array([0,0,0,0], dtype=numpy.float32));
             numpy.testing.assert_array_equal(s.constraints.group, numpy.array([[0,0],[0,0],[0,0], [0,0]], dtype=numpy.uint32));
+
+            eq_(s.pairs.N, 7);
+            eq_(s.pairs.types, snap0.pairs.types);
+            numpy.testing.assert_array_equal(s.pairs.typeid, numpy.array([0]*7, dtype=numpy.uint32));
+            numpy.testing.assert_array_equal(s.pairs.group, numpy.array([[0,0]]*7, dtype=numpy.uint32));
+
 
 def test_fallback2():
     with tempfile.TemporaryDirectory() as d:
