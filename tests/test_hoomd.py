@@ -14,7 +14,7 @@ def test_create():
         with gsd.fl.GSDFile(name=d+"/test_create.gsd", mode='rb') as f:
             hf = gsd.hoomd.HOOMDTrajectory(f);
             eq_(f.schema, 'hoomd');
-            ok_(f.schema_version == (1,0));
+            ok_(f.schema_version >= (1,0));
 
 def test_append():
     with tempfile.TemporaryDirectory() as d:
