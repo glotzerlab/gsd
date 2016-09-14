@@ -224,6 +224,10 @@ def read_xml(name):
     if len(constraint_nodes) == 1:
         parse_constraints(snap.constraints, constraint_nodes[0], 2);
 
+    pair_nodes = configuration.getElementsByTagName('pair');
+    if len(pair_nodes) == 1:
+        parse_bonds(snap.pairs, pair_nodes[0], 2);
+
     return snap;
 
 if __name__ == '__main__':

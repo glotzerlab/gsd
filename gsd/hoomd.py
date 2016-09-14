@@ -14,7 +14,7 @@ for full examples.
 
     * :py:class:`ConfigurationData` - Store configuration data in a snapshot.
     * :py:class:`ParticleData` - Store particle data in a snapshot.
-    * :py:class:`BondData` - Store particle data in a snapshot.
+    * :py:class:`BondData` - Store topology data in a snapshot.
 """
 
 import numpy
@@ -200,10 +200,10 @@ class BondData(object):
         ======== ===
 
     Attributes:
-        N (int): Number of particles in the snapshot (:chunk:`bonds/N`, :chunk:`angles/N`, :chunk:`dihedrals/N`, :chunk:`impropers/N`).
-        types (list[str]): Names of the particle types (:chunk:`bonds/types`, :chunk:`angles/types`, :chunk:`dihedrals/types`, :chunk:`impropers/types`).
-        typeid (numpy.ndarray[uint32, ndim=1, mode='c']): N length array defining bond type ids (:chunk:`bonds/typeid`, :chunk:`angles/typeid`, :chunk:`dihedrals/typeid`, :chunk:`impropers/typeid`).
-        group (numpy.ndarray[uint32, ndim=2, mode='c']): NxM array defining tags in the particle bonds (:chunk:`bonds/group`, :chunk:`angles/group`, :chunk:`dihedrals/group`, :chunk:`impropers/group`).
+        N (int): Number of particles in the snapshot (:chunk:`bonds/N`, :chunk:`angles/N`, :chunk:`dihedrals/N`, :chunk:`impropers/N`, :chuck:`pairs/N`).
+        types (list[str]): Names of the particle types (:chunk:`bonds/types`, :chunk:`angles/types`, :chunk:`dihedrals/types`, :chunk:`impropers/types`, :chuk:`pairs/types`).
+        typeid (numpy.ndarray[uint32, ndim=1, mode='c']): N length array defining bond type ids (:chunk:`bonds/typeid`, :chunk:`angles/typeid`, :chunk:`dihedrals/typeid`, :chunk:`impropers/typeid`, :chunk:`pairs.types`).
+        group (numpy.ndarray[uint32, ndim=2, mode='c']): NxM array defining tags in the particle bonds (:chunk:`bonds/group`, :chunk:`angles/group`, :chunk:`dihedrals/group`, :chunk:`impropers/group`, :chunk:`pairs/group/`).
     """
 
     def __init__(self, M):
@@ -304,6 +304,7 @@ class Snapshot(object):
         angles (:py:class:`BondData`): Angle data snapshot.
         dihedrals (:py:class:`BondData`): Dihedral data snapshot.
         impropers (:py:class:`BondData`): Improper data snapshot.
+        pairs (:py:class: `BondData`): Special pair interactions snapshot
     """
 
     def __init__(self):
@@ -314,6 +315,7 @@ class Snapshot(object):
         self.dihedrals = BondData(4);
         self.impropers = BondData(4);
         self.constraints = ConstraintData();
+        self.pairs = BondData(2);
 
     def validate(self):
         """ Validate all contained snapshot data.
@@ -328,6 +330,7 @@ class Snapshot(object):
         self.dihedrals.validate();
         self.impropers.validate();
         self.constraints.validate();
+        self.pairs.validate();
 
 class HOOMDTrajectory(object):
     """ Read and write hoomd gsd files.
@@ -383,7 +386,7 @@ class HOOMDTrajectory(object):
         if self._initial_frame is None and len(self) > 0:
             self.read_frame(0);
 
-        for path in ['configuration', 'particles', 'bonds', 'angles', 'dihedrals', 'impropers', 'constraints']:
+        for path in ['configuration', 'particles', 'bonds', 'angles', 'dihedrals', 'impropers', 'constraints', 'pairs']:
             container = getattr(snapshot, path);
             for name in container._default_value:
                 if self._should_write(path, name, snapshot):
@@ -506,7 +509,7 @@ class HOOMDTrajectory(object):
                 snap.configuration.box = snap.configuration._default_value['box'];
 
         # then read all groups that have N, types, etc...
-        for path in ['particles', 'bonds', 'angles', 'dihedrals', 'impropers', 'constraints']:
+        for path in ['particles', 'bonds', 'angles', 'dihedrals', 'impropers', 'constraints', 'pairs']:
             container = getattr(snap, path);
             if self._initial_frame is not None:
                 initial_frame_container = getattr(self._initial_frame, path);
@@ -597,7 +600,7 @@ def create(name, snapshot=None):
 
     logger.info('creating hoomd gsd file: ' + name);
 
-    gsd.fl.create(name=name, application='gsd.hoomd ' + gsd.__version__, schema='hoomd', schema_version=[1,0]);
+    gsd.fl.create(name=name, application='gsd.hoomd ' + gsd.__version__, schema='hoomd', schema_version=[1,1]);
     with gsd.fl.GSDFile(name, 'wb') as f:
         traj = HOOMDTrajectory(f);
         if snapshot is not None:
