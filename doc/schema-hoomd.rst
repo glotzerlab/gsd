@@ -12,7 +12,7 @@ of the existing data chunks. Any newer reader will initialize new data chunks wi
 not present in an older version file.
 
 :Schema name: ``hoomd``
-:Schema version: 1.0
+:Schema version: 1.1
 
 Use-cases
 ---------
@@ -491,6 +491,8 @@ Topology
 
     Define *N*, the number of special pair interactions, for all data chunks ``pairs/*``.
 
+    .. versionadded:: 1.1
+
 .. chunk:: pairs/types
 
     :Type: int8
@@ -503,6 +505,8 @@ Topology
     character string. Row *i* of the 2D matrix is the type name for particle type *i*.
     By default, there are 0 special pair types.
 
+    .. versionadded:: 1.1
+
 .. chunk:: pairs/typeid
 
     :Type: uint32
@@ -513,6 +517,8 @@ Topology
     Store the type id of each special pair interaction. All id's must be less than *NT*. A pair with
     type *id* has a type name matching the corresponding row in :chunk:`pairs/types`.
 
+    .. versionadded:: 1.1
+
 .. chunk:: pairs/group
 
     :Type: uint32
@@ -521,6 +527,8 @@ Topology
     :Units: number
 
     Store the particle tags in each special pair interaction.
+
+    .. versionadded:: 1.1
 
 
 Restart data
