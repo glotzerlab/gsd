@@ -91,9 +91,9 @@ Name                              Category  Type   Size Default Units
 :chunk:`constraints/group`        topology  uint32 Nx2  0,0     number
 **Special pairs data**
 :chunk:`pairs/N`                  topology  uint32 1x1  0       number
-:chunk:`pairs/types`              topology  int8   ntxm         utf-8
-:chunk:`pairs/typeid`             topology  uint32 nx1  0       number
-:chunk:`pairs/group`              topology  uint32 nx2  0,0     number
+:chunk:`pairs/types`              topology  int8   NTxM         utf-8
+:chunk:`pairs/typeid`             topology  uint32 Nx1  0       number
+:chunk:`pairs/group`              topology  uint32 Nx2  0,0     number
 ================================= ========= ====== ==== ======= ================
 
 
@@ -310,9 +310,9 @@ Topology
     :Default: *empty*
     :Units: UTF-8
 
-    Implicitly define *NT*, the number of particle types, for all data chunks ``bonds/*``.
+    Implicitly define *NT*, the number of bond types, for all data chunks ``bonds/*``.
     *M* must be large enough to accommodate each type name as a null terminated UTF-8
-    character string. Row *i* of the 2D matrix is the type name for particle type *i*.
+    character string. Row *i* of the 2D matrix is the type name for bond type *i*.
     By default, there are 0 bond types.
 
 .. chunk:: bonds/typeid
@@ -350,9 +350,9 @@ Topology
     :Default: *empty*
     :Units: UTF-8
 
-    Implicitly define *NT*, the number of particle types, for all data chunks ``angles/*``.
+    Implicitly define *NT*, the number of angle types, for all data chunks ``angles/*``.
     *M* must be large enough to accommodate each type name as a null terminated UTF-8
-    character string. Row *i* of the 2D matrix is the type name for particle type *i*.
+    character string. Row *i* of the 2D matrix is the type name for angle type *i*.
     By default, there are 0 angle types.
 
 .. chunk:: angles/typeid
@@ -390,9 +390,9 @@ Topology
     :Default: *empty*
     :Units: UTF-8
 
-    Implicitly define *NT*, the number of particle types, for all data chunks ``dihedrals/*``.
+    Implicitly define *NT*, the number of dihedral types, for all data chunks ``dihedrals/*``.
     *M* must be large enough to accommodate each type name as a null terminated UTF-8
-    character string. Row *i* of the 2D matrix is the type name for particle type *i*.
+    character string. Row *i* of the 2D matrix is the type name for dihedral type *i*.
     By default, there are 0 dihedral types.
 
 .. chunk:: dihedrals/typeid
@@ -430,9 +430,9 @@ Topology
     :Default: *empty*
     :Units: UTF-8
 
-    Implicitly define *NT*, the number of particle types, for all data chunks ``impropers/*``.
+    Implicitly define *NT*, the number of improper types, for all data chunks ``impropers/*``.
     *M* must be large enough to accommodate each type name as a null terminated UTF-8
-    character string. Row *i* of the 2D matrix is the type name for particle type *i*.
+    character string. Row *i* of the 2D matrix is the type name for improper type *i*.
     By default, there are 0 improper types.
 
 .. chunk:: impropers/typeid
@@ -498,10 +498,10 @@ Topology
     :Default: *empty*
     :Units: UTF-8
 
-    Implicitly define *NT*, the number of particle types, for all data chunks ``pairs/*``.
+    Implicitly define *NT*, the number of special pair types, for all data chunks ``pairs/*``.
     *M* must be large enough to accommodate each type name as a null terminated UTF-8
     character string. Row *i* of the 2D matrix is the type name for particle type *i*.
-    By default, there are 0 pair types.
+    By default, there are 0 special pair types.
 
 .. chunk:: pairs/typeid
 
@@ -510,7 +510,7 @@ Topology
     :Default: 0
     :Units: number
 
-    Store the type id of each pair interaction. All id's must be less than *NT*. A pair with
+    Store the type id of each special pair interaction. All id's must be less than *NT*. A pair with
     type *id* has a type name matching the corresponding row in :chunk:`pairs/types`.
 
 .. chunk:: pairs/group
