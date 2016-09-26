@@ -20,3 +20,6 @@ before_build:
   - ps: mkdir build
   - ps: cd build
   - ps: cmake ../ -G "Visual Studio 14 2015 Win64" -DPYTHON_EXECUTABLE=C:\Miniconda35-x64\python
+
+test_script:
+  - ps: C:\Miniconda35-x64\Scripts\nosetests
