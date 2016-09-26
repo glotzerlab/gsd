@@ -23,7 +23,7 @@ if(NOT PASSED_FIRST_CONFIGURE)
         endif(${CMAKE_GENERATOR} STREQUAL "Xcode")
     endif()
 
-    if(CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    if(CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
         # default flags for g++
         set(CMAKE_CXX_FLAGS_DEBUG "-march=${GCC_ARCH} -g -Wall -Wno-cpp" CACHE STRING "Flags used by the compiler during debug builds." FORCE)
         set(CMAKE_CXX_FLAGS_MINSIZEREL "-march=${GCC_ARCH} -Os -Wall -DNDEBUG -Wno-cpp" CACHE STRING "Flags used by the compiler during minimum size release builds." FORCE)

@@ -14,7 +14,7 @@ platform:
 configuration: Release
 
 install:
-  - ps: C:\Miniconda35-x64\Scripts\conda install -y numpy cython
+  - ps: C:\Miniconda35-x64\Scripts\conda install -q -y numpy cython
 
 before_build:
   - ps: mkdir build
