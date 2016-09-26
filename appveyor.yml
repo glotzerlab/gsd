@@ -6,13 +6,17 @@ image: Visual Studio 2015
 
 environment:
   PYTHONPATH: c:\projects\gsd\build
+  CONDA: C:\Miniconda35-x64
 
 platform:
   - x64
 
 configuration: Release
 
+install:
+  - ps: $CONDA/conda install -y numpy cython
+
 before_build:
   - ps: mkdir build
   - ps: cd build
-  - ps: cmake ../ -G "Visual Studio 14 2015 Win64"
+  - ps: cmake ../ -G "Visual Studio 14 2015 Win64" -DPYTHON_EXECUTABLE=$CONDA/python
