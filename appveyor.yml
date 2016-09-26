@@ -14,9 +14,9 @@ platform:
 configuration: Release
 
 install:
-  - ps: $Env:CONDA\conda install -y numpy cython
+  - ps: "$Env:CONDA\conda" install -y numpy cython
 
 before_build:
   - ps: mkdir build
   - ps: cd build
-  - ps: cmake ../ -G "Visual Studio 14 2015 Win64" -DPYTHON_EXECUTABLE=$Env:CONDA\python
+  - ps: cmake ../ -G "Visual Studio 14 2015 Win64" -DPYTHON_EXECUTABLE="$Env:CONDA\python"
