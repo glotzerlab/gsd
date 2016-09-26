@@ -28,19 +28,10 @@ string(REPLACE "." "" _python_version_no_dots ${PYTHON_VERSION})
 if (PYTHON_VERSION VERSION_GREATER 3)
     run_python("import sysconfig\; print(sysconfig.get_path('include'))" _python_include_hint)
     run_python("import sysconfig\; print(sysconfig.get_config_var('LIBDIR'))" _python_lib_hint)
-    run_python("import sysconfig\; print(sysconfig.get_config_var('LIBPL'))" _python_static_hint)
-
-    if (ENABLE_STATIC)
-        run_python("import sysconfig\; print(sysconfig.get_config_var('LIBRARY'))" _python_dynamic_lib_name)
-    else()
-        run_python("import sysconfig\; print(sysconfig.get_config_var('LDLIBRARY'))" _python_dynamic_lib_name)
-    endif()
+    run_python("import sysconfig\; print(sysconfig.get_config_var('BINDIR'))" _python_prefix_hint)
 else()
     run_python("from distutils import sysconfig\; print sysconfig.get_python_inc()" _python_include_hint)
     run_python("from distutils import sysconfig\; print sysconfig.PREFIX" _python_prefix_hint)
-    run_python("from distutils import sysconfig\; print sysconfig.get_config_var('LIBPL')" _python_static_hint)
-    run_python("from distutils import sysconfig\; print sysconfig.get_config_var('LIBRARY')" _python_static_lib_name)
-    run_python("from distutils import sysconfig\; print sysconfig.get_config_var('LDLIBRARY')" _python_dynamic_lib_name)
 endif()
 
 find_path(PYTHON_INCLUDE_DIR Python.h
@@ -57,7 +48,7 @@ set(_old_suffixes ${CMAKE_FIND_LIBRARY_SUFFIXES})
 set(CMAKE_FIND_LIBRARY_SUFFIXES ";${CMAKE_FIND_LIBRARY_SUFFIXES}")
 find_library(PYTHON_LIBRARY
              NAMES python${_python_version_no_dots} python${PYTHON_VERSION} python${PYTHON_VERSION}m
-             HINTS ${_python_prefix_hint} ${_python_lib_hint}
+             HINTS ${_python_prefix_hint} ${_python_lib_hint} ${_python_prefix_hint}/DLLs
              PATH_SUFFIXES lib64 lib libs
              NO_DEFAULT_PATH
              )
