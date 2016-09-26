@@ -1,23 +1,63 @@
 // Copyright (c) 2016 The Regents of the University of Michigan
 // This file is part of the General Simulation Data (GSD) project, released under the BSD 2-Clause License.
 
+#ifdef _WIN32
+
+#define GSD_USE_MMAP 0
+#include <io.h>
+#include <sys/stat.h>
+
+#else // linux / mac
+
 #define _XOPEN_SOURCE 500
 #include <unistd.h>
-#include <fcntl.h>
-#include <stdlib.h>
-#include <stdio.h>
-
+#include <sys/mman.h>
 #define GSD_USE_MMAP 1
 
-#if GSD_USE_MMAP
-#include <sys/mman.h>
 #endif
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <fcntl.h>
 
 #include "gsd.h"
 
 /*! \file gsd.c
     \brief Implements the GSD C API
 */
+
+// define windows wrapper functions
+#ifdef _WIN32
+#define lseek _lseeki64
+#define write _write
+#define read _read
+#define open _open
+#define ftruncate _chsize
+
+int S_IRUSR = _S_IREAD;
+int S_IWUSR = _S_IWRITE;
+int S_IRGRP = _S_IREAD;
+int S_IWGRP = _S_IWRITE;
+
+size_t pread(int fd, void *buf, size_t count, int64_t offset)
+    {
+    int64_t oldpos = _telli64(fd);
+    _lseeki64(fd, offset, SEEK_SET);
+    size_t result = _read(fd, buf, count);  // Note: does not support >4GB reads
+    _lseeki64(fd, oldpos, SEEK_SET);
+    return result;
+    }
+
+size_t pwrite(int fd, void *buf, size_t count, int64_t offset)
+    {
+    int64_t oldpos = _telli64(fd);
+    _lseeki64(fd, offset, SEEK_SET);
+    size_t result = _write(fd, buf, count);  // Note: does not support >4GB writes
+    _lseeki64(fd, oldpos, SEEK_SET);
+    return result;
+    }
+
+#endif
 
 /*! \internal
     \brief Utility function to expand the memory space for the index block
@@ -835,3 +875,13 @@ size_t gsd_sizeof_type(enum gsd_type type)
     else
         return 0;
     }
+
+// undefine windows wrapper macros
+#ifdef _WIN32
+#undef lseek
+#undef write
+#undef read
+#undef open
+#undef ftruncate
+
+#endif
