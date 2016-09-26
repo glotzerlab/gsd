@@ -450,9 +450,15 @@ uint32_t gsd_make_version(unsigned int major, unsigned int minor)
 */
 int gsd_create(const char *fname, const char *application, const char *schema, uint32_t schema_version)
     {
+    int extra_flags = 0;
+    #ifdef WIN32
+    extra_flags = _O_BINARY;
+    #endif
+
     // create the file
-    int fd = open(fname, O_RDWR | O_CREAT | O_TRUNC,  S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
-    return __gsd_initialize_file(fd, application, schema, schema_version);
+    int fd = open(fname, O_RDWR | O_CREAT | O_TRUNC | extra_flags,  S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
+    int retval = __gsd_initialize_file(fd, application, schema, schema_version);
+    close(fd);
     }
 
 /*! \param handle Handle to open
@@ -478,20 +484,25 @@ int gsd_open(struct gsd_handle* handle, const char *fname, const enum gsd_open_f
     handle->namelist = NULL;
     handle->cur_frame = 0;
 
+    int extra_flags = 0;
+    #ifdef WIN32
+    extra_flags = _O_BINARY;
+    #endif
+
     // create the file
     if (flags == GSD_OPEN_READWRITE)
         {
-        handle->fd = open(fname, O_RDWR);
+        handle->fd = open(fname, O_RDWR | extra_flags);
         handle->open_flags = GSD_OPEN_READWRITE;
         }
     else if (flags == GSD_OPEN_READONLY)
         {
-        handle->fd = open(fname, O_RDONLY);
+        handle->fd = open(fname, O_RDONLY | extra_flags);
         handle->open_flags = GSD_OPEN_READONLY;
         }
     else if (flags == GSD_OPEN_APPEND)
         {
-        handle->fd = open(fname, O_RDWR);
+        handle->fd = open(fname, O_RDWR | extra_flags);
         handle->open_flags = GSD_OPEN_APPEND;
         }
 
@@ -841,7 +852,10 @@ int gsd_read_chunk(struct gsd_handle* handle, void* data, const struct gsd_index
 
     size_t bytes_read = pread(handle->fd, data, size, chunk->location);
     if (bytes_read != size)
+        {
+        printf("%d %d\n", bytes_read, size);
         return -1;
+        }
 
     return 0;
     }
