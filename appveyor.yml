@@ -1,0 +1,18 @@
+version: '1.0.{build}-{branch}'
+
+clone_folder: c:\projects\gsd
+
+image: Visual Studio 2015
+
+environment:
+  PYTHONPATH: c:\projects\gsd\build
+
+platform:
+  - x64
+
+configuration: Release
+
+before_build:
+  - ps: mkdir build
+  - ps: cd build
+  - ps: cmake ../ -G "Visual Studio 14 2015 Win64"
