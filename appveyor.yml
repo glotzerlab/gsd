@@ -1,4 +1,4 @@
-version: '1.0.{build}-{branch}'
+version: '1.0.0.{build}-{branch}'
 
 clone_folder: c:\projects\gsd
 
@@ -22,5 +22,6 @@ before_build:
   - ps: cmake ../ -G "Visual Studio 14 2015 Win64" -DPYTHON_EXECUTABLE=C:\Miniconda35-x64\python
 
 test_script:
+  - ps: cp .\gsd\Release\*.pyd gsd\
   - ps: cd ..
   - ps: C:\Miniconda35-x64\Scripts\nosetests
