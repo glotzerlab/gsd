@@ -24,4 +24,4 @@ before_build:
 test_script:
   - ps: cp .\gsd\Release\*.pyd gsd\
   - ps: cd ..
-  - ps: C:\Miniconda35-x64\Scripts\nosetests
+  - cmd: C:\Miniconda35-x64\Scripts\nosetests
