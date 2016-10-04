@@ -33,6 +33,11 @@ if(APPLE)
     fix_conda_python(fl)
 endif(APPLE)
 
+if (WIN32)
+    target_link_libraries(fl ${PYTHON_LIBRARY})
+    set_target_properties(fl PROPERTIES SUFFIX ".pyd")
+endif()
+
 ################ Python only modules
 # copy python modules to the build directory to make it a working python package
 MACRO(copy_file file)
