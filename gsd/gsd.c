@@ -459,6 +459,7 @@ int gsd_create(const char *fname, const char *application, const char *schema, u
     int fd = open(fname, O_RDWR | O_CREAT | O_TRUNC | extra_flags,  S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
     int retval = __gsd_initialize_file(fd, application, schema, schema_version);
     close(fd);
+    return retval;
     }
 
 /*! \param handle Handle to open
@@ -853,7 +854,6 @@ int gsd_read_chunk(struct gsd_handle* handle, void* data, const struct gsd_index
     size_t bytes_read = pread(handle->fd, data, size, chunk->location);
     if (bytes_read != size)
         {
-        printf("%d %d\n", bytes_read, size);
         return -1;
         }
 
