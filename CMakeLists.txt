@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.10 FATAL_ERROR)
 project(gsd)
 
+set(PYTHON_MODULE_BASE_DIR "gsd")
+
 add_subdirectory(CMake)
 include(CFlagsSetup)
 

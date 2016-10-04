@@ -58,3 +58,11 @@ foreach(file ${files})
 endforeach()
 
 add_custom_target(copy_gsd ALL DEPENDS ${files})
+
+install(TARGETS fl
+        LIBRARY DESTINATION ${PYTHON_MODULE_BASE_DIR}
+        )
+
+install(FILES ${files}
+        DESTINATION ${PYTHON_MODULE_BASE_DIR}
+       )
