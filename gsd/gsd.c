@@ -97,7 +97,7 @@ static int __gsd_expand_index(struct gsd_handle *handle)
         // in append mode, we don't have the whole index stored in memory. Instead, we need to copy it in chunks
         // from the file's old position to the new position
         const size_t buf_size = 1024*16;
-        char buf[buf_size];
+        char buf[1024*16];
 
         int64_t new_index_location = lseek(handle->fd, 0, SEEK_END);
         int64_t old_index_location = handle->header.index_location;
