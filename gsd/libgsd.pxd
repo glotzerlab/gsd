@@ -1,4 +1,4 @@
-# Copyright (c) 2016 The Regents of the University of Michigan
+# Copyright (c) 2016-2017 The Regents of the University of Michigan
 # This file is part of the General Simulation Data (GSD) project, released under the BSD 2-Clause License.
 
 from libc.stdint cimport uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, uint64_t, int64_t

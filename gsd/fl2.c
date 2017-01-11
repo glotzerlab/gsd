@@ -497,7 +497,7 @@ typedef struct {
 
 /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":726
  * # in Cython to enable them only on the right systems.
- * 
+ *
  * ctypedef npy_int8       int8_t             # <<<<<<<<<<<<<<
  * ctypedef npy_int16      int16_t
  * ctypedef npy_int32      int32_t
@@ -505,7 +505,7 @@ typedef struct {
 typedef npy_int8 __pyx_t_5numpy_int8_t;
 
 /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":727
- * 
+ *
  * ctypedef npy_int8       int8_t
  * ctypedef npy_int16      int16_t             # <<<<<<<<<<<<<<
  * ctypedef npy_int32      int32_t
@@ -533,7 +533,7 @@ typedef npy_int64 __pyx_t_5numpy_int64_t;
 
 /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":733
  * #ctypedef npy_int128     int128_t
- * 
+ *
  * ctypedef npy_uint8      uint8_t             # <<<<<<<<<<<<<<
  * ctypedef npy_uint16     uint16_t
  * ctypedef npy_uint32     uint32_t
@@ -541,7 +541,7 @@ typedef npy_int64 __pyx_t_5numpy_int64_t;
 typedef npy_uint8 __pyx_t_5numpy_uint8_t;
 
 /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":734
- * 
+ *
  * ctypedef npy_uint8      uint8_t
  * ctypedef npy_uint16     uint16_t             # <<<<<<<<<<<<<<
  * ctypedef npy_uint32     uint32_t
@@ -569,7 +569,7 @@ typedef npy_uint64 __pyx_t_5numpy_uint64_t;
 
 /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":740
  * #ctypedef npy_uint128    uint128_t
- * 
+ *
  * ctypedef npy_float32    float32_t             # <<<<<<<<<<<<<<
  * ctypedef npy_float64    float64_t
  * #ctypedef npy_float80    float80_t
@@ -577,7 +577,7 @@ typedef npy_uint64 __pyx_t_5numpy_uint64_t;
 typedef npy_float32 __pyx_t_5numpy_float32_t;
 
 /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":741
- * 
+ *
  * ctypedef npy_float32    float32_t
  * ctypedef npy_float64    float64_t             # <<<<<<<<<<<<<<
  * #ctypedef npy_float80    float80_t
@@ -599,7 +599,7 @@ typedef npy_long __pyx_t_5numpy_int_t;
  * ctypedef npy_long       int_t
  * ctypedef npy_longlong   long_t             # <<<<<<<<<<<<<<
  * ctypedef npy_longlong   longlong_t
- * 
+ *
  */
 typedef npy_longlong __pyx_t_5numpy_long_t;
 
@@ -607,14 +607,14 @@ typedef npy_longlong __pyx_t_5numpy_long_t;
  * ctypedef npy_long       int_t
  * ctypedef npy_longlong   long_t
  * ctypedef npy_longlong   longlong_t             # <<<<<<<<<<<<<<
- * 
+ *
  * ctypedef npy_ulong      uint_t
  */
 typedef npy_longlong __pyx_t_5numpy_longlong_t;
 
 /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":754
  * ctypedef npy_longlong   longlong_t
- * 
+ *
  * ctypedef npy_ulong      uint_t             # <<<<<<<<<<<<<<
  * ctypedef npy_ulonglong  ulong_t
  * ctypedef npy_ulonglong  ulonglong_t
@@ -622,11 +622,11 @@ typedef npy_longlong __pyx_t_5numpy_longlong_t;
 typedef npy_ulong __pyx_t_5numpy_uint_t;
 
 /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":755
- * 
+ *
  * ctypedef npy_ulong      uint_t
  * ctypedef npy_ulonglong  ulong_t             # <<<<<<<<<<<<<<
  * ctypedef npy_ulonglong  ulonglong_t
- * 
+ *
  */
 typedef npy_ulonglong __pyx_t_5numpy_ulong_t;
 
@@ -634,32 +634,32 @@ typedef npy_ulonglong __pyx_t_5numpy_ulong_t;
  * ctypedef npy_ulong      uint_t
  * ctypedef npy_ulonglong  ulong_t
  * ctypedef npy_ulonglong  ulonglong_t             # <<<<<<<<<<<<<<
- * 
+ *
  * ctypedef npy_intp       intp_t
  */
 typedef npy_ulonglong __pyx_t_5numpy_ulonglong_t;
 
 /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":758
  * ctypedef npy_ulonglong  ulonglong_t
- * 
+ *
  * ctypedef npy_intp       intp_t             # <<<<<<<<<<<<<<
  * ctypedef npy_uintp      uintp_t
- * 
+ *
  */
 typedef npy_intp __pyx_t_5numpy_intp_t;
 
 /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":759
- * 
+ *
  * ctypedef npy_intp       intp_t
  * ctypedef npy_uintp      uintp_t             # <<<<<<<<<<<<<<
- * 
+ *
  * ctypedef npy_double     float_t
  */
 typedef npy_uintp __pyx_t_5numpy_uintp_t;
 
 /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":761
  * ctypedef npy_uintp      uintp_t
- * 
+ *
  * ctypedef npy_double     float_t             # <<<<<<<<<<<<<<
  * ctypedef npy_double     double_t
  * ctypedef npy_longdouble longdouble_t
@@ -667,11 +667,11 @@ typedef npy_uintp __pyx_t_5numpy_uintp_t;
 typedef npy_double __pyx_t_5numpy_float_t;
 
 /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":762
- * 
+ *
  * ctypedef npy_double     float_t
  * ctypedef npy_double     double_t             # <<<<<<<<<<<<<<
  * ctypedef npy_longdouble longdouble_t
- * 
+ *
  */
 typedef npy_double __pyx_t_5numpy_double_t;
 
@@ -679,7 +679,7 @@ typedef npy_double __pyx_t_5numpy_double_t;
  * ctypedef npy_double     float_t
  * ctypedef npy_double     double_t
  * ctypedef npy_longdouble longdouble_t             # <<<<<<<<<<<<<<
- * 
+ *
  * ctypedef npy_cfloat      cfloat_t
  */
 typedef npy_longdouble __pyx_t_5numpy_longdouble_t;
@@ -709,7 +709,7 @@ struct __pyx_obj_3gsd_2fl_GSDFile;
 
 /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":765
  * ctypedef npy_longdouble longdouble_t
- * 
+ *
  * ctypedef npy_cfloat      cfloat_t             # <<<<<<<<<<<<<<
  * ctypedef npy_cdouble     cdouble_t
  * ctypedef npy_clongdouble clongdouble_t
@@ -717,11 +717,11 @@ struct __pyx_obj_3gsd_2fl_GSDFile;
 typedef npy_cfloat __pyx_t_5numpy_cfloat_t;
 
 /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":766
- * 
+ *
  * ctypedef npy_cfloat      cfloat_t
  * ctypedef npy_cdouble     cdouble_t             # <<<<<<<<<<<<<<
  * ctypedef npy_clongdouble clongdouble_t
- * 
+ *
  */
 typedef npy_cdouble __pyx_t_5numpy_cdouble_t;
 
@@ -729,26 +729,26 @@ typedef npy_cdouble __pyx_t_5numpy_cdouble_t;
  * ctypedef npy_cfloat      cfloat_t
  * ctypedef npy_cdouble     cdouble_t
  * ctypedef npy_clongdouble clongdouble_t             # <<<<<<<<<<<<<<
- * 
+ *
  * ctypedef npy_cdouble     complex_t
  */
 typedef npy_clongdouble __pyx_t_5numpy_clongdouble_t;
 
 /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":769
  * ctypedef npy_clongdouble clongdouble_t
- * 
+ *
  * ctypedef npy_cdouble     complex_t             # <<<<<<<<<<<<<<
- * 
+ *
  * cdef inline object PyArray_MultiIterNew1(a):
  */
 typedef npy_cdouble __pyx_t_5numpy_complex_t;
 
 /* "gsd/fl.pyx":85
  *     return <void*>&data_array_float64[0,0];
- * 
+ *
  * cdef class GSDFile:             # <<<<<<<<<<<<<<
  *     """ GSDFile(name, mode)
- * 
+ *
  */
 struct __pyx_obj_3gsd_2fl_GSDFile {
   PyObject_HEAD
@@ -1451,7 +1451,7 @@ static PyObject *__pyx_codeobj__30;
 
 /* "gsd/fl.pyx":27
  * ### Helper functions ###
- * 
+ *
  * cdef __format_errno(fname):             # <<<<<<<<<<<<<<
  *     """ Return a tuple for constructing an IOError """
  *     return (errno, os.strerror(errno), fname);
@@ -1475,7 +1475,7 @@ static PyObject *__pyx_f_3gsd_2fl___format_errno(PyObject *__pyx_v_fname) {
  * cdef __format_errno(fname):
  *     """ Return a tuple for constructing an IOError """
  *     return (errno, os.strerror(errno), fname);             # <<<<<<<<<<<<<<
- * 
+ *
  * # Getter methods for 2D numpy arrays of all supported types
  */
   __Pyx_XDECREF(__pyx_r);
@@ -1531,7 +1531,7 @@ static PyObject *__pyx_f_3gsd_2fl___format_errno(PyObject *__pyx_v_fname) {
 
   /* "gsd/fl.pyx":27
  * ### Helper functions ###
- * 
+ *
  * cdef __format_errno(fname):             # <<<<<<<<<<<<<<
  *     """ Return a tuple for constructing an IOError """
  *     return (errno, os.strerror(errno), fname);
@@ -1588,7 +1588,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_uint8(PyObject *__pyx_v_data) {
  *     cdef numpy.ndarray[uint8_t, ndim=2, mode="c"] data_array_uint8;
  *     data_array_uint8 = data;             # <<<<<<<<<<<<<<
  *     return <void*>&data_array_uint8[0,0];
- * 
+ *
  */
   if (!(likely(((__pyx_v_data) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_data, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 37; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_t_1 = __pyx_v_data;
@@ -1616,7 +1616,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_uint8(PyObject *__pyx_v_data) {
  *     cdef numpy.ndarray[uint8_t, ndim=2, mode="c"] data_array_uint8;
  *     data_array_uint8 = data;
  *     return <void*>&data_array_uint8[0,0];             # <<<<<<<<<<<<<<
- * 
+ *
  * cdef void * __get_ptr_uint16(data):
  */
   __pyx_t_6 = 0;
@@ -1665,7 +1665,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_uint8(PyObject *__pyx_v_data) {
 
 /* "gsd/fl.pyx":40
  *     return <void*>&data_array_uint8[0,0];
- * 
+ *
  * cdef void * __get_ptr_uint16(data):             # <<<<<<<<<<<<<<
  *     cdef numpy.ndarray[uint16_t, ndim=2, mode="c"] data_array_uint16;
  *     data_array_uint16 = data;
@@ -1698,7 +1698,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_uint16(PyObject *__pyx_v_data) {
  *     cdef numpy.ndarray[uint16_t, ndim=2, mode="c"] data_array_uint16;
  *     data_array_uint16 = data;             # <<<<<<<<<<<<<<
  *     return <void*>&data_array_uint16[0,0];
- * 
+ *
  */
   if (!(likely(((__pyx_v_data) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_data, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 42; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_t_1 = __pyx_v_data;
@@ -1726,7 +1726,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_uint16(PyObject *__pyx_v_data) {
  *     cdef numpy.ndarray[uint16_t, ndim=2, mode="c"] data_array_uint16;
  *     data_array_uint16 = data;
  *     return <void*>&data_array_uint16[0,0];             # <<<<<<<<<<<<<<
- * 
+ *
  * cdef void * __get_ptr_uint32(data):
  */
   __pyx_t_6 = 0;
@@ -1749,7 +1749,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_uint16(PyObject *__pyx_v_data) {
 
   /* "gsd/fl.pyx":40
  *     return <void*>&data_array_uint8[0,0];
- * 
+ *
  * cdef void * __get_ptr_uint16(data):             # <<<<<<<<<<<<<<
  *     cdef numpy.ndarray[uint16_t, ndim=2, mode="c"] data_array_uint16;
  *     data_array_uint16 = data;
@@ -1775,7 +1775,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_uint16(PyObject *__pyx_v_data) {
 
 /* "gsd/fl.pyx":45
  *     return <void*>&data_array_uint16[0,0];
- * 
+ *
  * cdef void * __get_ptr_uint32(data):             # <<<<<<<<<<<<<<
  *     cdef numpy.ndarray[uint32_t, ndim=2, mode="c"] data_array_uint32;
  *     data_array_uint32 = data;
@@ -1808,7 +1808,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_uint32(PyObject *__pyx_v_data) {
  *     cdef numpy.ndarray[uint32_t, ndim=2, mode="c"] data_array_uint32;
  *     data_array_uint32 = data;             # <<<<<<<<<<<<<<
  *     return <void*>&data_array_uint32[0,0];
- * 
+ *
  */
   if (!(likely(((__pyx_v_data) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_data, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 47; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_t_1 = __pyx_v_data;
@@ -1836,7 +1836,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_uint32(PyObject *__pyx_v_data) {
  *     cdef numpy.ndarray[uint32_t, ndim=2, mode="c"] data_array_uint32;
  *     data_array_uint32 = data;
  *     return <void*>&data_array_uint32[0,0];             # <<<<<<<<<<<<<<
- * 
+ *
  * cdef void * __get_ptr_uint64(data):
  */
   __pyx_t_6 = 0;
@@ -1859,7 +1859,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_uint32(PyObject *__pyx_v_data) {
 
   /* "gsd/fl.pyx":45
  *     return <void*>&data_array_uint16[0,0];
- * 
+ *
  * cdef void * __get_ptr_uint32(data):             # <<<<<<<<<<<<<<
  *     cdef numpy.ndarray[uint32_t, ndim=2, mode="c"] data_array_uint32;
  *     data_array_uint32 = data;
@@ -1885,7 +1885,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_uint32(PyObject *__pyx_v_data) {
 
 /* "gsd/fl.pyx":50
  *     return <void*>&data_array_uint32[0,0];
- * 
+ *
  * cdef void * __get_ptr_uint64(data):             # <<<<<<<<<<<<<<
  *     cdef numpy.ndarray[uint64_t, ndim=2, mode="c"] data_array_uint64;
  *     data_array_uint64 = data;
@@ -1918,7 +1918,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_uint64(PyObject *__pyx_v_data) {
  *     cdef numpy.ndarray[uint64_t, ndim=2, mode="c"] data_array_uint64;
  *     data_array_uint64 = data;             # <<<<<<<<<<<<<<
  *     return <void*>&data_array_uint64[0,0];
- * 
+ *
  */
   if (!(likely(((__pyx_v_data) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_data, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 52; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_t_1 = __pyx_v_data;
@@ -1946,7 +1946,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_uint64(PyObject *__pyx_v_data) {
  *     cdef numpy.ndarray[uint64_t, ndim=2, mode="c"] data_array_uint64;
  *     data_array_uint64 = data;
  *     return <void*>&data_array_uint64[0,0];             # <<<<<<<<<<<<<<
- * 
+ *
  * cdef void * __get_ptr_int8(data):
  */
   __pyx_t_6 = 0;
@@ -1969,7 +1969,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_uint64(PyObject *__pyx_v_data) {
 
   /* "gsd/fl.pyx":50
  *     return <void*>&data_array_uint32[0,0];
- * 
+ *
  * cdef void * __get_ptr_uint64(data):             # <<<<<<<<<<<<<<
  *     cdef numpy.ndarray[uint64_t, ndim=2, mode="c"] data_array_uint64;
  *     data_array_uint64 = data;
@@ -1995,7 +1995,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_uint64(PyObject *__pyx_v_data) {
 
 /* "gsd/fl.pyx":55
  *     return <void*>&data_array_uint64[0,0];
- * 
+ *
  * cdef void * __get_ptr_int8(data):             # <<<<<<<<<<<<<<
  *     cdef numpy.ndarray[int8_t, ndim=2, mode="c"] data_array_int8;
  *     data_array_int8 = data;
@@ -2028,7 +2028,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_int8(PyObject *__pyx_v_data) {
  *     cdef numpy.ndarray[int8_t, ndim=2, mode="c"] data_array_int8;
  *     data_array_int8 = data;             # <<<<<<<<<<<<<<
  *     return <void*>&data_array_int8[0,0];
- * 
+ *
  */
   if (!(likely(((__pyx_v_data) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_data, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 57; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_t_1 = __pyx_v_data;
@@ -2056,7 +2056,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_int8(PyObject *__pyx_v_data) {
  *     cdef numpy.ndarray[int8_t, ndim=2, mode="c"] data_array_int8;
  *     data_array_int8 = data;
  *     return <void*>&data_array_int8[0,0];             # <<<<<<<<<<<<<<
- * 
+ *
  * cdef void * __get_ptr_int16(data):
  */
   __pyx_t_6 = 0;
@@ -2079,7 +2079,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_int8(PyObject *__pyx_v_data) {
 
   /* "gsd/fl.pyx":55
  *     return <void*>&data_array_uint64[0,0];
- * 
+ *
  * cdef void * __get_ptr_int8(data):             # <<<<<<<<<<<<<<
  *     cdef numpy.ndarray[int8_t, ndim=2, mode="c"] data_array_int8;
  *     data_array_int8 = data;
@@ -2105,7 +2105,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_int8(PyObject *__pyx_v_data) {
 
 /* "gsd/fl.pyx":60
  *     return <void*>&data_array_int8[0,0];
- * 
+ *
  * cdef void * __get_ptr_int16(data):             # <<<<<<<<<<<<<<
  *     cdef numpy.ndarray[int16_t, ndim=2, mode="c"] data_array_int16;
  *     data_array_int16 = data;
@@ -2138,7 +2138,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_int16(PyObject *__pyx_v_data) {
  *     cdef numpy.ndarray[int16_t, ndim=2, mode="c"] data_array_int16;
  *     data_array_int16 = data;             # <<<<<<<<<<<<<<
  *     return <void*>&data_array_int16[0,0];
- * 
+ *
  */
   if (!(likely(((__pyx_v_data) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_data, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 62; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_t_1 = __pyx_v_data;
@@ -2166,7 +2166,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_int16(PyObject *__pyx_v_data) {
  *     cdef numpy.ndarray[int16_t, ndim=2, mode="c"] data_array_int16;
  *     data_array_int16 = data;
  *     return <void*>&data_array_int16[0,0];             # <<<<<<<<<<<<<<
- * 
+ *
  * cdef void * __get_ptr_int32(data):
  */
   __pyx_t_6 = 0;
@@ -2189,7 +2189,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_int16(PyObject *__pyx_v_data) {
 
   /* "gsd/fl.pyx":60
  *     return <void*>&data_array_int8[0,0];
- * 
+ *
  * cdef void * __get_ptr_int16(data):             # <<<<<<<<<<<<<<
  *     cdef numpy.ndarray[int16_t, ndim=2, mode="c"] data_array_int16;
  *     data_array_int16 = data;
@@ -2215,7 +2215,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_int16(PyObject *__pyx_v_data) {
 
 /* "gsd/fl.pyx":65
  *     return <void*>&data_array_int16[0,0];
- * 
+ *
  * cdef void * __get_ptr_int32(data):             # <<<<<<<<<<<<<<
  *     cdef numpy.ndarray[int32_t, ndim=2, mode="c"] data_array_int32;
  *     data_array_int32 = data;
@@ -2248,7 +2248,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_int32(PyObject *__pyx_v_data) {
  *     cdef numpy.ndarray[int32_t, ndim=2, mode="c"] data_array_int32;
  *     data_array_int32 = data;             # <<<<<<<<<<<<<<
  *     return <void*>&data_array_int32[0,0];
- * 
+ *
  */
   if (!(likely(((__pyx_v_data) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_data, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_t_1 = __pyx_v_data;
@@ -2276,7 +2276,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_int32(PyObject *__pyx_v_data) {
  *     cdef numpy.ndarray[int32_t, ndim=2, mode="c"] data_array_int32;
  *     data_array_int32 = data;
  *     return <void*>&data_array_int32[0,0];             # <<<<<<<<<<<<<<
- * 
+ *
  * cdef void * __get_ptr_int64(data):
  */
   __pyx_t_6 = 0;
@@ -2299,7 +2299,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_int32(PyObject *__pyx_v_data) {
 
   /* "gsd/fl.pyx":65
  *     return <void*>&data_array_int16[0,0];
- * 
+ *
  * cdef void * __get_ptr_int32(data):             # <<<<<<<<<<<<<<
  *     cdef numpy.ndarray[int32_t, ndim=2, mode="c"] data_array_int32;
  *     data_array_int32 = data;
@@ -2325,7 +2325,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_int32(PyObject *__pyx_v_data) {
 
 /* "gsd/fl.pyx":70
  *     return <void*>&data_array_int32[0,0];
- * 
+ *
  * cdef void * __get_ptr_int64(data):             # <<<<<<<<<<<<<<
  *     cdef numpy.ndarray[int64_t, ndim=2, mode="c"] data_array_int64;
  *     data_array_int64 = data;
@@ -2358,7 +2358,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_int64(PyObject *__pyx_v_data) {
  *     cdef numpy.ndarray[int64_t, ndim=2, mode="c"] data_array_int64;
  *     data_array_int64 = data;             # <<<<<<<<<<<<<<
  *     return <void*>&data_array_int64[0,0];
- * 
+ *
  */
   if (!(likely(((__pyx_v_data) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_data, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 72; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_t_1 = __pyx_v_data;
@@ -2386,7 +2386,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_int64(PyObject *__pyx_v_data) {
  *     cdef numpy.ndarray[int64_t, ndim=2, mode="c"] data_array_int64;
  *     data_array_int64 = data;
  *     return <void*>&data_array_int64[0,0];             # <<<<<<<<<<<<<<
- * 
+ *
  * cdef void * __get_ptr_float32(data):
  */
   __pyx_t_6 = 0;
@@ -2409,7 +2409,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_int64(PyObject *__pyx_v_data) {
 
   /* "gsd/fl.pyx":70
  *     return <void*>&data_array_int32[0,0];
- * 
+ *
  * cdef void * __get_ptr_int64(data):             # <<<<<<<<<<<<<<
  *     cdef numpy.ndarray[int64_t, ndim=2, mode="c"] data_array_int64;
  *     data_array_int64 = data;
@@ -2435,7 +2435,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_int64(PyObject *__pyx_v_data) {
 
 /* "gsd/fl.pyx":75
  *     return <void*>&data_array_int64[0,0];
- * 
+ *
  * cdef void * __get_ptr_float32(data):             # <<<<<<<<<<<<<<
  *     cdef numpy.ndarray[float, ndim=2, mode="c"] data_array_float32;
  *     data_array_float32 = data;
@@ -2468,7 +2468,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_float32(PyObject *__pyx_v_data) {
  *     cdef numpy.ndarray[float, ndim=2, mode="c"] data_array_float32;
  *     data_array_float32 = data;             # <<<<<<<<<<<<<<
  *     return <void*>&data_array_float32[0,0];
- * 
+ *
  */
   if (!(likely(((__pyx_v_data) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_data, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 77; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_t_1 = __pyx_v_data;
@@ -2496,7 +2496,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_float32(PyObject *__pyx_v_data) {
  *     cdef numpy.ndarray[float, ndim=2, mode="c"] data_array_float32;
  *     data_array_float32 = data;
  *     return <void*>&data_array_float32[0,0];             # <<<<<<<<<<<<<<
- * 
+ *
  * cdef void * __get_ptr_float64(data):
  */
   __pyx_t_6 = 0;
@@ -2519,7 +2519,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_float32(PyObject *__pyx_v_data) {
 
   /* "gsd/fl.pyx":75
  *     return <void*>&data_array_int64[0,0];
- * 
+ *
  * cdef void * __get_ptr_float32(data):             # <<<<<<<<<<<<<<
  *     cdef numpy.ndarray[float, ndim=2, mode="c"] data_array_float32;
  *     data_array_float32 = data;
@@ -2545,7 +2545,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_float32(PyObject *__pyx_v_data) {
 
 /* "gsd/fl.pyx":80
  *     return <void*>&data_array_float32[0,0];
- * 
+ *
  * cdef void * __get_ptr_float64(data):             # <<<<<<<<<<<<<<
  *     cdef numpy.ndarray[double, ndim=2, mode="c"] data_array_float64;
  *     data_array_float64 = data;
@@ -2578,7 +2578,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_float64(PyObject *__pyx_v_data) {
  *     cdef numpy.ndarray[double, ndim=2, mode="c"] data_array_float64;
  *     data_array_float64 = data;             # <<<<<<<<<<<<<<
  *     return <void*>&data_array_float64[0,0];
- * 
+ *
  */
   if (!(likely(((__pyx_v_data) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_data, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 82; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_t_1 = __pyx_v_data;
@@ -2606,7 +2606,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_float64(PyObject *__pyx_v_data) {
  *     cdef numpy.ndarray[double, ndim=2, mode="c"] data_array_float64;
  *     data_array_float64 = data;
  *     return <void*>&data_array_float64[0,0];             # <<<<<<<<<<<<<<
- * 
+ *
  * cdef class GSDFile:
  */
   __pyx_t_6 = 0;
@@ -2629,7 +2629,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_float64(PyObject *__pyx_v_data) {
 
   /* "gsd/fl.pyx":80
  *     return <void*>&data_array_float32[0,0];
- * 
+ *
  * cdef void * __get_ptr_float64(data):             # <<<<<<<<<<<<<<
  *     cdef numpy.ndarray[double, ndim=2, mode="c"] data_array_float64;
  *     data_array_float64 = data;
@@ -2655,7 +2655,7 @@ static void *__pyx_f_3gsd_2fl___get_ptr_float64(PyObject *__pyx_v_data) {
 
 /* "gsd/fl.pyx":136
  *     cdef str name;
- * 
+ *
  *     def __init__(self, name, mode):             # <<<<<<<<<<<<<<
  *         cdef libgsd.gsd_open_flag c_flags;
  *         if mode == 'wb':
@@ -2825,7 +2825,7 @@ static int __pyx_pf_3gsd_2fl_7GSDFile___init__(struct __pyx_obj_3gsd_2fl_GSDFile
  *             raise ValueError("mode must be 'rb', 'wb', or 'ab'");
  *         self.name = name;             # <<<<<<<<<<<<<<
  *         self.mode = mode;
- * 
+ *
  */
   if (!(likely(PyString_CheckExact(__pyx_v_name))||((__pyx_v_name) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_v_name)->tp_name), 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 146; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_t_2 = __pyx_v_name;
@@ -2840,7 +2840,7 @@ static int __pyx_pf_3gsd_2fl_7GSDFile___init__(struct __pyx_obj_3gsd_2fl_GSDFile
  *             raise ValueError("mode must be 'rb', 'wb', or 'ab'");
  *         self.name = name;
  *         self.mode = mode;             # <<<<<<<<<<<<<<
- * 
+ *
  *         logger.info('opening file: ' + name + ' with mode: ' + mode);
  */
   if (!(likely(PyString_CheckExact(__pyx_v_mode))||((__pyx_v_mode) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_v_mode)->tp_name), 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 147; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -2854,7 +2854,7 @@ static int __pyx_pf_3gsd_2fl_7GSDFile___init__(struct __pyx_obj_3gsd_2fl_GSDFile
 
   /* "gsd/fl.pyx":149
  *         self.mode = mode;
- * 
+ *
  *         logger.info('opening file: ' + name + ' with mode: ' + mode);             # <<<<<<<<<<<<<<
  *         cdef char * c_name;
  *         name_e = name.encode('utf-8')
@@ -2905,7 +2905,7 @@ static int __pyx_pf_3gsd_2fl_7GSDFile___init__(struct __pyx_obj_3gsd_2fl_GSDFile
  *         cdef char * c_name;
  *         name_e = name.encode('utf-8')             # <<<<<<<<<<<<<<
  *         c_name = name_e;
- * 
+ *
  */
   __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_name, __pyx_n_s_encode); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 151; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
@@ -2919,7 +2919,7 @@ static int __pyx_pf_3gsd_2fl_7GSDFile___init__(struct __pyx_obj_3gsd_2fl_GSDFile
  *         cdef char * c_name;
  *         name_e = name.encode('utf-8')
  *         c_name = name_e;             # <<<<<<<<<<<<<<
- * 
+ *
  *         with nogil:
  */
   __pyx_t_7 = __Pyx_PyObject_AsString(__pyx_v_name_e); if (unlikely((!__pyx_t_7) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 152; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -2927,10 +2927,10 @@ static int __pyx_pf_3gsd_2fl_7GSDFile___init__(struct __pyx_obj_3gsd_2fl_GSDFile
 
   /* "gsd/fl.pyx":154
  *         c_name = name_e;
- * 
+ *
  *         with nogil:             # <<<<<<<<<<<<<<
  *             retval = libgsd.gsd_open(&self.__handle, c_name, c_flags);
- * 
+ *
  */
   {
       #ifdef WITH_THREAD
@@ -2940,10 +2940,10 @@ static int __pyx_pf_3gsd_2fl_7GSDFile___init__(struct __pyx_obj_3gsd_2fl_GSDFile
       /*try:*/ {
 
         /* "gsd/fl.pyx":155
- * 
+ *
  *         with nogil:
  *             retval = libgsd.gsd_open(&self.__handle, c_name, c_flags);             # <<<<<<<<<<<<<<
- * 
+ *
  *         if retval == -1:
  */
         __pyx_v_retval = gsd_open((&__pyx_v_self->__pyx___handle), __pyx_v_c_name, __pyx_v_c_flags);
@@ -2951,10 +2951,10 @@ static int __pyx_pf_3gsd_2fl_7GSDFile___init__(struct __pyx_obj_3gsd_2fl_GSDFile
 
       /* "gsd/fl.pyx":154
  *         c_name = name_e;
- * 
+ *
  *         with nogil:             # <<<<<<<<<<<<<<
  *             retval = libgsd.gsd_open(&self.__handle, c_name, c_flags);
- * 
+ *
  */
       /*finally:*/ {
         /*normal exit:*/{
@@ -2969,7 +2969,7 @@ static int __pyx_pf_3gsd_2fl_7GSDFile___init__(struct __pyx_obj_3gsd_2fl_GSDFile
 
   /* "gsd/fl.pyx":157
  *             retval = libgsd.gsd_open(&self.__handle, c_name, c_flags);
- * 
+ *
  *         if retval == -1:             # <<<<<<<<<<<<<<
  *             raise IOError(*__format_errno(name));
  *         elif retval == -2:
@@ -2978,7 +2978,7 @@ static int __pyx_pf_3gsd_2fl_7GSDFile___init__(struct __pyx_obj_3gsd_2fl_GSDFile
   if (__pyx_t_1) {
 
     /* "gsd/fl.pyx":158
- * 
+ *
  *         if retval == -1:
  *             raise IOError(*__format_errno(name));             # <<<<<<<<<<<<<<
  *         elif retval == -2:
@@ -3130,7 +3130,7 @@ static int __pyx_pf_3gsd_2fl_7GSDFile___init__(struct __pyx_obj_3gsd_2fl_GSDFile
  *             raise MemoryError("Unable to allocate GSD index: " + name);
  *         elif retval != 0:             # <<<<<<<<<<<<<<
  *             raise RuntimeError("Unknown error");
- * 
+ *
  */
   __pyx_t_1 = ((__pyx_v_retval != 0) != 0);
   if (__pyx_t_1) {
@@ -3139,7 +3139,7 @@ static int __pyx_pf_3gsd_2fl_7GSDFile___init__(struct __pyx_obj_3gsd_2fl_GSDFile
  *             raise MemoryError("Unable to allocate GSD index: " + name);
  *         elif retval != 0:
  *             raise RuntimeError("Unknown error");             # <<<<<<<<<<<<<<
- * 
+ *
  *         self.__is_open = True;
  */
     __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 168; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -3151,16 +3151,16 @@ static int __pyx_pf_3gsd_2fl_7GSDFile___init__(struct __pyx_obj_3gsd_2fl_GSDFile
 
   /* "gsd/fl.pyx":170
  *             raise RuntimeError("Unknown error");
- * 
+ *
  *         self.__is_open = True;             # <<<<<<<<<<<<<<
- * 
+ *
  *     def close(self):
  */
   __pyx_v_self->__pyx___is_open = 1;
 
   /* "gsd/fl.pyx":136
  *     cdef str name;
- * 
+ *
  *     def __init__(self, name, mode):             # <<<<<<<<<<<<<<
  *         cdef libgsd.gsd_open_flag c_flags;
  *         if mode == 'wb':
@@ -3185,10 +3185,10 @@ static int __pyx_pf_3gsd_2fl_7GSDFile___init__(struct __pyx_obj_3gsd_2fl_GSDFile
 
 /* "gsd/fl.pyx":172
  *         self.__is_open = True;
- * 
+ *
  *     def close(self):             # <<<<<<<<<<<<<<
  *         """ close()
- * 
+ *
  */
 
 /* Python wrapper */
@@ -3220,7 +3220,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_2close(struct __pyx_obj_3gsd_2fl_GSD
   __Pyx_RefNannySetupContext("close", 0);
 
   /* "gsd/fl.pyx":193
- * 
+ *
  *         """
  *         if self.__is_open:             # <<<<<<<<<<<<<<
  *             logger.info('closing file: ' + self.name);
@@ -3290,7 +3290,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_2close(struct __pyx_obj_3gsd_2fl_GSD
  *             with nogil:
  *                 libgsd.gsd_close(&self.__handle);             # <<<<<<<<<<<<<<
  *             self.__is_open = False;
- * 
+ *
  */
           gsd_close((&__pyx_v_self->__pyx___handle));
         }
@@ -3317,7 +3317,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_2close(struct __pyx_obj_3gsd_2fl_GSD
  *             with nogil:
  *                 libgsd.gsd_close(&self.__handle);
  *             self.__is_open = False;             # <<<<<<<<<<<<<<
- * 
+ *
  *     def truncate(self):
  */
     __pyx_v_self->__pyx___is_open = 0;
@@ -3327,10 +3327,10 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_2close(struct __pyx_obj_3gsd_2fl_GSD
 
   /* "gsd/fl.pyx":172
  *         self.__is_open = True;
- * 
+ *
  *     def close(self):             # <<<<<<<<<<<<<<
  *         """ close()
- * 
+ *
  */
 
   /* function exit code */
@@ -3352,10 +3352,10 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_2close(struct __pyx_obj_3gsd_2fl_GSD
 
 /* "gsd/fl.pyx":199
  *             self.__is_open = False;
- * 
+ *
  *     def truncate(self):             # <<<<<<<<<<<<<<
  *         """ truncate()
- * 
+ *
  */
 
 /* Python wrapper */
@@ -3389,19 +3389,19 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_4truncate(struct __pyx_obj_3gsd_2fl_
 
   /* "gsd/fl.pyx":217
  *         """
- * 
+ *
  *         if not self.__is_open:             # <<<<<<<<<<<<<<
  *             raise ValueError("File is not open");
- * 
+ *
  */
   __pyx_t_1 = ((!(__pyx_v_self->__pyx___is_open != 0)) != 0);
   if (__pyx_t_1) {
 
     /* "gsd/fl.pyx":218
- * 
+ *
  *         if not self.__is_open:
  *             raise ValueError("File is not open");             # <<<<<<<<<<<<<<
- * 
+ *
  *         logger.info('truncating file: ' + self.name);
  */
     __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 218; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -3413,7 +3413,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_4truncate(struct __pyx_obj_3gsd_2fl_
 
   /* "gsd/fl.pyx":220
  *             raise ValueError("File is not open");
- * 
+ *
  *         logger.info('truncating file: ' + self.name);             # <<<<<<<<<<<<<<
  *         with nogil:
  *             retval = libgsd.gsd_truncate(&self.__handle);
@@ -3454,11 +3454,11 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_4truncate(struct __pyx_obj_3gsd_2fl_
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "gsd/fl.pyx":221
- * 
+ *
  *         logger.info('truncating file: ' + self.name);
  *         with nogil:             # <<<<<<<<<<<<<<
  *             retval = libgsd.gsd_truncate(&self.__handle);
- * 
+ *
  */
   {
       #ifdef WITH_THREAD
@@ -3471,18 +3471,18 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_4truncate(struct __pyx_obj_3gsd_2fl_
  *         logger.info('truncating file: ' + self.name);
  *         with nogil:
  *             retval = libgsd.gsd_truncate(&self.__handle);             # <<<<<<<<<<<<<<
- * 
+ *
  *         if retval == -1:
  */
         __pyx_v_retval = gsd_truncate((&__pyx_v_self->__pyx___handle));
       }
 
       /* "gsd/fl.pyx":221
- * 
+ *
  *         logger.info('truncating file: ' + self.name);
  *         with nogil:             # <<<<<<<<<<<<<<
  *             retval = libgsd.gsd_truncate(&self.__handle);
- * 
+ *
  */
       /*finally:*/ {
         /*normal exit:*/{
@@ -3497,7 +3497,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_4truncate(struct __pyx_obj_3gsd_2fl_
 
   /* "gsd/fl.pyx":224
  *             retval = libgsd.gsd_truncate(&self.__handle);
- * 
+ *
  *         if retval == -1:             # <<<<<<<<<<<<<<
  *             raise IOError(*__format_errno(self.name));
  *         elif retval == -2:
@@ -3506,7 +3506,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_4truncate(struct __pyx_obj_3gsd_2fl_
   if (__pyx_t_1) {
 
     /* "gsd/fl.pyx":225
- * 
+ *
  *         if retval == -1:
  *             raise IOError(*__format_errno(self.name));             # <<<<<<<<<<<<<<
  *         elif retval == -2:
@@ -3661,7 +3661,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_4truncate(struct __pyx_obj_3gsd_2fl_
  *             raise MemoryError("Unable to allocate GSD index: " + self.name);
  *         elif retval != 0:             # <<<<<<<<<<<<<<
  *             raise RuntimeError("Unknown error");
- * 
+ *
  */
   __pyx_t_1 = ((__pyx_v_retval != 0) != 0);
   if (__pyx_t_1) {
@@ -3670,8 +3670,8 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_4truncate(struct __pyx_obj_3gsd_2fl_
  *             raise MemoryError("Unable to allocate GSD index: " + self.name);
  *         elif retval != 0:
  *             raise RuntimeError("Unknown error");             # <<<<<<<<<<<<<<
- * 
- * 
+ *
+ *
  */
     __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__5, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 235; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
@@ -3682,10 +3682,10 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_4truncate(struct __pyx_obj_3gsd_2fl_
 
   /* "gsd/fl.pyx":199
  *             self.__is_open = False;
- * 
+ *
  *     def truncate(self):             # <<<<<<<<<<<<<<
  *         """ truncate()
- * 
+ *
  */
 
   /* function exit code */
@@ -3706,11 +3706,11 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_4truncate(struct __pyx_obj_3gsd_2fl_
 }
 
 /* "gsd/fl.pyx":238
- * 
- * 
+ *
+ *
  *     def end_frame(self):             # <<<<<<<<<<<<<<
  *         """ end_frame()
- * 
+ *
  */
 
 /* Python wrapper */
@@ -3744,19 +3744,19 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_6end_frame(struct __pyx_obj_3gsd_2fl
 
   /* "gsd/fl.pyx":266
  *         """
- * 
+ *
  *         if not self.__is_open:             # <<<<<<<<<<<<<<
  *             raise ValueError("File is not open");
- * 
+ *
  */
   __pyx_t_1 = ((!(__pyx_v_self->__pyx___is_open != 0)) != 0);
   if (__pyx_t_1) {
 
     /* "gsd/fl.pyx":267
- * 
+ *
  *         if not self.__is_open:
  *             raise ValueError("File is not open");             # <<<<<<<<<<<<<<
- * 
+ *
  *         logger.debug('end frame: ' + self.name);
  */
     __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 267; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -3768,9 +3768,9 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_6end_frame(struct __pyx_obj_3gsd_2fl
 
   /* "gsd/fl.pyx":269
  *             raise ValueError("File is not open");
- * 
+ *
  *         logger.debug('end frame: ' + self.name);             # <<<<<<<<<<<<<<
- * 
+ *
  *         with nogil:
  */
   __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_logger); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 269; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -3810,10 +3810,10 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_6end_frame(struct __pyx_obj_3gsd_2fl
 
   /* "gsd/fl.pyx":271
  *         logger.debug('end frame: ' + self.name);
- * 
+ *
  *         with nogil:             # <<<<<<<<<<<<<<
  *             retval = libgsd.gsd_end_frame(&self.__handle)
- * 
+ *
  */
   {
       #ifdef WITH_THREAD
@@ -3823,10 +3823,10 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_6end_frame(struct __pyx_obj_3gsd_2fl
       /*try:*/ {
 
         /* "gsd/fl.pyx":272
- * 
+ *
  *         with nogil:
  *             retval = libgsd.gsd_end_frame(&self.__handle)             # <<<<<<<<<<<<<<
- * 
+ *
  *         if retval == -1:
  */
         __pyx_v_retval = gsd_end_frame((&__pyx_v_self->__pyx___handle));
@@ -3834,10 +3834,10 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_6end_frame(struct __pyx_obj_3gsd_2fl
 
       /* "gsd/fl.pyx":271
  *         logger.debug('end frame: ' + self.name);
- * 
+ *
  *         with nogil:             # <<<<<<<<<<<<<<
  *             retval = libgsd.gsd_end_frame(&self.__handle)
- * 
+ *
  */
       /*finally:*/ {
         /*normal exit:*/{
@@ -3852,7 +3852,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_6end_frame(struct __pyx_obj_3gsd_2fl
 
   /* "gsd/fl.pyx":274
  *             retval = libgsd.gsd_end_frame(&self.__handle)
- * 
+ *
  *         if retval == -1:             # <<<<<<<<<<<<<<
  *             raise IOError(*__format_errno(self.name));
  *         elif retval == -2:
@@ -3861,7 +3861,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_6end_frame(struct __pyx_obj_3gsd_2fl
   if (__pyx_t_1) {
 
     /* "gsd/fl.pyx":275
- * 
+ *
  *         if retval == -1:
  *             raise IOError(*__format_errno(self.name));             # <<<<<<<<<<<<<<
  *         elif retval == -2:
@@ -3920,7 +3920,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_6end_frame(struct __pyx_obj_3gsd_2fl
  *             raise RuntimeError("GSD file is opened read only: " + self.name);
  *         elif retval != 0:             # <<<<<<<<<<<<<<
  *             raise RuntimeError("Unknown error");
- * 
+ *
  */
   __pyx_t_1 = ((__pyx_v_retval != 0) != 0);
   if (__pyx_t_1) {
@@ -3929,7 +3929,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_6end_frame(struct __pyx_obj_3gsd_2fl
  *             raise RuntimeError("GSD file is opened read only: " + self.name);
  *         elif retval != 0:
  *             raise RuntimeError("Unknown error");             # <<<<<<<<<<<<<<
- * 
+ *
  *     def write_chunk(self, name, data):
  */
     __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__7, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 279; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -3940,11 +3940,11 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_6end_frame(struct __pyx_obj_3gsd_2fl
   }
 
   /* "gsd/fl.pyx":238
- * 
- * 
+ *
+ *
  *     def end_frame(self):             # <<<<<<<<<<<<<<
  *         """ end_frame()
- * 
+ *
  */
 
   /* function exit code */
@@ -3966,10 +3966,10 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_6end_frame(struct __pyx_obj_3gsd_2fl
 
 /* "gsd/fl.pyx":281
  *             raise RuntimeError("Unknown error");
- * 
+ *
  *     def write_chunk(self, name, data):             # <<<<<<<<<<<<<<
  *         """ write_chunk(name, data)
- * 
+ *
  */
 
 /* Python wrapper */
@@ -4063,19 +4063,19 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_8write_chunk(struct __pyx_obj_3gsd_2
 
   /* "gsd/fl.pyx":313
  *         """
- * 
+ *
  *         if not self.__is_open:             # <<<<<<<<<<<<<<
  *             raise ValueError("File is not open");
- * 
+ *
  */
   __pyx_t_1 = ((!(__pyx_v_self->__pyx___is_open != 0)) != 0);
   if (__pyx_t_1) {
 
     /* "gsd/fl.pyx":314
- * 
+ *
  *         if not self.__is_open:
  *             raise ValueError("File is not open");             # <<<<<<<<<<<<<<
- * 
+ *
  *         data_array = numpy.ascontiguousarray(data);
  */
     __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 314; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -4087,7 +4087,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_8write_chunk(struct __pyx_obj_3gsd_2
 
   /* "gsd/fl.pyx":316
  *             raise ValueError("File is not open");
- * 
+ *
  *         data_array = numpy.ascontiguousarray(data);             # <<<<<<<<<<<<<<
  *         if data_array is not data:
  *             logger.warning('implicit data copy when writing chunk: ' + name);
@@ -4126,7 +4126,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_8write_chunk(struct __pyx_obj_3gsd_2
   __pyx_t_2 = 0;
 
   /* "gsd/fl.pyx":317
- * 
+ *
  *         data_array = numpy.ascontiguousarray(data);
  *         if data_array is not data:             # <<<<<<<<<<<<<<
  *             logger.warning('implicit data copy when writing chunk: ' + name);
@@ -4141,7 +4141,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_8write_chunk(struct __pyx_obj_3gsd_2
  *         if data_array is not data:
  *             logger.warning('implicit data copy when writing chunk: ' + name);             # <<<<<<<<<<<<<<
  *         data_array = data_array.view();
- * 
+ *
  */
     __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_logger); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 318; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
@@ -4185,7 +4185,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_8write_chunk(struct __pyx_obj_3gsd_2
  *         if data_array is not data:
  *             logger.warning('implicit data copy when writing chunk: ' + name);
  *         data_array = data_array.view();             # <<<<<<<<<<<<<<
- * 
+ *
  *         cdef uint64_t N;
  */
   __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_data_array, __pyx_n_s_view); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 319; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -4213,10 +4213,10 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_8write_chunk(struct __pyx_obj_3gsd_2
 
   /* "gsd/fl.pyx":324
  *         cdef uint8_t M;
- * 
+ *
  *         if len(data_array.shape) > 2:             # <<<<<<<<<<<<<<
  *             raise ValueError("GSD can only write 1 or 2 dimensional arrays: " + name);
- * 
+ *
  */
   __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_data_array, __pyx_n_s_shape); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 324; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
@@ -4226,10 +4226,10 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_8write_chunk(struct __pyx_obj_3gsd_2
   if (__pyx_t_6) {
 
     /* "gsd/fl.pyx":325
- * 
+ *
  *         if len(data_array.shape) > 2:
  *             raise ValueError("GSD can only write 1 or 2 dimensional arrays: " + name);             # <<<<<<<<<<<<<<
- * 
+ *
  *         if len(data_array.shape) == 1:
  */
     __pyx_t_2 = PyNumber_Add(__pyx_kp_s_GSD_can_only_write_1_or_2_dimens, __pyx_v_name); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 325; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -4249,10 +4249,10 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_8write_chunk(struct __pyx_obj_3gsd_2
 
   /* "gsd/fl.pyx":327
  *             raise ValueError("GSD can only write 1 or 2 dimensional arrays: " + name);
- * 
+ *
  *         if len(data_array.shape) == 1:             # <<<<<<<<<<<<<<
  *             data_array = data_array.reshape([data_array.shape[0], 1]);
- * 
+ *
  */
   __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_data_array, __pyx_n_s_shape); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 327; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
@@ -4262,10 +4262,10 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_8write_chunk(struct __pyx_obj_3gsd_2
   if (__pyx_t_6) {
 
     /* "gsd/fl.pyx":328
- * 
+ *
  *         if len(data_array.shape) == 1:
  *             data_array = data_array.reshape([data_array.shape[0], 1]);             # <<<<<<<<<<<<<<
- * 
+ *
  *         if data_array.shape[1] > 255:
  */
     __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_data_array, __pyx_n_s_reshape); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 328; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -4317,7 +4317,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_8write_chunk(struct __pyx_obj_3gsd_2
 
   /* "gsd/fl.pyx":330
  *             data_array = data_array.reshape([data_array.shape[0], 1]);
- * 
+ *
  *         if data_array.shape[1] > 255:             # <<<<<<<<<<<<<<
  *             raise ValueError("Dimension 2 is greater than 255 in chunk: " + name);
  *         N = data_array.shape[0];
@@ -4334,7 +4334,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_8write_chunk(struct __pyx_obj_3gsd_2
   if (__pyx_t_6) {
 
     /* "gsd/fl.pyx":331
- * 
+ *
  *         if data_array.shape[1] > 255:
  *             raise ValueError("Dimension 2 is greater than 255 in chunk: " + name);             # <<<<<<<<<<<<<<
  *         N = data_array.shape[0];
@@ -4360,7 +4360,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_8write_chunk(struct __pyx_obj_3gsd_2
  *             raise ValueError("Dimension 2 is greater than 255 in chunk: " + name);
  *         N = data_array.shape[0];             # <<<<<<<<<<<<<<
  *         M = data_array.shape[1];
- * 
+ *
  */
   __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_data_array, __pyx_n_s_shape); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 332; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
@@ -4375,7 +4375,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_8write_chunk(struct __pyx_obj_3gsd_2
  *             raise ValueError("Dimension 2 is greater than 255 in chunk: " + name);
  *         N = data_array.shape[0];
  *         M = data_array.shape[1];             # <<<<<<<<<<<<<<
- * 
+ *
  *         cdef libgsd.gsd_type gsd_type;
  */
   __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_data_array, __pyx_n_s_shape); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 333; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -4802,7 +4802,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_8write_chunk(struct __pyx_obj_3gsd_2
  *             data_ptr = __get_ptr_float64(data_array)
  *         else:
  *             raise ValueError("invalid type for chunk: " + name);             # <<<<<<<<<<<<<<
- * 
+ *
  *         logger.debug('write chunk: ' + self.name + ' - ' + name);
  */
     __pyx_t_5 = PyNumber_Add(__pyx_kp_s_invalid_type_for_chunk, __pyx_v_name); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 368; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -4823,9 +4823,9 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_8write_chunk(struct __pyx_obj_3gsd_2
 
   /* "gsd/fl.pyx":370
  *             raise ValueError("invalid type for chunk: " + name);
- * 
+ *
  *         logger.debug('write chunk: ' + self.name + ' - ' + name);             # <<<<<<<<<<<<<<
- * 
+ *
  *         cdef char * c_name;
  */
   __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_logger); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 370; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -4870,7 +4870,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_8write_chunk(struct __pyx_obj_3gsd_2
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
   /* "gsd/fl.pyx":373
- * 
+ *
  *         cdef char * c_name;
  *         name_e = name.encode('utf-8')             # <<<<<<<<<<<<<<
  *         c_name = name_e;
@@ -4938,7 +4938,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_8write_chunk(struct __pyx_obj_3gsd_2
 
   /* "gsd/fl.pyx":384
  *                                            data_ptr);
- * 
+ *
  *         if retval == -1:             # <<<<<<<<<<<<<<
  *             raise IOError(*__format_errno(name));
  *         elif retval == -2:
@@ -4947,7 +4947,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_8write_chunk(struct __pyx_obj_3gsd_2
   if (__pyx_t_6) {
 
     /* "gsd/fl.pyx":385
- * 
+ *
  *         if retval == -1:
  *             raise IOError(*__format_errno(name));             # <<<<<<<<<<<<<<
  *         elif retval == -2:
@@ -5003,7 +5003,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_8write_chunk(struct __pyx_obj_3gsd_2
  *             raise RuntimeError("GSD file is opened read only: " + self.name);
  *         elif retval != 0:             # <<<<<<<<<<<<<<
  *             raise RuntimeError("Unknown error");
- * 
+ *
  */
   __pyx_t_6 = ((__pyx_v_retval != 0) != 0);
   if (__pyx_t_6) {
@@ -5012,7 +5012,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_8write_chunk(struct __pyx_obj_3gsd_2
  *             raise RuntimeError("GSD file is opened read only: " + self.name);
  *         elif retval != 0:
  *             raise RuntimeError("Unknown error");             # <<<<<<<<<<<<<<
- * 
+ *
  *     def chunk_exists(self, frame, name):
  */
     __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__11, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 389; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -5024,10 +5024,10 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_8write_chunk(struct __pyx_obj_3gsd_2
 
   /* "gsd/fl.pyx":281
  *             raise RuntimeError("Unknown error");
- * 
+ *
  *     def write_chunk(self, name, data):             # <<<<<<<<<<<<<<
  *         """ write_chunk(name, data)
- * 
+ *
  */
 
   /* function exit code */
@@ -5051,10 +5051,10 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_8write_chunk(struct __pyx_obj_3gsd_2
 
 /* "gsd/fl.pyx":391
  *             raise RuntimeError("Unknown error");
- * 
+ *
  *     def chunk_exists(self, frame, name):             # <<<<<<<<<<<<<<
  *         """ chunk_exists(frame, name)
- * 
+ *
  */
 
 /* Python wrapper */
@@ -5167,7 +5167,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_10chunk_exists(struct __pyx_obj_3gsd
  *         c_name = name_e;
  *         cdef int64_t c_frame;
  *         c_frame = frame;             # <<<<<<<<<<<<<<
- * 
+ *
  *         logger.debug('chunk exists: ' + self.name + ' - ' + name);
  */
   __pyx_t_4 = __Pyx_PyInt_As_int64_t(__pyx_v_frame); if (unlikely((__pyx_t_4 == (int64_t)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 418; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -5175,9 +5175,9 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_10chunk_exists(struct __pyx_obj_3gsd
 
   /* "gsd/fl.pyx":420
  *         c_frame = frame;
- * 
+ *
  *         logger.debug('chunk exists: ' + self.name + ' - ' + name);             # <<<<<<<<<<<<<<
- * 
+ *
  *         with nogil:
  */
   __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_logger); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 420; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -5223,10 +5223,10 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_10chunk_exists(struct __pyx_obj_3gsd
 
   /* "gsd/fl.pyx":422
  *         logger.debug('chunk exists: ' + self.name + ' - ' + name);
- * 
+ *
  *         with nogil:             # <<<<<<<<<<<<<<
  *             index_entry = libgsd.gsd_find_chunk(&self.__handle, c_frame, c_name)
- * 
+ *
  */
   {
       #ifdef WITH_THREAD
@@ -5236,10 +5236,10 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_10chunk_exists(struct __pyx_obj_3gsd
       /*try:*/ {
 
         /* "gsd/fl.pyx":423
- * 
+ *
  *         with nogil:
  *             index_entry = libgsd.gsd_find_chunk(&self.__handle, c_frame, c_name)             # <<<<<<<<<<<<<<
- * 
+ *
  *         return index_entry != NULL;
  */
         __pyx_v_index_entry = gsd_find_chunk((&__pyx_v_self->__pyx___handle), __pyx_v_c_frame, __pyx_v_c_name);
@@ -5247,10 +5247,10 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_10chunk_exists(struct __pyx_obj_3gsd
 
       /* "gsd/fl.pyx":422
  *         logger.debug('chunk exists: ' + self.name + ' - ' + name);
- * 
+ *
  *         with nogil:             # <<<<<<<<<<<<<<
  *             index_entry = libgsd.gsd_find_chunk(&self.__handle, c_frame, c_name)
- * 
+ *
  */
       /*finally:*/ {
         /*normal exit:*/{
@@ -5265,9 +5265,9 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_10chunk_exists(struct __pyx_obj_3gsd
 
   /* "gsd/fl.pyx":425
  *             index_entry = libgsd.gsd_find_chunk(&self.__handle, c_frame, c_name)
- * 
+ *
  *         return index_entry != NULL;             # <<<<<<<<<<<<<<
- * 
+ *
  *     def read_chunk(self, frame, name):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -5279,10 +5279,10 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_10chunk_exists(struct __pyx_obj_3gsd
 
   /* "gsd/fl.pyx":391
  *             raise RuntimeError("Unknown error");
- * 
+ *
  *     def chunk_exists(self, frame, name):             # <<<<<<<<<<<<<<
  *         """ chunk_exists(frame, name)
- * 
+ *
  */
 
   /* function exit code */
@@ -5303,10 +5303,10 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_10chunk_exists(struct __pyx_obj_3gsd
 
 /* "gsd/fl.pyx":427
  *         return index_entry != NULL;
- * 
+ *
  *     def read_chunk(self, frame, name):             # <<<<<<<<<<<<<<
  *         """ read_chunk(frame, name)
- * 
+ *
  */
 
 /* Python wrapper */
@@ -5397,19 +5397,19 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_12read_chunk(struct __pyx_obj_3gsd_2
 
   /* "gsd/fl.pyx":457
  *         """
- * 
+ *
  *         if not self.__is_open:             # <<<<<<<<<<<<<<
  *             raise ValueError("File is not open");
- * 
+ *
  */
   __pyx_t_1 = ((!(__pyx_v_self->__pyx___is_open != 0)) != 0);
   if (__pyx_t_1) {
 
     /* "gsd/fl.pyx":458
- * 
+ *
  *         if not self.__is_open:
  *             raise ValueError("File is not open");             # <<<<<<<<<<<<<<
- * 
+ *
  *         cdef const libgsd.gsd_index_entry* index_entry;
  */
     __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__13, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 458; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -5448,7 +5448,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_12read_chunk(struct __pyx_obj_3gsd_2
  *         c_name = name_e;
  *         cdef int64_t c_frame;
  *         c_frame = frame;             # <<<<<<<<<<<<<<
- * 
+ *
  *         with nogil:
  */
   __pyx_t_5 = __Pyx_PyInt_As_int64_t(__pyx_v_frame); if (unlikely((__pyx_t_5 == (int64_t)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 465; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -5456,10 +5456,10 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_12read_chunk(struct __pyx_obj_3gsd_2
 
   /* "gsd/fl.pyx":467
  *         c_frame = frame;
- * 
+ *
  *         with nogil:             # <<<<<<<<<<<<<<
  *             index_entry = libgsd.gsd_find_chunk(&self.__handle, c_frame, c_name)
- * 
+ *
  */
   {
       #ifdef WITH_THREAD
@@ -5469,10 +5469,10 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_12read_chunk(struct __pyx_obj_3gsd_2
       /*try:*/ {
 
         /* "gsd/fl.pyx":468
- * 
+ *
  *         with nogil:
  *             index_entry = libgsd.gsd_find_chunk(&self.__handle, c_frame, c_name)             # <<<<<<<<<<<<<<
- * 
+ *
  *         if index_entry == NULL:
  */
         __pyx_v_index_entry = gsd_find_chunk((&__pyx_v_self->__pyx___handle), __pyx_v_c_frame, __pyx_v_c_name);
@@ -5480,10 +5480,10 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_12read_chunk(struct __pyx_obj_3gsd_2
 
       /* "gsd/fl.pyx":467
  *         c_frame = frame;
- * 
+ *
  *         with nogil:             # <<<<<<<<<<<<<<
  *             index_entry = libgsd.gsd_find_chunk(&self.__handle, c_frame, c_name)
- * 
+ *
  */
       /*finally:*/ {
         /*normal exit:*/{
@@ -5498,19 +5498,19 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_12read_chunk(struct __pyx_obj_3gsd_2
 
   /* "gsd/fl.pyx":470
  *             index_entry = libgsd.gsd_find_chunk(&self.__handle, c_frame, c_name)
- * 
+ *
  *         if index_entry == NULL:             # <<<<<<<<<<<<<<
  *             raise KeyError("frame " + str(frame) + " / chunk " + name + " not found in: " + self.name);
- * 
+ *
  */
   __pyx_t_1 = ((__pyx_v_index_entry == NULL) != 0);
   if (__pyx_t_1) {
 
     /* "gsd/fl.pyx":471
- * 
+ *
  *         if index_entry == NULL:
  *             raise KeyError("frame " + str(frame) + " / chunk " + name + " not found in: " + self.name);             # <<<<<<<<<<<<<<
- * 
+ *
  *         cdef libgsd.gsd_type gsd_type;
  */
     __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 471; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -5550,10 +5550,10 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_12read_chunk(struct __pyx_obj_3gsd_2
   }
 
   /* "gsd/fl.pyx":474
- * 
+ *
  *         cdef libgsd.gsd_type gsd_type;
  *         gsd_type = <libgsd.gsd_type>index_entry.type;             # <<<<<<<<<<<<<<
- * 
+ *
  *         cdef void *data_ptr;
  */
   __pyx_v_gsd_type = ((enum gsd_type)__pyx_v_index_entry->type);
@@ -5568,7 +5568,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_12read_chunk(struct __pyx_obj_3gsd_2
   switch (__pyx_v_gsd_type) {
 
     /* "gsd/fl.pyx":477
- * 
+ *
  *         cdef void *data_ptr;
  *         if gsd_type == libgsd.GSD_TYPE_UINT8:             # <<<<<<<<<<<<<<
  *             data_array = numpy.empty(dtype=numpy.uint8, shape=[index_entry.N, index_entry.M])
@@ -6182,7 +6182,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_12read_chunk(struct __pyx_obj_3gsd_2
  *             data_ptr = __get_ptr_float64(data_array)
  *         else:
  *             raise ValueError("invalid type for chunk: " + name);             # <<<<<<<<<<<<<<
- * 
+ *
  *         logger.debug('read chunk: ' + self.name + ' - ' + str(frame) + ' - ' + name);
  */
     __pyx_t_3 = PyNumber_Add(__pyx_kp_s_invalid_type_for_chunk, __pyx_v_name); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 508; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -6203,9 +6203,9 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_12read_chunk(struct __pyx_obj_3gsd_2
 
   /* "gsd/fl.pyx":510
  *             raise ValueError("invalid type for chunk: " + name);
- * 
+ *
  *         logger.debug('read chunk: ' + self.name + ' - ' + str(frame) + ' - ' + name);             # <<<<<<<<<<<<<<
- * 
+ *
  *         with nogil:
  */
   __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_logger); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 510; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -6266,7 +6266,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_12read_chunk(struct __pyx_obj_3gsd_2
 
   /* "gsd/fl.pyx":512
  *         logger.debug('read chunk: ' + self.name + ' - ' + str(frame) + ' - ' + name);
- * 
+ *
  *         with nogil:             # <<<<<<<<<<<<<<
  *             retval = libgsd.gsd_read_chunk(&self.__handle,
  *                                            data_ptr,
@@ -6279,7 +6279,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_12read_chunk(struct __pyx_obj_3gsd_2
       /*try:*/ {
 
         /* "gsd/fl.pyx":513
- * 
+ *
  *         with nogil:
  *             retval = libgsd.gsd_read_chunk(&self.__handle,             # <<<<<<<<<<<<<<
  *                                            data_ptr,
@@ -6290,7 +6290,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_12read_chunk(struct __pyx_obj_3gsd_2
 
       /* "gsd/fl.pyx":512
  *         logger.debug('read chunk: ' + self.name + ' - ' + str(frame) + ' - ' + name);
- * 
+ *
  *         with nogil:             # <<<<<<<<<<<<<<
  *             retval = libgsd.gsd_read_chunk(&self.__handle,
  *                                            data_ptr,
@@ -6308,7 +6308,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_12read_chunk(struct __pyx_obj_3gsd_2
 
   /* "gsd/fl.pyx":517
  *                                            index_entry);
- * 
+ *
  *         if retval == -1:             # <<<<<<<<<<<<<<
  *             raise IOError(*__format_errno(name));
  *         elif retval == -2:
@@ -6317,7 +6317,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_12read_chunk(struct __pyx_obj_3gsd_2
   if (__pyx_t_1) {
 
     /* "gsd/fl.pyx":518
- * 
+ *
  *         if retval == -1:
  *             raise IOError(*__format_errno(name));             # <<<<<<<<<<<<<<
  *         elif retval == -2:
@@ -6426,7 +6426,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_12read_chunk(struct __pyx_obj_3gsd_2
  *             raise RuntimeError("Corrupt chunk: " + str(frame) + " / " + name + " in file" + self.name);
  *         elif retval != 0:             # <<<<<<<<<<<<<<
  *             raise RuntimeError("Unknown error");
- * 
+ *
  */
   __pyx_t_1 = ((__pyx_v_retval != 0) != 0);
   if (__pyx_t_1) {
@@ -6435,7 +6435,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_12read_chunk(struct __pyx_obj_3gsd_2
  *             raise RuntimeError("Corrupt chunk: " + str(frame) + " / " + name + " in file" + self.name);
  *         elif retval != 0:
  *             raise RuntimeError("Unknown error");             # <<<<<<<<<<<<<<
- * 
+ *
  *         if index_entry.M == 1:
  */
     __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__16, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 524; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -6447,7 +6447,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_12read_chunk(struct __pyx_obj_3gsd_2
 
   /* "gsd/fl.pyx":526
  *             raise RuntimeError("Unknown error");
- * 
+ *
  *         if index_entry.M == 1:             # <<<<<<<<<<<<<<
  *             return data_array.reshape([index_entry.N]);
  *         else:
@@ -6456,7 +6456,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_12read_chunk(struct __pyx_obj_3gsd_2
   if (__pyx_t_1) {
 
     /* "gsd/fl.pyx":527
- * 
+ *
  *         if index_entry.M == 1:
  *             return data_array.reshape([index_entry.N]);             # <<<<<<<<<<<<<<
  *         else:
@@ -6508,7 +6508,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_12read_chunk(struct __pyx_obj_3gsd_2
  *             return data_array.reshape([index_entry.N]);
  *         else:
  *             return data_array;             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __enter__(self):
  */
     __Pyx_XDECREF(__pyx_r);
@@ -6519,10 +6519,10 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_12read_chunk(struct __pyx_obj_3gsd_2
 
   /* "gsd/fl.pyx":427
  *         return index_entry != NULL;
- * 
+ *
  *     def read_chunk(self, frame, name):             # <<<<<<<<<<<<<<
  *         """ read_chunk(frame, name)
- * 
+ *
  */
 
   /* function exit code */
@@ -6544,10 +6544,10 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_12read_chunk(struct __pyx_obj_3gsd_2
 
 /* "gsd/fl.pyx":531
  *             return data_array;
- * 
+ *
  *     def __enter__(self):             # <<<<<<<<<<<<<<
  *         return self;
- * 
+ *
  */
 
 /* Python wrapper */
@@ -6569,10 +6569,10 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_14__enter__(struct __pyx_obj_3gsd_2f
   __Pyx_RefNannySetupContext("__enter__", 0);
 
   /* "gsd/fl.pyx":532
- * 
+ *
  *     def __enter__(self):
  *         return self;             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __exit__(self, exc_type, exc_value, traceback):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -6582,10 +6582,10 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_14__enter__(struct __pyx_obj_3gsd_2f
 
   /* "gsd/fl.pyx":531
  *             return data_array;
- * 
+ *
  *     def __enter__(self):             # <<<<<<<<<<<<<<
  *         return self;
- * 
+ *
  */
 
   /* function exit code */
@@ -6597,10 +6597,10 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_14__enter__(struct __pyx_obj_3gsd_2f
 
 /* "gsd/fl.pyx":534
  *         return self;
- * 
+ *
  *     def __exit__(self, exc_type, exc_value, traceback):             # <<<<<<<<<<<<<<
  *         self.close()
- * 
+ *
  */
 
 /* Python wrapper */
@@ -6685,10 +6685,10 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_16__exit__(struct __pyx_obj_3gsd_2fl
   __Pyx_RefNannySetupContext("__exit__", 0);
 
   /* "gsd/fl.pyx":535
- * 
+ *
  *     def __exit__(self, exc_type, exc_value, traceback):
  *         self.close()             # <<<<<<<<<<<<<<
- * 
+ *
  *     property name:
  */
   __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_close); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 535; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -6715,10 +6715,10 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_16__exit__(struct __pyx_obj_3gsd_2fl
 
   /* "gsd/fl.pyx":534
  *         return self;
- * 
+ *
  *     def __exit__(self, exc_type, exc_value, traceback):             # <<<<<<<<<<<<<<
  *         self.close()
- * 
+ *
  */
 
   /* function exit code */
@@ -6737,11 +6737,11 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_16__exit__(struct __pyx_obj_3gsd_2fl
 }
 
 /* "gsd/fl.pyx":538
- * 
+ *
  *     property name:
  *         def __get__(self):             # <<<<<<<<<<<<<<
  *             return self.name;
- * 
+ *
  */
 
 /* Python wrapper */
@@ -6766,7 +6766,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_4name___get__(struct __pyx_obj_3gsd_
  *     property name:
  *         def __get__(self):
  *             return self.name;             # <<<<<<<<<<<<<<
- * 
+ *
  *     property mode:
  */
   __Pyx_XDECREF(__pyx_r);
@@ -6775,11 +6775,11 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_4name___get__(struct __pyx_obj_3gsd_
   goto __pyx_L0;
 
   /* "gsd/fl.pyx":538
- * 
+ *
  *     property name:
  *         def __get__(self):             # <<<<<<<<<<<<<<
  *             return self.name;
- * 
+ *
  */
 
   /* function exit code */
@@ -6790,11 +6790,11 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_4name___get__(struct __pyx_obj_3gsd_
 }
 
 /* "gsd/fl.pyx":542
- * 
+ *
  *     property mode:
  *         def __get__(self):             # <<<<<<<<<<<<<<
  *             return self.mode;
- * 
+ *
  */
 
 /* Python wrapper */
@@ -6819,7 +6819,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_4mode___get__(struct __pyx_obj_3gsd_
  *     property mode:
  *         def __get__(self):
  *             return self.mode;             # <<<<<<<<<<<<<<
- * 
+ *
  *     property gsd_version:
  */
   __Pyx_XDECREF(__pyx_r);
@@ -6828,11 +6828,11 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_4mode___get__(struct __pyx_obj_3gsd_
   goto __pyx_L0;
 
   /* "gsd/fl.pyx":542
- * 
+ *
  *     property mode:
  *         def __get__(self):             # <<<<<<<<<<<<<<
  *             return self.mode;
- * 
+ *
  */
 
   /* function exit code */
@@ -6843,7 +6843,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_4mode___get__(struct __pyx_obj_3gsd_
 }
 
 /* "gsd/fl.pyx":546
- * 
+ *
  *     property gsd_version:
  *         def __get__(self):             # <<<<<<<<<<<<<<
  *             cdef uint32_t v = self.__handle.header.gsd_version;
@@ -6881,7 +6881,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_11gsd_version___get__(struct __pyx_o
  *         def __get__(self):
  *             cdef uint32_t v = self.__handle.header.gsd_version;             # <<<<<<<<<<<<<<
  *             return (v >> 16, v & 0xffff);
- * 
+ *
  */
   __pyx_t_1 = __pyx_v_self->__pyx___handle.header.gsd_version;
   __pyx_v_v = __pyx_t_1;
@@ -6890,7 +6890,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_11gsd_version___get__(struct __pyx_o
  *         def __get__(self):
  *             cdef uint32_t v = self.__handle.header.gsd_version;
  *             return (v >> 16, v & 0xffff);             # <<<<<<<<<<<<<<
- * 
+ *
  *     property schema_version:
  */
   __Pyx_XDECREF(__pyx_r);
@@ -6911,7 +6911,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_11gsd_version___get__(struct __pyx_o
   goto __pyx_L0;
 
   /* "gsd/fl.pyx":546
- * 
+ *
  *     property gsd_version:
  *         def __get__(self):             # <<<<<<<<<<<<<<
  *             cdef uint32_t v = self.__handle.header.gsd_version;
@@ -6932,7 +6932,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_11gsd_version___get__(struct __pyx_o
 }
 
 /* "gsd/fl.pyx":551
- * 
+ *
  *     property schema_version:
  *         def __get__(self):             # <<<<<<<<<<<<<<
  *             cdef uint32_t v = self.__handle.header.schema_version;
@@ -6970,7 +6970,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_14schema_version___get__(struct __py
  *         def __get__(self):
  *             cdef uint32_t v = self.__handle.header.schema_version;             # <<<<<<<<<<<<<<
  *             return (v >> 16, v & 0xffff);
- * 
+ *
  */
   __pyx_t_1 = __pyx_v_self->__pyx___handle.header.schema_version;
   __pyx_v_v = __pyx_t_1;
@@ -6979,7 +6979,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_14schema_version___get__(struct __py
  *         def __get__(self):
  *             cdef uint32_t v = self.__handle.header.schema_version;
  *             return (v >> 16, v & 0xffff);             # <<<<<<<<<<<<<<
- * 
+ *
  *     property schema:
  */
   __Pyx_XDECREF(__pyx_r);
@@ -7000,7 +7000,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_14schema_version___get__(struct __py
   goto __pyx_L0;
 
   /* "gsd/fl.pyx":551
- * 
+ *
  *     property schema_version:
  *         def __get__(self):             # <<<<<<<<<<<<<<
  *             cdef uint32_t v = self.__handle.header.schema_version;
@@ -7021,11 +7021,11 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_14schema_version___get__(struct __py
 }
 
 /* "gsd/fl.pyx":556
- * 
+ *
  *     property schema:
  *         def __get__(self):             # <<<<<<<<<<<<<<
  *             return self.__handle.header.schema.decode('utf-8');
- * 
+ *
  */
 
 /* Python wrapper */
@@ -7055,7 +7055,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_6schema___get__(struct __pyx_obj_3gs
  *     property schema:
  *         def __get__(self):
  *             return self.__handle.header.schema.decode('utf-8');             # <<<<<<<<<<<<<<
- * 
+ *
  *     property application:
  */
   __Pyx_XDECREF(__pyx_r);
@@ -7068,11 +7068,11 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_6schema___get__(struct __pyx_obj_3gs
   goto __pyx_L0;
 
   /* "gsd/fl.pyx":556
- * 
+ *
  *     property schema:
  *         def __get__(self):             # <<<<<<<<<<<<<<
  *             return self.__handle.header.schema.decode('utf-8');
- * 
+ *
  */
 
   /* function exit code */
@@ -7087,11 +7087,11 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_6schema___get__(struct __pyx_obj_3gs
 }
 
 /* "gsd/fl.pyx":560
- * 
+ *
  *     property application:
  *         def __get__(self):             # <<<<<<<<<<<<<<
  *             return self.__handle.header.application.decode('utf-8');
- * 
+ *
  */
 
 /* Python wrapper */
@@ -7121,7 +7121,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_11application___get__(struct __pyx_o
  *     property application:
  *         def __get__(self):
  *             return self.__handle.header.application.decode('utf-8');             # <<<<<<<<<<<<<<
- * 
+ *
  *     property nframes:
  */
   __Pyx_XDECREF(__pyx_r);
@@ -7134,11 +7134,11 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_11application___get__(struct __pyx_o
   goto __pyx_L0;
 
   /* "gsd/fl.pyx":560
- * 
+ *
  *     property application:
  *         def __get__(self):             # <<<<<<<<<<<<<<
  *             return self.__handle.header.application.decode('utf-8');
- * 
+ *
  */
 
   /* function exit code */
@@ -7153,7 +7153,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_11application___get__(struct __pyx_o
 }
 
 /* "gsd/fl.pyx":564
- * 
+ *
  *     property nframes:
  *         def __get__(self):             # <<<<<<<<<<<<<<
  *             if not self.__is_open:
@@ -7188,7 +7188,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_7nframes___get__(struct __pyx_obj_3g
  *         def __get__(self):
  *             if not self.__is_open:             # <<<<<<<<<<<<<<
  *                 raise ValueError("File is not open");
- * 
+ *
  */
   __pyx_t_1 = ((!(__pyx_v_self->__pyx___is_open != 0)) != 0);
   if (__pyx_t_1) {
@@ -7197,7 +7197,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_7nframes___get__(struct __pyx_obj_3g
  *         def __get__(self):
  *             if not self.__is_open:
  *                 raise ValueError("File is not open");             # <<<<<<<<<<<<<<
- * 
+ *
  *             return libgsd.gsd_get_nframes(&self.__handle);
  */
     __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__17, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 566; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -7209,9 +7209,9 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_7nframes___get__(struct __pyx_obj_3g
 
   /* "gsd/fl.pyx":568
  *                 raise ValueError("File is not open");
- * 
+ *
  *             return libgsd.gsd_get_nframes(&self.__handle);             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __dealloc__(self):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -7222,7 +7222,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_7nframes___get__(struct __pyx_obj_3g
   goto __pyx_L0;
 
   /* "gsd/fl.pyx":564
- * 
+ *
  *     property nframes:
  *         def __get__(self):             # <<<<<<<<<<<<<<
  *             if not self.__is_open:
@@ -7242,7 +7242,7 @@ static PyObject *__pyx_pf_3gsd_2fl_7GSDFile_7nframes___get__(struct __pyx_obj_3g
 
 /* "gsd/fl.pyx":570
  *             return libgsd.gsd_get_nframes(&self.__handle);
- * 
+ *
  *     def __dealloc__(self):             # <<<<<<<<<<<<<<
  *         if self.__is_open:
  *             logger.info('closing file: ' + self.name);
@@ -7273,7 +7273,7 @@ static void __pyx_pf_3gsd_2fl_7GSDFile_18__dealloc__(struct __pyx_obj_3gsd_2fl_G
   __Pyx_RefNannySetupContext("__dealloc__", 0);
 
   /* "gsd/fl.pyx":571
- * 
+ *
  *     def __dealloc__(self):
  *         if self.__is_open:             # <<<<<<<<<<<<<<
  *             logger.info('closing file: ' + self.name);
@@ -7329,7 +7329,7 @@ static void __pyx_pf_3gsd_2fl_7GSDFile_18__dealloc__(struct __pyx_obj_3gsd_2fl_G
  *             logger.info('closing file: ' + self.name);
  *             libgsd.gsd_close(&self.__handle);             # <<<<<<<<<<<<<<
  *             self.__is_open = False;
- * 
+ *
  */
     gsd_close((&__pyx_v_self->__pyx___handle));
 
@@ -7337,7 +7337,7 @@ static void __pyx_pf_3gsd_2fl_7GSDFile_18__dealloc__(struct __pyx_obj_3gsd_2fl_G
  *             logger.info('closing file: ' + self.name);
  *             libgsd.gsd_close(&self.__handle);
  *             self.__is_open = False;             # <<<<<<<<<<<<<<
- * 
+ *
  * def create(name, application, schema, schema_version):
  */
     __pyx_v_self->__pyx___is_open = 0;
@@ -7347,7 +7347,7 @@ static void __pyx_pf_3gsd_2fl_7GSDFile_18__dealloc__(struct __pyx_obj_3gsd_2fl_G
 
   /* "gsd/fl.pyx":570
  *             return libgsd.gsd_get_nframes(&self.__handle);
- * 
+ *
  *     def __dealloc__(self):             # <<<<<<<<<<<<<<
  *         if self.__is_open:
  *             logger.info('closing file: ' + self.name);
@@ -7368,10 +7368,10 @@ static void __pyx_pf_3gsd_2fl_7GSDFile_18__dealloc__(struct __pyx_obj_3gsd_2fl_G
 
 /* "gsd/fl.pyx":576
  *             self.__is_open = False;
- * 
+ *
  * def create(name, application, schema, schema_version):             # <<<<<<<<<<<<<<
  *     """ create(name, application, schema, schema_version)
- * 
+ *
  */
 
 /* Python wrapper */
@@ -7477,10 +7477,10 @@ static PyObject *__pyx_pf_3gsd_2fl_create(CYTHON_UNUSED PyObject *__pyx_self, Py
 
   /* "gsd/fl.pyx":603
  *     """
- * 
+ *
  *     _c_schema_version = libgsd.gsd_make_version(schema_version[0], schema_version[1])             # <<<<<<<<<<<<<<
  *     retval = libgsd.gsd_create(name.encode('utf-8'), application.encode('utf-8'), schema.encode('utf-8'), _c_schema_version);
- * 
+ *
  */
   __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_schema_version, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 603; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
   __Pyx_GOTREF(__pyx_t_1);
@@ -7493,10 +7493,10 @@ static PyObject *__pyx_pf_3gsd_2fl_create(CYTHON_UNUSED PyObject *__pyx_self, Py
   __pyx_v__c_schema_version = gsd_make_version(__pyx_t_2, __pyx_t_3);
 
   /* "gsd/fl.pyx":604
- * 
+ *
  *     _c_schema_version = libgsd.gsd_make_version(schema_version[0], schema_version[1])
  *     retval = libgsd.gsd_create(name.encode('utf-8'), application.encode('utf-8'), schema.encode('utf-8'), _c_schema_version);             # <<<<<<<<<<<<<<
- * 
+ *
  *     if retval == -1:
  */
   __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_name, __pyx_n_s_encode); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 604; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -7524,7 +7524,7 @@ static PyObject *__pyx_pf_3gsd_2fl_create(CYTHON_UNUSED PyObject *__pyx_self, Py
 
   /* "gsd/fl.pyx":606
  *     retval = libgsd.gsd_create(name.encode('utf-8'), application.encode('utf-8'), schema.encode('utf-8'), _c_schema_version);
- * 
+ *
  *     if retval == -1:             # <<<<<<<<<<<<<<
  *         raise IOError(*__format_errno(name));
  *     elif retval != 0:
@@ -7533,7 +7533,7 @@ static PyObject *__pyx_pf_3gsd_2fl_create(CYTHON_UNUSED PyObject *__pyx_self, Py
   if (__pyx_t_10) {
 
     /* "gsd/fl.pyx":607
- * 
+ *
  *     if retval == -1:
  *         raise IOError(*__format_errno(name));             # <<<<<<<<<<<<<<
  *     elif retval != 0:
@@ -7575,10 +7575,10 @@ static PyObject *__pyx_pf_3gsd_2fl_create(CYTHON_UNUSED PyObject *__pyx_self, Py
 
   /* "gsd/fl.pyx":576
  *             self.__is_open = False;
- * 
+ *
  * def create(name, application, schema, schema_version):             # <<<<<<<<<<<<<<
  *     """ create(name, application, schema, schema_version)
- * 
+ *
  */
 
   /* function exit code */
@@ -7649,9 +7649,9 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
 
   /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":203
  *             # of flags
- * 
+ *
  *             if info == NULL: return             # <<<<<<<<<<<<<<
- * 
+ *
  *             cdef int copy_shape, i, ndim
  */
   __pyx_t_1 = ((__pyx_v_info == NULL) != 0);
@@ -7661,11 +7661,11 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
   }
 
   /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":206
- * 
+ *
  *             cdef int copy_shape, i, ndim
  *             cdef int endian_detector = 1             # <<<<<<<<<<<<<<
  *             cdef bint little_endian = ((<char*>&endian_detector)[0] != 0)
- * 
+ *
  */
   __pyx_v_endian_detector = 1;
 
@@ -7673,23 +7673,23 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  *             cdef int copy_shape, i, ndim
  *             cdef int endian_detector = 1
  *             cdef bint little_endian = ((<char*>&endian_detector)[0] != 0)             # <<<<<<<<<<<<<<
- * 
+ *
  *             ndim = PyArray_NDIM(self)
  */
   __pyx_v_little_endian = ((((char *)(&__pyx_v_endian_detector))[0]) != 0);
 
   /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":209
  *             cdef bint little_endian = ((<char*>&endian_detector)[0] != 0)
- * 
+ *
  *             ndim = PyArray_NDIM(self)             # <<<<<<<<<<<<<<
- * 
+ *
  *             if sizeof(npy_intp) != sizeof(Py_ssize_t):
  */
   __pyx_v_ndim = PyArray_NDIM(__pyx_v_self);
 
   /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":211
  *             ndim = PyArray_NDIM(self)
- * 
+ *
  *             if sizeof(npy_intp) != sizeof(Py_ssize_t):             # <<<<<<<<<<<<<<
  *                 copy_shape = 1
  *             else:
@@ -7698,7 +7698,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
   if (__pyx_t_1) {
 
     /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":212
- * 
+ *
  *             if sizeof(npy_intp) != sizeof(Py_ssize_t):
  *                 copy_shape = 1             # <<<<<<<<<<<<<<
  *             else:
@@ -7713,7 +7713,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  *                 copy_shape = 1
  *             else:
  *                 copy_shape = 0             # <<<<<<<<<<<<<<
- * 
+ *
  *             if ((flags & pybuf.PyBUF_C_CONTIGUOUS == pybuf.PyBUF_C_CONTIGUOUS)
  */
     __pyx_v_copy_shape = 0;
@@ -7722,7 +7722,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
 
   /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":216
  *                 copy_shape = 0
- * 
+ *
  *             if ((flags & pybuf.PyBUF_C_CONTIGUOUS == pybuf.PyBUF_C_CONTIGUOUS)             # <<<<<<<<<<<<<<
  *                 and not PyArray_CHKFLAGS(self, NPY_C_CONTIGUOUS)):
  *                 raise ValueError(u"ndarray is not C contiguous")
@@ -7735,11 +7735,11 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
   }
 
   /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":217
- * 
+ *
  *             if ((flags & pybuf.PyBUF_C_CONTIGUOUS == pybuf.PyBUF_C_CONTIGUOUS)
  *                 and not PyArray_CHKFLAGS(self, NPY_C_CONTIGUOUS)):             # <<<<<<<<<<<<<<
  *                 raise ValueError(u"ndarray is not C contiguous")
- * 
+ *
  */
   __pyx_t_2 = ((!(PyArray_CHKFLAGS(__pyx_v_self, NPY_C_CONTIGUOUS) != 0)) != 0);
   __pyx_t_1 = __pyx_t_2;
@@ -7750,7 +7750,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  *             if ((flags & pybuf.PyBUF_C_CONTIGUOUS == pybuf.PyBUF_C_CONTIGUOUS)
  *                 and not PyArray_CHKFLAGS(self, NPY_C_CONTIGUOUS)):
  *                 raise ValueError(u"ndarray is not C contiguous")             # <<<<<<<<<<<<<<
- * 
+ *
  *             if ((flags & pybuf.PyBUF_F_CONTIGUOUS == pybuf.PyBUF_F_CONTIGUOUS)
  */
     __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__22, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 218; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -7762,7 +7762,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
 
   /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":220
  *                 raise ValueError(u"ndarray is not C contiguous")
- * 
+ *
  *             if ((flags & pybuf.PyBUF_F_CONTIGUOUS == pybuf.PyBUF_F_CONTIGUOUS)             # <<<<<<<<<<<<<<
  *                 and not PyArray_CHKFLAGS(self, NPY_F_CONTIGUOUS)):
  *                 raise ValueError(u"ndarray is not Fortran contiguous")
@@ -7775,11 +7775,11 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
   }
 
   /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":221
- * 
+ *
  *             if ((flags & pybuf.PyBUF_F_CONTIGUOUS == pybuf.PyBUF_F_CONTIGUOUS)
  *                 and not PyArray_CHKFLAGS(self, NPY_F_CONTIGUOUS)):             # <<<<<<<<<<<<<<
  *                 raise ValueError(u"ndarray is not Fortran contiguous")
- * 
+ *
  */
   __pyx_t_2 = ((!(PyArray_CHKFLAGS(__pyx_v_self, NPY_F_CONTIGUOUS) != 0)) != 0);
   __pyx_t_1 = __pyx_t_2;
@@ -7790,7 +7790,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  *             if ((flags & pybuf.PyBUF_F_CONTIGUOUS == pybuf.PyBUF_F_CONTIGUOUS)
  *                 and not PyArray_CHKFLAGS(self, NPY_F_CONTIGUOUS)):
  *                 raise ValueError(u"ndarray is not Fortran contiguous")             # <<<<<<<<<<<<<<
- * 
+ *
  *             info.buf = PyArray_DATA(self)
  */
     __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__23, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 222; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -7802,7 +7802,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
 
   /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":224
  *                 raise ValueError(u"ndarray is not Fortran contiguous")
- * 
+ *
  *             info.buf = PyArray_DATA(self)             # <<<<<<<<<<<<<<
  *             info.ndim = ndim
  *             if copy_shape:
@@ -7810,7 +7810,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
   __pyx_v_info->buf = PyArray_DATA(__pyx_v_self);
 
   /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":225
- * 
+ *
  *             info.buf = PyArray_DATA(self)
  *             info.ndim = ndim             # <<<<<<<<<<<<<<
  *             if copy_shape:
@@ -7913,7 +7913,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  *             info.suboffsets = NULL
  *             info.itemsize = PyArray_ITEMSIZE(self)             # <<<<<<<<<<<<<<
  *             info.readonly = not PyArray_ISWRITEABLE(self)
- * 
+ *
  */
   __pyx_v_info->itemsize = PyArray_ITEMSIZE(__pyx_v_self);
 
@@ -7921,13 +7921,13 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  *             info.suboffsets = NULL
  *             info.itemsize = PyArray_ITEMSIZE(self)
  *             info.readonly = not PyArray_ISWRITEABLE(self)             # <<<<<<<<<<<<<<
- * 
+ *
  *             cdef int t
  */
   __pyx_v_info->readonly = (!(PyArray_ISWRITEABLE(__pyx_v_self) != 0));
 
   /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":242
- * 
+ *
  *             cdef int t
  *             cdef char* f = NULL             # <<<<<<<<<<<<<<
  *             cdef dtype descr = self.descr
@@ -7949,16 +7949,16 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
 
   /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":247
  *             cdef int offset
- * 
+ *
  *             cdef bint hasfields = PyDataType_HASFIELDS(descr)             # <<<<<<<<<<<<<<
- * 
+ *
  *             if not hasfields and not copy_shape:
  */
   __pyx_v_hasfields = PyDataType_HASFIELDS(__pyx_v_descr);
 
   /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":249
  *             cdef bint hasfields = PyDataType_HASFIELDS(descr)
- * 
+ *
  *             if not hasfields and not copy_shape:             # <<<<<<<<<<<<<<
  *                 # do not call releasebuffer
  *                 info.obj = None
@@ -7994,7 +7994,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  *             else:
  *                 # need to call releasebuffer
  *                 info.obj = self             # <<<<<<<<<<<<<<
- * 
+ *
  *             if not hasfields:
  */
     __Pyx_INCREF(((PyObject *)__pyx_v_self));
@@ -8007,7 +8007,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
 
   /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":256
  *                 info.obj = self
- * 
+ *
  *             if not hasfields:             # <<<<<<<<<<<<<<
  *                 t = descr.type_num
  *                 if ((descr.byteorder == c'>' and little_endian) or
@@ -8016,7 +8016,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
   if (__pyx_t_1) {
 
     /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":257
- * 
+ *
  *             if not hasfields:
  *                 t = descr.type_num             # <<<<<<<<<<<<<<
  *                 if ((descr.byteorder == c'>' and little_endian) or
@@ -8362,7 +8362,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  *                                       info.format + _buffer_format_string_len,
  *                                       &offset)
  *                 f[0] = c'\0' # Terminate format string             # <<<<<<<<<<<<<<
- * 
+ *
  *         def __releasebuffer__(ndarray self, Py_buffer* info):
  */
     (__pyx_v_f[0]) = '\x00';
@@ -8402,7 +8402,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
 
 /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":291
  *                 f[0] = c'\0' # Terminate format string
- * 
+ *
  *         def __releasebuffer__(ndarray self, Py_buffer* info):             # <<<<<<<<<<<<<<
  *             if PyArray_HASFIELDS(self):
  *                 stdlib.free(info.format)
@@ -8425,7 +8425,7 @@ static void __pyx_pf_5numpy_7ndarray_2__releasebuffer__(PyArrayObject *__pyx_v_s
   __Pyx_RefNannySetupContext("__releasebuffer__", 0);
 
   /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":292
- * 
+ *
  *         def __releasebuffer__(ndarray self, Py_buffer* info):
  *             if PyArray_HASFIELDS(self):             # <<<<<<<<<<<<<<
  *                 stdlib.free(info.format)
@@ -8461,7 +8461,7 @@ static void __pyx_pf_5numpy_7ndarray_2__releasebuffer__(PyArrayObject *__pyx_v_s
  *             if sizeof(npy_intp) != sizeof(Py_ssize_t):
  *                 stdlib.free(info.strides)             # <<<<<<<<<<<<<<
  *                 # info.shape was stored after info.strides in the same block
- * 
+ *
  */
     free(__pyx_v_info->strides);
     goto __pyx_L4;
@@ -8470,7 +8470,7 @@ static void __pyx_pf_5numpy_7ndarray_2__releasebuffer__(PyArrayObject *__pyx_v_s
 
   /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":291
  *                 f[0] = c'\0' # Terminate format string
- * 
+ *
  *         def __releasebuffer__(ndarray self, Py_buffer* info):             # <<<<<<<<<<<<<<
  *             if PyArray_HASFIELDS(self):
  *                 stdlib.free(info.format)
@@ -8482,10 +8482,10 @@ static void __pyx_pf_5numpy_7ndarray_2__releasebuffer__(PyArrayObject *__pyx_v_s
 
 /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":771
  * ctypedef npy_cdouble     complex_t
- * 
+ *
  * cdef inline object PyArray_MultiIterNew1(a):             # <<<<<<<<<<<<<<
  *     return PyArray_MultiIterNew(1, <void*>a)
- * 
+ *
  */
 
 static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew1(PyObject *__pyx_v_a) {
@@ -8498,10 +8498,10 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew1(PyObject *__
   __Pyx_RefNannySetupContext("PyArray_MultiIterNew1", 0);
 
   /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":772
- * 
+ *
  * cdef inline object PyArray_MultiIterNew1(a):
  *     return PyArray_MultiIterNew(1, <void*>a)             # <<<<<<<<<<<<<<
- * 
+ *
  * cdef inline object PyArray_MultiIterNew2(a, b):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -8513,10 +8513,10 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew1(PyObject *__
 
   /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":771
  * ctypedef npy_cdouble     complex_t
- * 
+ *
  * cdef inline object PyArray_MultiIterNew1(a):             # <<<<<<<<<<<<<<
  *     return PyArray_MultiIterNew(1, <void*>a)
- * 
+ *
  */
 
   /* function exit code */
@@ -8532,10 +8532,10 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew1(PyObject *__
 
 /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":774
  *     return PyArray_MultiIterNew(1, <void*>a)
- * 
+ *
  * cdef inline object PyArray_MultiIterNew2(a, b):             # <<<<<<<<<<<<<<
  *     return PyArray_MultiIterNew(2, <void*>a, <void*>b)
- * 
+ *
  */
 
 static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew2(PyObject *__pyx_v_a, PyObject *__pyx_v_b) {
@@ -8548,10 +8548,10 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew2(PyObject *__
   __Pyx_RefNannySetupContext("PyArray_MultiIterNew2", 0);
 
   /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":775
- * 
+ *
  * cdef inline object PyArray_MultiIterNew2(a, b):
  *     return PyArray_MultiIterNew(2, <void*>a, <void*>b)             # <<<<<<<<<<<<<<
- * 
+ *
  * cdef inline object PyArray_MultiIterNew3(a, b, c):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -8563,10 +8563,10 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew2(PyObject *__
 
   /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":774
  *     return PyArray_MultiIterNew(1, <void*>a)
- * 
+ *
  * cdef inline object PyArray_MultiIterNew2(a, b):             # <<<<<<<<<<<<<<
  *     return PyArray_MultiIterNew(2, <void*>a, <void*>b)
- * 
+ *
  */
 
   /* function exit code */
@@ -8582,10 +8582,10 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew2(PyObject *__
 
 /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":777
  *     return PyArray_MultiIterNew(2, <void*>a, <void*>b)
- * 
+ *
  * cdef inline object PyArray_MultiIterNew3(a, b, c):             # <<<<<<<<<<<<<<
  *     return PyArray_MultiIterNew(3, <void*>a, <void*>b, <void*> c)
- * 
+ *
  */
 
 static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew3(PyObject *__pyx_v_a, PyObject *__pyx_v_b, PyObject *__pyx_v_c) {
@@ -8598,10 +8598,10 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew3(PyObject *__
   __Pyx_RefNannySetupContext("PyArray_MultiIterNew3", 0);
 
   /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":778
- * 
+ *
  * cdef inline object PyArray_MultiIterNew3(a, b, c):
  *     return PyArray_MultiIterNew(3, <void*>a, <void*>b, <void*> c)             # <<<<<<<<<<<<<<
- * 
+ *
  * cdef inline object PyArray_MultiIterNew4(a, b, c, d):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -8613,10 +8613,10 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew3(PyObject *__
 
   /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":777
  *     return PyArray_MultiIterNew(2, <void*>a, <void*>b)
- * 
+ *
  * cdef inline object PyArray_MultiIterNew3(a, b, c):             # <<<<<<<<<<<<<<
  *     return PyArray_MultiIterNew(3, <void*>a, <void*>b, <void*> c)
- * 
+ *
  */
 
   /* function exit code */
@@ -8632,10 +8632,10 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew3(PyObject *__
 
 /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":780
  *     return PyArray_MultiIterNew(3, <void*>a, <void*>b, <void*> c)
- * 
+ *
  * cdef inline object PyArray_MultiIterNew4(a, b, c, d):             # <<<<<<<<<<<<<<
  *     return PyArray_MultiIterNew(4, <void*>a, <void*>b, <void*>c, <void*> d)
- * 
+ *
  */
 
 static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew4(PyObject *__pyx_v_a, PyObject *__pyx_v_b, PyObject *__pyx_v_c, PyObject *__pyx_v_d) {
@@ -8648,10 +8648,10 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew4(PyObject *__
   __Pyx_RefNannySetupContext("PyArray_MultiIterNew4", 0);
 
   /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":781
- * 
+ *
  * cdef inline object PyArray_MultiIterNew4(a, b, c, d):
  *     return PyArray_MultiIterNew(4, <void*>a, <void*>b, <void*>c, <void*> d)             # <<<<<<<<<<<<<<
- * 
+ *
  * cdef inline object PyArray_MultiIterNew5(a, b, c, d, e):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -8663,10 +8663,10 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew4(PyObject *__
 
   /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":780
  *     return PyArray_MultiIterNew(3, <void*>a, <void*>b, <void*> c)
- * 
+ *
  * cdef inline object PyArray_MultiIterNew4(a, b, c, d):             # <<<<<<<<<<<<<<
  *     return PyArray_MultiIterNew(4, <void*>a, <void*>b, <void*>c, <void*> d)
- * 
+ *
  */
 
   /* function exit code */
@@ -8682,10 +8682,10 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew4(PyObject *__
 
 /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":783
  *     return PyArray_MultiIterNew(4, <void*>a, <void*>b, <void*>c, <void*> d)
- * 
+ *
  * cdef inline object PyArray_MultiIterNew5(a, b, c, d, e):             # <<<<<<<<<<<<<<
  *     return PyArray_MultiIterNew(5, <void*>a, <void*>b, <void*>c, <void*> d, <void*> e)
- * 
+ *
  */
 
 static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew5(PyObject *__pyx_v_a, PyObject *__pyx_v_b, PyObject *__pyx_v_c, PyObject *__pyx_v_d, PyObject *__pyx_v_e) {
@@ -8698,10 +8698,10 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew5(PyObject *__
   __Pyx_RefNannySetupContext("PyArray_MultiIterNew5", 0);
 
   /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":784
- * 
+ *
  * cdef inline object PyArray_MultiIterNew5(a, b, c, d, e):
  *     return PyArray_MultiIterNew(5, <void*>a, <void*>b, <void*>c, <void*> d, <void*> e)             # <<<<<<<<<<<<<<
- * 
+ *
  * cdef inline char* _util_dtypestring(dtype descr, char* f, char* end, int* offset) except NULL:
  */
   __Pyx_XDECREF(__pyx_r);
@@ -8713,10 +8713,10 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew5(PyObject *__
 
   /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":783
  *     return PyArray_MultiIterNew(4, <void*>a, <void*>b, <void*>c, <void*> d)
- * 
+ *
  * cdef inline object PyArray_MultiIterNew5(a, b, c, d, e):             # <<<<<<<<<<<<<<
  *     return PyArray_MultiIterNew(5, <void*>a, <void*>b, <void*>c, <void*> d, <void*> e)
- * 
+ *
  */
 
   /* function exit code */
@@ -8732,7 +8732,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew5(PyObject *__
 
 /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":786
  *     return PyArray_MultiIterNew(5, <void*>a, <void*>b, <void*>c, <void*> d, <void*> e)
- * 
+ *
  * cdef inline char* _util_dtypestring(dtype descr, char* f, char* end, int* offset) except NULL:             # <<<<<<<<<<<<<<
  *     # Recursive utility function used in __getbuffer__ to get format
  *     # string. The new location in the format string is returned.
@@ -8776,13 +8776,13 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  *     cdef int endian_detector = 1
  *     cdef bint little_endian = ((<char*>&endian_detector)[0] != 0)             # <<<<<<<<<<<<<<
  *     cdef tuple fields
- * 
+ *
  */
   __pyx_v_little_endian = ((((char *)(&__pyx_v_endian_detector))[0]) != 0);
 
   /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":797
  *     cdef tuple fields
- * 
+ *
  *     for childname in descr.names:             # <<<<<<<<<<<<<<
  *         fields = descr.fields[childname]
  *         child, new_offset = fields
@@ -8803,11 +8803,11 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
     __pyx_t_3 = 0;
 
     /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":798
- * 
+ *
  *     for childname in descr.names:
  *         fields = descr.fields[childname]             # <<<<<<<<<<<<<<
  *         child, new_offset = fields
- * 
+ *
  */
     if (unlikely(__pyx_v_descr->fields == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
@@ -8823,7 +8823,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  *     for childname in descr.names:
  *         fields = descr.fields[childname]
  *         child, new_offset = fields             # <<<<<<<<<<<<<<
- * 
+ *
  *         if (end - f) - <int>(new_offset - offset[0]) < 15:
  */
     if (likely(__pyx_v_fields != Py_None)) {
@@ -8839,8 +8839,8 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
         {__pyx_filename = __pyx_f[1]; __pyx_lineno = 799; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       }
       #if CYTHON_COMPILING_IN_CPYTHON
-      __pyx_t_3 = PyTuple_GET_ITEM(sequence, 0); 
-      __pyx_t_4 = PyTuple_GET_ITEM(sequence, 1); 
+      __pyx_t_3 = PyTuple_GET_ITEM(sequence, 0);
+      __pyx_t_4 = PyTuple_GET_ITEM(sequence, 1);
       __Pyx_INCREF(__pyx_t_3);
       __Pyx_INCREF(__pyx_t_4);
       #else
@@ -8860,10 +8860,10 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
 
     /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":801
  *         child, new_offset = fields
- * 
+ *
  *         if (end - f) - <int>(new_offset - offset[0]) < 15:             # <<<<<<<<<<<<<<
  *             raise RuntimeError(u"Format string allocated too short, see comment in numpy.pxd")
- * 
+ *
  */
     __pyx_t_4 = __Pyx_PyInt_From_int((__pyx_v_offset[0])); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 801; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
@@ -8876,10 +8876,10 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
     if (__pyx_t_6) {
 
       /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":802
- * 
+ *
  *         if (end - f) - <int>(new_offset - offset[0]) < 15:
  *             raise RuntimeError(u"Format string allocated too short, see comment in numpy.pxd")             # <<<<<<<<<<<<<<
- * 
+ *
  *         if ((child.byteorder == c'>' and little_endian) or
  */
       __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__25, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 802; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -8891,7 +8891,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
 
     /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":804
  *             raise RuntimeError(u"Format string allocated too short, see comment in numpy.pxd")
- * 
+ *
  *         if ((child.byteorder == c'>' and little_endian) or             # <<<<<<<<<<<<<<
  *             (child.byteorder == c'<' and not little_endian)):
  *             raise ValueError(u"Non-native byte order not supported")
@@ -8910,7 +8910,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
     __pyx_L8_next_or:;
 
     /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":805
- * 
+ *
  *         if ((child.byteorder == c'>' and little_endian) or
  *             (child.byteorder == c'<' and not little_endian)):             # <<<<<<<<<<<<<<
  *             raise ValueError(u"Non-native byte order not supported")
@@ -8942,7 +8942,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
     }
 
     /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":816
- * 
+ *
  *         # Output padding bytes
  *         while offset[0] < new_offset:             # <<<<<<<<<<<<<<
  *             f[0] = 120 # "x"; pad byte
@@ -8971,7 +8971,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  *             f[0] = 120 # "x"; pad byte
  *             f += 1             # <<<<<<<<<<<<<<
  *             offset[0] += 1
- * 
+ *
  */
       __pyx_v_f = (__pyx_v_f + 1);
 
@@ -8979,7 +8979,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  *             f[0] = 120 # "x"; pad byte
  *             f += 1
  *             offset[0] += 1             # <<<<<<<<<<<<<<
- * 
+ *
  *         offset[0] += child.itemsize
  */
       __pyx_t_8 = 0;
@@ -8988,9 +8988,9 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
 
     /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":821
  *             offset[0] += 1
- * 
+ *
  *         offset[0] += child.itemsize             # <<<<<<<<<<<<<<
- * 
+ *
  *         if not PyDataType_HASFIELDS(child):
  */
     __pyx_t_8 = 0;
@@ -8998,7 +8998,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
 
     /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":823
  *         offset[0] += child.itemsize
- * 
+ *
  *         if not PyDataType_HASFIELDS(child):             # <<<<<<<<<<<<<<
  *             t = child.type_num
  *             if end - f < 5:
@@ -9007,7 +9007,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
     if (__pyx_t_6) {
 
       /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":824
- * 
+ *
  *         if not PyDataType_HASFIELDS(child):
  *             t = child.type_num             # <<<<<<<<<<<<<<
  *             if end - f < 5:
@@ -9023,7 +9023,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  *             t = child.type_num
  *             if end - f < 5:             # <<<<<<<<<<<<<<
  *                 raise RuntimeError(u"Format string allocated too short.")
- * 
+ *
  */
       __pyx_t_6 = (((__pyx_v_end - __pyx_v_f) < 5) != 0);
       if (__pyx_t_6) {
@@ -9032,7 +9032,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  *             t = child.type_num
  *             if end - f < 5:
  *                 raise RuntimeError(u"Format string allocated too short.")             # <<<<<<<<<<<<<<
- * 
+ *
  *             # Until ticket #99 is fixed, use integers to avoid warnings
  */
         __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__27, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 826; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -9043,7 +9043,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
       }
 
       /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":829
- * 
+ *
  *             # Until ticket #99 is fixed, use integers to avoid warnings
  *             if   t == NPY_BYTE:        f[0] =  98 #"b"             # <<<<<<<<<<<<<<
  *             elif t == NPY_UBYTE:       f[0] =  66 #"B"
@@ -9395,7 +9395,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  *             # so don't output it
  *             f = _util_dtypestring(child, f, end, offset)             # <<<<<<<<<<<<<<
  *     return f
- * 
+ *
  */
       __pyx_t_9 = __pyx_f_5numpy__util_dtypestring(__pyx_v_child, __pyx_v_f, __pyx_v_end, __pyx_v_offset); if (unlikely(__pyx_t_9 == NULL)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 852; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __pyx_v_f = __pyx_t_9;
@@ -9404,7 +9404,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
 
     /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":797
  *     cdef tuple fields
- * 
+ *
  *     for childname in descr.names:             # <<<<<<<<<<<<<<
  *         fields = descr.fields[childname]
  *         child, new_offset = fields
@@ -9416,15 +9416,15 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  *             # so don't output it
  *             f = _util_dtypestring(child, f, end, offset)
  *     return f             # <<<<<<<<<<<<<<
- * 
- * 
+ *
+ *
  */
   __pyx_r = __pyx_v_f;
   goto __pyx_L0;
 
   /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":786
  *     return PyArray_MultiIterNew(5, <void*>a, <void*>b, <void*>c, <void*> d, <void*> e)
- * 
+ *
  * cdef inline char* _util_dtypestring(dtype descr, char* f, char* end, int* offset) except NULL:             # <<<<<<<<<<<<<<
  *     # Recursive utility function used in __getbuffer__ to get format
  *     # string. The new location in the format string is returned.
@@ -9448,8 +9448,8 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
 }
 
 /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":969
- * 
- * 
+ *
+ *
  * cdef inline void set_array_base(ndarray arr, object base):             # <<<<<<<<<<<<<<
  *      cdef PyObject* baseptr
  *      if base is None:
@@ -9510,7 +9510,7 @@ static CYTHON_INLINE void __pyx_f_5numpy_set_array_base(PyArrayObject *__pyx_v_a
  *          baseptr = <PyObject*>base
  *      Py_XDECREF(arr.base)             # <<<<<<<<<<<<<<
  *      arr.base = baseptr
- * 
+ *
  */
   Py_XDECREF(__pyx_v_arr->base);
 
@@ -9518,14 +9518,14 @@ static CYTHON_INLINE void __pyx_f_5numpy_set_array_base(PyArrayObject *__pyx_v_a
  *          baseptr = <PyObject*>base
  *      Py_XDECREF(arr.base)
  *      arr.base = baseptr             # <<<<<<<<<<<<<<
- * 
+ *
  * cdef inline object get_array_base(ndarray arr):
  */
   __pyx_v_arr->base = __pyx_v_baseptr;
 
   /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":969
- * 
- * 
+ *
+ *
  * cdef inline void set_array_base(ndarray arr, object base):             # <<<<<<<<<<<<<<
  *      cdef PyObject* baseptr
  *      if base is None:
@@ -9537,7 +9537,7 @@ static CYTHON_INLINE void __pyx_f_5numpy_set_array_base(PyArrayObject *__pyx_v_a
 
 /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":979
  *      arr.base = baseptr
- * 
+ *
  * cdef inline object get_array_base(ndarray arr):             # <<<<<<<<<<<<<<
  *     if arr.base is NULL:
  *         return None
@@ -9550,7 +9550,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_get_array_base(PyArrayObject *__py
   __Pyx_RefNannySetupContext("get_array_base", 0);
 
   /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":980
- * 
+ *
  * cdef inline object get_array_base(ndarray arr):
  *     if arr.base is NULL:             # <<<<<<<<<<<<<<
  *         return None
@@ -9586,7 +9586,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_get_array_base(PyArrayObject *__py
 
   /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":979
  *      arr.base = baseptr
- * 
+ *
  * cdef inline object get_array_base(ndarray arr):             # <<<<<<<<<<<<<<
  *     if arr.base is NULL:
  *         return None
@@ -9888,7 +9888,7 @@ static int __Pyx_InitCachedConstants(void) {
  *         cdef char * c_name;
  *         name_e = name.encode('utf-8')             # <<<<<<<<<<<<<<
  *         c_name = name_e;
- * 
+ *
  */
   __pyx_tuple__2 = PyTuple_Pack(1, __pyx_kp_s_utf_8); if (unlikely(!__pyx_tuple__2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 151; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__2);
@@ -9898,7 +9898,7 @@ static int __Pyx_InitCachedConstants(void) {
  *             raise MemoryError("Unable to allocate GSD index: " + name);
  *         elif retval != 0:
  *             raise RuntimeError("Unknown error");             # <<<<<<<<<<<<<<
- * 
+ *
  *         self.__is_open = True;
  */
   __pyx_tuple__3 = PyTuple_Pack(1, __pyx_kp_s_Unknown_error); if (unlikely(!__pyx_tuple__3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 168; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -9906,10 +9906,10 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__3);
 
   /* "gsd/fl.pyx":218
- * 
+ *
  *         if not self.__is_open:
  *             raise ValueError("File is not open");             # <<<<<<<<<<<<<<
- * 
+ *
  *         logger.info('truncating file: ' + self.name);
  */
   __pyx_tuple__4 = PyTuple_Pack(1, __pyx_kp_s_File_is_not_open); if (unlikely(!__pyx_tuple__4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 218; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -9920,18 +9920,18 @@ static int __Pyx_InitCachedConstants(void) {
  *             raise MemoryError("Unable to allocate GSD index: " + self.name);
  *         elif retval != 0:
  *             raise RuntimeError("Unknown error");             # <<<<<<<<<<<<<<
- * 
- * 
+ *
+ *
  */
   __pyx_tuple__5 = PyTuple_Pack(1, __pyx_kp_s_Unknown_error); if (unlikely(!__pyx_tuple__5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 235; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__5);
   __Pyx_GIVEREF(__pyx_tuple__5);
 
   /* "gsd/fl.pyx":267
- * 
+ *
  *         if not self.__is_open:
  *             raise ValueError("File is not open");             # <<<<<<<<<<<<<<
- * 
+ *
  *         logger.debug('end frame: ' + self.name);
  */
   __pyx_tuple__6 = PyTuple_Pack(1, __pyx_kp_s_File_is_not_open); if (unlikely(!__pyx_tuple__6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 267; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -9942,7 +9942,7 @@ static int __Pyx_InitCachedConstants(void) {
  *             raise RuntimeError("GSD file is opened read only: " + self.name);
  *         elif retval != 0:
  *             raise RuntimeError("Unknown error");             # <<<<<<<<<<<<<<
- * 
+ *
  *     def write_chunk(self, name, data):
  */
   __pyx_tuple__7 = PyTuple_Pack(1, __pyx_kp_s_Unknown_error); if (unlikely(!__pyx_tuple__7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 279; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -9950,10 +9950,10 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__7);
 
   /* "gsd/fl.pyx":314
- * 
+ *
  *         if not self.__is_open:
  *             raise ValueError("File is not open");             # <<<<<<<<<<<<<<
- * 
+ *
  *         data_array = numpy.ascontiguousarray(data);
  */
   __pyx_tuple__8 = PyTuple_Pack(1, __pyx_kp_s_File_is_not_open); if (unlikely(!__pyx_tuple__8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 314; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -9961,7 +9961,7 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__8);
 
   /* "gsd/fl.pyx":373
- * 
+ *
  *         cdef char * c_name;
  *         name_e = name.encode('utf-8')             # <<<<<<<<<<<<<<
  *         c_name = name_e;
@@ -9975,7 +9975,7 @@ static int __Pyx_InitCachedConstants(void) {
  *             raise RuntimeError("GSD file is opened read only: " + self.name);
  *         elif retval != 0:
  *             raise RuntimeError("Unknown error");             # <<<<<<<<<<<<<<
- * 
+ *
  *     def chunk_exists(self, frame, name):
  */
   __pyx_tuple__11 = PyTuple_Pack(1, __pyx_kp_s_Unknown_error); if (unlikely(!__pyx_tuple__11)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 389; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -9994,10 +9994,10 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__12);
 
   /* "gsd/fl.pyx":458
- * 
+ *
  *         if not self.__is_open:
  *             raise ValueError("File is not open");             # <<<<<<<<<<<<<<
- * 
+ *
  *         cdef const libgsd.gsd_index_entry* index_entry;
  */
   __pyx_tuple__13 = PyTuple_Pack(1, __pyx_kp_s_File_is_not_open); if (unlikely(!__pyx_tuple__13)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 458; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -10019,7 +10019,7 @@ static int __Pyx_InitCachedConstants(void) {
  *             raise RuntimeError("Corrupt chunk: " + str(frame) + " / " + name + " in file" + self.name);
  *         elif retval != 0:
  *             raise RuntimeError("Unknown error");             # <<<<<<<<<<<<<<
- * 
+ *
  *         if index_entry.M == 1:
  */
   __pyx_tuple__16 = PyTuple_Pack(1, __pyx_kp_s_Unknown_error); if (unlikely(!__pyx_tuple__16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 524; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -10030,7 +10030,7 @@ static int __Pyx_InitCachedConstants(void) {
  *         def __get__(self):
  *             if not self.__is_open:
  *                 raise ValueError("File is not open");             # <<<<<<<<<<<<<<
- * 
+ *
  *             return libgsd.gsd_get_nframes(&self.__handle);
  */
   __pyx_tuple__17 = PyTuple_Pack(1, __pyx_kp_s_File_is_not_open); if (unlikely(!__pyx_tuple__17)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 566; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -10038,10 +10038,10 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__17);
 
   /* "gsd/fl.pyx":604
- * 
+ *
  *     _c_schema_version = libgsd.gsd_make_version(schema_version[0], schema_version[1])
  *     retval = libgsd.gsd_create(name.encode('utf-8'), application.encode('utf-8'), schema.encode('utf-8'), _c_schema_version);             # <<<<<<<<<<<<<<
- * 
+ *
  *     if retval == -1:
  */
   __pyx_tuple__18 = PyTuple_Pack(1, __pyx_kp_s_utf_8); if (unlikely(!__pyx_tuple__18)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 604; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -10067,7 +10067,7 @@ static int __Pyx_InitCachedConstants(void) {
  *             if ((flags & pybuf.PyBUF_C_CONTIGUOUS == pybuf.PyBUF_C_CONTIGUOUS)
  *                 and not PyArray_CHKFLAGS(self, NPY_C_CONTIGUOUS)):
  *                 raise ValueError(u"ndarray is not C contiguous")             # <<<<<<<<<<<<<<
- * 
+ *
  *             if ((flags & pybuf.PyBUF_F_CONTIGUOUS == pybuf.PyBUF_F_CONTIGUOUS)
  */
   __pyx_tuple__22 = PyTuple_Pack(1, __pyx_kp_u_ndarray_is_not_C_contiguous); if (unlikely(!__pyx_tuple__22)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 218; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -10078,7 +10078,7 @@ static int __Pyx_InitCachedConstants(void) {
  *             if ((flags & pybuf.PyBUF_F_CONTIGUOUS == pybuf.PyBUF_F_CONTIGUOUS)
  *                 and not PyArray_CHKFLAGS(self, NPY_F_CONTIGUOUS)):
  *                 raise ValueError(u"ndarray is not Fortran contiguous")             # <<<<<<<<<<<<<<
- * 
+ *
  *             info.buf = PyArray_DATA(self)
  */
   __pyx_tuple__23 = PyTuple_Pack(1, __pyx_kp_u_ndarray_is_not_Fortran_contiguou); if (unlikely(!__pyx_tuple__23)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 222; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -10097,10 +10097,10 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__24);
 
   /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":802
- * 
+ *
  *         if (end - f) - <int>(new_offset - offset[0]) < 15:
  *             raise RuntimeError(u"Format string allocated too short, see comment in numpy.pxd")             # <<<<<<<<<<<<<<
- * 
+ *
  *         if ((child.byteorder == c'>' and little_endian) or
  */
   __pyx_tuple__25 = PyTuple_Pack(1, __pyx_kp_u_Format_string_allocated_too_shor); if (unlikely(!__pyx_tuple__25)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 802; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -10122,7 +10122,7 @@ static int __Pyx_InitCachedConstants(void) {
  *             t = child.type_num
  *             if end - f < 5:
  *                 raise RuntimeError(u"Format string allocated too short.")             # <<<<<<<<<<<<<<
- * 
+ *
  *             # Until ticket #99 is fixed, use integers to avoid warnings
  */
   __pyx_tuple__27 = PyTuple_Pack(1, __pyx_kp_u_Format_string_allocated_too_shor_2); if (unlikely(!__pyx_tuple__27)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 826; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -10131,9 +10131,9 @@ static int __Pyx_InitCachedConstants(void) {
 
   /* "gsd/fl.pyx":22
  * import numpy
- * 
+ *
  * logger = logging.getLogger('gsd.fl')             # <<<<<<<<<<<<<<
- * 
+ *
  * ########################
  */
   __pyx_tuple__28 = PyTuple_Pack(1, __pyx_kp_s_gsd_fl); if (unlikely(!__pyx_tuple__28)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 22; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -10142,10 +10142,10 @@ static int __Pyx_InitCachedConstants(void) {
 
   /* "gsd/fl.pyx":576
  *             self.__is_open = False;
- * 
+ *
  * def create(name, application, schema, schema_version):             # <<<<<<<<<<<<<<
  *     """ create(name, application, schema, schema_version)
- * 
+ *
  */
   __pyx_tuple__29 = PyTuple_Pack(6, __pyx_n_s_name, __pyx_n_s_application, __pyx_n_s_schema, __pyx_n_s_schema_version, __pyx_n_s_c_schema_version, __pyx_n_s_retval); if (unlikely(!__pyx_tuple__29)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 576; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__29);
@@ -10253,7 +10253,7 @@ PyMODINIT_FUNC PyInit_fl(void)
   if (PyObject_SetAttrString(__pyx_m, "GSDFile", (PyObject *)&__pyx_type_3gsd_2fl_GSDFile) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 85; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_ptype_3gsd_2fl_GSDFile = &__pyx_type_3gsd_2fl_GSDFile;
   /*--- Type import code ---*/
-  __pyx_ptype_7cpython_4type_type = __Pyx_ImportType(__Pyx_BUILTIN_MODULE_NAME, "type", 
+  __pyx_ptype_7cpython_4type_type = __Pyx_ImportType(__Pyx_BUILTIN_MODULE_NAME, "type",
   #if CYTHON_COMPILING_IN_PYPY
   sizeof(PyTypeObject),
   #else
@@ -10286,7 +10286,7 @@ PyMODINIT_FUNC PyInit_fl(void)
  * import os
  * import logging             # <<<<<<<<<<<<<<
  * import numpy
- * 
+ *
  */
   __pyx_t_1 = __Pyx_Import(__pyx_n_s_logging, 0, -1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -10297,7 +10297,7 @@ PyMODINIT_FUNC PyInit_fl(void)
  * import os
  * import logging
  * import numpy             # <<<<<<<<<<<<<<
- * 
+ *
  * logger = logging.getLogger('gsd.fl')
  */
   __pyx_t_1 = __Pyx_Import(__pyx_n_s_numpy, 0, -1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 20; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -10307,9 +10307,9 @@ PyMODINIT_FUNC PyInit_fl(void)
 
   /* "gsd/fl.pyx":22
  * import numpy
- * 
+ *
  * logger = logging.getLogger('gsd.fl')             # <<<<<<<<<<<<<<
- * 
+ *
  * ########################
  */
   __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_logging); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 22; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -10325,10 +10325,10 @@ PyMODINIT_FUNC PyInit_fl(void)
 
   /* "gsd/fl.pyx":576
  *             self.__is_open = False;
- * 
+ *
  * def create(name, application, schema, schema_version):             # <<<<<<<<<<<<<<
  *     """ create(name, application, schema, schema_version)
- * 
+ *
  */
   __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_3gsd_2fl_1create, NULL, __pyx_kp_s_gsd_fl); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 576; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -10336,9 +10336,9 @@ PyMODINIT_FUNC PyInit_fl(void)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "gsd/fl.pyx":1
- * # Copyright (c) 2016 The Regents of the University of Michigan             # <<<<<<<<<<<<<<
+ * # Copyright (c) 2016-2017 The Regents of the University of Michigan             # <<<<<<<<<<<<<<
  * # This file is part of the General Simulation Data (GSD) project, released under the BSD 2-Clause License.
- * 
+ *
  */
   __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -10347,7 +10347,7 @@ PyMODINIT_FUNC PyInit_fl(void)
 
   /* "../../../../../usr/lib64/python3.3/site-packages/Cython/Includes/numpy/__init__.pxd":979
  *      arr.base = baseptr
- * 
+ *
  * cdef inline object get_array_base(ndarray arr):             # <<<<<<<<<<<<<<
  *     if arr.base is NULL:
  *         return None
