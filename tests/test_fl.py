@@ -219,7 +219,7 @@ def test_fileio_errors():
             with open(d+'/test_fileio_errors.gsd', 'wb') as f:
                 f.write(b'test');
 
-            with assert_raises(Exception) as cm:
+            with assert_raises(RuntimeError) as cm:
                 f = gsd.fl.GSDFile(name=d+'/test_fileio_errors.gsd', mode='rb');
 
 def test_dtype_errors():

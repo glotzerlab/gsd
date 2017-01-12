@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <fcntl.h>
+#include <errno.h>
 
 #include "gsd.h"
 
@@ -267,7 +268,12 @@ int __gsd_read_header(struct gsd_handle* handle)
     lseek(handle->fd, 0, SEEK_SET);
     size_t bytes_read = read(handle->fd, &handle->header, sizeof(struct gsd_header));
     if (bytes_read != sizeof(struct gsd_header))
-        return -1;
+        {
+        if (errno != 0)
+            return -1;
+        else
+            return -2;
+        }
 
     // validate the header
     if (handle->header.magic != 0x65DF65DF65DF65DF)
