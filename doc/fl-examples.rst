@@ -110,13 +110,13 @@ Open a file in read/write mode
 
 .. ipython:: python
 
-    f = gsd.fl.GSDFile(name='file.gsd', mode='wb');
+    f = gsd.fl.GSDFile(name='file.gsd', mode='rb+');
     f.write_chunk(name='double', data=numpy.array([1,2,3,4], dtype=numpy.float64));
     f.end_frame()
     f.nframes
     f.read_chunk(frame=2, name='double')
 
-Files in read/write mode (``wb``) are inefficient. Only use this mode if you **must** read and
+Files in read/write mode (``rb+``) are inefficient. Only use this mode if you **must** read and
 write to the same file, and only if you are working with relatively small files with fewer than
 a million data chunks. Prefer append mode for writing and read-only mode for reading.
 
@@ -155,7 +155,7 @@ Store string chunks
 
 .. ipython:: python
 
-    f = gsd.fl.GSDFile(name='file.gsd', mode='wb')
+    f = gsd.fl.GSDFile(name='file.gsd', mode='rb+')
     f.mode
     s = "This is a string"
     b = numpy.array([s], dtype=numpy.dtype((bytes, len(s)+1)))
