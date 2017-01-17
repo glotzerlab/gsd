@@ -46,7 +46,7 @@ Append frames to a gsd file
         s.particles.position = numpy.random.random(size=(4+i,3))
         return s
 
-    f = gsd.fl.GSDFile('test.gsd', 'rb+')
+    f = gsd.fl.GSDFile('test.gsd', 'wb')
     t = gsd.hoomd.HOOMDTrajectory(f)
     t.extend( (create_frame(i) for i in range(10)) )
     t.append( create_frame(11) )

@@ -24,7 +24,7 @@ def check_dtype(typ):
     with tempfile.TemporaryDirectory() as d:
         gsd.fl.create(name=d+"/test_dtype.gsd", application="test_dtype", schema="none", schema_version=[1,2]);
 
-        with gsd.fl.GSDFile(name=d+"/test_dtype.gsd", mode='rb+') as f:
+        with gsd.fl.GSDFile(name=d+"/test_dtype.gsd", mode='wb') as f:
             f.write_chunk(name='data1d', data=data1d);
             f.write_chunk(name='data2d', data=data2d);
             f.end_frame();

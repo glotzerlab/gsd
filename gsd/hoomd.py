@@ -601,7 +601,7 @@ def create(name, snapshot=None):
     logger.info('creating hoomd gsd file: ' + name);
 
     gsd.fl.create(name=name, application='gsd.hoomd ' + gsd.__version__, schema='hoomd', schema_version=[1,1]);
-    with gsd.fl.GSDFile(name, 'rb+') as f:
+    with gsd.fl.GSDFile(name, 'wb') as f:
         traj = HOOMDTrajectory(f);
         if snapshot is not None:
             traj.append(snapshot);
