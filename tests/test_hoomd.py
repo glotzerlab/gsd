@@ -358,14 +358,11 @@ def test_fallback2():
 
 def test_iteration():
     with tempfile.TemporaryDirectory() as d:
-        gsd.hoomd.create(name=d+"/test_iteration.gsd");
 
-        with gsd.fl.GSDFile(name=d+"/test_iteration.gsd", mode='wb') as f:
-            hf = gsd.hoomd.HOOMDTrajectory(f);
+        with gsd.hoomd.open(name=d+"/test_iteration.gsd", mode='wb') as hf:
             hf.extend((create_frame(i) for i in range(20)));
 
-        with gsd.fl.GSDFile(name=d+"/test_iteration.gsd", mode='rb') as f:
-            hf = gsd.hoomd.HOOMDTrajectory(f);
+        with gsd.hoomd.open(name=d+"/test_iteration.gsd", mode='rb') as hf:
             step = hf[-1].configuration.step;
             eq_(step, 20);
 

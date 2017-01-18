@@ -8,7 +8,8 @@ GSD schema ``hoomd``. It is a simple, but high performance and memory
 efficient, reader and writer for the schema. See :ref:`hoomd-examples`
 for full examples.
 
-* :py:func:`create` - Create a hoomd schema GSD file.
+* :py:func:`create` - Create a hoomd schema GSD file (deprecated).
+* :py:func:`open` - Open a hoomd schema GSD file.
 * :py:class:`HOOMDTrajectory` - Read and write hoomd schema GSD files.
 * :py:class:`Snapshot` - Store the state of a single frame.
 
@@ -20,6 +21,15 @@ for full examples.
 import numpy
 from collections import OrderedDict
 import logging
+try:
+    from gsd import fl
+except ImportError:
+    fl = None;
+
+try:
+    import gsd
+except ImportError:
+    gsd = None;
 
 logger = logging.getLogger('gsd.hoomd')
 
@@ -585,6 +595,12 @@ class HOOMDTrajectory(object):
         else:
             raise TypeError;
 
+    def __enter__(self):
+        return self;
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.file.close();
+
 def create(name, snapshot=None):
     """ Create a hoomd gsd file from the given snapshot.
 
@@ -595,8 +611,33 @@ def create(name, snapshot=None):
     .. danger::
         The file is overwritten if it already exists.
     """
-    import gsd.fl
-    import gsd
+    logger.info('creating hoomd gsd file: ' + name);
+
+    fl.create(name=name, application='gsd.hoomd ' + gsd.__version__, schema='hoomd', schema_version=[1,1]);
+    with gsd.fl.GSDFile(name, 'wb') as f:
+        traj = HOOMDTrajectory(f);
+        if snapshot is not None:
+            traj.append(snapshot);
+
+def create(name, snapshot=None):
+    """ Create a hoomd gsd file from the given snapshot.
+
+    Args:
+        name (str): File name.
+        snapshot (:py:class:`Snapshot`): Snapshot to write to frame 0. No frame is written if snapshot is ``None``.
+
+    .. deprecated:: 1.2
+
+        As of version 1.2, you can create and open hoomd GSD files in the same call to
+        :py:func:`open`. :py:func:`create` is kept for backwards compatibility.
+
+    .. danger::
+        The file is overwritten if it already exists.
+    """
+    if fl is None:
+        raise RuntimeError("file layer module is not available");
+    if gsd is None:
+        raise RuntimeError("gsd module is not available");
 
     logger.info('creating hoomd gsd file: ' + name);
 
@@ -605,3 +646,64 @@ def create(name, snapshot=None):
         traj = HOOMDTrajectory(f);
         if snapshot is not None:
             traj.append(snapshot);
+
+def open(name, mode):
+    """ Open a hoomd schema GSD file.
+
+    The return value of :py:func:`open` can be used as a context manager.
+
+    Args:
+        name (str): File name to open.
+        mode (str): File open mode.
+
+    Returns:
+        An :py:class:`HOOMDTrajectory` instance that accesses the file *name* with the given mode.
+
+    Valid values for mode:
+
+    +------------------+---------------------------------------------+
+    | mode             | description                                 |
+    +==================+=============================================+
+    | ``'rb'``         | Open an existing file for reading.          |
+    +------------------+---------------------------------------------+
+    | ``'rb+'``        | Open an existing file for reading and       |
+    |                  | writing. *Inefficient for large files.*     |
+    +------------------+---------------------------------------------+
+    | ``'wb'``         | Open a file for writing. Creates the file   |
+    |                  | if needed, or overwrites an existing file.  |
+    +------------------+---------------------------------------------+
+    | ``'wb+'``        | Open a file for reading and writing.        |
+    |                  | Creates the file if needed, or overwrites   |
+    |                  | an existing file. *Inefficient for large    |
+    |                  | files.*                                     |
+    +------------------+---------------------------------------------+
+    | ``'xb'``         | Create a gsd file exclusively and opens it  |
+    |                  | for writing.                                |
+    |                  | Raise an :py:exc:`FileExistsError`          |
+    |                  | exception if it already exists.             |
+    +------------------+---------------------------------------------+
+    | ``'xb+'``        | Create a gsd file exclusively and opens it  |
+    |                  | for reading and writing.                    |
+    |                  | Raise an :py:exc:`FileExistsError`          |
+    |                  | exception if it already exists.             |
+    |                  | *Inefficient for large files.*              |
+    +------------------+---------------------------------------------+
+    | ``'ab'``         | Open an existing file for writing.          |
+    |                  | Does *not* create or overwrite existing     |
+    |                  | files.                                      |
+    +------------------+---------------------------------------------+
+
+    .. versionadded:: 1.2
+
+    """
+    if fl is None:
+        raise RuntimeError("file layer module is not available");
+    if gsd is None:
+        raise RuntimeError("gsd module is not available");
+
+    gsdfileobj = fl.open(name=name,
+                         mode=mode,
+                         application='gsd.hoomd ' + gsd.__version__,
+                         schema='hoomd',
+                         schema_version=[1,1]);
+    return HOOMDTrajectory(gsdfileobj);
