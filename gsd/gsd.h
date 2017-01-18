@@ -112,6 +112,15 @@ uint32_t gsd_make_version(unsigned int major, unsigned int minor);
 //! Create a GSD file
 int gsd_create(const char *fname, const char *application, const char *schema, uint32_t schema_version);
 
+//! Create and open a GSD file
+int gsd_create_and_open(struct gsd_handle* handle,
+                        const char *fname,
+                        const char *application,
+                        const char *schema,
+                        uint32_t schema_version,
+                        const enum gsd_open_flag flags,
+                        int exclusive_create);
+
 //! Open a GSD file
 int gsd_open(struct gsd_handle* handle, const char *fname, const enum gsd_open_flag flags);
 
