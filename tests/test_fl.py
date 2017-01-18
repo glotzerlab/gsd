@@ -307,3 +307,40 @@ def test_namelen():
         with gsd.pygsd.GSDFile(file=open(d+'/test_namelen.gsd', mode='rb')) as f:
             data_read = f.read_chunk(0, name=chunk_long[0:63]);
             numpy.testing.assert_array_equal(data, data_read);
+
+def test_open():
+    with tempfile.TemporaryDirectory() as d:
+        data = numpy.array([1,2,3,4,5,10012], dtype=numpy.int64);
+
+        with gsd.fl.GSDFile(name=d+'/test.gsd', mode='xb', application='test_open', schema='none', schema_version=[1,2]) as f:
+            f.write_chunk(name='chunk1', data=data);
+            f.end_frame();
+
+        with gsd.fl.GSDFile(name=d+'/test_2.gsd', mode='xb+', application='test_open', schema='none', schema_version=[1,2]) as f:
+            f.write_chunk(name='chunk1', data=data);
+            f.end_frame();
+            f.read_chunk(0, name='chunk1');
+
+        with gsd.fl.GSDFile(name=d+'/test.gsd', mode='wb', application='test_open', schema='none', schema_version=[1,2]) as f:
+            f.write_chunk(name='chunk1', data=data);
+            f.end_frame();
+
+        with gsd.fl.GSDFile(name=d+'/test.gsd', mode='wb+', application='test_open', schema='none', schema_version=[1,2]) as f:
+            f.write_chunk(name='chunk1', data=data);
+            f.end_frame();
+            f.read_chunk(0, name='chunk1');
+
+        with gsd.fl.GSDFile(name=d+'/test.gsd', mode='ab', application='test_open', schema='none', schema_version=[1,2]) as f:
+            f.write_chunk(name='chunk1', data=data);
+            f.end_frame();
+
+        with gsd.fl.GSDFile(name=d+'/test.gsd', mode='rb', application='test_open', schema='none', schema_version=[1,2]) as f:
+            f.read_chunk(0, name='chunk1');
+            f.read_chunk(1, name='chunk1');
+
+        with gsd.fl.GSDFile(name=d+'/test.gsd', mode='rb+', application='test_open', schema='none', schema_version=[1,2]) as f:
+            f.write_chunk(name='chunk1', data=data);
+            f.end_frame();
+            f.read_chunk(0, name='chunk1');
+            f.read_chunk(1, name='chunk1');
+            f.read_chunk(2, name='chunk1');
