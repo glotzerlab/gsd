@@ -45,6 +45,28 @@ Functions
         * -4: Corrupt file
         * -5: Unable to allocate memory
 
+.. c:function:: int gsd_create_and_open(struct gsd_handle* handle, const char *fname, const char *application, const char *schema, uint32_t schema_version, const enum gsd_open_flag flags, int exclusive_create)
+
+    Create an empty gsd file in a file of the given name. Overwrite any existing file at that location.
+    Open the generated gsd file in *handle*.
+
+    :param handle: Handle to open
+    :param fname: File name
+    :param application: Generating application name (truncated to 63 chars)
+    :param schema: Schema name for data to be written in this GSD file (truncated to 63 chars)
+    :param schema_version: Version of the scheme data to be written (make with gsd_make_version())
+    :param flags: Either ``GSD_OPEN_READWRITE``, or ``GSD_OPEN_APPEND``
+    :param exclusive_create: Set to non-zero to force exclusive creation of the file
+
+    :return: 0 on success. Negative value on failure:
+
+        * -1: IO error (check errno)
+        * -2: Not a GSD file
+        * -3: Invalid GSD file version
+        * -4: Corrupt file
+        * -5: Unable to allocate memory
+        * -6: Invalid argument
+
 .. c:function:: int gsd_truncate(gsd_handle_t* handle)
 
     Truncate a GSD file opened by :c:func:`gsd_open()`.
