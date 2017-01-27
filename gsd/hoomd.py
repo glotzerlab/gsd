@@ -647,7 +647,7 @@ def create(name, snapshot=None):
         if snapshot is not None:
             traj.append(snapshot);
 
-def open(name, mode):
+def open(name, mode='rb'):
     """ Open a hoomd schema GSD file.
 
     The return value of :py:func:`open` can be used as a context manager.
