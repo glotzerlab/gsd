@@ -465,8 +465,68 @@ int gsd_create(const char *fname, const char *application, const char *schema, u
     }
 
 /*! \param handle Handle to open
+    \param fname File name
+    \param application Generating application name (truncated to 63 chars)
+    \param schema Schema name for data to be written in this GSD file (truncated to 63 chars)
+    \param schema_version Version of the scheme data to be written (make with gsd_make_version())
+    \param flags Either GSD_OPEN_READWRITE, or GSD_OPEN_APPEND
+    \param exclusive_create Set to non-zero to force exclusive creation of the file
+
+    \post Create an empty gsd file in a file of the given name. Overwrite any existing file at that location.
+
+    Open the generated gsd file in *handle*.
+
+    \return 0 on success. Negative value on failure:
+        * -1: IO error (check errno)
+        * -2: Not a GSD file
+        * -3: Invalid GSD file version
+        * -4: Corrupt file
+        * -5: Unable to allocate memory
+        * -6: Invalid argument
+*/
+int gsd_create_and_open(struct gsd_handle* handle,
+                        const char *fname,
+                        const char *application,
+                        const char *schema,
+                        uint32_t schema_version,
+                        const enum gsd_open_flag flags,
+                        int exclusive_create)
+    {
+    int extra_flags = 0;
+    #ifdef WIN32
+    extra_flags = _O_BINARY;
+    #endif
+
+    // set the open flags in the handle
+    if (flags == GSD_OPEN_READWRITE)
+        {
+        handle->open_flags = GSD_OPEN_READWRITE;
+        }
+    else if (flags == GSD_OPEN_READONLY)
+        {
+        return -6;
+        }
+    else if (flags == GSD_OPEN_APPEND)
+        {
+        handle->open_flags = GSD_OPEN_APPEND;
+        }
+
+    // set the exclusive create bit
+    if (exclusive_create)
+        extra_flags |= O_EXCL;
+
+    // create the file
+    handle->fd = open(fname, O_RDWR | O_CREAT | O_TRUNC | extra_flags,  S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
+    int retval = __gsd_initialize_file(handle->fd, application, schema, schema_version);
+    if (retval != 0)
+        return retval;
+
+    return __gsd_read_header(handle);
+    }
+
+/*! \param handle Handle to open
     \param fname File name to open
-    \param flags Either GSD_OPEN_READWRITE or GSD_OPEN_READONLY
+    \param flags Either GSD_OPEN_READWRITE, GSD_OPEN_READONLY, or GSD_OPEN_APPEND
 
     \pre The file name \a fname is a GSD file.
 
@@ -492,7 +552,7 @@ int gsd_open(struct gsd_handle* handle, const char *fname, const enum gsd_open_f
     extra_flags = _O_BINARY;
     #endif
 
-    // create the file
+    // open the file
     if (flags == GSD_OPEN_READWRITE)
         {
         handle->fd = open(fname, O_RDWR | extra_flags);

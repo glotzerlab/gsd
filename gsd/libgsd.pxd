@@ -61,6 +61,13 @@ cdef extern from "gsd.h" nogil:
 
     uint32_t gsd_make_version(unsigned int major, unsigned int minor);
     int gsd_create(const char *fname, const char *application, const char *schema, uint32_t schema_version);
+    int gsd_create_and_open(gsd_handle* handle,
+                            const char *fname,
+                            const char *application,
+                            const char *schema,
+                            uint32_t schema_version,
+                            const gsd_open_flag flags,
+                            int exclusive_create)
     int gsd_open(gsd_handle* handle, const char *fname, const gsd_open_flag flags);
     int gsd_truncate(gsd_handle* handle);
     int gsd_close(gsd_handle* handle);
