@@ -43,7 +43,8 @@ Create a hoomd gsd file.
 >>> s.particles.typeid = [0,0,1,1]
 >>> s.particles.position = [[0,0,0],[1,1,1], [-1,-1,-1], [1,-1,-1]]
 >>> s.configuration.box = [3, 3, 3, 0, 0, 0]
->>> gsd.hoomd.create(name='test.gsd', snapshot=s)
+>>> traj = gsd.hoomd.open(name='test.gsd', mode='wb')
+>>> traj.append(s)
 ```
 
 Append frames to a gsd file:
@@ -54,8 +55,7 @@ Append frames to a gsd file:
 ...     s.particles.N = 4+i;
 ...     s.particles.position = numpy.random.random(size=(4+i,3))
 ...     return s;
->>> with gsd.fl.GSDFile('test.gsd', 'w') as f:
-...     t = gsd.hoomd.HOOMDTrajectory(f);
+>>> with gsd.hoomd.open('test.gsd', 'ab') as t:
 ...     t.extend( (create_frame(i) for i in range(10)) )
 ...     print(len(t))
 11
@@ -63,8 +63,7 @@ Append frames to a gsd file:
 
 Randomly index frames:
 ```python
->>> with gsd.fl.GSDFile('test.gsd', 'w') as f:
-...     t = gsd.hoomd.HOOMDTrajectory(f);
+>>> with gsd.hoomd.open('test.gsd', 'rb') as t:
 ...     snap = t[5]
 ...     print(snap.configuration.step)
 4
@@ -83,8 +82,7 @@ Randomly index frames:
 
 Slice frames:
 ```python
->>> with gsd.fl.GSDFile('test.gsd', 'w') as f:
-...     t = gsd.hoomd.HOOMDTrajectory(f);
+>>> with gsd.hoomd.open('test.gsd', 'rb') as t:
 ...     for s in t[5:-2]:
 ...         print(s.configuration.step, end=' ')
 4 5 6 7
@@ -93,7 +91,7 @@ Slice frames:
 ## File layer examples
 
 ```python
-with GSDFile(name='file.gsd', mode='w') as f:
+with gsd.fl.open(name='file.gsd', mode='wb') as f:
     f.write_chunk(name='position', data=numpy.array([[1,2,3],[4,5,6]], dtype=numpy.float32));
     f.write_chunk(name='angle', data=numpy.array([0, 1], dtype=numpy.float32));
     f.write_chunk(name='box', data=numpy.array([10, 10, 10], dtype=numpy.float32));
@@ -101,7 +99,7 @@ with GSDFile(name='file.gsd', mode='w') as f:
 ```
 
 ```python
-with GSDFile(name='file.gsd', mode='r') as f:
+with gsd.fl.open(name='file.gsd', mode='rb') as f:
     for i in range(1,f.nframes):
         position = f.read_chunk(frame=i, name='position');
         do_something(position);
