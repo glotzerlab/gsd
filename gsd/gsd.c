@@ -924,7 +924,7 @@ int gsd_read_chunk(struct gsd_handle* handle, void* data, const struct gsd_index
 
 /*! \param type Type ID to query
 
-    \return Size of the given type, or 1 for an unknown type ID.
+    \return Size of the given type, or 0 for an unknown type ID.
 */
 size_t gsd_sizeof_type(enum gsd_type type)
     {
