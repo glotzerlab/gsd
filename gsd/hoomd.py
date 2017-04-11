@@ -210,8 +210,8 @@ class BondData(object):
         ======== ===
 
     Attributes:
-        N (int): Number of particles in the snapshot (:chunk:`bonds/N`, :chunk:`angles/N`, :chunk:`dihedrals/N`, :chunk:`impropers/N`, :chuck:`pairs/N`).
-        types (list[str]): Names of the particle types (:chunk:`bonds/types`, :chunk:`angles/types`, :chunk:`dihedrals/types`, :chunk:`impropers/types`, :chuk:`pairs/types`).
+        N (int): Number of particles in the snapshot (:chunk:`bonds/N`, :chunk:`angles/N`, :chunk:`dihedrals/N`, :chunk:`impropers/N`, :chunk:`pairs/N`).
+        types (list[str]): Names of the particle types (:chunk:`bonds/types`, :chunk:`angles/types`, :chunk:`dihedrals/types`, :chunk:`impropers/types`, :chunk:`pairs/types`).
         typeid (numpy.ndarray[uint32, ndim=1, mode='c']): N length array defining bond type ids (:chunk:`bonds/typeid`, :chunk:`angles/typeid`, :chunk:`dihedrals/typeid`, :chunk:`impropers/typeid`, :chunk:`pairs.types`).
         group (numpy.ndarray[uint32, ndim=2, mode='c']): NxM array defining tags in the particle bonds (:chunk:`bonds/group`, :chunk:`angles/group`, :chunk:`dihedrals/group`, :chunk:`impropers/group`, :chunk:`pairs/group/`).
     """
