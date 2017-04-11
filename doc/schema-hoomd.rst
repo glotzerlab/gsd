@@ -12,7 +12,7 @@ of the existing data chunks. Any newer reader will initialize new data chunks wi
 not present in an older version file.
 
 :Schema name: ``hoomd``
-:Schema version: 1.1
+:Schema version: 1.2
 
 Use-cases
 ---------
@@ -531,9 +531,228 @@ Topology
     .. versionadded:: 1.1
 
 
-Restart data
+State data
 ------------
 
-HOOMD restart files store additional information in ``restart/*`` data chunks.
-The format of this data varies from class to class and is not defined in this
-specification. All restart data is meant for internal use by hoomd only.
+HOOMD stores auxiliary state information in ``state/*`` data chunks. Auxiliary state encompasses internal state
+to any integrator, updater, or other class that is not part of the particle system state but is also not a fixed
+parameter. For example, the internal degrees of freedom in integrator. Auxiliary state is useful when restarting
+simulations.
+
+HOOMD only stores state in GSD files when requested explicitly by the user. Only a few of the documented
+state data chunks will be present in any GSD file and not all state chunks are valid. Thus, state data chunks do not
+have default values. If a chunk is not present in the file, that state does not have a well-defined value.
+
+========================================================== ====== ========= ================
+Name                                                       Type   Size      Units
+========================================================== ====== ========= ================
+**HPMC integrator state**
+:chunk:`state/hpmc/integrate/d`                            double 1x1       length
+:chunk:`state/hpmc/integrate/a`                            double 1x1       number
+:chunk:`state/hpmc/sphere/radius`                          float  NTx1      length
+:chunk:`state/hpmc/ellipsoid/a`                            float  NTx1      length
+:chunk:`state/hpmc/ellipsoid/b`                            float  NTx1      length
+:chunk:`state/hpmc/ellipsoid/c`                            float  NTx1      length
+:chunk:`state/hpmc/convex_polyhedron/N`                    uint32 NTx1      number
+:chunk:`state/hpmc/convex_polyhedron/vertices`             float  sum(N)x3  length
+:chunk:`state/hpmc/convex_spheropolyhedron/N`              uint32 NTx1      number
+:chunk:`state/hpmc/convex_spheropolyhedron/vertices`       float  sum(N)x3  length
+:chunk:`state/hpmc/convex_spheropolyhedron/sweep_radius`   float  NTx1      length
+:chunk:`state/hpmc/convex_polygon/N`                       uint32 NTx1      number
+:chunk:`state/hpmc/convex_polygon/vertices`                float  sum(N)x2  length
+:chunk:`state/hpmc/convex_spheropolygon/N`                 uint32 NTx1      number
+:chunk:`state/hpmc/convex_spheropolygon/vertices`          float  sum(N)x2  length
+:chunk:`state/hpmc/convex_spheropolygon/sweep_radius`      float  NTx1      length
+:chunk:`state/hpmc/simple_polygon/N`                       uint32 NTx1      number
+:chunk:`state/hpmc/simple_polygon/vertices`                float  sum(N)x2  length
+========================================================== ====== ========= ================
+
+HPMC integrator state
+^^^^^^^^^^^^^^^^^^^^^
+
+*NT* is the number of particle types.
+
+.. chunk:: state/hpmc/integrate/d
+
+    :Type: double
+    :Size: 1x1
+    :Units: length
+
+    *d* is the maximum trial move displacement.
+
+    .. versionadded:: 1.2
+
+.. chunk:: state/hpmc/integrate/a
+
+    :Type: double
+    :Size: 1x1
+    :Units: number
+
+    *a* is the size of the maximum rotation move.
+
+    .. versionadded:: 1.2
+
+.. chunk:: state/hpmc/sphere/radius
+
+    :Type: float
+    :Size: NTx1
+    :Units: length
+
+    Sphere radius for each particle type.
+
+    .. versionadded:: 1.2
+
+.. chunk:: state/hpmc/ellipsoid/a
+
+    :Type: float
+    :Size: NTx1
+    :Units: length
+
+    Size of the first ellipsoid semi-axis for each particle type.
+
+    .. versionadded:: 1.2
+
+.. chunk:: state/hpmc/ellipsoid/b
+
+    :Type: float
+    :Size: NTx1
+    :Units: length
+
+    Size of the second ellipsoid semi-axis for each particle type.
+
+    .. versionadded:: 1.2
+
+.. chunk:: state/hpmc/ellipsoid/c
+
+    :Type: float
+    :Size: NTx1
+    :Units: length
+
+    Size of the third ellipsoid semi-axis for each particle type.
+
+    .. versionadded:: 1.2
+
+.. chunk:: state/hpmc/convex_polyhedron/N
+
+    :Type: uint32
+    :Size: NTx1
+    :Units: number
+
+    Number of vertices defined for each type.
+
+    .. versionadded:: 1.2
+
+.. chunk:: state/hpmc/convex_polyhedron/vertices
+
+    :Type: float
+    :Size: sum(N)x3
+    :Units: length
+
+    Position of the vertices in the shape for all types. The shape for type 0 is the first N[0] vertices,
+    the shape for type 1 is the next N[1] vertices, and so on...
+
+    .. versionadded:: 1.2
+
+.. chunk:: state/hpmc/convex_spheropolyhedron/N
+
+    :Type: uint32
+    :Size: NTx1
+    :Units: number
+
+    Number of vertices defined for each type.
+
+    .. versionadded:: 1.2
+
+.. chunk:: state/hpmc/convex_spheropolyhedron/vertices
+
+    :Type: float
+    :Size: sum(N)x3
+    :Units: length
+
+    Position of the vertices in the shape for all types. The shape for type 0 is the first N[0] vertices,
+    the shape for type 1 is the next N[1] vertices, and so on...
+
+    .. versionadded:: 1.2
+
+.. chunk:: state/hpmc/convex_spheropolyhedron/sweep_radius
+
+    :Type: float
+    :Size: NTx1
+    :Units: length
+
+    Sweep radius for each type.
+
+    .. versionadded:: 1.2
+
+.. chunk:: state/hpmc/convex_polygon/N
+
+    :Type: uint32
+    :Size: NTx1
+    :Units: number
+
+    Number of vertices defined for each type.
+
+    .. versionadded:: 1.2
+
+.. chunk:: state/hpmc/convex_polygon/vertices
+
+    :Type: float
+    :Size: sum(N)x2
+    :Units: length
+
+    Position of the vertices in the shape for all types. The shape for type 0 is the first N[0] vertices,
+    the shape for type 1 is the next N[1] vertices, and so on...
+
+    .. versionadded:: 1.2
+
+.. chunk:: state/hpmc/convex_spheropolygon/N
+
+    :Type: uint32
+    :Size: NTx1
+    :Units: number
+
+    Number of vertices defined for each type.
+
+    .. versionadded:: 1.2
+
+.. chunk:: state/hpmc/convex_spheropolygon/vertices
+
+    :Type: float
+    :Size: sum(N)x2
+    :Units: length
+
+    Position of the vertices in the shape for all types. The shape for type 0 is the first N[0] vertices,
+    the shape for type 1 is the next N[1] vertices, and so on...
+
+    .. versionadded:: 1.2
+
+.. chunk:: state/hpmc/convex_spheropolygon/sweep_radius
+
+    :Type: float
+    :Size: NTx1
+    :Units: length
+
+    Sweep radius for each type.
+
+    .. versionadded:: 1.2
+
+.. chunk:: state/hpmc/simple_polygon/N
+
+    :Type: uint32
+    :Size: NTx1
+    :Units: number
+
+    Number of vertices defined for each type.
+
+    .. versionadded:: 1.2
+
+.. chunk:: state/hpmc/simple_polygon/vertices
+
+    :Type: float
+    :Size: sum(N)x2
+    :Units: length
+
+    Position of the vertices in the shape for all types. The shape for type 0 is the first N[0] vertices,
+    the shape for type 1 is the next N[1] vertices, and so on...
+
+    .. versionadded:: 1.2
