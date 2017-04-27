@@ -705,5 +705,5 @@ def open(name, mode='rb'):
                          mode=mode,
                          application='gsd.hoomd ' + gsd.__version__,
                          schema='hoomd',
-                         schema_version=[1,1]);
+                         schema_version=[1,2]);
     return HOOMDTrajectory(gsdfileobj);
