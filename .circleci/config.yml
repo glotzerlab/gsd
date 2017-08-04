@@ -11,7 +11,7 @@ jobs:
       - run: cd build && make
       - run:
           environment:
-            PYTHONPATH: $CIRCLE_WORKING_DIRECTORY/build
-          command: cd code && nosetests3 --with-xunit --xunit-file=$CIRCLE_WORKING_DIRECTORY/test-results/test.xml
+            PYTHONPATH: /root/project/build
+          command: cd code && nosetests3 --with-xunit --xunit-file=/root/project/test-results/test.xml
       - store_artifacts:
           path: test-results
