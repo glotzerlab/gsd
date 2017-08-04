@@ -1,13 +1,17 @@
 version: 2
 jobs:
-  build:
+  gcc-python3:
     docker:
-      - image: joaander/ci
+      - image: joaander/ci:20170804
     steps:
       - checkout:
           path: code
       - run: mkdir build && mkdir test-results
-      - run: cd build && cmake ../code -DPYTHON_EXECUTABLE=`which python3` -DCYTHON_EXECUTABLE=`which cython3`
+      - run:
+          environment:
+            CC: /usr/bin/gcc
+            CXX: /usr/bin/g++
+          command: cd build && cmake ../code -DPYTHON_EXECUTABLE=`which python3` -DCYTHON_EXECUTABLE=`which cython3`
       - run: cd build && make
       - run:
           environment:
@@ -15,5 +19,36 @@ jobs:
           command: cd code && nosetests3 --with-xunit --xunit-file=/root/project/test-results/test.xml
       - store_artifacts:
           path: test-results
+          destination: gcc-python3
       - store_test_results:
           path: test-results
+
+  clang-python3:
+    docker:
+      - image: joaander/ci:20170804
+    steps:
+      - checkout:
+          path: code
+      - run: mkdir build && mkdir test-results
+      - run:
+          environment:
+            CC: /usr/bin/clang
+            CXX: /usr/bin/clang++
+          command: cd build && cmake ../code -DPYTHON_EXECUTABLE=`which python3` -DCYTHON_EXECUTABLE=`which cython3`
+      - run: cd build && make
+      - run:
+          environment:
+            PYTHONPATH: /root/project/build
+          command: cd code && nosetests3 --with-xunit --xunit-file=/root/project/test-results/test.xml
+      - store_artifacts:
+          path: test-results
+          destination: clang-python3
+      - store_test_results:
+          path: test-results
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - gcc-python3
+      - clang-python3
