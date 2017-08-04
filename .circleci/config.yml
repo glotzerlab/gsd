@@ -4,7 +4,7 @@ jobs:
     docker:
       - image: joaander/ci
     steps:
-      - checkout: code
+      - checkout code
       - run: mkdir build && cd build
       - run: cmake ../code -DPYTHON_EXECUTABLE=`which python3` -DCYTHON_EXECUTABLE=`which cython3`
       - run: make
