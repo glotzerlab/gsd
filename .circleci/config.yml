@@ -15,3 +15,5 @@ jobs:
           command: cd code && nosetests3 --with-xunit --xunit-file=/root/project/test-results/test.xml
       - store_artifacts:
           path: test-results
+      - store_test_results:
+          path: test-results
