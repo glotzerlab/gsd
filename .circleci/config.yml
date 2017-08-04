@@ -6,6 +6,9 @@ jobs:
     steps:
       - checkout:
           path: code
-      - run: mkdir build
+      - run: mkdir build && mkdir test-results
       - run: cd build && cmake ../code -DPYTHON_EXECUTABLE=`which python3` -DCYTHON_EXECUTABLE=`which cython3`
       - run: cd build && make
+      - run: cd code && PYTHONPATH=$CIRCLE_WORKING_DIRECTORY/build nosetests3 --with-xunit --xunit-file=$CIRCLE_WORKING_DIRECTORY/test-results/test.xml
+      - store_artifacts:
+          path: test-results
