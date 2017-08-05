@@ -62,6 +62,6 @@ workflows:
     jobs:
       - gcc-python3
       - clang-python3
-      - sphinx-docs
+      - sphinx-docs:
           requires:
             - gcc-python3
