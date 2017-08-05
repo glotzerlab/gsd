@@ -2,44 +2,54 @@ version: 2
 jobs:
   gcc-python3:
     docker:
-      - image: joaander/ci:20170804
+      - image: joaander/ci:20170804-1
+    environment:
+      CC: /usr/bin/gcc
+      CXX: /usr/bin/g++
+      PYTHONPATH: /root/project/build
     steps:
       - checkout:
           path: code
       - run: mkdir build && mkdir test-results
-      - run:
-          environment:
-            CC: /usr/bin/gcc
-            CXX: /usr/bin/g++
-          command: cd build && cmake ../code -DPYTHON_EXECUTABLE=`which python3` -DCYTHON_EXECUTABLE=`which cython3`
-      - run: cd build && make
-      - run:
-          environment:
-            PYTHONPATH: /root/project/build
-          command: cd code && nosetests3 --with-xunit --xunit-file=/root/project/test-results/test.xml
+      - run: cd build && cmake ../code -DPYTHON_EXECUTABLE=`which python3` -DCYTHON_EXECUTABLE=`which cython3` -GNinja
+      - run: cd build && ninja
+      - run: cd code && nosetests3 --with-xunit --xunit-file=/root/project/test-results/test.xml
       - store_artifacts:
           path: test-results
           destination: gcc-python3
       - store_test_results:
           path: test-results
+      - persist_to_workspace:
+          root: .
+          paths:
+            - build/gsd
+
+  sphinx-docs:
+    docker:
+      - image: joaander/ci:20170804-1
+    environment:
+      PYTHONPATH: /root/project/build
+    steps:
+      - checkout:
+          path: code
+      - attach_workspace:
+          at: .
+      - run: cd code/doc && sphinx-build -b html -d _build/doctrees -W -n . _build/html
 
   clang-python3:
     docker:
-      - image: joaander/ci:20170804
+      - image: joaander/ci:20170804-1
+    environment:
+      CC: /usr/bin/clang
+      CXX: /usr/bin/clang++
+      PYTHONPATH: /root/project/build
     steps:
       - checkout:
           path: code
       - run: mkdir build && mkdir test-results
-      - run:
-          environment:
-            CC: /usr/bin/clang
-            CXX: /usr/bin/clang++
-          command: cd build && cmake ../code -DPYTHON_EXECUTABLE=`which python3` -DCYTHON_EXECUTABLE=`which cython3`
-      - run: cd build && make
-      - run:
-          environment:
-            PYTHONPATH: /root/project/build
-          command: cd code && nosetests3 --with-xunit --xunit-file=/root/project/test-results/test.xml
+      - run: cd build && cmake ../code -DPYTHON_EXECUTABLE=`which python3` -DCYTHON_EXECUTABLE=`which cython3` -GNinja
+      - run: cd build && ninja
+      - run: cd code && nosetests3 --with-xunit --xunit-file=/root/project/test-results/test.xml
       - store_artifacts:
           path: test-results
           destination: clang-python3
@@ -48,7 +58,10 @@ jobs:
 
 workflows:
   version: 2
-  build_and_test:
+  workflow:
     jobs:
       - gcc-python3
       - clang-python3
+      - sphinx-docs
+          requires:
+            - gcc-python3
