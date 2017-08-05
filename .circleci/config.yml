@@ -2,7 +2,7 @@ version: 2
 jobs:
   gcc-python3:
     docker:
-      - image: joaander/ci:20170804-1
+      - image: joaander/ci:20170804-2
     environment:
       CC: /usr/bin/gcc
       CXX: /usr/bin/g++
@@ -26,7 +26,7 @@ jobs:
 
   sphinx-docs:
     docker:
-      - image: joaander/ci:20170804-1
+      - image: joaander/ci:20170804-2
     environment:
       PYTHONPATH: /root/project/build
     steps:
@@ -38,7 +38,7 @@ jobs:
 
   clang-python3:
     docker:
-      - image: joaander/ci:20170804-1
+      - image: joaander/ci:20170804-2
     environment:
       CC: /usr/bin/clang
       CXX: /usr/bin/clang++
