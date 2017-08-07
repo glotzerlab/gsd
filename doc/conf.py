@@ -280,4 +280,5 @@ def setup(app):
                         indextemplate='single: %s (data chunk)')
 
 ###### IPython directive settings
+ipython_mplbackend = '';
 ipython_execlines = ['import gsd.fl', 'import gsd.hoomd', 'import gsd.pygsd', 'import numpy']
