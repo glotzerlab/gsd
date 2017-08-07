@@ -18,7 +18,7 @@ for files up to a few thousand frames.
 The reader reads from file-like python objects, which may be useful for reading from in memory buffers, in-database
 grid files, etc... For regular files on the filesystem, and for writing gsd files, use :py:mod:`gsd.fl`.
 
-The :py:class:`GSDFile` in this module can be used with the :py:class:`HOOMDTrajectory` hoomd reader:
+The :py:class:`GSDFile` in this module can be used with the :py:class:`gsd.hoomd.HOOMDTrajectory` hoomd reader:
 
 >>> with gsd.pygsd.GSDFile('test.gsd', 'rb') as f:
 ...     t = gsd.hoomd.HOOMDTrajectory(f);
@@ -67,7 +67,7 @@ class GSDFile(object):
 
     Args:
 
-        file (file-like): File-like object to read.
+        file: File-like object to read.
 
     GSDFile implements an object oriented class interface to the GSD file
     layer. Use it to open an existing file in a **read-only** mode. For
@@ -267,10 +267,10 @@ class GSDFile(object):
             name (str): Name of the chunk
 
         Returns:
-            numpy.ndarray[type, ndim=?, mode='c']: Data read from file.
-            ``type`` is determined by the chunk metadata. If the data is
-            NxM in the file and M > 1, return a 2D array. If the data is
-            Nx1, return a 1D array.
+            ``numpy.ndarray[type, ndim=?, mode='c']``: Data read from file.
+              ``type`` is determined by the chunk metadata. If the data is
+              NxM in the file and M > 1, return a 2D array. If the data is
+              Nx1, return a 1D array.
 
         Examples:
 

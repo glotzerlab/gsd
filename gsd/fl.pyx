@@ -420,9 +420,9 @@ cdef class GSDFile:
 
         Args:
             name (str): Name of the chunk
-            data (numpy array): Data to write into the chunk. Must be a numpy
-                                array, or array-like, with 2 or fewer
-                                dimensions.
+            data: Data to write into the chunk. Must be a numpy
+                  array, or array-like, with 2 or fewer
+                  dimensions.
 
         Warning:
             :py:meth:`write_chunk()` will implicitly converts array-like and
@@ -577,7 +577,7 @@ cdef class GSDFile:
             name (str): Name of the chunk
 
         Returns:
-            numpy.ndarray[type, ndim=?, mode='c']: Data read from file.
+            ``numpy.ndarray[type, ndim=?, mode='c']``: Data read from file.
             ``type`` is determined by the chunk metadata. If the data is
             NxM in the file and M > 1, return a 2D array. If the data is
             Nx1, return a 1D array.

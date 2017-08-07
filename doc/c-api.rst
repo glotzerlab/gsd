@@ -25,7 +25,7 @@ Functions
 
     :return: 0 on success, -1 on a file IO failure - see errno for details
 
-.. c:function:: int gsd_open(struct gsd_handle* handle, const char *fname, const enum gsd_open_flag flags)
+.. c:function:: int gsd_open(struct gsd_handle_t* handle, const char *fname, const gsd_open_flag flags)
 
     Open a GSD file and populates the handle for use by later API calls.
 
@@ -45,7 +45,7 @@ Functions
         * -4: Corrupt file
         * -5: Unable to allocate memory
 
-.. c:function:: int gsd_create_and_open(struct gsd_handle* handle, const char *fname, const char *application, const char *schema, uint32_t schema_version, const enum gsd_open_flag flags, int exclusive_create)
+.. c:function:: int gsd_create_and_open(struct gsd_handle_t* handle, const char *fname, const char *application, const char *schema, uint32_t schema_version, const gsd_open_flag flags, int exclusive_create)
 
     Create an empty gsd file in a file of the given name. Overwrite any existing file at that location.
     Open the generated gsd file in *handle*.
@@ -112,7 +112,7 @@ Functions
 
     :return: 0 on success, -1 on a file IO failure - see errno for details, and -2 on invalid input
 
-.. c:function:: int gsd_write_chunk(struct gsd_handle* handle, const char *name, enum gsd_type type, uint64_t N, uint32_t M, uint8_t flags, const void *data)
+.. c:function:: int gsd_write_chunk(struct gsd_handle_t* handle, const char *name, gsd_type type, uint64_t N, uint32_t M, uint8_t flags, const void *data)
 
     Write a data chunk to the current frame. The chunk name must be unique within each frame.
     The given data chunk is written to the end of the file and its location is updated in the in-memory index.
@@ -128,7 +128,7 @@ Functions
 
     :return: 0 on success, -1 on a file IO failure - see errno for details, and -2 on invalid input
 
-.. c:function:: const struct gsd_index_entry* gsd_find_chunk(struct gsd_handle* handle, uint64_t frame, const char *name)
+.. c:function:: const struct gsd_index_entry_t* gsd_find_chunk(struct gsd_handle_t* handle, uint64_t frame, const char *name)
 
     Find a chunk in the GSD file. The found entry contains size and type metadata and can be passed to
     :c:func:`gsd_read_chunk()` to read the data.
@@ -162,7 +162,7 @@ Functions
 
     :return: The number of frames in the file, or 0 on error.
 
-.. c:function:: size_t gsd_sizeof_type(enum gsd_type type)
+.. c:function:: size_t gsd_sizeof_type(gsd_type type)
 
     Query size of a GSD type ID.
 
@@ -240,6 +240,9 @@ Open flags
 
     Open file in **read only** mode.
 
+.. c:var:: gsd_open_flag GSD_OPEN_APPEND
+
+    Open file in **append only** mode.
 
 Data structures
 ---------------
@@ -299,3 +302,28 @@ Data structures
     .. c:member:: uint8_t type
 
         Data type of the chunk. See :ref:`data-types`.
+
+.. c:type:: gsd_open_flag
+
+    Enum defining the file open flag. Vaild values are ``GSD_OPEN_READWRITE``, ``GSD_OPEN_READONLY``, and
+    ``GSD_OPEN_APPEND``.
+
+.. c:type:: gsd_type
+
+    Enum defining the file type of the GSD data chunk.
+
+.. c:type:: uint8_t
+
+    8-bit unsigned integer (defined by C compiler)
+
+.. c:type:: uint32_t
+
+    32-bit unsigned integer (defined by C compiler)
+
+.. c:type:: uint64_t
+
+    64-bit unsigned integer (defined by C compiler)
+
+.. c:type:: int64_t
+
+    64-bit signed integer (defined by C compiler)

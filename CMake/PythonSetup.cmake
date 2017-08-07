@@ -48,7 +48,7 @@ set(_old_suffixes ${CMAKE_FIND_LIBRARY_SUFFIXES})
 set(CMAKE_FIND_LIBRARY_SUFFIXES ";${CMAKE_FIND_LIBRARY_SUFFIXES}")
 find_library(PYTHON_LIBRARY
              NAMES python${_python_version_no_dots} python${PYTHON_VERSION} python${PYTHON_VERSION}m
-             HINTS ${_python_prefix_hint} ${_python_lib_hint} ${_python_prefix_hint}/DLLs
+             HINTS ${_python_lib_hint} ${_python_prefix_hint} ${_python_prefix_hint}/DLLs
              PATH_SUFFIXES lib64 lib libs
              NO_DEFAULT_PATH
              )

@@ -74,7 +74,7 @@ Dependencies
 The file layer is implemented in C (*not C++*) with no dependencies to enable trivial
 installation and incorporation into existing projects. A single header and C file completely implement
 the entire file layer in a few hundred lines of code. Python based projects that need only read access can use
-:py:mod:`gsd.flpy`, a pure python gsd reader implementation.
+:py:mod:`gsd.pygsd`, a pure python gsd reader implementation.
 
 A python interface to the file layer allows reference implementations and convenience methods for schemas.
 Most non-technical users of GSD will probably use these reference implementations directly in their scripts.
