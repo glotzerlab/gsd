@@ -1,67 +1,112 @@
 version: 2
-jobs:
-  gcc-python3:
+
+references:
+  test_container_config: &test_container_config
     docker:
-      - image: joaander/ci:20170804-2
+      - image: joaander/ci:20180807
+        environment:
+          PYTHONPATH: /root/project/build
+    working_directory: /root/project
+
+  load_code: &load_code
+    checkout:
+      path: code
+
+  configure: &configure
+    run:
+      name: Configure
+      command: mkdir build && cd build && ${CMAKE} ../code -DPYTHON_EXECUTABLE=`which python3` -DCYTHON_EXECUTABLE=`which cython3` -GNinja
+
+  compile: &compile
+    run:
+      name: Compile
+      command: cd build && ninja
+
+  unit_test: &unit_test
+    run:
+      name: Unit test
+      command: mkdir test-results && cd code && nosetests3 --with-xunit --xunit-file=/root/project/test-results/test.xml
+
+  store_results: &store_results
+    store_artifacts:
+      path: test-results
+      destination: test-results
+
+  store_results2: &store_results2
+    store_test_results:
+      path: test-results
+
+  build_and_test: &build_and_test
+    steps:
+      - *load_code
+      - *configure
+      - *compile
+      - *unit_test
+      - *store_results
+      - *store_results2
+
+jobs:
+
+  gcc54-python35:
+    <<: *test_container_config
+
     environment:
       CC: /usr/bin/gcc
       CXX: /usr/bin/g++
-      PYTHONPATH: /root/project/build
+      CMAKE: /usr/bin/cmake
+
     steps:
-      - checkout:
-          path: code
-      - run: mkdir build && mkdir test-results
-      - run: cd build && cmake ../code -DPYTHON_EXECUTABLE=`which python3` -DCYTHON_EXECUTABLE=`which cython3` -GNinja
-      - run: cd build && ninja
-      - run: cd code && nosetests3 --with-xunit --xunit-file=/root/project/test-results/test.xml
-      - store_artifacts:
-          path: test-results
-          destination: gcc-python3
-      - store_test_results:
-          path: test-results
+      - *load_code
+      - *configure
+      - *compile
+      - *unit_test
+      - *store_results
+      - *store_results2
       - persist_to_workspace:
           root: .
           paths:
             - build/gsd
 
   sphinx-docs:
-    docker:
-      - image: joaander/ci:20170804-2
-    environment:
-      PYTHONPATH: /root/project/build
+    <<: *test_container_config
     steps:
-      - checkout:
-          path: code
+      - *load_code
       - attach_workspace:
           at: .
       - run: cd code/doc && sphinx-build -b html -d _build/doctrees -W -n . _build/html
 
-  clang-python3:
-    docker:
-      - image: joaander/ci:20170804-2
+  clang38-python35:
+    <<: *test_container_config
     environment:
       CC: /usr/bin/clang
       CXX: /usr/bin/clang++
-      PYTHONPATH: /root/project/build
-    steps:
-      - checkout:
-          path: code
-      - run: mkdir build && mkdir test-results
-      - run: cd build && cmake ../code -DPYTHON_EXECUTABLE=`which python3` -DCYTHON_EXECUTABLE=`which cython3` -GNinja
-      - run: cd build && ninja
-      - run: cd code && nosetests3 --with-xunit --xunit-file=/root/project/test-results/test.xml
-      - store_artifacts:
-          path: test-results
-          destination: clang-python3
-      - store_test_results:
-          path: test-results
+      CMAKE: /usr/bin/cmake
+    <<: *build_and_test
+
+  gcc48-python35-cmake28:
+    <<: *test_container_config
+    environment:
+      CC: /usr/bin/gcc-4.8
+      CXX: /usr/bin/g++-4.8
+      CMAKE: /opt/cmake-2.8.12/bin/cmake
+    <<: *build_and_test
+
+  gcc49-python35:
+    <<: *test_container_config
+    environment:
+      CC: /usr/bin/gcc-4.9
+      CXX: /usr/bin/g++-4.9
+      CMAKE: /usr/bin/cmake
+    <<: *build_and_test
 
 workflows:
   version: 2
   workflow:
     jobs:
-      - gcc-python3
-      - clang-python3
+      - gcc54-python35:
       - sphinx-docs:
           requires:
-            - gcc-python3
+            - gcc54-python35
+      - clang38-python35:
+      - gcc48-python35-cmake28:
+      - gcc49-python35:
