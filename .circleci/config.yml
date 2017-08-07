@@ -103,10 +103,10 @@ workflows:
   version: 2
   workflow:
     jobs:
-      - gcc54-python35:
+      - gcc54-python35
       - sphinx-docs:
           requires:
             - gcc54-python35
-      - clang38-python35:
-      - gcc48-python35-cmake28:
-      - gcc49-python35:
+      - clang38-python35
+      - gcc48-python35-cmake28
+      - gcc49-python35
