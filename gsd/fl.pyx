@@ -95,7 +95,7 @@ def open(name, mode, application, schema, schema_version):
         mode (str): File access mode.
         application (str): Name of the application creating the file.
         schema (str): Name of the data schema.
-        schema_version (list[int]): Schema version number [major, minor].
+        schema_version (``list[int]``): Schema version number [major, minor].
 
     Valid values for mode:
 
@@ -739,7 +739,7 @@ def create(name, application, schema, schema_version):
         name (str): File name to open.
         application (str): Name of the application creating the file.
         schema (str): Name of the data schema.
-        schema_version (list[int]): Schema version number [major, minor].
+        schema_version (``list[int]``): Schema version number [major, minor].
 
     Example:
 
