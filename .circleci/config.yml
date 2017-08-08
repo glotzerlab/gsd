@@ -141,6 +141,13 @@ jobs:
       PYVER: "2.7"
     <<: *conda_build
 
+  conda-upload:
+    <<: *conda_container_config
+    steps:
+      - attach_workspace:
+          at: .
+      - anaconda -t ${ANACONDA_TOKEN} upload conda-bld/linux-64/gsd-*.tar.bz2
+
 workflows:
   version: 2
   workflow:
@@ -153,6 +160,30 @@ workflows:
       - gcc48-python35-cmake28
       - gcc49-python35
       - conda-build-python36
+          filters:
+            tags:
+              only: /.*/
       - conda-build-python35
+          filters:
+            tags:
+              only: /.*/
       - conda-build-python34
+          filters:
+            tags:
+              only: /.*/
       - conda-build-python27
+          filters:
+            tags:
+              only: /.*/
+      - conda-upload:
+          context: org-global
+          requires:
+            - conda-build-python36
+            - conda-build-python35
+            - conda-build-python34
+            - conda-build-python27
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore: /.*/
