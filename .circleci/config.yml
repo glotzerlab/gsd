@@ -50,6 +50,19 @@ references:
       - *store_results
       - *store_results2
 
+  conda_build: &conda_build
+    steps:
+      - *load_code
+      - run:
+          name: Compile
+          working_directory: code
+          command: conda build --python ${PYVER} conda-recipe
+      - run: mv /opt/conda/conda-bld .
+      - persist_to_workspace:
+          root: .
+          paths:
+            - conda-bld/linux-64/gsd-*.tar.bz2
+
 jobs:
 
   gcc54-python35:
@@ -106,17 +119,27 @@ jobs:
 
   conda-build-python36:
     <<: *conda_container_config
-    steps:
-      - *load_code
-      - run:
-          name: Compile
-          working_directory: code
-          command: conda build --python 3.6 conda-recipe
-      - run: mv /opt/conda/conda-bld .
-      - persist_to_workspace:
-          root: .
-          paths:
-            - conda-bld/linux-64/gsd-*.tar.bz2
+    environment:
+      PYVER: "3.6"
+    <<: *conda_build
+
+  conda-build-python35:
+    <<: *conda_container_config
+    environment:
+      PYVER: "3.5"
+    <<: *conda_build
+
+  conda-build-python34:
+    <<: *conda_container_config
+    environment:
+      PYVER: "3.4"
+    <<: *conda_build
+
+  conda-build-python27:
+    <<: *conda_container_config
+    environment:
+      PYVER: "2.7"
+    <<: *conda_build
 
 workflows:
   version: 2
@@ -130,3 +153,6 @@ workflows:
       - gcc48-python35-cmake28
       - gcc49-python35
       - conda-build-python36
+      - conda-build-python35
+      - conda-build-python34
+      - conda-build-python27
