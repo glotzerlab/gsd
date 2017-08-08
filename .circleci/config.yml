@@ -8,6 +8,11 @@ references:
           PYTHONPATH: /root/project/build
     working_directory: /root/project
 
+  conda_container_config: &conda_container_config
+    docker:
+      - image: joaander/conda-build:20170808
+    working_directory: /root/project
+
   load_code: &load_code
     checkout:
       path: code
@@ -99,6 +104,19 @@ jobs:
       CMAKE: /usr/bin/cmake
     <<: *build_and_test
 
+  conda-build-python36:
+    <<: *conda_container_config
+    steps:
+      - *load_code
+      - run:
+        name: Compile
+        working_directory: code
+        command: conda build --python 3.6 conda-recipe
+      - persist_to_workspace:
+          root: conda-bld
+          paths:
+            - /opt/conda/conda-bld/linux-64/gsd-*.tar.bz2
+
 workflows:
   version: 2
   workflow:
@@ -110,3 +128,4 @@ workflows:
       - clang38-python35
       - gcc48-python35-cmake28
       - gcc49-python35
+      - conda-build-python36

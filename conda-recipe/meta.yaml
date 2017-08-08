@@ -1,0 +1,33 @@
+package:
+  name: gsd
+  version: "1.2.0"
+
+build:
+  number: 1
+
+source:
+  path: ../
+
+requirements:
+  build:
+    - nomkl
+    - python
+    - numpy
+    - cython
+    - cmake
+
+  run:
+    - python
+    - numpy
+
+test:
+  imports:
+    - gsd
+    - gsd.fl
+    - gsd.pygsd
+    - gsd.hoomd
+
+about:
+  home: https://bitbucket.org/glotzer/gsd
+  license: BSD 2-clause
+
