@@ -159,19 +159,19 @@ workflows:
       - clang38-python35
       - gcc48-python35-cmake28
       - gcc49-python35
-      - conda-build-python36
+      - conda-build-python36:
           filters:
             tags:
               only: /.*/
-      - conda-build-python35
+      - conda-build-python35:
           filters:
             tags:
               only: /.*/
-      - conda-build-python34
+      - conda-build-python34:
           filters:
             tags:
               only: /.*/
-      - conda-build-python27
+      - conda-build-python27:
           filters:
             tags:
               only: /.*/
