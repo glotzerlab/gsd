@@ -109,9 +109,9 @@ jobs:
     steps:
       - *load_code
       - run:
-        name: Compile
-        working_directory: code
-        command: conda build --python 3.6 conda-recipe
+          name: Compile
+          working_directory: code
+          command: conda build --python 3.6 conda-recipe
       - persist_to_workspace:
           root: conda-bld
           paths:
