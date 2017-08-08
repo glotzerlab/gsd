@@ -112,10 +112,11 @@ jobs:
           name: Compile
           working_directory: code
           command: conda build --python 3.6 conda-recipe
+      - run: mv /opt/conda/conda-bld .
       - persist_to_workspace:
-          root: conda-bld
+          root: .
           paths:
-            - /opt/conda/conda-bld/linux-64/gsd-*.tar.bz2
+            - conda-bld/linux-64/gsd-*.tar.bz2
 
 workflows:
   version: 2
