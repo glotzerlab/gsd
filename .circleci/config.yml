@@ -50,19 +50,6 @@ references:
       - *store_results
       - *store_results2
 
-  conda_build: &conda_build
-    steps:
-      - *load_code
-      - run:
-          name: Compile
-          working_directory: code
-          command: conda build --python ${PYVER} conda-recipe
-      - run: mv /opt/conda/conda-bld .
-      - persist_to_workspace:
-          root: .
-          paths:
-            - conda-bld/linux-64/gsd-*.tar.bz2
-
 jobs:
 
   gcc54-python35:
@@ -121,7 +108,6 @@ jobs:
     <<: *conda_container_config
     steps:
       - *load_code
-      - *update_submodules
       - run:
           name: Conda build
           working_directory: code
