@@ -15,10 +15,9 @@ build:
 requirements:
   build:
     - nomkl
-    - python
+    - python {{ python }}
     - numpy
     - cython
-    - cmake
 
   run:
     - python
