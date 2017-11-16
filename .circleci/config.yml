@@ -30,7 +30,7 @@ references:
   unit_test: &unit_test
     run:
       name: Unit test
-      command: mkdir test-results && cd code && nosetests3 --with-xunit --xunit-file=/root/project/test-results/test.xml
+      command: mkdir test-results && cd code && nosetests3 --with-xunit --xunit-file=/home/ci/project/test-results/test.xml
 
   store_results: &store_results
     store_artifacts:
@@ -117,7 +117,7 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - conda-bld/linux-64/hoomd-*.tar.bz2
+            - conda-bld/linux-64/*.tar.bz2
 
   conda-upload:
     <<: *conda_container_config
