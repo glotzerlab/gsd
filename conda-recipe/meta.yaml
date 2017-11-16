@@ -1,20 +1,23 @@
-package:
-  name: gsd
-  version: "1.2.0"
+{% set name = "gsd" %}
+{% set version = "1.2.0" %}
 
-build:
-  number: 0
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
 
 source:
   path: ../
 
+build:
+  number: 0
+  script: python setup.py install --single-version-externally-managed --record record.txt
+
 requirements:
   build:
     - nomkl
-    - python
+    - python {{ python }}
     - numpy
     - cython
-    - cmake
 
   run:
     - python
@@ -30,4 +33,16 @@ test:
 about:
   home: https://bitbucket.org/glotzer/gsd
   license: BSD 2-clause
+  license_family: BSD
+  license_file: LICENSE
+  summary: 'General simulation data.'
 
+  description: |
+   GSD (General Simulation Data) is a file format specification
+   and a library to read and write it. The package also contains a python module
+   that reads and writes hoomd schema gsd files with an easy to use syntax.
+   doc_url: https://signac.readthedocs.io dev_url:
+   https://bitbucket.org/glotzer/signac
+
+  doc_url: https://gsd.readthedocs.io
+  dev_url: https://bitbucket.org/glotzer/gsd
