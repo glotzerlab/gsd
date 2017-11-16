@@ -2,6 +2,13 @@
 
 [TOC]
 
+## v1.3.0
+
+Released 2017-11-17
+
+* Document `state` entries in the HOOMD schema
+* No changes to the gsd format or reader code in v1.3
+
 ## v1.2.0
 
 * Add gsd.hoomd.open() method which can create and open hoomd gsd files
