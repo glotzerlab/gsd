@@ -755,7 +755,7 @@ int gsd_write_chunk(struct gsd_handle* handle,
     // validate input
     if (data == NULL)
         return -2;
-    if (N == 0 || M == 0)
+    if (M == 0)
         return -2;
     if (handle->open_flags == GSD_OPEN_READONLY)
         return -2;
