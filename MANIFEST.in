@@ -1,0 +1,8 @@
+global-include *.pyx
+global-include *.pxd
+global-include *.sha256
+global-include *.c
+global-include *.h
+include README.md
+include ChangeLog.md
+
