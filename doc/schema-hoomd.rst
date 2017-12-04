@@ -44,6 +44,9 @@ frame 0, or *N* differs between frames, values are assumed default. Default valu
 remain small. For example, a simulation with point particles where orientation is always (1,0,0,0) would
 not write any orientation chunk to the file.
 
+*N* may be zero. When *N* is zero, an index entry may be written for a data chunk with no actual data
+written to the file for that chunk.
+
 ================================= ========= ====== ==== ======= ================
 Name                              Category  Type   Size Default Units
 ================================= ========= ====== ==== ======= ================
