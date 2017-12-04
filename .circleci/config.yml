@@ -3,14 +3,14 @@ version: 2
 references:
   test_container_config: &test_container_config
     docker:
-      - image: joaander/ci:20170809
+      - image: joaander/ci:20171130
         environment:
           PYTHONPATH: /home/ci/project/build
     working_directory: /home/ci/project
 
   conda_container_config: &conda_container_config
     docker:
-      - image: joaander/conda-build:20170821
+      - image: joaander/conda-build:20171204-2
     working_directory: /root/project
 
   load_code: &load_code
@@ -128,6 +128,19 @@ jobs:
           name: Upload
           command: anaconda -t ${ANACONDA_TOKEN} upload --no-progress --force conda-bld/**/*.tar.bz2
 
+  pypi-upload:
+    <<: *conda_container_config
+    steps:
+      - *load_code
+      - run:
+          name: Build sdist
+          working_directory: code
+          command: python setup.py sdist
+      - run:
+          name: Upload
+          working_directory: code
+          command: twine upload --username joaander --password ${PYPI_PASSWORD} dist/*
+
 workflows:
   version: 2
   workflow:
@@ -147,4 +160,8 @@ workflows:
           filters:
             branches:
               only: release
-
+      - pypi-upload:
+          context: org-global
+          filters:
+            branches:
+              only: release
