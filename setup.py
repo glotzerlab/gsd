@@ -29,7 +29,7 @@ setup(name = 'gsd',
       download_url = 'https://bitbucket.org/glotzer/gsd/get/v1.3.0.tar.bz2',
 
         classifiers=[
-            "Development Status :: 4 - Beta",
+            "Development Status :: 5 - Production/Stable",
             'Intended Audience :: Developers',
             "Intended Audience :: Science/Research",
             'Operating System :: MacOS :: MacOS X',
