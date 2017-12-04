@@ -2,6 +2,12 @@
 
 [TOC]
 
+## v1.4.0
+
+Released 2017-12-04
+
+* Support reading and writing chunks with 0 length. No schema changes are necessary to support this.
+
 ## v1.3.0
 
 Released 2017-11-17
