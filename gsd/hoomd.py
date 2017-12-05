@@ -607,24 +607,6 @@ def create(name, snapshot=None):
         name (str): File name.
         snapshot (:py:class:`Snapshot`): Snapshot to write to frame 0. No frame is written if snapshot is ``None``.
 
-    .. danger::
-        The file is overwritten if it already exists.
-    """
-    logger.info('creating hoomd gsd file: ' + name);
-
-    fl.create(name=name, application='gsd.hoomd ' + gsd.__version__, schema='hoomd', schema_version=[1,1]);
-    with gsd.fl.GSDFile(name, 'wb') as f:
-        traj = HOOMDTrajectory(f);
-        if snapshot is not None:
-            traj.append(snapshot);
-
-def create(name, snapshot=None):
-    """ Create a hoomd gsd file from the given snapshot.
-
-    Args:
-        name (str): File name.
-        snapshot (:py:class:`Snapshot`): Snapshot to write to frame 0. No frame is written if snapshot is ``None``.
-
     .. deprecated:: 1.2
 
         As of version 1.2, you can create and open hoomd GSD files in the same call to
@@ -640,7 +622,7 @@ def create(name, snapshot=None):
 
     logger.info('creating hoomd gsd file: ' + name);
 
-    gsd.fl.create(name=name, application='gsd.hoomd ' + gsd.__version__, schema='hoomd', schema_version=[1,1]);
+    gsd.fl.create(name=name, application='gsd.hoomd ' + gsd.__version__, schema='hoomd', schema_version=[1,2]);
     with gsd.fl.GSDFile(name, 'wb') as f:
         traj = HOOMDTrajectory(f);
         if snapshot is not None:
