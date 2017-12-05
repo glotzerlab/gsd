@@ -628,52 +628,67 @@ cdef class GSDFile:
         cdef void *data_ptr;
         if gsd_type == libgsd.GSD_TYPE_UINT8:
             data_array = numpy.empty(dtype=numpy.uint8, shape=[index_entry.N, index_entry.M])
-            data_ptr = __get_ptr_uint8(data_array)
         elif gsd_type == libgsd.GSD_TYPE_UINT16:
             data_array = numpy.empty(dtype=numpy.uint16, shape=[index_entry.N, index_entry.M])
-            data_ptr = __get_ptr_uint16(data_array)
         elif gsd_type == libgsd.GSD_TYPE_UINT32:
             data_array = numpy.empty(dtype=numpy.uint32, shape=[index_entry.N, index_entry.M])
-            data_ptr = __get_ptr_uint32(data_array)
         elif gsd_type == libgsd.GSD_TYPE_UINT64:
             data_array = numpy.empty(dtype=numpy.uint64, shape=[index_entry.N, index_entry.M])
-            data_ptr = __get_ptr_uint64(data_array)
         elif gsd_type == libgsd.GSD_TYPE_INT8:
             data_array = numpy.empty(dtype=numpy.int8, shape=[index_entry.N, index_entry.M])
-            data_ptr = __get_ptr_int8(data_array)
         elif gsd_type == libgsd.GSD_TYPE_INT16:
             data_array = numpy.empty(dtype=numpy.int16, shape=[index_entry.N, index_entry.M])
-            data_ptr = __get_ptr_int16(data_array)
         elif gsd_type == libgsd.GSD_TYPE_INT32:
             data_array = numpy.empty(dtype=numpy.int32, shape=[index_entry.N, index_entry.M])
-            data_ptr = __get_ptr_int32(data_array)
         elif gsd_type == libgsd.GSD_TYPE_INT64:
             data_array = numpy.empty(dtype=numpy.int64, shape=[index_entry.N, index_entry.M])
-            data_ptr = __get_ptr_int64(data_array)
         elif gsd_type == libgsd.GSD_TYPE_FLOAT:
             data_array = numpy.empty(dtype=numpy.float32, shape=[index_entry.N, index_entry.M])
-            data_ptr = __get_ptr_float32(data_array)
         elif gsd_type == libgsd.GSD_TYPE_DOUBLE:
             data_array = numpy.empty(dtype=numpy.float64, shape=[index_entry.N, index_entry.M])
-            data_ptr = __get_ptr_float64(data_array)
         else:
             raise ValueError("invalid type for chunk: " + name);
 
         logger.debug('read chunk: ' + self.name + ' - ' + str(frame) + ' - ' + name);
 
-        with nogil:
-            retval = libgsd.gsd_read_chunk(&self.__handle,
-                                           data_ptr,
-                                           index_entry);
+        # only read chunk if we have data
+        if index_entry.N != 0 and index_entry.M != 0:
+            if gsd_type == libgsd.GSD_TYPE_UINT8:
+                data_ptr = __get_ptr_uint8(data_array)
+            elif gsd_type == libgsd.GSD_TYPE_UINT16:
+                data_ptr = __get_ptr_uint16(data_array)
+            elif gsd_type == libgsd.GSD_TYPE_UINT32:
+                data_ptr = __get_ptr_uint32(data_array)
+            elif gsd_type == libgsd.GSD_TYPE_UINT64:
+                data_ptr = __get_ptr_uint64(data_array)
+            elif gsd_type == libgsd.GSD_TYPE_INT8:
+                data_ptr = __get_ptr_int8(data_array)
+            elif gsd_type == libgsd.GSD_TYPE_INT16:
+                data_ptr = __get_ptr_int16(data_array)
+            elif gsd_type == libgsd.GSD_TYPE_INT32:
+                data_ptr = __get_ptr_int32(data_array)
+            elif gsd_type == libgsd.GSD_TYPE_INT64:
+                data_ptr = __get_ptr_int64(data_array)
+            elif gsd_type == libgsd.GSD_TYPE_FLOAT:
+                data_ptr = __get_ptr_float32(data_array)
+            elif gsd_type == libgsd.GSD_TYPE_DOUBLE:
+                data_ptr = __get_ptr_float64(data_array)
+            else:
+                raise ValueError("invalid type for chunk: " + name);
 
-        if retval == -1:
-            raise IOError(*__format_errno(name));
-        elif retval == -2:
-            raise RuntimeError("Programming error: " + self.name);
-        elif retval == -3:
-            raise RuntimeError("Corrupt chunk: " + str(frame) + " / " + name + " in file" + self.name);
-        elif retval != 0:
-            raise RuntimeError("Unknown error");
+            with nogil:
+                retval = libgsd.gsd_read_chunk(&self.__handle,
+                                               data_ptr,
+                                               index_entry);
+
+            if retval == -1:
+                raise IOError(*__format_errno(name));
+            elif retval == -2:
+                raise RuntimeError("Programming error: " + self.name);
+            elif retval == -3:
+                raise RuntimeError("Corrupt chunk: " + str(frame) + " / " + name + " in file" + self.name);
+            elif retval != 0:
+                raise RuntimeError("Unknown error");
 
         if index_entry.M == 1:
             return data_array.reshape([index_entry.N]);
