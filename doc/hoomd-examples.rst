@@ -101,3 +101,34 @@ You can use GSD without needing to compile C code to read GSD files using
 supports the ``rb`` mode and does not read files as fast as the C implementation.
 It takes in a python file-like object, so it can be used with in-memory IO classes,
 grid file classes that access data over the internet, etc...
+
+Access state data
+^^^^^^^^^^^^^^^^^
+
+.. ipython:: python
+
+    with gsd.hoomd.open(name='test2.gsd', mode='wb') as t:
+        s = gsd.hoomd.Snapshot()
+        s.particles.types = ['A', 'B']
+        s.state['hpmc/convex_polygon/N'] = [3, 4]
+        s.state['hpmc/convex_polygon/vertices'] = [[-1, -1],
+                                                   [1, -1],
+                                                   [1, 1],
+                                                   [-2, -2],
+                                                   [2, -2],
+                                                   [2, 2],
+                                                   [-2, 2]]
+        t.append(s)
+
+State data is stored in the ``state`` dictionary as numpy arrays. Place data into this dictionary directly
+without the 'state/' prefix and gsd will include it in the output. Shape vertices are stored in a packed
+format. In this example, type 'A' has 3 vertices (the first 3 in the list) and type 'B' has 4 (the next 4).
+
+.. ipython:: python
+
+    with gsd.hoomd.open(name='test2.gsd', mode='rb') as t:
+        s = t[0]
+        print(s.state['hpmc/convex_polygon/N'])
+        print(s.state['hpmc/convex_polygon/vertices'])
+
+Access read state data in the same way.
