@@ -382,15 +382,15 @@ class Snapshot(object):
             self.state['hpmc/integrate/a'] = self.state['hpmc/integrate/a'].reshape([1])
 
         if 'hpmc/sphere/radius' in self.state:
-            self.state['hpmc/sphere/radius'] = numpy.ascontiguousarray(self.state['hpmc/sphere/radius'], dtype=numpy.float);
+            self.state['hpmc/sphere/radius'] = numpy.ascontiguousarray(self.state['hpmc/sphere/radius'], dtype=numpy.float32);
             self.state['hpmc/sphere/radius'] = self.state['hpmc/sphere/radius'].reshape([NT])
 
         if 'hpmc/ellipsoid/a' in self.state:
-            self.state['hpmc/ellipsoid/a'] = numpy.ascontiguousarray(self.state['hpmc/ellipsoid/a'], dtype=numpy.float);
+            self.state['hpmc/ellipsoid/a'] = numpy.ascontiguousarray(self.state['hpmc/ellipsoid/a'], dtype=numpy.float32);
             self.state['hpmc/ellipsoid/a'] = self.state['hpmc/ellipsoid/a'].reshape([NT])
-            self.state['hpmc/ellipsoid/b'] = numpy.ascontiguousarray(self.state['hpmc/ellipsoid/b'], dtype=numpy.float);
+            self.state['hpmc/ellipsoid/b'] = numpy.ascontiguousarray(self.state['hpmc/ellipsoid/b'], dtype=numpy.float32);
             self.state['hpmc/ellipsoid/b'] = self.state['hpmc/ellipsoid/b'].reshape([NT])
-            self.state['hpmc/ellipsoid/c'] = numpy.ascontiguousarray(self.state['hpmc/ellipsoid/c'], dtype=numpy.float);
+            self.state['hpmc/ellipsoid/c'] = numpy.ascontiguousarray(self.state['hpmc/ellipsoid/c'], dtype=numpy.float32);
             self.state['hpmc/ellipsoid/c'] = self.state['hpmc/ellipsoid/c'].reshape([NT])
 
         if 'hpmc/convex_polyhedron/N' in self.state:
@@ -398,7 +398,7 @@ class Snapshot(object):
             self.state['hpmc/convex_polyhedron/N'] = self.state['hpmc/convex_polyhedron/N'].reshape([NT])
             sumN = numpy.sum(self.state['hpmc/convex_polyhedron/N'])
 
-            self.state['hpmc/convex_polyhedron/vertices'] = numpy.ascontiguousarray(self.state['hpmc/convex_polyhedron/vertices'], dtype=numpy.float);
+            self.state['hpmc/convex_polyhedron/vertices'] = numpy.ascontiguousarray(self.state['hpmc/convex_polyhedron/vertices'], dtype=numpy.float32);
             self.state['hpmc/convex_polyhedron/vertices'] = self.state['hpmc/convex_polyhedron/vertices'].reshape([sumN, 3])
 
         if 'hpmc/convex_spheropolyhedron/N' in self.state:
@@ -409,7 +409,7 @@ class Snapshot(object):
             self.state['hpmc/convex_spheropolyhedron/sweep_radius'] = numpy.ascontiguousarray(self.state['hpmc/convex_spheropolyhedron/sweep_radius'], dtype=numpy.float32);
             self.state['hpmc/convex_spheropolyhedron/sweep_radius'] = self.state['hpmc/convex_spheropolyhedron/sweep_radius'].reshape([NT])
 
-            self.state['hpmc/convex_spheropolyhedron/vertices'] = numpy.ascontiguousarray(self.state['hpmc/convex_spheropolyhedron/vertices'], dtype=numpy.float);
+            self.state['hpmc/convex_spheropolyhedron/vertices'] = numpy.ascontiguousarray(self.state['hpmc/convex_spheropolyhedron/vertices'], dtype=numpy.float32);
             self.state['hpmc/convex_spheropolyhedron/vertices'] = self.state['hpmc/convex_spheropolyhedron/vertices'].reshape([sumN, 3])
 
         if 'hpmc/convex_polygon/N' in self.state:
@@ -417,7 +417,7 @@ class Snapshot(object):
             self.state['hpmc/convex_polygon/N'] = self.state['hpmc/convex_polygon/N'].reshape([NT])
             sumN = numpy.sum(self.state['hpmc/convex_polygon/N'])
 
-            self.state['hpmc/convex_polygon/vertices'] = numpy.ascontiguousarray(self.state['hpmc/convex_polygon/vertices'], dtype=numpy.float);
+            self.state['hpmc/convex_polygon/vertices'] = numpy.ascontiguousarray(self.state['hpmc/convex_polygon/vertices'], dtype=numpy.float32);
             self.state['hpmc/convex_polygon/vertices'] = self.state['hpmc/convex_polygon/vertices'].reshape([sumN, 2])
 
         if 'hpmc/convex_spheropolygon/N' in self.state:
@@ -428,7 +428,7 @@ class Snapshot(object):
             self.state['hpmc/convex_spheropolygon/sweep_radius'] = numpy.ascontiguousarray(self.state['hpmc/convex_spheropolygon/sweep_radius'], dtype=numpy.float32);
             self.state['hpmc/convex_spheropolygon/sweep_radius'] = self.state['hpmc/convex_spheropolygon/sweep_radius'].reshape([NT])
 
-            self.state['hpmc/convex_spheropolygon/vertices'] = numpy.ascontiguousarray(self.state['hpmc/convex_spheropolygon/vertices'], dtype=numpy.float);
+            self.state['hpmc/convex_spheropolygon/vertices'] = numpy.ascontiguousarray(self.state['hpmc/convex_spheropolygon/vertices'], dtype=numpy.float32);
             self.state['hpmc/convex_spheropolygon/vertices'] = self.state['hpmc/convex_spheropolygon/vertices'].reshape([sumN, 2])
 
         if 'hpmc/simple_polygon/N' in self.state:
@@ -436,7 +436,7 @@ class Snapshot(object):
             self.state['hpmc/simple_polygon/N'] = self.state['hpmc/simple_polygon/N'].reshape([NT])
             sumN = numpy.sum(self.state['hpmc/simple_polygon/N'])
 
-            self.state['hpmc/simple_polygon/vertices'] = numpy.ascontiguousarray(self.state['hpmc/simple_polygon/vertices'], dtype=numpy.float);
+            self.state['hpmc/simple_polygon/vertices'] = numpy.ascontiguousarray(self.state['hpmc/simple_polygon/vertices'], dtype=numpy.float32);
             self.state['hpmc/simple_polygon/vertices'] = self.state['hpmc/simple_polygon/vertices'].reshape([sumN, 2])
 
         for k in self.state:
