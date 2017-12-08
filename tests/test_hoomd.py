@@ -113,6 +113,7 @@ def test_defaults():
             numpy.testing.assert_array_equal(s.pairs.typeid, numpy.array([0]*7, dtype=numpy.uint32));
             numpy.testing.assert_array_equal(s.pairs.group, numpy.array([[0,0]]*7, dtype=numpy.uint32));
 
+            eq_(len(s.state), 0)
 
 def test_fallback():
     with tempfile.TemporaryDirectory() as d:
@@ -402,3 +403,34 @@ def test_truncate():
             hf.truncate();
             eq_(len(hf), 0);
             ok_(hf._initial_frame is None);
+
+def test_state():
+    with tempfile.TemporaryDirectory() as d:
+        snap0 = gsd.hoomd.Snapshot();
+
+        snap0.state['hpmc/sphere/radius'] = [2.0]
+
+        snap1 = gsd.hoomd.Snapshot();
+
+        snap1.state['hpmc/convex_polyhedron/N'] = [3]
+        snap1.state['hpmc/convex_polyhedron/vertices'] = [[-1, -1, -1],
+                                                          [0, 1, 1],
+                                                          [1, 0, 0]];
+
+        gsd.hoomd.create(name=d+"/test_state.gsd");
+
+        with gsd.fl.GSDFile(name=d+"/test_state.gsd", mode='wb') as f:
+            hf = gsd.hoomd.HOOMDTrajectory(f);
+            hf.extend([snap0, snap1]);
+
+        with gsd.fl.GSDFile(name=d+"/test_state.gsd", mode='rb') as f:
+            hf = gsd.hoomd.HOOMDTrajectory(f);
+            eq_(len(hf), 2);
+            s = hf.read_frame(0);
+
+            numpy.testing.assert_array_equal(s.state['hpmc/sphere/radius'], snap0.state['hpmc/sphere/radius']);
+
+            s = hf.read_frame(1);
+
+            numpy.testing.assert_array_equal(s.state['hpmc/convex_polyhedron/N'], snap1.state['hpmc/convex_polyhedron/N']);
+            numpy.testing.assert_array_equal(s.state['hpmc/convex_polyhedron/vertices'], snap1.state['hpmc/convex_polyhedron/vertices']);
