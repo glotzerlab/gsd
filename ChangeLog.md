@@ -2,6 +2,12 @@
 
 [TOC]
 
+## v1.5.0
+
+Released 2018-01-18
+
+* Read and write HPMC shape state data.
+
 ## v1.4.0
 
 Released 2017-12-04
