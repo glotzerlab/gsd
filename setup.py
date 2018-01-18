@@ -26,7 +26,7 @@ setup(name = 'gsd',
       author = 'Joshua A. Anderson',
       author_email = 'joaander@umich.edu',
       url = 'https://bitbucket.org/glotzer/gsd',
-      download_url = 'https://bitbucket.org/glotzer/gsd/get/v1.5.0.tar.bz2',
+      download_url = 'http://glotzerlab.engin.umich.edu/Downloads/gsd/gsd-v1.5.0.tar.gz',
 
         classifiers=[
             "Development Status :: 5 - Production/Stable",
