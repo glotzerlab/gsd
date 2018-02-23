@@ -1,26 +1,37 @@
 name: gsd
 dependencies:
-- decorator=4.0.9=py35_0
-- ipython=4.1.2=py35_1
-- ipython_genutils=0.1.0=py35_0
-- mkl=11.3.1=0
-- numpy=1.11.0=py35_0
-- openssl=1.0.2g=0
-- path.py=8.2=py35_0
-- pexpect=4.0.1=py35_0
-- pickleshare=0.5=py35_0
-- pip=8.1.1=py35_1
-- ptyprocess=0.5=py35_0
-- python=3.5.1=0
-- readline=6.2=2
-- setuptools=20.6.7=py35_0
-- simplegeneric=0.8.1=py35_0
-- sqlite=3.9.2=0
-- tk=8.5.18=0
-- traitlets=4.2.1=py35_0
-- wheel=0.29.0=py35_0
-- xz=5.0.5=1
-- zlib=1.2.8=0
-- pip:
-  - ipython-genutils==0.1.0
-
+  - ca-certificates=2017.08.26=h1d4fec5_0
+  - certifi=2018.1.18=py36_0
+  - decorator=4.2.1=py36_0
+  - ipython=6.2.1=py36h88c514a_1
+  - ipython_genutils=0.2.0=py36hb52b0d5_0
+  - jedi=0.11.1=py36_0
+  - libedit=3.1=heed3624_0
+  - libffi=3.2.1=hd88cf55_4
+  - libgcc-ng=7.2.0=h7cc24e2_2
+  - libgfortran-ng=7.2.0=h9f7466a_2
+  - libopenblas=0.2.20=h9ac9557_4
+  - libstdcxx-ng=7.2.0=h7a57d05_2
+  - ncurses=6.0=h9df7e31_2
+  - nomkl=1.0=0
+  - numpy=1.14.1=py36_nomklh7cdd4dd_1
+  - openssl=1.0.2n=hb7f436b_0
+  - parso=0.1.1=py36h35f843b_0
+  - pexpect=4.4.0=py36_0
+  - pickleshare=0.7.4=py36h63277f8_0
+  - pip=9.0.1=py36h6c6f9ce_4
+  - prompt_toolkit=1.0.15=py36h17d85b1_0
+  - ptyprocess=0.5.2=py36h69acd42_0
+  - pygments=2.2.0=py36h0d3125c_0
+  - python=3.6.4=hc3d631a_1
+  - readline=7.0=ha6073c6_4
+  - setuptools=38.5.1=py36_0
+  - simplegeneric=0.8.1=py36_2
+  - six=1.11.0=py36h372c433_1
+  - sqlite=3.22.0=h1bed415_0
+  - tk=8.6.7=hc745277_3
+  - traitlets=4.3.2=py36h674d592_0
+  - wcwidth=0.1.7=py36hdf4376a_0
+  - wheel=0.30.0=py36hfd4bba0_1
+  - xz=5.2.3=h55aa19d_2
+  - zlib=1.2.11=ha838bed_2
