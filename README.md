@@ -23,13 +23,18 @@ contains a python module that reads and writes hoomd schema gsd files with an ea
 ## Installing the python module
 
 Official binaries of GSD are available via [conda](http://conda.pydata.org/docs/) through
-the [glotzer channel](https://anaconda.org/glotzer).
+the [glotzer](https://anaconda.org/glotzer) and [conda-forge](https://conda-forge.org/) channels.
 To install GSD, first download and install
 [miniconda](http://conda.pydata.org/miniconda.html) following [conda's instructions](http://conda.pydata.org/docs/install/quick.html).
-Then add the `glotzer` channel and install GSD:
+Then add the channel and install GSD:
 
 ```bash
 $ conda config --add channels glotzer
+$ conda install gsd
+```
+or:
+```bash
+$ conda config --add channels conda-forge
 $ conda install gsd
 ```
 
@@ -120,11 +125,21 @@ with gsd.fl.open(name='file.gsd', mode='rb') as f:
     * sphinx (documentation)
     * ipython (documentation)
     * cmake (for development builds)
+    * Python >= 3.2 (to execute unit tests)
 
-Either install using your distributions package manager, by loading the appropriate module on a cluster or with a
-conda install in your home directory.
+### Get the source
 
-    conda install cython nose sphinx ipython cmake
+Download source releases directly from the web: https://glotzerlab.engin.umich.edu/Downloads/
+
+```bash
+$ curl -O https://glotzerlab.engin.umich.edu/Downloads/glotzer/glotzer-v1.5.0.tar.gz
+```
+
+Or, clone the latest development version using git:
+
+```bash
+$ git clone https://bitbucket.org/glotzer/gsd.git
+```
 
 ### Install with setuptools
 
