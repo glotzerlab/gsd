@@ -5,4 +5,4 @@ global-include *.c
 global-include *.h
 include README.md
 include ChangeLog.md
-
+include LICENSE
