@@ -166,6 +166,8 @@ export PYTHONPATH=/path/to/build:$PYTHONPATH
 
 ### Run unit tests
 
+Tests require python 3.2 or newer to execute.
+
 Run `nosetests` in the source directory to execute all unit tests. This requires that the
 python module is on the python path.
 
