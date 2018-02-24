@@ -5,7 +5,8 @@ See the [full GSD documentation](http://gsd.readthedocs.io) at readthedocs.io.
 ## Overview
 
 GSD (General Simulation Data) is a file format specification and a library to read and write it. The package also
-contains a python module that reads and writes hoomd schema gsd files with an easy to use syntax.
+contains a python module that reads and writes [hoomd](https://glotzerlab.engin.umich.edu/hoomd-blue/) schema gsd
+files with an easy to use syntax.
 
 * Efficiently store many frames of data from simulation runs.
 * High performance file read and write.
@@ -19,24 +20,6 @@ contains a python module that reads and writes hoomd schema gsd files with an ea
 * Generic use case: binary blob of N bytes.
 * Easy to integrate into other tools with python, or a C API (< 1k lines).
 * Fast random access to frames.
-
-## Installing the python module
-
-Official binaries of GSD are available via [conda](http://conda.pydata.org/docs/) through
-the [glotzer](https://anaconda.org/glotzer) and [conda-forge](https://conda-forge.org/) channels.
-To install GSD, first download and install
-[miniconda](http://conda.pydata.org/miniconda.html) following [conda's instructions](http://conda.pydata.org/docs/install/quick.html).
-Then add the channel and install GSD:
-
-```bash
-$ conda config --add channels glotzer
-$ conda install gsd
-```
-or:
-```bash
-$ conda config --add channels conda-forge
-$ conda install gsd
-```
 
 ## HOOMD examples
 
@@ -108,6 +91,38 @@ with gsd.fl.open(name='file.gsd', mode='rb') as f:
     for i in range(1,f.nframes):
         position = f.read_chunk(frame=i, name='position');
         do_something(position);
+```
+
+## Installing the python module
+
+Official GSD binaries are available through a number of methods. Alternately, you can compile from source (see below).
+
+### pip
+
+GSD is [available on pypi](https://pypi.python.org/pypi/gsd/). Install it with pip:
+
+```bash
+pip install gsd
+```
+
+### Conda (conda-forge)
+
+Official binaries of GSD are available via [conda](http://conda.pydata.org/docs/) through
+the [glotzer](https://anaconda.org/glotzer) and [conda-forge](https://conda-forge.org/) channels.
+To install GSD, first download and install
+[miniconda](http://conda.pydata.org/miniconda.html) following [conda's instructions](http://conda.pydata.org/docs/install/quick.html).
+Then add the channel and install GSD from conda-forge:
+
+```bash
+$ conda config --add channels conda-forge
+$ conda install gsd
+```
+
+Or to install from the glotzer channel:
+
+```bash
+$ conda config --add channels glotzer
+$ conda install gsd
 ```
 
 ## Compiling the python module
