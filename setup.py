@@ -20,13 +20,13 @@ fl = Extension('gsd.fl',
                )
 
 setup(name = 'gsd',
-      version = '1.5.0',
+      version = '1.5.1',
       description = 'General simulation data file format.',
       license = 'BSD - 2 clause',
       author = 'Joshua A. Anderson',
       author_email = 'joaander@umich.edu',
       url = 'https://bitbucket.org/glotzer/gsd',
-      download_url = 'http://glotzerlab.engin.umich.edu/Downloads/gsd/gsd-v1.5.0.tar.gz',
+      download_url = 'http://glotzerlab.engin.umich.edu/Downloads/gsd/gsd-v1.5.1.tar.gz',
 
         classifiers=[
             "Development Status :: 5 - Production/Stable",
