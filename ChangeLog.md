@@ -2,6 +2,12 @@
 
 [TOC]
 
+## V1.5.1
+
+Released 2018-02-26
+
+* Documentation fixes
+
 ## v1.5.0
 
 Released 2018-01-18
