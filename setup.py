@@ -1,6 +1,11 @@
 from setuptools import setup, find_packages
 from setuptools.extension import Extension
-import numpy
+try:
+    from numpy import get_include
+except ImportError:
+    def get_include(*args,**kwargs):
+        from numpy import get_include
+        return get_include(*args,**kwargs)
 import sys
 import hashlib
 
@@ -13,11 +18,6 @@ with open('gsd/fl.pyx.sha256') as f:
 if existing_checksum.strip() != current_checksum.hexdigest():
     print('fl.pyx has been updated, it needs to be cythonized before setup.py can continue.');
     sys.exit(1);
-
-fl = Extension('gsd.fl',
-               sources=['gsd/fl{0}.c'.format(sys.version_info.major), 'gsd/gsd.c'],
-               include_dirs = [numpy.get_include()]
-               )
 
 setup(name = 'gsd',
       version = '1.5.1',
@@ -39,6 +39,9 @@ setup(name = 'gsd',
         ],
 
       install_requires=['numpy'],
-      ext_modules = [fl],
+      ext_modules = [Extension('gsd.fl',
+               sources=['gsd/fl{0}.c'.format(sys.version_info.major), 'gsd/gsd.c'],
+               include_dirs = [get_include()]
+               )],
       packages = ['gsd']
      )
