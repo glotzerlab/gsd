@@ -2,6 +2,14 @@
 
 [TOC]
 
+## V1.5.2
+
+Released 2018-04-04
+
+* Close file handle on errors in `gsd_open`
+* Always close file handle in `gsd_close`
+* `setup.py` now correctly pulls in the numpy dependency
+
 ## V1.5.1
 
 Released 2018-02-26
