@@ -15,4 +15,4 @@ Attributes:
                        not the file layer version it reads/writes.
 """
 
-__version__ = "1.5.1";
+__version__ = "1.5.2";

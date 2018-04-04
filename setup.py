@@ -23,13 +23,13 @@ if existing_checksum.strip() != current_checksum.hexdigest():
     sys.exit(1);
 
 setup(name = 'gsd',
-      version = '1.5.1',
+      version = '1.5.2',
       description = 'General simulation data file format.',
       license = 'BSD - 2 clause',
       author = 'Joshua A. Anderson',
       author_email = 'joaander@umich.edu',
       url = 'https://bitbucket.org/glotzer/gsd',
-      download_url = 'http://glotzerlab.engin.umich.edu/Downloads/gsd/gsd-v1.5.1.tar.gz',
+      download_url = 'http://glotzerlab.engin.umich.edu/Downloads/gsd/gsd-v1.5.2.tar.gz',
 
         classifiers=[
             "Development Status :: 5 - Production/Stable",
