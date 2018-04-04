@@ -476,6 +476,8 @@ int gsd_create(const char *fname, const char *application, const char *schema, u
 
     Open the generated gsd file in *handle*.
 
+    The file descriptor is closed if there when an error opening the file.
+
     \return 0 on success. Negative value on failure:
         * -1: IO error (check errno)
         * -2: Not a GSD file
@@ -519,9 +521,17 @@ int gsd_create_and_open(struct gsd_handle* handle,
     handle->fd = open(fname, O_RDWR | O_CREAT | O_TRUNC | extra_flags,  S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
     int retval = __gsd_initialize_file(handle->fd, application, schema, schema_version);
     if (retval != 0)
+        {
+        close(handle->fd);
         return retval;
+        }
 
-    return __gsd_read_header(handle);
+    retval = __gsd_read_header(handle);
+    if (retval != 0)
+        {
+        close(handle->fd);
+        }
+    return retval;
     }
 
 /*! \param handle Handle to open
@@ -531,6 +541,8 @@ int gsd_create_and_open(struct gsd_handle* handle,
     \pre The file name \a fname is a GSD file.
 
     \post Open a GSD file and populates the handle for use by API calls.
+
+    The file descriptor is closed if there when an error opening the file.
 
     \return 0 on success. Negative value on failure:
         * -1: IO error (check errno)
@@ -569,7 +581,12 @@ int gsd_open(struct gsd_handle* handle, const char *fname, const enum gsd_open_f
         handle->open_flags = GSD_OPEN_APPEND;
         }
 
-    return __gsd_read_header(handle);
+    int retval = __gsd_read_header(handle);
+    if (retval != 0)
+        {
+        close(handle->fd);
+        }
+    return retval;
     }
 
 /*! \param handle Handle to an open GSD file
@@ -649,11 +666,6 @@ int gsd_close(struct gsd_handle* handle)
         handle->namelist = NULL;
 
         memset(handle, 0, sizeof(struct gsd_handle));
-
-        // close the file
-        int retval = close(fd);
-        if (retval != 0)
-            return -1;
         }
     else
     #endif
@@ -670,13 +682,13 @@ int gsd_close(struct gsd_handle* handle)
             handle->index = NULL;
 
             memset(handle, 0, sizeof(struct gsd_handle));
-
-            // close the file
-            int retval = close(fd);
-            if (retval != 0)
-                return -1;
             }
         }
+
+    // close the file
+    int retval = close(fd);
+    if (retval != 0)
+        return -1;
 
     return 0;
     }
