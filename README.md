@@ -129,7 +129,7 @@ $ conda install gsd
 Download source releases directly from the web: https://glotzerlab.engin.umich.edu/Downloads/
 
 ```bash
-$ curl -O https://glotzerlab.engin.umich.edu/Downloads/glotzer/glotzer-v1.5.2.tar.gz
+$ curl -O https://glotzerlab.engin.umich.edu/Downloads/glotzer/glotzer-v1.5.3.tar.gz
 ```
 
 Or, clone the latest development version using git:
