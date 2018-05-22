@@ -93,35 +93,16 @@ with gsd.fl.open(name='file.gsd', mode='rb') as f:
         do_something(position);
 ```
 
-## Installing the python module
-
-Official GSD binaries are available through a number of methods. Alternately, you can compile from source (see below).
-
-### pip
-
-GSD is [available on pypi](https://pypi.python.org/pypi/gsd/). Install it with pip:
-
-```bash
-pip install gsd
-```
-
-### Conda (conda-forge)
+## Installing binaries
 
 Official binaries of GSD are available via [conda](http://conda.pydata.org/docs/) through
-the [glotzer](https://anaconda.org/glotzer) and [conda-forge](https://conda-forge.org/) channels.
+the [conda-forge](https://conda-forge.org/) channel.
 To install GSD, first download and install
 [miniconda](http://conda.pydata.org/miniconda.html) following [conda's instructions](http://conda.pydata.org/docs/install/quick.html).
 Then add the channel and install GSD from conda-forge:
 
 ```bash
 $ conda config --add channels conda-forge
-$ conda install gsd
-```
-
-Or to install from the glotzer channel:
-
-```bash
-$ conda config --add channels glotzer
 $ conda install gsd
 ```
 
@@ -139,6 +120,7 @@ $ conda install gsd
     * nose (unit tests)
     * sphinx (documentation)
     * ipython (documentation)
+    * an internet connection (documentation)
     * cmake (for development builds)
     * Python >= 3.2 (to execute unit tests)
 
@@ -168,7 +150,7 @@ $ python setup.py install --user
 When using conda, you can install into your `conda` site-packages with:
 
 ```bash
-$ python setup.py install --user
+$ python setup.py install
 ```
 
 Uninstall using pip:
@@ -208,7 +190,7 @@ $ nosetests
 ### Build Documentation
 
 Documentation builds with sphinx and requires that the python module is on the python path.
-`ipython` is also required to build the documentation.
+`ipython` is also required to build the documentation, as is an active internet connection.
 To build the documentation:
 
 ```bash
