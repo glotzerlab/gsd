@@ -1,11 +1,11 @@
 // Copyright (c) 2016-2018 The Regents of the University of Michigan
 // This file is part of the General Simulation Data (GSD) project, released under the BSD 2-Clause License.
 
+#include <sys/stat.h>
 #ifdef _WIN32
 
 #define GSD_USE_MMAP 0
 #include <io.h>
-#include <sys/stat.h>
 
 #else // linux / mac
 
