@@ -168,7 +168,7 @@ workflows:
   workflow:
     jobs:
       - gcc54-py35
-      - gcc48-py27-cm28
+      - gcc48-py35-cm28
       - gcc6-py36
       - gcc7-py36
       - sphinx-docs:
