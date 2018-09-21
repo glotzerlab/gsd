@@ -53,7 +53,6 @@ references:
       - *store_results2
 
 jobs:
-
   gcc54-py35:
     <<: *ubuntu16
 
@@ -62,26 +61,7 @@ jobs:
       CXX: /usr/bin/g++
       CMAKE: /usr/bin/cmake
       PYVER: "3.5"
-
-    steps:
-      - *load_code
-      - *configure
-      - *compile
-      - *unit_test
-      - *store_results
-      - *store_results2
-      - persist_to_workspace:
-          root: .
-          paths:
-            - build/gsd
-
-  sphinx-docs:
-    <<: *test_container_config
-    steps:
-      - *load_code
-      - attach_workspace:
-          at: .
-      - run: cd code/doc && sphinx-build -b html -d _build/doctrees -W -n . _build/html
+    <<: *build_and_test
 
   gcc48-py35-cm28:
     <<: *ubuntu16
@@ -121,7 +101,27 @@ jobs:
       PYVER: "3.6"
       PYTEST: "py.test-3"
       CMAKE: /usr/bin/cmake
-    <<: *build_and_test
+
+    steps:
+      - *load_code
+      - *configure
+      - *compile
+      - *unit_test
+      - *store_results
+      - *store_results2
+      - persist_to_workspace:
+          root: .
+          paths:
+            - build/gsd
+
+  sphinx-docs:
+    <<: *ubuntu18
+    steps:
+      - *load_code
+      - attach_workspace:
+          at: .
+      - run: cd code/doc && sphinx-build -b html -d _build/doctrees -W -n . _build/html
+
 
   gcc8-py36:
     <<: *ubuntu18
@@ -163,21 +163,19 @@ jobs:
       CMAKE: /usr/bin/cmake
     <<: *build_and_test
 
-
 workflows:
   version: 2
   workflow:
     jobs:
       - gcc54-py35
-      - sphinx-docs:
-          requires:
-            - gcc54-py35
       - gcc48-py27-cm28
       - gcc6-py36
       - gcc7-py36
+      - sphinx-docs:
+          requires:
+            - gcc7-py36
       - gcc8-py36
       - clang38-py35
       - clang4-py36
       - clang5-py36
       - clang6-py36
-
