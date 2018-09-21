@@ -1,16 +1,16 @@
 version: 2
 
 references:
-  test_container_config-arch: &test_container_config-arch
+  ubuntu16: &ubuntu16
     docker:
-      - image: joaander/ci:20171206-arch-2
+      - image: glotzerlab/ci:2018.09-ubuntu16.04
         environment:
           PYTHONPATH: /home/ci/project/build
     working_directory: /home/ci/project
 
-  test_container_config: &test_container_config
+  ubuntu18: &ubuntu18
     docker:
-      - image: joaander/ci:20171130
+      - image: glotzerlab/ci:2018.09-ubuntu18.04
         environment:
           PYTHONPATH: /home/ci/project/build
     working_directory: /home/ci/project
@@ -22,7 +22,7 @@ references:
   configure: &configure
     run:
       name: Configure
-      command: mkdir build && cd build && ${CMAKE} ../code -DPYTHON_EXECUTABLE=`which python3` -DCYTHON_EXECUTABLE=`which cython3` -GNinja
+      command: mkdir build && cd build && ${CMAKE} ../code -DPYTHON_EXECUTABLE=/usr/bin/python${PYVER} -DCYTHON_EXECUTABLE=`which cython3` -GNinja
 
   compile: &compile
     run:
@@ -54,13 +54,14 @@ references:
 
 jobs:
 
-  gcc54-python35:
-    <<: *test_container_config
+  gcc54-py35:
+    <<: *ubuntu16
 
     environment:
       CC: /usr/bin/gcc
       CXX: /usr/bin/g++
       CMAKE: /usr/bin/cmake
+      PYVER: "3.5"
 
     steps:
       - *load_code
@@ -82,47 +83,101 @@ jobs:
           at: .
       - run: cd code/doc && sphinx-build -b html -d _build/doctrees -W -n . _build/html
 
-  clang38-python35:
-    <<: *test_container_config
-    environment:
-      CC: /usr/bin/clang
-      CXX: /usr/bin/clang++
-      CMAKE: /usr/bin/cmake
-    <<: *build_and_test
-
-  gcc48-python35-cmake28:
-    <<: *test_container_config
-    environment:
-      CC: /usr/bin/gcc-4.8
-      CXX: /usr/bin/g++-4.8
-      CMAKE: /opt/cmake-2.8.12/bin/cmake
-    <<: *build_and_test
-
-  gcc49-python35:
-    <<: *test_container_config
-    environment:
-      CC: /usr/bin/gcc-4.9
-      CXX: /usr/bin/g++-4.9
-      CMAKE: /usr/bin/cmake
-    <<: *build_and_test
-
-  gcc72-python36:
-    <<: *test_container_config-arch
+  gcc48-py35-cm28:
+    <<: *ubuntu16
     environment:
       CC: /usr/bin/gcc
       CXX: /usr/bin/g++
+      PYVER: "3.5"
+      PYTEST: "py.test-3.5"
+      CMAKE: /opt/cmake-2.8.12/bin/cmake
+    <<: *build_and_test
+
+  clang38-py35:
+    <<: *ubuntu16
+    environment:
+      CC: /usr/bin/clang
+      CXX: /usr/bin/clang++
+      PYVER: "3.5"
+      PYTEST: "py.test-3.5"
       CMAKE: /usr/bin/cmake
     <<: *build_and_test
+
+  gcc6-py36:
+    <<: *ubuntu18
+    environment:
+      CC: /usr/bin/gcc-6
+      CXX: /usr/bin/g++-6
+      PYVER: "3.6"
+      PYTEST: "py.test-3"
+      CMAKE: /usr/bin/cmake
+    <<: *build_and_test
+
+  gcc7-py36:
+    <<: *ubuntu18
+    environment:
+      CC: /usr/bin/gcc-7
+      CXX: /usr/bin/g++-7
+      PYVER: "3.6"
+      PYTEST: "py.test-3"
+      CMAKE: /usr/bin/cmake
+    <<: *build_and_test
+
+  gcc8-py36:
+    <<: *ubuntu18
+    environment:
+      CC: /usr/bin/gcc-8
+      CXX: /usr/bin/g++-8
+      PYVER: "3.6"
+      PYTEST: "py.test-3"
+      CMAKE: /usr/bin/cmake
+    <<: *build_and_test
+
+  clang4-py36:
+    <<: *ubuntu18
+    environment:
+      CC: /usr/bin/clang-4.0
+      CXX: /usr/bin/clang++-4.0
+      PYVER: "3.6"
+      PYTEST: "py.test-3"
+      CMAKE: /usr/bin/cmake
+    <<: *build_and_test
+
+  clang5-py36:
+    <<: *ubuntu18
+    environment:
+      CC: /usr/bin/clang-5.0
+      CXX: /usr/bin/clang++-5.0
+      PYVER: "3.6"
+      PYTEST: "py.test-3"
+      CMAKE: /usr/bin/cmake
+    <<: *build_and_test
+
+  clang6-py36:
+    <<: *ubuntu18
+    environment:
+      CC: /usr/bin/clang-5.0
+      CXX: /usr/bin/clang++-5.0
+      PYVER: "3.6"
+      PYTEST: "py.test-3"
+      CMAKE: /usr/bin/cmake
+    <<: *build_and_test
+
 
 workflows:
   version: 2
   workflow:
     jobs:
-      - gcc54-python35
+      - gcc54-py35
       - sphinx-docs:
           requires:
-            - gcc54-python35
-      - clang38-python35
-      - gcc48-python35-cmake28
-      - gcc49-python35
-      - gcc72-python36
+            - gcc54-py35
+      - gcc48-py27-cm28
+      - gcc6-py36
+      - gcc7-py36
+      - gcc8-py36
+      - clang38-py35
+      - clang4-py36
+      - clang5-py36
+      - clang6-py36
+
