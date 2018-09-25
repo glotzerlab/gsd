@@ -104,7 +104,7 @@ workflows:
           name: gcc6-py36
           image: ubuntu18.04
           cc: gcc-6
-          cxx: gc++-6
+          cxx: g++-6
           python-version: "3.6"
 
       - build_and_test:
@@ -129,10 +129,10 @@ workflows:
           python-version: "3.6"
 
       - build_and_test:
-          name: gcc54-py35
+          name: gcc5-py35
           image: ubuntu16.04
-          cc: gcc-5.4
-          cxx: g++-5.4
+          cc: gcc-5
+          cxx: g++-5
           python-version: "3.5"
 
       - build_and_test:
