@@ -2,8 +2,8 @@ Installation
 ============
 
 **GSD** binaries are available in the `glotzerlab-software <https://glotzerlab-software.readthedocs.io>`_
-`Docker <https://hub.docker.com/>`_/`Singularity <https://www.sylabs.io/>`_ images and packages on
-`conda-forge <https://conda-forge.org/>`_, and `PyPI <https://pypi.org/>`_. You can also compile **gsd** from source,
+`Docker <https://hub.docker.com/>`_/`Singularity <https://www.sylabs.io/>`_ images and in packages on
+`conda-forge <https://conda-forge.org/>`_ and `PyPI <https://pypi.org/>`_. You can also compile **GSD** from source,
 embed ``gsd.c`` in your code, or read gsd files with a single file pure python reader ``pygsd.py``.
 
 Anaconda package
@@ -11,14 +11,14 @@ Anaconda package
 
 **GSD** is available on `conda-forge <https://conda-forge.org/>`_. To install, first download and install
 `miniconda <http://conda.pydata.org/miniconda.html>`_.
-Then add the ``conda-forge`` channel and install **gsd**:
+Then add the ``conda-forge`` channel and install **GSD**:
 
 .. code-block:: bash
 
    $ conda config --add channels conda-forge
    $ conda install gsd
 
-You can update **gsd** with:
+You can update **GSD** with:
 
 .. code-block:: bash
 
@@ -27,8 +27,8 @@ You can update **gsd** with:
 Docker images
 -------------
 
-Pull the `glotzerlab-software <glotzerlab-software <https://glotzerlab-software.readthedocs.io>>`_ image to get
-**gsd** along with many other tools commonly used in simulation and analysis workflows. See full usage information in the
+Pull the `glotzerlab-software <https://glotzerlab-software.readthedocs.io>`_ image to get
+**GSD** along with many other tools commonly used in simulation and analysis workflows. See full usage information in the
 `glotzerlab-software documentation <https://glotzerlab-software.readthedocs.io>`_.
 
 Singularity:
@@ -46,7 +46,7 @@ Docker:
 PyPI
 ----
 
-Use **pip** to install **gsd**:
+Use **pip** to install **GSD**:
 
 .. code-block:: bash
 
@@ -96,7 +96,7 @@ your home directory, execute:
 
     $ python setup.py install --user
 
-When using conda, you can install into your `conda` site-packages with:
+When using conda, you can install into your **conda** site-packages with:
 
 .. code-block:: bash
 
@@ -120,7 +120,7 @@ You can assemble a functional python module in the build directory. Configure wi
    $ cmake ../
    $ make
 
-Add ``/path/to/build`` to your ``PYTHONPATH`` to test **gsd**, where ``/path/to`` is the directory containing your
+Add ``/path/to/build`` to your ``PYTHONPATH`` to test **GSD**, where ``/path/to`` is the directory containing your
 ``build`` directory.
 
 .. code-block:: bash
@@ -130,7 +130,7 @@ Add ``/path/to/build`` to your ``PYTHONPATH`` to test **gsd**, where ``/path/to`
 Run tests
 ^^^^^^^^^
 
-**gsd** has extensive unit tests to verify correct execution. Tests require python 3.2 or newer to execute.
+**GSD** has extensive unit tests to verify correct execution. Tests require python 3.2 or newer to execute.
 
 Run ``nosetests`` in the source directory to execute all unit tests. This requires that the
 python module is on the python path.
