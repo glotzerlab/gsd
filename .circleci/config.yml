@@ -115,6 +115,16 @@ jobs:
             done
             ls wheelhouse
 
+      - run:
+          name: Test wheels
+          working_directory: /root/code
+          command: |
+            for PYBIN in /opt/python/*/bin/; do
+                "${PYBIN}/pip" install nose --progress-bar=off
+                "${PYBIN}/pip" install gsd --no-index -f /io/wheelhouse --progress-bar=off
+                "${PYBIN}/nosetests"
+            done
+
 workflows:
   test:
     jobs:
