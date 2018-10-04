@@ -123,7 +123,7 @@ jobs:
           command: |
             export PYBIN=/opt/python/cp37-cp37m/bin
             "${PYBIN}/pip" install twine --progress-bar=off
-            echo "${PYBIN}/twine" upload --username joaander --password ${PYPI_PASSWORD} dist/*
+            "${PYBIN}/twine" upload --username joaander --password ${PYPI_PASSWORD} dist/*
 
 workflows:
   test:
