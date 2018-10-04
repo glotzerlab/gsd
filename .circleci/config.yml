@@ -130,7 +130,7 @@ jobs:
       - run:
           name: Upload
           working_directory: /root/code
-          command: echo twine upload --username joaander --password ${PYPI_PASSWORD} wheelhouse/*
+          command: twine upload --username joaander --password ${PYPI_PASSWORD} wheelhouse/*
 
 workflows:
   test:
@@ -209,4 +209,9 @@ workflows:
             branches:
               ignore: /.*/
 
-      - pypi-wheels
+      - pypi-wheels:
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
