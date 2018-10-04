@@ -204,3 +204,8 @@ workflows:
     jobs:
       - pypi-linux-wheels:
           context: org-global
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
