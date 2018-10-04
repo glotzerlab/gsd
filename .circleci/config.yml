@@ -8,7 +8,7 @@ executors:
       python-version:
         type: string
     docker:
-      - image: glotzerlab/ci:2018.09-<< parameters.image >>
+      - image: glotzerlab/ci:2018.10-<< parameters.image >>
     environment:
       PYTHONPATH: /home/ci/project/build
       PYTHON: "/usr/bin/python<< parameters.python-version >>"
@@ -82,6 +82,23 @@ jobs:
           steps:
             - sphinx:
 
+  pypi-upload:
+    executor:
+      name: glotzerlab
+      image: ubuntu18.04
+      python-version: "3.6"
+    steps:
+      - checkout:
+          path: code
+      - run:
+          name: Build sdist
+          working_directory: code
+          command: python3 setup.py sdist
+      - run:
+          name: Upload
+          working_directory: code
+          command: echo twine upload --username joaander --password ${PYPI_PASSWORD} dist/*
+
 workflows:
   workflow:
     jobs:
@@ -149,3 +166,12 @@ workflows:
           cxx: g++-4.8
           python-version: "3.5"
           cmake: /opt/cmake-2.8.12/bin/cmake
+
+  deploy:
+    jobs:
+      - pypi-upload:
+        filters:
+          tags:
+            only: /^v.*/
+          branches:
+            ignore: /.*/
