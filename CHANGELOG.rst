@@ -52,7 +52,7 @@ v1.2.0 (2017-02-21)
   for backward compatibility.
 
 v1.1.0 (2016-10-04)
------------------
+-------------------
 
 * Add special pairs section pairs/ to HOOMD schema.
 * HOOMD schema version is now 1.1.

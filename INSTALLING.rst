@@ -6,8 +6,11 @@ Installation
 `conda-forge <https://conda-forge.org/>`_ and `PyPI <https://pypi.org/>`_. You can also compile **GSD** from source,
 embed ``gsd.c`` in your code, or read gsd files with a single file pure python reader ``pygsd.py``.
 
+Binaries
+--------
+
 Anaconda package
-----------------
+^^^^^^^^^^^^^^^^
 
 **GSD** is available on `conda-forge <https://conda-forge.org/>`_. To install, first download and install
 `miniconda <http://conda.pydata.org/miniconda.html>`_.
@@ -25,7 +28,7 @@ You can update **GSD** with:
    $ conda update gsd
 
 Docker images
--------------
+^^^^^^^^^^^^^
 
 Pull the `glotzerlab-software <https://glotzerlab-software.readthedocs.io>`_ image to get
 **GSD** along with many other tools commonly used in simulation and analysis workflows. See full usage information in the
@@ -44,7 +47,7 @@ Docker:
    $ docker pull glotzerlab/software
 
 PyPI
-----
+^^^^
 
 Use **pip** to install **GSD**:
 
