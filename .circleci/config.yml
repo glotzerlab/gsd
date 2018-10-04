@@ -102,6 +102,13 @@ jobs:
                 "${PYBIN}/pip" wheel . -w dist/ --no-deps --progress-bar=off
             done
       - run:
+          name: Audit wheels
+          working_directory: /root/code
+          command: |
+            for whl in dist/gsd*.whl; do
+                auditwheel repair "$whl" -w dist/
+            done
+      - run:
           name: Test wheels
           working_directory: /root/code
           command: |
