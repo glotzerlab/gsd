@@ -111,7 +111,7 @@ jobs:
           working_directory: code
           command: |
             for PYBIN in /opt/python/*/bin; do
-                "${PYBIN}/pip" install numpy
+                "${PYBIN}/pip" install numpy --progress-bar=off
                 "${PYBIN}/pip" wheel . -w wheelhouse/ --no-deps
             done
             ls wheelhouse
