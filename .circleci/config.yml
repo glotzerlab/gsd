@@ -110,6 +110,7 @@ jobs:
           working_directory: /root/code
           command: |
             for PYBIN in /opt/python/*/bin; do
+                echo Building for `${PYBIN}/python --version`
                 "${PYBIN}/pip" install numpy --progress-bar=off
                 "${PYBIN}/pip" wheel . -w wheelhouse/ --no-deps --progress-bar=off
             done
@@ -120,10 +121,16 @@ jobs:
           working_directory: /root/code
           command: |
             for PYBIN in /opt/python/cp3*/bin/; do
+                echo Testing `${PYBIN}/python --version`
                 "${PYBIN}/pip" install nose --progress-bar=off
                 "${PYBIN}/pip" install gsd --no-index -f wheelhouse --progress-bar=off
                 "${PYBIN}/nosetests"
             done
+
+      - run:
+          name: Upload
+          working_directory: /root/code
+          command: echo twine upload --username joaander --password ${PYPI_PASSWORD} wheelhouse/*
 
 workflows:
   test:
