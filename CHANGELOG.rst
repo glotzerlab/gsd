@@ -3,8 +3,8 @@ Change Log
 
 `gsd <https://bitbucket.org/glotzer/gsd>`_ releases follow `semantic versioning <https://semver.org/>`_.
 
-v1.5.4 (not yet released)
--------------------------
+v1.5.4 (2018-10-04)
+-------------------
 
 * Add ``pyproject.toml`` file that defines ``numpy`` as a proper build dependency (requires pip >= 10)
 * Reorganize documentation
