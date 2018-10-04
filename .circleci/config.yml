@@ -100,19 +100,18 @@ jobs:
           command: twine upload --username joaander --password ${PYPI_PASSWORD} dist/*
 
   pypi-wheels:
-    working_directory: /root
     docker:
       - image: quay.io/pypa/manylinux1_x86_64
     steps:
       - checkout:
-          path: code
+          path: /root/code
       - run:
           name: Compile wheels
-          working_directory: code
+          working_directory: /root/code
           command: |
             for PYBIN in /opt/python/*/bin; do
                 "${PYBIN}/pip" install numpy --progress-bar=off
-                "${PYBIN}/pip" wheel . -w wheelhouse/ --no-deps
+                "${PYBIN}/pip" wheel . -w wheelhouse/ --no-deps --progress-bar=off
             done
             ls wheelhouse
 
@@ -192,4 +191,5 @@ workflows:
               only: /^v.*/
             branches:
               ignore: /.*/
+
       - pypi-wheels
