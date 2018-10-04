@@ -89,12 +89,6 @@ jobs:
       - checkout:
           path: /root/code
       - run:
-          name: Build sdist
-          working_directory: /root/code
-          command: |
-            export PYBIN=/opt/python/cp37-cp37m/bin
-            "${PYBIN}/python" setup.py sdist
-      - run:
           name: Compile wheels
           working_directory: /root/code
           command: |
@@ -103,8 +97,6 @@ jobs:
                 "${PYBIN}/pip" install numpy --progress-bar=off
                 "${PYBIN}/pip" wheel . -w dist/ --no-deps --progress-bar=off
             done
-            ls dist
-
       - run:
           name: Test wheels
           working_directory: /root/code
@@ -115,7 +107,12 @@ jobs:
                 "${PYBIN}/pip" install gsd --no-index -f dist --progress-bar=off
                 "${PYBIN}/nosetests"
             done
-
+      - run:
+          name: Build sdist
+          working_directory: /root/code
+          command: |
+            export PYBIN=/opt/python/cp37-cp37m/bin
+            "${PYBIN}/python" setup.py sdist
       - run:
           name: Upload
           working_directory: /root/code
@@ -123,6 +120,7 @@ jobs:
             export PYBIN=/opt/python/cp37-cp37m/bin
             "${PYBIN}/pip" install twine --progress-bar=off
             "${PYBIN}/twine" --help
+            ls dist
             echo "${PYBIN}/twine" upload --username joaander --password ${PYPI_PASSWORD} dist/*
 
 workflows:
