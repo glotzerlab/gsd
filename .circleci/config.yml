@@ -195,4 +195,4 @@ workflows:
 
   deploy:
     jobs:
-      - pypi-linux-wheels:
+      - pypi-linux-wheels
