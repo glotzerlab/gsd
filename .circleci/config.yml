@@ -82,23 +82,6 @@ jobs:
           steps:
             - sphinx:
 
-  pypi-sdist:
-    executor:
-      name: glotzerlab
-      image: ubuntu18.04
-      python-version: "3.6"
-    steps:
-      - checkout:
-          path: code
-      - run:
-          name: Build sdist
-          working_directory: code
-          command: python3 setup.py sdist
-      - run:
-          name: Upload
-          working_directory: code
-          command: twine upload --username joaander --password ${PYPI_PASSWORD} dist/*
-
   pypi-wheels:
     docker:
       - image: quay.io/pypa/manylinux1_x86_64
@@ -106,15 +89,19 @@ jobs:
       - checkout:
           path: /root/code
       - run:
+          name: Build sdist
+          working_directory: /root/code
+          command: python3 setup.py sdist
+      - run:
           name: Compile wheels
           working_directory: /root/code
           command: |
             for PYBIN in /opt/python/*/bin; do
                 echo Building for `${PYBIN}/python --version`
                 "${PYBIN}/pip" install numpy --progress-bar=off
-                "${PYBIN}/pip" wheel . -w wheelhouse/ --no-deps --progress-bar=off
+                "${PYBIN}/pip" wheel . -w dist/ --no-deps --progress-bar=off
             done
-            ls wheelhouse
+            ls dist
 
       - run:
           name: Test wheels
@@ -123,7 +110,7 @@ jobs:
             for PYBIN in /opt/python/cp3*/bin/; do
                 echo Testing `${PYBIN}/python --version`
                 "${PYBIN}/pip" install nose --progress-bar=off
-                "${PYBIN}/pip" install gsd --no-index -f wheelhouse --progress-bar=off
+                "${PYBIN}/pip" install gsd --no-index -f dist --progress-bar=off
                 "${PYBIN}/nosetests"
             done
 
@@ -131,10 +118,10 @@ jobs:
           name: Upload
           working_directory: /root/code
           command: |
-            export PYBIN=/opt/cp37-cp37m/bin
+            export PYBIN=/opt/python/cp37-cp37m/bin
             "${PYBIN}/pip" install twine --progress-bar=off
             "${PYBIN}/twine" --help
-            echo "${PYBIN}/twine" upload --username joaander --password ${PYPI_PASSWORD} wheelhouse/*
+            echo "${PYBIN}/twine" upload --username joaander --password ${PYPI_PASSWORD} dist/*
 
 workflows:
   test:
@@ -206,11 +193,4 @@ workflows:
 
   deploy:
     jobs:
-      - pypi-sdist:
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
-
       - pypi-wheels
