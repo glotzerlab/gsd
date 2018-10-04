@@ -3,6 +3,7 @@ from setuptools.extension import Extension
 import numpy
 import sys
 import hashlib
+import os
 
 current_checksum = hashlib.sha256()
 with open('gsd/fl.pyx') as f:
@@ -19,13 +20,26 @@ fl = Extension('gsd.fl',
                include_dirs = [numpy.get_include()]
                )
 
+# Read README for PyPI, fallback to short description if it fails.
+desc = 'General simulation data file format.'
+try:
+    readme_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                               'README.md')
+    with open(readme_file) as f:
+        readme = f.read()
+except ImportError:
+    readme = desc
+
+
 setup(name = 'gsd',
       version = '1.5.3',
-      description = 'General simulation data file format.',
+      description = desc,
+      long_description = readme,
+      long_description_content_type='text/markdown',
       license = 'BSD - 2 clause',
       author = 'Joshua A. Anderson',
       author_email = 'joaander@umich.edu',
-      url = 'https://bitbucket.org/glotzer/gsd',
+      url = 'https://gsd.readthedocs.io',
       download_url = 'http://glotzerlab.engin.umich.edu/Downloads/gsd/gsd-v1.5.3.tar.gz',
 
         classifiers=[
