@@ -1,12 +1,14 @@
 # GSD
 
+GSD (General Simulation Data) is a file format specification and a library to read and write it. The package also
+contains a python module that reads and writes [hoomd](https://glotzerlab.engin.umich.edu/hoomd-blue/) schema gsd
+files with an easy to use syntax.
+
 See the [full GSD documentation](http://gsd.readthedocs.io) at readthedocs.io.
 
 ## Overview
 
-GSD (General Simulation Data) is a file format specification and a library to read and write it. The package also
-contains a python module that reads and writes [hoomd](https://glotzerlab.engin.umich.edu/hoomd-blue/) schema gsd
-files with an easy to use syntax.
+GSD files:
 
 * Efficiently store many frames of data from simulation runs.
 * High performance file read and write.
@@ -93,122 +95,10 @@ with gsd.fl.open(name='file.gsd', mode='rb') as f:
         do_something(position);
 ```
 
-## Installing binaries
+## Installing gsd
 
-Official binaries of GSD are available via [conda](http://conda.pydata.org/docs/) through
-the [conda-forge](https://conda-forge.org/) channel.
-To install GSD, first download and install
-[miniconda](http://conda.pydata.org/miniconda.html) following [conda's instructions](http://conda.pydata.org/docs/install/quick.html).
-Then add the channel and install GSD from conda-forge:
+See [INSTALLING.rst](INSTALLING.rst).
 
-```bash
-$ conda config --add channels conda-forge
-$ conda install gsd
-```
+## Change log
 
-## Compiling the python module
-
-### Prerequisites
-
-    * A standards compliant C compiler
-    * Python >= 2.7
-    * numpy
-
-### Optional dependencies
-
-    * Cython >= 0.22 (only needed for non-tagged releases)
-    * nose (unit tests)
-    * sphinx (documentation)
-    * ipython (documentation)
-    * an internet connection (documentation)
-    * cmake (for development builds)
-    * Python >= 3.2 (to execute unit tests)
-
-### Get the source
-
-Download source releases directly from the web: https://glotzerlab.engin.umich.edu/Downloads/
-
-```bash
-$ curl -O https://glotzerlab.engin.umich.edu/Downloads/glotzer/glotzer-v1.5.3.tar.gz
-```
-
-Or, clone the latest development version using git:
-
-```bash
-$ git clone https://bitbucket.org/glotzer/gsd.git
-```
-
-### Install with setuptools
-
-Use ``python setup.py`` to install the python module with setuptools. For example, to install into
-your home directory, execute:
-
-```bash
-$ python setup.py install --user
-```
-
-When using conda, you can install into your `conda` site-packages with:
-
-```bash
-$ python setup.py install
-```
-
-Uninstall using pip:
-
-```bash
-$ pip uninstall gsd
-```
-
-### Build with cmake for development
-
-You can assemble a functional python module in the build directory using cmake:
-
-```bash
-$ mkdir build
-$ cd build
-$ cmake ../
-$ make
-```
-
-Then add the directory to your PYTHONPATH temporarily for testing.
-
-```bash
-export PYTHONPATH=/path/to/build:$PYTHONPATH
-```
-
-### Run unit tests
-
-Tests require python 3.2 or newer to execute.
-
-Run `nosetests` in the source directory to execute all unit tests. This requires that the
-python module is on the python path.
-
-```bash
-$ nosetests
-```
-
-### Build Documentation
-
-Documentation builds with sphinx and requires that the python module is on the python path.
-`ipython` is also required to build the documentation, as is an active internet connection.
-To build the documentation:
-
-```bash
-$ cd doc
-$ make html
-$ open _build/html/index.html
-```
-
-## Using the C library
-
-GSD is implemented in less than 1k lines of C code. It doesn't build a shared library, just
-copy `gsd/gsd.h` and `gsd/gsd.c` into your project and compile it directly in.
-
-## Using the pure python reader
-
-If you only need to read files, you can skip installing and just extract the module modules `gsd/pygsd.py` and
-`gsd/hoomd.py`. Together, these implement a pure-python reader for GSD and hoomd files - no C compiler required.
-
-# Change log
-
-See [ChangeLog.md](ChangeLog.md).
+See [CHANGELOG.rst](CHANGELOG.rst).

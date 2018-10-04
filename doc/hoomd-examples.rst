@@ -1,7 +1,7 @@
 .. _hoomd-examples:
 
-HOOMD examples
---------------
+HOOMD
+-----
 
 :py:mod:`gsd.hoomd` provides high-level access to HOOMD schema GSD files.
 
