@@ -32,7 +32,7 @@ except ImportError:
 
 
 setup(name = 'gsd',
-      version = '1.5.3',
+      version = '1.5.4',
       description = desc,
       long_description = readme,
       long_description_content_type='text/markdown',
@@ -40,7 +40,7 @@ setup(name = 'gsd',
       author = 'Joshua A. Anderson',
       author_email = 'joaander@umich.edu',
       url = 'https://gsd.readthedocs.io',
-      download_url = 'http://glotzerlab.engin.umich.edu/Downloads/gsd/gsd-v1.5.3.tar.gz',
+      download_url = 'http://glotzerlab.engin.umich.edu/Downloads/gsd/gsd-v1.5.4.tar.gz',
 
         classifiers=[
             "Development Status :: 5 - Production/Stable",
