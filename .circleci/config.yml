@@ -86,6 +86,10 @@ jobs:
     docker:
       - image: quay.io/pypa/manylinux1_x86_64
     steps:
+      - run:
+          name: Install software
+          working_directory: /root/code
+          command: yum install -y openssh-clients
       - checkout:
           path: /root/code
       - run:
@@ -119,7 +123,7 @@ jobs:
           command: |
             export PYBIN=/opt/python/cp37-cp37m/bin
             "${PYBIN}/pip" install twine --progress-bar=off
-            "${PYBIN}/twine" upload --username joaander --password ${PYPI_PASSWORD} dist/*
+            echo "${PYBIN}/twine" upload --username joaander --password ${PYPI_PASSWORD} dist/*
 
 workflows:
   test:
@@ -192,8 +196,3 @@ workflows:
   deploy:
     jobs:
       - pypi-linux-wheels:
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
