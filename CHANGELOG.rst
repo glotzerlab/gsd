@@ -7,6 +7,7 @@ v1.5.4 (not yet released)
 -------------------------
 
 * Add ``pyproject.toml`` file that defines ``numpy`` as a proper build dependency (requires pip >= 10)
+* Reorganize documentation
 
 v1.5.3 (2018-05-22)
 -------------------
