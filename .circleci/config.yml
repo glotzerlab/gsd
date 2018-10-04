@@ -82,7 +82,7 @@ jobs:
           steps:
             - sphinx:
 
-  pypi-upload:
+  pypi-sdist:
     executor:
       name: glotzerlab
       image: ubuntu18.04
@@ -98,6 +98,23 @@ jobs:
           name: Upload
           working_directory: code
           command: twine upload --username joaander --password ${PYPI_PASSWORD} dist/*
+
+  pypi-wheels:
+    docker:
+      - image: quay.io/pypa/manylinux1_x86_64
+          working_directory: /root
+    steps:
+      - checkout:
+          path: code
+      - run:
+          name: Compile wheels
+          working_directory: code
+          command:|
+            for PYBIN in /opt/python/*/bin; do
+                "${PYBIN}/pip" install numpy
+                "${PYBIN}/pip" wheel . -w wheelhouse/ --no-deps
+            done
+            ls wheelhouse
 
 workflows:
   test:
@@ -169,9 +186,10 @@ workflows:
 
   deploy:
     jobs:
-      - pypi-upload:
+      - pypi-sdist:
           filters:
             tags:
               only: /^v.*/
             branches:
               ignore: /.*/
+      - pypi-wheels
