@@ -100,7 +100,7 @@ jobs:
           command: echo twine upload --username joaander --password ${PYPI_PASSWORD} dist/*
 
 workflows:
-  workflow:
+  test:
     jobs:
       - build_and_test:
           name: gcc8-py36
