@@ -99,13 +99,13 @@ jobs:
             for PYBIN in /opt/python/*/bin; do
                 echo Building for `${PYBIN}/python --version`
                 "${PYBIN}/pip" install numpy --progress-bar=off
-                "${PYBIN}/pip" wheel . -w dist/ --no-deps --progress-bar=off
+                "${PYBIN}/pip" wheel . -w wheels/ --no-deps --progress-bar=off
             done
       - run:
           name: Audit wheels
           working_directory: /root/code
           command: |
-            for whl in dist/gsd*.whl; do
+            for whl in wheels/gsd*.whl; do
                 auditwheel repair "$whl" -w dist/
             done
       - run:
