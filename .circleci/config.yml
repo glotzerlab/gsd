@@ -130,7 +130,11 @@ jobs:
       - run:
           name: Upload
           working_directory: /root/code
-          command: twine upload --username joaander --password ${PYPI_PASSWORD} wheelhouse/*
+          command: |
+            export PYBIN=/opt/cp37-cp37m/bin
+            "${PYBIN}/pip" install twine --progress-bar=off
+            "${PYBIN}/twine" --help
+            echo "${PYBIN}/twine" upload --username joaander --password ${PYPI_PASSWORD} wheelhouse/*
 
 workflows:
   test:
@@ -209,9 +213,4 @@ workflows:
             branches:
               ignore: /.*/
 
-      - pypi-wheels:
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
+      - pypi-wheels
