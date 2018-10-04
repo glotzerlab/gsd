@@ -8,7 +8,7 @@ executors:
       python-version:
         type: string
     docker:
-      - image: glotzerlab/ci:2018.09-<< parameters.image >>
+      - image: glotzerlab/ci:2018.10-<< parameters.image >>
     environment:
       PYTHONPATH: /home/ci/project/build
       PYTHON: "/usr/bin/python<< parameters.python-version >>"
@@ -82,8 +82,47 @@ jobs:
           steps:
             - sphinx:
 
+  pypi-linux-wheels:
+    docker:
+      - image: quay.io/pypa/manylinux1_x86_64
+    steps:
+      - checkout:
+          path: /root/code
+      - run:
+          name: Compile wheels
+          working_directory: /root/code
+          command: |
+            for PYBIN in /opt/python/*/bin; do
+                echo Building for `${PYBIN}/python --version`
+                "${PYBIN}/pip" install numpy --progress-bar=off
+                "${PYBIN}/pip" wheel . -w dist/ --no-deps --progress-bar=off
+            done
+      - run:
+          name: Test wheels
+          working_directory: /root/code
+          command: |
+            for PYBIN in /opt/python/cp3*/bin/; do
+                echo Testing `${PYBIN}/python --version`
+                "${PYBIN}/pip" install nose --progress-bar=off
+                "${PYBIN}/pip" install gsd --no-index -f dist --progress-bar=off
+                "${PYBIN}/nosetests"
+            done
+      - run:
+          name: Build sdist
+          working_directory: /root/code
+          command: |
+            export PYBIN=/opt/python/cp37-cp37m/bin
+            "${PYBIN}/python" setup.py sdist
+      - run:
+          name: Upload
+          working_directory: /root/code
+          command: |
+            export PYBIN=/opt/python/cp37-cp37m/bin
+            "${PYBIN}/pip" install twine --progress-bar=off
+            "${PYBIN}/twine" upload --username joaander --password ${PYPI_PASSWORD} dist/*
+
 workflows:
-  workflow:
+  test:
     jobs:
       - build_and_test:
           name: gcc8-py36
@@ -149,3 +188,12 @@ workflows:
           cxx: g++-4.8
           python-version: "3.5"
           cmake: /opt/cmake-2.8.12/bin/cmake
+
+  deploy:
+    jobs:
+      - pypi-linux-wheels:
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
