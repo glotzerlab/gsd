@@ -91,7 +91,9 @@ jobs:
       - run:
           name: Build sdist
           working_directory: /root/code
-          command: python3 setup.py sdist
+          command: |
+            export PYBIN=/opt/python/cp37-cp37m/bin
+            "${PYBIN}/python" setup.py sdist
       - run:
           name: Compile wheels
           working_directory: /root/code
