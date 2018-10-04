@@ -97,7 +97,7 @@ jobs:
       - run:
           name: Upload
           working_directory: code
-          command: echo twine upload --username joaander --password ${PYPI_PASSWORD} dist/*
+          command: twine upload --username joaander --password ${PYPI_PASSWORD} dist/*
 
 workflows:
   test:
