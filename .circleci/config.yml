@@ -82,7 +82,7 @@ jobs:
           steps:
             - sphinx:
 
-  pypi-wheels:
+  pypi-linux-wheels:
     docker:
       - image: quay.io/pypa/manylinux1_x86_64
     steps:
@@ -119,9 +119,7 @@ jobs:
           command: |
             export PYBIN=/opt/python/cp37-cp37m/bin
             "${PYBIN}/pip" install twine --progress-bar=off
-            "${PYBIN}/twine" --help
-            ls dist
-            echo "${PYBIN}/twine" upload --username joaander --password ${PYPI_PASSWORD} dist/*
+            "${PYBIN}/twine" upload --username joaander --password ${PYPI_PASSWORD} dist/*
 
 workflows:
   test:
@@ -193,4 +191,9 @@ workflows:
 
   deploy:
     jobs:
-      - pypi-wheels
+      - pypi-linux-wheels:
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
