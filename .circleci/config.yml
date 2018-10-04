@@ -121,7 +121,7 @@ jobs:
           command: |
             for PYBIN in /opt/python/*/bin/; do
                 "${PYBIN}/pip" install nose --progress-bar=off
-                "${PYBIN}/pip" install gsd --no-index -f /io/wheelhouse --progress-bar=off
+                "${PYBIN}/pip" install gsd --no-index -f wheelhouse --progress-bar=off
                 "${PYBIN}/nosetests"
             done
 
