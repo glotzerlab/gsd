@@ -86,6 +86,10 @@ jobs:
     docker:
       - image: quay.io/pypa/manylinux1_x86_64
     steps:
+      - run:
+          name: Install software
+          working_directory: /root/code
+          command: yum install -y openssh-clients
       - checkout:
           path: /root/code
       - run:
@@ -95,7 +99,14 @@ jobs:
             for PYBIN in /opt/python/*/bin; do
                 echo Building for `${PYBIN}/python --version`
                 "${PYBIN}/pip" install numpy --progress-bar=off
-                "${PYBIN}/pip" wheel . -w dist/ --no-deps --progress-bar=off
+                "${PYBIN}/pip" wheel . -w wheels/ --no-deps --progress-bar=off
+            done
+      - run:
+          name: Audit wheels
+          working_directory: /root/code
+          command: |
+            for whl in wheels/gsd*.whl; do
+                auditwheel repair "$whl" -w dist/
             done
       - run:
           name: Test wheels
@@ -192,6 +203,7 @@ workflows:
   deploy:
     jobs:
       - pypi-linux-wheels:
+          context: org-global
           filters:
             tags:
               only: /^v.*/
