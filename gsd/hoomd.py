@@ -551,11 +551,11 @@ class HOOMDTrajectory(object):
         if self._initial_frame is not None:
             initial_container = getattr(self._initial_frame, path);
             initial_data = getattr(initial_container, name);
-            if numpy.all(initial_data == data):
+            if numpy.array_equal(initial_data, data):
                 logger.debug('skipping data chunk, matches frame 0: ' + path + '/' + name);
                 return False;
 
-        if numpy.all(data == container._default_value[name]):
+        if numpy.array_equal(data, container._default_value[name]):
             logger.debug('skipping data chunk, default value: ' + path + '/' + name);
             return False;
 
