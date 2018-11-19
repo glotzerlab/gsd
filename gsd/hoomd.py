@@ -555,7 +555,7 @@ class HOOMDTrajectory(object):
                 logger.debug('skipping data chunk, matches frame 0: ' + path + '/' + name);
                 return False;
 
-        if numpy.array_equal(data, container._default_value[name]):
+        if numpy.array_equiv(data, container._default_value[name]):
             logger.debug('skipping data chunk, default value: ' + path + '/' + name);
             return False;
 
