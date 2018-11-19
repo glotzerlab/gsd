@@ -321,7 +321,7 @@ class GSDFile(object):
         if len(data_raw) != size:
             raise IOError;
 
-        data_npy = numpy.fromstring(data_raw, dtype=gsd_type_mapping[chunk.type]);
+        data_npy = numpy.frombuffer(data_raw, dtype=gsd_type_mapping[chunk.type]);
 
         if chunk.M == 1:
             return data_npy;
