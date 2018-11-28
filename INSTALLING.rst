@@ -63,7 +63,7 @@ Download source releases directly from the web: https://glotzerlab.engin.umich.e
 
 .. code-block:: bash
 
-   $ curl -O https://glotzerlab.engin.umich.edu/Downloads/gsd/gsd-v1.5.4.tar.gz
+   $ curl -O https://glotzerlab.engin.umich.edu/Downloads/gsd/gsd-v1.5.5.tar.gz
 
 Or, clone using git:
 
