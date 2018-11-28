@@ -3,6 +3,11 @@ Change Log
 
 `gsd <https://bitbucket.org/glotzer/gsd>`_ releases follow `semantic versioning <https://semver.org/>`_.
 
+v1.5.5 (2018-11-28)
+-------------------
+
+* Silence numpy deprecation warnings
+
 v1.5.4 (2018-10-04)
 -------------------
 
