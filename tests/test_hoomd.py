@@ -388,6 +388,41 @@ def test_iteration():
             steps = [snap.configuration.step for snap in snaps];
             eq_(steps, [16,17]);
 
+def test_slicing_and_iteration():
+    with tempfile.TemporaryDirectory() as d:
+
+        with gsd.hoomd.open(name=d+"/test_slicing.gsd", mode='wb') as hf:
+            hf.extend((create_frame(i) for i in range(20)));
+
+        with gsd.hoomd.open(name=d+"/test_slicing.gsd", mode='rb') as hf:
+            # Test len()-function on trajectory and sliced trajectory.
+            eq_(len(hf), 20)
+            eq_(len(hf[:10]), 10)
+
+            # Test len()-function with explicit iterator.
+            eq_(len(iter(hf)), len(hf))
+            eq_(len(iter(hf[:10])), len(hf[:10]))
+
+            # Test iteration with implicit iterator.
+            # All iterations are run twice to check for issues
+            # with iterator exhaustion.
+            eq_(len(list(hf)), len(hf))
+            eq_(len(list(hf)), len(hf))
+            eq_(len(list(hf[:10])), len(hf[:10]))
+            eq_(len(list(hf[:10])), len(hf[:10]))
+
+            # Test iteration with explicit iterator.
+            hf_iter = iter(hf)
+            eq_(len(hf_iter), len(hf))  # sanity check
+            eq_(len(list(hf_iter)), len(hf))
+            eq_(len(list(hf_iter)), len(hf))
+
+            # Test iteration with explicit sliced iterator.
+            hf_iter = iter(hf[:10])
+            eq_(len(hf_iter), 10)  # sanity check
+            eq_(len(list(hf_iter)), 10)
+            eq_(len(list(hf_iter)), 10)
+
 def test_truncate():
     with tempfile.TemporaryDirectory() as d:
         gsd.hoomd.create(name=d+"/test_iteration.gsd");
