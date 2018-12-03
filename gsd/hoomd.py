@@ -443,6 +443,25 @@ class Snapshot(object):
             if k not in self._valid_state:
                 raise RuntimeError('Not a valid state: ' + k)
 
+class _HOOMDTrajectoryIterable(object):
+    """Iterable over a HOOMDTrajectory object."""
+
+    def __init__(self, trajectory, indices):
+        self._trajectory = trajectory
+        self._indices = indices
+        self._indices_iterator = iter(indices)
+
+    def __next__(self):
+        return self._trajectory[next(self._indices_iterator)]
+
+    next = __next__     # Python 2.7 compatibility
+
+    def __iter__(self):
+        return type(self)(self._trajectory, self._indices)
+
+    def __len__(self):
+        return len(self._indices)
+
 class HOOMDTrajectory(object):
     """ Read and write hoomd gsd files.
 
@@ -694,7 +713,7 @@ class HOOMDTrajectory(object):
         """
 
         if isinstance(key, slice) :
-            return (self.read_frame(i) for i in range(*key.indices(len(self))));
+            return _HOOMDTrajectoryIterable(self, range(*key.indices(len(self))))
         elif isinstance(key, int) :
             if key < 0:
                 key += len(self)
@@ -703,6 +722,9 @@ class HOOMDTrajectory(object):
             return self.read_frame(key);
         else:
             raise TypeError;
+
+    def __iter__(self):
+        return _HOOMDTrajectoryIterable(self, range(len(self)))
 
     def __enter__(self):
         return self;

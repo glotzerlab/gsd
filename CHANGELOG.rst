@@ -3,6 +3,11 @@ Change Log
 
 `gsd <https://bitbucket.org/glotzer/gsd>`_ releases follow `semantic versioning <https://semver.org/>`_.
 
+next
+----
+
+* The length of sliced HOOMDTrajectory objects can be determined with the builtin len()-function.
+
 v1.5.5 (2018-11-28)
 -------------------
 

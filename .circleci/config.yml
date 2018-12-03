@@ -80,7 +80,7 @@ jobs:
       - when:
           condition: << parameters.build-docs >>
           steps:
-            - sphinx:
+            - sphinx
 
   pypi-linux-wheels:
     docker:
