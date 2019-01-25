@@ -69,7 +69,7 @@ Or, clone using git:
 
 .. code-block:: bash
 
-   $ git clone https://bitbucket.org/glotzer/gsd.git
+   $ git clone https://github.com/glotzerlab/gsd
 
 Prerequisites
 ^^^^^^^^^^^^^

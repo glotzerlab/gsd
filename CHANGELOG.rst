@@ -1,7 +1,7 @@
 Change Log
 ==========
 
-`gsd <https://bitbucket.org/glotzer/gsd>`_ releases follow `semantic versioning <https://semver.org/>`_.
+`gsd <https://github.com/glotzerlab/gsd>`_ releases follow `semantic versioning <https://semver.org/>`_.
 
 v1.6.0 (2018-12-20)
 -------------------
