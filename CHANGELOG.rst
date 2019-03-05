@@ -3,6 +3,11 @@ Change Log
 
 `gsd <https://github.com/glotzerlab/gsd>`_ releases follow `semantic versioning <https://semver.org/>`_.
 
+v1.6.1 (2019-03-05)
+-------------------
+
+* Documentation updates
+
 v1.6.0 (2018-12-20)
 -------------------
 
