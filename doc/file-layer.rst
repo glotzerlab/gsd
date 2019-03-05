@@ -98,13 +98,13 @@ There are four types of data blocks in a GSD file.
     * The header is the first 256 bytes in the file.
 #. Index block
     * Index the frame data, size information, location, name id, etc...
-    * The index contains space for any number of `index_entry` structs, the header indicates how many slots are used.
+    * The index contains space for any number of ``index_entry`` structs, the header indicates how many slots are used.
     * When the index fills up, a new index block is allocated at the end of the file with more space and all
       current index entries are rewritten there.
     * Index entry size: 32 bytes
 #. Name list
     * List of string names used by index entries.
-    * Each name is a `name_entry` struct, which holds up to 63 characters.
+    * Each name is a ``name_entry`` struct, which holds up to 63 characters.
     * The header stores the total number of names available in the list and the number of name slots used.
 #. Data chunk
     * Raw binary data stored for the named frame data blocks.

@@ -131,8 +131,8 @@ Configuration
     Simulation box. Each array element defines a different box property. See the hoomd documentation for
     a full description on how these box parameters map to a triclinic geometry.
 
-    * `box[0:3]`: :math:`(l_x, l_y, l_z)` the box length in each direction, in length units
-    * `box[3:]`: :math:`(xy, xz, yz)` the tilt factors, unitless values
+    * ``box[0:3]``: :math:`(l_x, l_y, l_z)` the box length in each direction, in length units
+    * ``box[3:]``: :math:`(xy, xz, yz)` the tilt factors, unitless values
 
 
 Particle data
