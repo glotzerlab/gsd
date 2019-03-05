@@ -43,7 +43,7 @@ class ConfigurationData(object):
     Attributes:
         step (int): Time step of this frame (:chunk:`configuration/step`).
         dimensions (int): Number of dimensions (:chunk:`configuration/dimensions`).
-        box (numpy.ndarray[float, ndim=1, mode='c']): Box dimensions (:chunk:`configuration/box`)
+        box (`numpy.ndarray` or `array_like` [float, ndim=1, mode='c']): Box dimensions (:chunk:`configuration/box`)
                                                       - [lx, ly, lz, xy, xz, yz].
     """
 
@@ -92,17 +92,17 @@ class ParticleData(object):
     Attributes:
         N (int): Number of particles in the snapshot (:chunk:`particles/N`).
         types (list[str]): Names of the particle types (:chunk:`particles/types`).
-        position (numpy.ndarray[float, ndim=2, mode='c']): Nx3 array defining particle position (:chunk:`particles/position`).
-        orientation (numpy.ndarray[float, ndim=2, mode='c']): Nx4 array defining particle position (:chunk:`particles/orientation`).
-        typeid (numpy.ndarray[uint32, ndim=1, mode='c']): N length array defining particle type ids (:chunk:`particles/typeid`).
-        mass (numpy.ndarray[float, ndim=1, mode='c']): N length array defining particle masses (:chunk:`particles/mass`).
-        charge (numpy.ndarray[float, ndim=1, mode='c']): N length array defining particle charges (:chunk:`particles/charge`).
-        diameter (numpy.ndarray[float, ndim=1, mode='c']): N length array defining particle diameters (:chunk:`particles/diameter`).
-        body (numpy.ndarray[int32, ndim=1, mode='c']): N length array defining particle bodies (:chunk:`particles/body`).
-        moment_inertia (numpy.ndarray[float, ndim=2, mode='c']): Nx3 array defining particle moments of inertia (:chunk:`particles/moment_inertia`).
-        velocity (numpy.ndarray[float, ndim=2, mode='c']): Nx3 array defining particle velocities (:chunk:`particles/velocity`).
-        angmom (numpy.ndarray[float, ndim=2, mode='c']): Nx4 array defining particle angular momenta (:chunk:`particles/angmom`).
-        image (numpy.ndarray[int32, ndim=2, mode='c']): Nx3 array defining particle images (:chunk:`particles/image`).
+        position (`numpy.ndarray` or `array_like` [float, ndim=2, mode='c']): Nx3 array defining particle position (:chunk:`particles/position`).
+        orientation (`numpy.ndarray` or `array_like` [float, ndim=2, mode='c']): Nx4 array defining particle position (:chunk:`particles/orientation`).
+        typeid (`numpy.ndarray` or `array_like` [uint32, ndim=1, mode='c']): N length array defining particle type ids (:chunk:`particles/typeid`).
+        mass (`numpy.ndarray` or `array_like` [float, ndim=1, mode='c']): N length array defining particle masses (:chunk:`particles/mass`).
+        charge (`numpy.ndarray` or `array_like` [float, ndim=1, mode='c']): N length array defining particle charges (:chunk:`particles/charge`).
+        diameter (`numpy.ndarray` or `array_like` [float, ndim=1, mode='c']): N length array defining particle diameters (:chunk:`particles/diameter`).
+        body (`numpy.ndarray` or `array_like` [int32, ndim=1, mode='c']): N length array defining particle bodies (:chunk:`particles/body`).
+        moment_inertia (`numpy.ndarray` or `array_like` [float, ndim=2, mode='c']): Nx3 array defining particle moments of inertia (:chunk:`particles/moment_inertia`).
+        velocity (`numpy.ndarray` or `array_like` [float, ndim=2, mode='c']): Nx3 array defining particle velocities (:chunk:`particles/velocity`).
+        angmom (`numpy.ndarray` or `array_like` [float, ndim=2, mode='c']): Nx4 array defining particle angular momenta (:chunk:`particles/angmom`).
+        image (`numpy.ndarray` or `array_like` [int32, ndim=2, mode='c']): Nx3 array defining particle images (:chunk:`particles/image`).
     """
 
     _default_value = OrderedDict();
@@ -212,8 +212,8 @@ class BondData(object):
     Attributes:
         N (int): Number of particles in the snapshot (:chunk:`bonds/N`, :chunk:`angles/N`, :chunk:`dihedrals/N`, :chunk:`impropers/N`, :chunk:`pairs/N`).
         types (list[str]): Names of the particle types (:chunk:`bonds/types`, :chunk:`angles/types`, :chunk:`dihedrals/types`, :chunk:`impropers/types`, :chunk:`pairs/types`).
-        typeid (numpy.ndarray[uint32, ndim=1, mode='c']): N length array defining bond type ids (:chunk:`bonds/typeid`, :chunk:`angles/typeid`, :chunk:`dihedrals/typeid`, :chunk:`impropers/typeid`, :chunk:`pairs/types`).
-        group (numpy.ndarray[uint32, ndim=2, mode='c']): NxM array defining tags in the particle bonds (:chunk:`bonds/group`, :chunk:`angles/group`, :chunk:`dihedrals/group`, :chunk:`impropers/group`, :chunk:`pairs/group`).
+        typeid (`numpy.ndarray` or `array_like` [uint32, ndim=1, mode='c']): - N length array defining bond type ids (:chunk:`bonds/typeid`, :chunk:`angles/typeid`, :chunk:`dihedrals/typeid`, :chunk:`impropers/typeid`, :chunk:`pairs/types`).
+        group (`numpy.ndarray` or `array_like` [uint32, ndim=2, mode='c']): - NxM array defining tags in the particle bonds (:chunk:`bonds/group`, :chunk:`angles/group`, :chunk:`dihedrals/group`, :chunk:`impropers/group`, :chunk:`pairs/group`).
     """
 
     def __init__(self, M):
@@ -266,8 +266,8 @@ class ConstraintData(object):
 
     Attributes:
         N (int): Number of particles in the snapshot (:chunk:`constraints/N`).
-        value (numpy.ndarray[float32, ndim=1, mode='c']): N length array defining constraint lengths (:chunk:`constraints/value`).
-        group (numpy.ndarray[uint32, ndim=2, mode='c']): Nx2 array defining tags in the particle constraints (:chunk:`constraints/group`).
+        value (`numpy.ndarray` or `array_like` [float32, ndim=1, mode='c']): N length array defining constraint lengths (:chunk:`constraints/value`).
+        group (`numpy.ndarray` or `array_like` [int32, ndim=2, mode='c']): Nx2 array defining tags in the particle constraints (:chunk:`constraints/group`).
     """
 
     def __init__(self):
@@ -314,7 +314,7 @@ class Snapshot(object):
         angles (:py:class:`BondData`): Angle data snapshot.
         dihedrals (:py:class:`BondData`): Dihedral data snapshot.
         impropers (:py:class:`BondData`): Improper data snapshot.
-        pairs (:py:class: `BondData`): Special pair interactions snapshot
+        pairs (:py:class:`BondData`): Special pair interactions snapshot
         state (dict): Dictionary containing state data
 
     See the HOOMD schema specification for details on entries in the state dictionary. Entries in this dict are the

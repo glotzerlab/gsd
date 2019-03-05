@@ -97,7 +97,7 @@ class GSDFile(object):
 
     Attributes:
 
-        file (file-like): File-like object opened **(read only)**.
+        file: File-like object opened **(read only)**.
         name (str): file.name **(read only)**.
         mode (str): Mode of the open file **(read only)**.
         gsd_version (tuple[int]): GSD file layer version number [major, minor] **(read only)**.

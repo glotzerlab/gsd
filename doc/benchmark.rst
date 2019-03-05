@@ -6,7 +6,7 @@ Benchmarks
 
 The benchmark script :file:`scripts/benchmark-hoomd.py` runs a suite of I/O benchmarks that measure the time it takes
 to write a file, read frames sequentially, and read frames randomly. This script only runs on linux and requires that
-the user have no-password `sudo` access (set this only temporarily). It flushes filesystem buffers and clears the
+the user have no-password ``sudo`` access (set this only temporarily). It flushes filesystem buffers and clears the
 cache to provide accurate timings. It is representative of typical use cases, storing position and orientation in
 a hoomd schema GSD file at each frame. The benchmark runs at fixed file sizes with varying N (and varying number of
 frames) in order to test small block and large block I/O.

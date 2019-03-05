@@ -6,7 +6,7 @@ Change Log
 v1.6.0 (2018-12-20)
 -------------------
 
-* The length of sliced HOOMDTrajectory objects can be determined with the built-in `len()` function.
+* The length of sliced HOOMDTrajectory objects can be determined with the built-in ``len()`` function.
 
 v1.5.5 (2018-11-28)
 -------------------
@@ -58,7 +58,7 @@ v1.2.0 (2017-02-21)
 
 * Add ``gsd.hoomd.open()`` method which can create and open hoomd gsd files.
 * Add ``gsd.fl.open()`` method which can create and open gsd files.
-* The previous create/class `GSDFile` instantiation is still supported
+* The previous create/class ``GSDFile`` instantiation is still supported
   for backward compatibility.
 
 v1.1.0 (2016-10-04)
