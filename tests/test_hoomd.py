@@ -444,6 +444,8 @@ def test_state():
         snap0 = gsd.hoomd.Snapshot();
 
         snap0.state['hpmc/sphere/radius'] = [2.0]
+        snap0.state['hpmc/sphere/orientable'] = [1]
+
 
         snap1 = gsd.hoomd.Snapshot();
 
@@ -464,6 +466,7 @@ def test_state():
             s = hf.read_frame(0);
 
             numpy.testing.assert_array_equal(s.state['hpmc/sphere/radius'], snap0.state['hpmc/sphere/radius']);
+            numpy.testing.assert_array_equal(s.state['hpmc/sphere/orientable'], snap0.state['hpmc/sphere/orientable']);
 
             s = hf.read_frame(1);
 
