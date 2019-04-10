@@ -553,7 +553,7 @@ Name                                                       Type   Size      Unit
 :chunk:`state/hpmc/integrate/d`                            double 1x1       length
 :chunk:`state/hpmc/integrate/a`                            double 1x1       number
 :chunk:`state/hpmc/sphere/radius`                          float  NTx1      length
-:chunk:`state/hpmc/sphere/orientable`                      bool   NTx1      ------
+:chunk:`state/hpmc/sphere/orientable`                      uint8  NTx1      boolean
 :chunk:`state/hpmc/ellipsoid/a`                            float  NTx1      length
 :chunk:`state/hpmc/ellipsoid/b`                            float  NTx1      length
 :chunk:`state/hpmc/ellipsoid/c`                            float  NTx1      length

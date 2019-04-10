@@ -387,7 +387,7 @@ class Snapshot(object):
             self.state['hpmc/sphere/radius'] = self.state['hpmc/sphere/radius'].reshape([NT])
 
         if 'hpmc/sphere/orientable' in self.state:
-            self.state['hpmc/sphere/orientable'] = numpy.ascontiguousarray(self.state['hpmc/sphere/orientable'], dtype=numpy.bool);
+            self.state['hpmc/sphere/orientable'] = numpy.ascontiguousarray(self.state['hpmc/sphere/orientable'], dtype=numpy.uint8);
             self.state['hpmc/sphere/orientable'] = self.state['hpmc/sphere/orientable'].reshape([NT])
 
         if 'hpmc/ellipsoid/a' in self.state:
