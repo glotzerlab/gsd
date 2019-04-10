@@ -606,6 +606,16 @@ HPMC integrator state
 
     .. versionadded:: 1.2
 
+.. chunk:: state/hpmc/sphere/orientable
+
+        :Type: uint8
+        :Size: NTx1
+        :Units: boolean
+
+    Orientable flag for each particle type.
+
+    .. versionadded:: 1.3
+
 .. chunk:: state/hpmc/ellipsoid/a
 
     :Type: float
