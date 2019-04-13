@@ -94,8 +94,21 @@ jobs:
           name: Install software
           working_directory: /root/code
           command: yum install -y openssh-clients
-      - checkout:
-          path: /root/code
+      - run:
+          name: Checkout repository
+          command: |
+            cd /root
+            git clone ${CIRCLE_REPOSITORY_URL} code
+            cd code
+            if [ -n "$CIRCLE_TAG" ]
+            then
+              git reset --hard "$CIRCLE_SHA1"
+              git checkout -q "$CIRCLE_TAG"
+            elif [ -n "$CIRCLE_BRANCH" ]
+            then
+              git reset --hard "$CIRCLE_SHA1"
+              git checkout -q -B "$CIRCLE_BRANCH"
+            fi
       - run:
           name: Build numpy
           working_directory: /
@@ -222,7 +235,7 @@ workflows:
           cmake: /opt/cmake-2.8.12/bin/cmake
 
       - pypi-linux-wheels:
-          upload: false
+          upload: ""
 
   deploy:
     jobs:
