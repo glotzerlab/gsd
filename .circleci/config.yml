@@ -237,10 +237,12 @@ workflows:
           cmake: /opt/cmake-2.8.12/bin/cmake
 
       - pypi-linux-wheels
+          name: wheel-build
 
   deploy:
     jobs:
       - pypi-linux-wheels:
+          name: wheel-upload
           context: org-global
           upload-package: true
           filters:
