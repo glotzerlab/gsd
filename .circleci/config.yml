@@ -116,6 +116,7 @@ jobs:
             for PYBIN in /opt/python/cp27*/bin /opt/python/cp34*/bin /opt/python/cp36*/bin /opt/python/cp37*/bin; do
                 echo Building numpy for `${PYBIN}/python --version`
                 "${PYBIN}/python" -m pip install cython --no-deps --ignore-installed -q --progress-bar=off
+                rm -rf numpy-1.9.3
                 curl -sSLO https://github.com/numpy/numpy/archive/v1.9.3.tar.gz
                 tar -xzf v1.9.3.tar.gz
                 cd numpy-1.9.3
