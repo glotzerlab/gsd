@@ -52,7 +52,7 @@ setup(name = 'gsd',
             "Topic :: Scientific/Engineering :: Physics",
         ],
 
-      install_requires=['numpy'],
+      install_requires=['numpy>=1.9.3,<2'],
       ext_modules = [fl],
       packages = ['gsd']
      )
