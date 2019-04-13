@@ -127,9 +127,9 @@ jobs:
           name: Compile gsd wheels
           working_directory: /root/code
           command: |
-            for PYBIN in /opt/python/*/bin; do
+            for PYBIN in /opt/python/cp37*/bin; do
                 echo Building gsd for `${PYBIN}/python --version`
-                "${PYBIN}/python" -m pip wheel . -w wheels/ --no-deps --progress-bar=off
+                "${PYBIN}/python" -m pip wheel . -w wheels/ --no-deps --progress-bar=off -v
             done
       - run:
           name: Audit wheels
