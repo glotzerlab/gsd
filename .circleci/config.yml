@@ -98,6 +98,7 @@ jobs:
           name: Checkout repository
           command: |
             cd /root
+            echo ${CIRCLE_REPOSITORY_URL}
             git clone ${CIRCLE_REPOSITORY_URL} code
             cd code
             if [ -n "$CIRCLE_TAG" ]
