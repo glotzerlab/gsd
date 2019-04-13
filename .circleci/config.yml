@@ -84,7 +84,7 @@ jobs:
 
   pypi-linux-wheels:
     parameters:
-      upload:
+      upload-package:
         type: boolean
         default: false
     docker:
@@ -234,14 +234,13 @@ workflows:
           python-version: "3.5"
           cmake: /opt/cmake-2.8.12/bin/cmake
 
-      - pypi-linux-wheels:
-          upload: ""
+      - pypi-linux-wheels
 
   deploy:
     jobs:
       - pypi-linux-wheels:
           context: org-global
-          upload: true
+          upload-package: true
           filters:
             tags:
               only: /^v.*/
