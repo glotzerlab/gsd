@@ -236,7 +236,7 @@ workflows:
           python-version: "3.5"
           cmake: /opt/cmake-2.8.12/bin/cmake
 
-      - pypi-linux-wheels
+      - pypi-linux-wheels:
           name: wheel-build
 
   deploy:
