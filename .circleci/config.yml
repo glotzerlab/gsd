@@ -113,7 +113,7 @@ jobs:
           name: Build numpy
           working_directory: /
           command: |
-            for PYBIN in /opt/python/cp27*/bin /opt/python/cp34*/bin /opt/python/cp36*/bin /opt/python/cp37*/bin; do
+            for PYBIN in /opt/python/cp27*/bin /opt/python/cp35*/bin /opt/python/cp36*/bin /opt/python/cp37*/bin; do
                 echo Building numpy for `${PYBIN}/python --version`
                 "${PYBIN}/python" -m pip install cython --no-deps --ignore-installed -q --progress-bar=off
                 rm -rf numpy-1.9.3
@@ -128,7 +128,7 @@ jobs:
           name: Compile gsd wheels
           working_directory: /root/code
           command: |
-            for PYBIN in /opt/python/cp27*/bin /opt/python/cp34*/bin /opt/python/cp36*/bin /opt/python/cp37*/bin; do
+            for PYBIN in /opt/python/cp27*/bin /opt/python/cp35*/bin /opt/python/cp36*/bin /opt/python/cp37*/bin; do
                 echo Building gsd for `${PYBIN}/python --version`
                 "${PYBIN}/python" -m pip wheel -w wheels/ . --no-deps --progress-bar=off --no-build-isolation --no-use-pep517
             done
@@ -143,7 +143,7 @@ jobs:
           name: Test wheels
           working_directory: /root/code
           command: |
-            for PYBIN in /opt/python/cp27*/bin /opt/python/cp34*/bin /opt/python/cp36*/bin /opt/python/cp37*/bin; do
+            for PYBIN in /opt/python/cp27*/bin /opt/python/cp35*/bin /opt/python/cp36*/bin /opt/python/cp37*/bin; do
                 echo Testing `${PYBIN}/python --version`
                 "${PYBIN}/pip" install nose --progress-bar=off
                 "${PYBIN}/pip" install gsd --no-index -f dist --progress-bar=off
