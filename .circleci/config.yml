@@ -155,7 +155,7 @@ jobs:
             export PYBIN=/opt/python/cp37-cp37m/bin
             "${PYBIN}/python" setup.py sdist
       - when:
-          condition: << parameters.upload >>
+          condition: << parameters.upload-package >>
           steps:
             - run:
                 name: Upload
@@ -163,7 +163,7 @@ jobs:
                 command: |
                   echo "Would have uploaded..."
       - unless:
-          condition: << parameters.upload >>
+          condition: << parameters.upload-package >>
           steps:
             - run: echo "Branch build, skipping upload"
 workflows:
