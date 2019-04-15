@@ -140,11 +140,22 @@ jobs:
                 auditwheel repair "$whl" -w dist/
             done
       - run:
-          name: Test wheels
+          name: Test wheels (old numpy)
           working_directory: /root/code
           command: |
             for PYBIN in /opt/python/cp35*/bin /opt/python/cp36*/bin /opt/python/cp37*/bin; do
                 echo Testing `${PYBIN}/python --version`
+                "${PYBIN}/pip" install nose --progress-bar=off
+                "${PYBIN}/pip" install gsd --no-index -f dist --progress-bar=off
+                "${PYBIN}/nosetests"
+            done
+      - run:
+          name: Test wheels (latest numpy)
+          working_directory: /root/code
+          command: |
+            for PYBIN in /opt/python/cp35*/bin /opt/python/cp36*/bin /opt/python/cp37*/bin; do
+                echo Testing `${PYBIN}/python --version`
+                "${PYBIN}/pip" install numpy --upgrade
                 "${PYBIN}/pip" install nose --progress-bar=off
                 "${PYBIN}/pip" install gsd --no-index -f dist --progress-bar=off
                 "${PYBIN}/nosetests"
