@@ -150,12 +150,12 @@ jobs:
                 "${PYBIN}/nosetests"
             done
       - run:
-          name: Test wheels (no numpy)
+          name: Test wheels (latest numpy)
           working_directory: /root/code
           command: |
             for PYBIN in /opt/python/cp35*/bin /opt/python/cp36*/bin /opt/python/cp37*/bin; do
                 echo Testing `${PYBIN}/python --version`
-                "${PYBIN}/pip" uninstall numpy
+                "${PYBIN}/pip" install numpy --update --progress-bar=off
                 "${PYBIN}/pip" install gsd --no-index -f dist --progress-bar=off
                 "${PYBIN}/nosetests"
             done
@@ -179,6 +179,8 @@ jobs:
           condition: << parameters.upload-package >>
           steps:
             - run: echo "Branch build, skipping upload"
+      - store_artifacts:
+          path: /root/code/dist
 workflows:
   test:
     jobs:
