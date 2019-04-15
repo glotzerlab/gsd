@@ -150,13 +150,12 @@ jobs:
                 "${PYBIN}/nosetests"
             done
       - run:
-          name: Test wheels (latest numpy)
+          name: Test wheels (no numpy)
           working_directory: /root/code
           command: |
             for PYBIN in /opt/python/cp35*/bin /opt/python/cp36*/bin /opt/python/cp37*/bin; do
                 echo Testing `${PYBIN}/python --version`
-                "${PYBIN}/pip" install numpy --upgrade --progress-bar=off
-                "${PYBIN}/pip" install nose --progress-bar=off
+                "${PYBIN}/pip" uninstall numpy --progress-bar=off
                 "${PYBIN}/pip" install gsd --no-index -f dist --progress-bar=off
                 "${PYBIN}/nosetests"
             done
