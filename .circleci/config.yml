@@ -264,15 +264,15 @@ workflows:
 
       - pypi-linux-wheels:
           name: wheel-build-cp35m
-          python: cp27-cp35m
+          python: cp35-cp35m
 
       - pypi-linux-wheels:
           name: wheel-build-cp36m
-          python: cp27-cp36m
+          python: cp36-cp36m
 
       - pypi-linux-wheels:
           name: wheel-build-cp37m
-          python: cp27-cp37m
+          python: cp37-cp37m
           build-sdist: true
 
   deploy:
@@ -303,7 +303,7 @@ workflows:
 
       - pypi-linux-wheels:
           name: wheel-upload-cp35m
-          python: cp27-cp35m
+          python: cp36-cp35m
           context: org-global
           upload-package: true
           filters:
@@ -314,7 +314,7 @@ workflows:
 
       - pypi-linux-wheels:
           name: wheel-upload-cp36m
-          python: cp27-cp36m
+          python: cp36-cp36m
           context: org-global
           upload-package: true
           filters:
@@ -325,7 +325,7 @@ workflows:
 
       - pypi-linux-wheels:
           name: wheel-upload-cp37m
-          python: cp27-cp37m
+          python: cp37-cp37m
           context: org-global
           build-sdist: true
           upload-package: true
