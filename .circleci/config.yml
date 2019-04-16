@@ -84,11 +84,18 @@ jobs:
 
   pypi-linux-wheels:
     parameters:
+      python:
+        type: string
       upload-package:
         type: boolean
         default: false
+      run-tests:
+        type: boolean
+        default: true
     docker:
       - image: quay.io/pypa/manylinux1_x86_64
+    environment:
+      PYBIN: "/opt/python/<< parameters.python-version >>/bin"
     steps:
       - run:
           name: Install software
@@ -113,25 +120,18 @@ jobs:
           name: Build numpy
           working_directory: /
           command: |
-            for PYBIN in /opt/python/cp27*/bin /opt/python/cp35*/bin /opt/python/cp36*/bin /opt/python/cp37*/bin; do
-                echo Building numpy for `${PYBIN}/python --version`
-                "${PYBIN}/python" -m pip install cython --no-deps --ignore-installed -q --progress-bar=off
-                rm -rf numpy-1.9.3
-                curl -sSLO https://github.com/numpy/numpy/archive/v1.9.3.tar.gz
-                tar -xzf v1.9.3.tar.gz
-                cd numpy-1.9.3
-                rm -f numpy/random/mtrand/mtrand.c
-                rm -f PKG-INFO
-                "${PYBIN}/python" -m pip install . --no-deps --ignore-installed -v --progress-bar=off -q
-            done
+            "${PYBIN}/python" -m pip install cython --no-deps --ignore-installed -q --progress-bar=off
+            curl -sSLO https://github.com/numpy/numpy/archive/v1.9.3.tar.gz
+            tar -xzf v1.9.3.tar.gz
+            cd numpy-1.9.3
+            rm -f numpy/random/mtrand/mtrand.c
+            rm -f PKG-INFO
+            "${PYBIN}/python" -m pip install . --no-deps --ignore-installed -v --progress-bar=off -q
       - run:
           name: Compile gsd wheels
           working_directory: /root/code
           command: |
-            for PYBIN in /opt/python/cp27*/bin /opt/python/cp35*/bin /opt/python/cp36*/bin /opt/python/cp37*/bin; do
-                echo Building gsd for `${PYBIN}/python --version`
-                "${PYBIN}/python" -m pip wheel -w wheels/ . --no-deps --progress-bar=off --no-build-isolation --no-use-pep517
-            done
+            "${PYBIN}/python" -m pip wheel -w wheels/ . --no-deps --progress-bar=off --no-build-isolation --no-use-pep517
       - run:
           name: Audit wheels
           working_directory: /root/code
@@ -139,26 +139,23 @@ jobs:
             for whl in wheels/gsd*.whl; do
                 auditwheel repair "$whl" -w dist/
             done
-      - run:
-          name: Test wheels (old numpy)
-          working_directory: /root/code
-          command: |
-            for PYBIN in /opt/python/cp35*/bin /opt/python/cp36*/bin /opt/python/cp37*/bin; do
-                echo Testing `${PYBIN}/python --version`
-                "${PYBIN}/pip" install nose --progress-bar=off
-                "${PYBIN}/pip" install gsd --no-index -f dist --progress-bar=off
-                "${PYBIN}/nosetests"
-            done
-      - run:
-          name: Test wheels (latest numpy)
-          working_directory: /root/code
-          command: |
-            for PYBIN in /opt/python/cp35*/bin /opt/python/cp36*/bin /opt/python/cp37*/bin; do
-                echo Testing `${PYBIN}/python --version`
-                "${PYBIN}/pip" install numpy --upgrade --progress-bar=off
-                "${PYBIN}/pip" install gsd --no-index -f dist --progress-bar=off
-                "${PYBIN}/nosetests"
-            done
+      - when:
+          condition: << parameters.run-tests >>
+          steps:
+            - run:
+                name: Test wheels (old numpy)
+                working_directory: /root/code
+                command: |
+                  "${PYBIN}/pip" install nose --progress-bar=off
+                  "${PYBIN}/pip" install gsd --no-index -f dist --progress-bar=off
+                  "${PYBIN}/nosetests"
+            - run:
+                name: Test wheels (latest numpy)
+                working_directory: /root/code
+                command: |
+                  "${PYBIN}/pip" install numpy --upgrade --progress-bar=off
+                  "${PYBIN}/pip" install gsd --no-index -f dist --progress-bar=off
+                  "${PYBIN}/nosetests"
       - run:
           name: Build sdist
           working_directory: /root/code
@@ -250,12 +247,78 @@ workflows:
           cmake: /opt/cmake-2.8.12/bin/cmake
 
       - pypi-linux-wheels:
-          name: wheel-build
+          name: wheel-build-cp27m
+          python: cp27-cp27m
+          run-tests: false
+
+      - pypi-linux-wheels:
+          name: wheel-build-cp27mu
+          python: cp27-cp27mu
+          run-tests: false
+
+      - pypi-linux-wheels:
+          name: wheel-build-cp35m
+          python: cp27-cp35m
+
+      - pypi-linux-wheels:
+          name: wheel-build-cp36m
+          python: cp27-cp36m
+
+      - pypi-linux-wheels:
+          name: wheel-build-cp37m
+          python: cp27-cp37m
 
   deploy:
     jobs:
       - pypi-linux-wheels:
-          name: wheel-upload
+          name: wheel-upload-cp27m
+          python: cp27-cp27m
+          run-tests: false
+          context: org-global
+          upload-package: true
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+
+      - pypi-linux-wheels:
+          name: wheel-upload-cp27mu
+          python: cp27-cp27mu
+          run-tests: false
+          context: org-global
+          upload-package: true
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+
+      - pypi-linux-wheels:
+          name: wheel-upload-cp35m
+          python: cp27-cp35m
+          context: org-global
+          upload-package: true
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+
+      - pypi-linux-wheels:
+          name: wheel-upload-cp36m
+          python: cp27-cp36m
+          context: org-global
+          upload-package: true
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+
+      - pypi-linux-wheels:
+          name: wheel-upload-cp37m
+          python: cp27-cp37m
           context: org-global
           upload-package: true
           filters:
