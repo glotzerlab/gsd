@@ -303,7 +303,7 @@ workflows:
 
       - pypi-linux-wheels:
           name: wheel-upload-cp35m
-          python: cp36-cp35m
+          python: cp35-cp35m
           context: org-global
           upload-package: true
           filters:
