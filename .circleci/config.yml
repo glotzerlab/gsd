@@ -92,6 +92,9 @@ jobs:
       run-tests:
         type: boolean
         default: true
+      build-sdist:
+        type: boolean
+        default: false
     docker:
       - image: quay.io/pypa/manylinux1_x86_64
     environment:
@@ -156,12 +159,15 @@ jobs:
                   "${PYBIN}/pip" install numpy --upgrade --progress-bar=off
                   "${PYBIN}/pip" install gsd --no-index -f dist --progress-bar=off
                   "${PYBIN}/nosetests"
-      - run:
-          name: Build sdist
-          working_directory: /root/code
-          command: |
-            export PYBIN=/opt/python/cp37-cp37m/bin
-            "${PYBIN}/python" setup.py sdist
+      - when:
+          condition: << parameters.build-sdist >>
+          steps:
+            - run:
+                name: Build sdist
+                working_directory: /root/code
+                command: |
+                  export PYBIN=/opt/python/cp37-cp37m/bin
+                  "${PYBIN}/python" setup.py sdist
       - when:
           condition: << parameters.upload-package >>
           steps:
@@ -267,6 +273,7 @@ workflows:
       - pypi-linux-wheels:
           name: wheel-build-cp37m
           python: cp27-cp37m
+          build-sdist: true
 
   deploy:
     jobs:
@@ -320,6 +327,7 @@ workflows:
           name: wheel-upload-cp37m
           python: cp27-cp37m
           context: org-global
+          build-sdist: true
           upload-package: true
           filters:
             tags:
