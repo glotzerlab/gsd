@@ -34,7 +34,7 @@ import struct
 from collections import namedtuple
 import sys
 
-__version__ = "1.6.1";
+__version__ = "1.6.2";
 
 logger = logging.getLogger('gsd.pygsd')
 
