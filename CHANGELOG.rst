@@ -3,6 +3,11 @@ Change Log
 
 `gsd <https://github.com/glotzerlab/gsd>`_ releases follow `semantic versioning <https://semver.org/>`_.
 
+v1.6.2 (not yetreleased)
+------------------------
+
+* PyPI binary wheels now support numpy>=1.9.3,<2
+
 v1.6.1 (2019-03-05)
 -------------------
 

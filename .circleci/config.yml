@@ -83,6 +83,10 @@ jobs:
             - sphinx
 
   pypi-linux-wheels:
+    parameters:
+      upload-package:
+        type: boolean
+        default: false
     docker:
       - image: quay.io/pypa/manylinux1_x86_64
     steps:
@@ -90,16 +94,43 @@ jobs:
           name: Install software
           working_directory: /root/code
           command: yum install -y openssh-clients
-      - checkout:
-          path: /root/code
       - run:
-          name: Compile wheels
+          name: Checkout repository
+          command: |
+            cd /root
+            git clone https://github.com/glotzerlab/${CIRCLE_PROJECT_REPONAME} code
+            cd code
+            if [ -n "$CIRCLE_TAG" ]
+            then
+              git reset --hard "$CIRCLE_SHA1"
+              git checkout -q "$CIRCLE_TAG"
+            elif [ -n "$CIRCLE_BRANCH" ]
+            then
+              git reset --hard "$CIRCLE_SHA1"
+              git checkout -q -B "$CIRCLE_BRANCH"
+            fi
+      - run:
+          name: Build numpy
+          working_directory: /
+          command: |
+            for PYBIN in /opt/python/cp27*/bin /opt/python/cp35*/bin /opt/python/cp36*/bin /opt/python/cp37*/bin; do
+                echo Building numpy for `${PYBIN}/python --version`
+                "${PYBIN}/python" -m pip install cython --no-deps --ignore-installed -q --progress-bar=off
+                rm -rf numpy-1.9.3
+                curl -sSLO https://github.com/numpy/numpy/archive/v1.9.3.tar.gz
+                tar -xzf v1.9.3.tar.gz
+                cd numpy-1.9.3
+                rm -f numpy/random/mtrand/mtrand.c
+                rm -f PKG-INFO
+                "${PYBIN}/python" -m pip install . --no-deps --ignore-installed -v --progress-bar=off -q
+            done
+      - run:
+          name: Compile gsd wheels
           working_directory: /root/code
           command: |
-            for PYBIN in /opt/python/*/bin; do
-                echo Building for `${PYBIN}/python --version`
-                "${PYBIN}/pip" install numpy --progress-bar=off
-                "${PYBIN}/pip" wheel . -w wheels/ --no-deps --progress-bar=off
+            for PYBIN in /opt/python/cp27*/bin /opt/python/cp35*/bin /opt/python/cp36*/bin /opt/python/cp37*/bin; do
+                echo Building gsd for `${PYBIN}/python --version`
+                "${PYBIN}/python" -m pip wheel -w wheels/ . --no-deps --progress-bar=off --no-build-isolation --no-use-pep517
             done
       - run:
           name: Audit wheels
@@ -109,12 +140,22 @@ jobs:
                 auditwheel repair "$whl" -w dist/
             done
       - run:
-          name: Test wheels
+          name: Test wheels (old numpy)
           working_directory: /root/code
           command: |
-            for PYBIN in /opt/python/cp3*/bin/; do
+            for PYBIN in /opt/python/cp35*/bin /opt/python/cp36*/bin /opt/python/cp37*/bin; do
                 echo Testing `${PYBIN}/python --version`
                 "${PYBIN}/pip" install nose --progress-bar=off
+                "${PYBIN}/pip" install gsd --no-index -f dist --progress-bar=off
+                "${PYBIN}/nosetests"
+            done
+      - run:
+          name: Test wheels (latest numpy)
+          working_directory: /root/code
+          command: |
+            for PYBIN in /opt/python/cp35*/bin /opt/python/cp36*/bin /opt/python/cp37*/bin; do
+                echo Testing `${PYBIN}/python --version`
+                "${PYBIN}/pip" install numpy --upgrade --progress-bar=off
                 "${PYBIN}/pip" install gsd --no-index -f dist --progress-bar=off
                 "${PYBIN}/nosetests"
             done
@@ -124,14 +165,22 @@ jobs:
           command: |
             export PYBIN=/opt/python/cp37-cp37m/bin
             "${PYBIN}/python" setup.py sdist
-      - run:
-          name: Upload
-          working_directory: /root/code
-          command: |
-            export PYBIN=/opt/python/cp37-cp37m/bin
-            "${PYBIN}/pip" install twine --progress-bar=off
-            "${PYBIN}/twine" upload --username joaander --password ${PYPI_PASSWORD} dist/*
-
+      - when:
+          condition: << parameters.upload-package >>
+          steps:
+            - run:
+                name: Upload
+                working_directory: /root/code
+                command: |
+                  export PYBIN=/opt/python/cp37-cp37m/bin
+                  "${PYBIN}/pip" install twine --progress-bar=off
+                  "${PYBIN}/twine" upload --username joaander --password ${PYPI_PASSWORD} dist/*
+      - unless:
+          condition: << parameters.upload-package >>
+          steps:
+            - run: echo "Branch build, skipping upload"
+      - store_artifacts:
+          path: /root/code/dist
 workflows:
   test:
     jobs:
@@ -200,10 +249,15 @@ workflows:
           python-version: "3.5"
           cmake: /opt/cmake-2.8.12/bin/cmake
 
+      - pypi-linux-wheels:
+          name: wheel-build
+
   deploy:
     jobs:
       - pypi-linux-wheels:
+          name: wheel-upload
           context: org-global
+          upload-package: true
           filters:
             tags:
               only: /^v.*/
