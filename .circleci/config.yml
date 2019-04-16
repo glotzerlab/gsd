@@ -98,7 +98,7 @@ jobs:
     docker:
       - image: quay.io/pypa/manylinux1_x86_64
     environment:
-      PYBIN: "/opt/python/<< parameters.python-version >>/bin"
+      PYBIN: "/opt/python/<< parameters.python >>/bin"
     steps:
       - run:
           name: Install software
