@@ -281,7 +281,6 @@ workflows:
           name: wheel-upload-cp27m
           python: cp27-cp27m
           run-tests: false
-          context: org-global
           upload-package: true
           filters:
             tags:
@@ -293,7 +292,6 @@ workflows:
           name: wheel-upload-cp27mu
           python: cp27-cp27mu
           run-tests: false
-          context: org-global
           upload-package: true
           filters:
             tags:
@@ -304,7 +302,6 @@ workflows:
       - pypi-linux-wheels:
           name: wheel-upload-cp35m
           python: cp35-cp35m
-          context: org-global
           upload-package: true
           filters:
             tags:
@@ -315,7 +312,6 @@ workflows:
       - pypi-linux-wheels:
           name: wheel-upload-cp36m
           python: cp36-cp36m
-          context: org-global
           upload-package: true
           filters:
             tags:
@@ -326,7 +322,6 @@ workflows:
       - pypi-linux-wheels:
           name: wheel-upload-cp37m
           python: cp37-cp37m
-          context: org-global
           build-sdist: true
           upload-package: true
           filters:
