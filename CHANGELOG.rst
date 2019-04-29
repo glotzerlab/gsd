@@ -3,6 +3,13 @@ Change Log
 
 `gsd <https://github.com/glotzerlab/gsd>`_ releases follow `semantic versioning <https://semver.org/>`_.
 
+v1.7.0 (2019-04-30)
+-------------------
+
+* Add ``hpmc/sphere/orientable`` to HOOMD schema.
+* HOOMD schema 1.3
+
+
 v1.6.2 (2019-04-16)
 -------------------
 
