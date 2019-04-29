@@ -12,7 +12,7 @@ of the existing data chunks. Any newer reader will initialize new data chunks wi
 not present in an older version file.
 
 :Schema name: ``hoomd``
-:Schema version: 1.2
+:Schema version: 1.3
 
 Use-cases
 ---------
@@ -553,6 +553,7 @@ Name                                                       Type   Size      Unit
 :chunk:`state/hpmc/integrate/d`                            double 1x1       length
 :chunk:`state/hpmc/integrate/a`                            double 1x1       number
 :chunk:`state/hpmc/sphere/radius`                          float  NTx1      length
+:chunk:`state/hpmc/sphere/orientable`                      uint8  NTx1      boolean
 :chunk:`state/hpmc/ellipsoid/a`                            float  NTx1      length
 :chunk:`state/hpmc/ellipsoid/b`                            float  NTx1      length
 :chunk:`state/hpmc/ellipsoid/c`                            float  NTx1      length
@@ -604,6 +605,16 @@ HPMC integrator state
     Sphere radius for each particle type.
 
     .. versionadded:: 1.2
+
+.. chunk:: state/hpmc/sphere/orientable
+
+        :Type: uint8
+        :Size: NTx1
+        :Units: boolean
+
+    Orientable flag for each particle type.
+
+    .. versionadded:: 1.3
 
 .. chunk:: state/hpmc/ellipsoid/a
 

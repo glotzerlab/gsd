@@ -336,6 +336,7 @@ class Snapshot(object):
         self._valid_state = ['hpmc/integrate/d',
                              'hpmc/integrate/a',
                              'hpmc/sphere/radius',
+                             'hpmc/sphere/orientable',
                              'hpmc/ellipsoid/a',
                              'hpmc/ellipsoid/b',
                              'hpmc/ellipsoid/c',
@@ -384,6 +385,10 @@ class Snapshot(object):
         if 'hpmc/sphere/radius' in self.state:
             self.state['hpmc/sphere/radius'] = numpy.ascontiguousarray(self.state['hpmc/sphere/radius'], dtype=numpy.float32);
             self.state['hpmc/sphere/radius'] = self.state['hpmc/sphere/radius'].reshape([NT])
+
+        if 'hpmc/sphere/orientable' in self.state:
+            self.state['hpmc/sphere/orientable'] = numpy.ascontiguousarray(self.state['hpmc/sphere/orientable'], dtype=numpy.uint8);
+            self.state['hpmc/sphere/orientable'] = self.state['hpmc/sphere/orientable'].reshape([NT])
 
         if 'hpmc/ellipsoid/a' in self.state:
             self.state['hpmc/ellipsoid/a'] = numpy.ascontiguousarray(self.state['hpmc/ellipsoid/a'], dtype=numpy.float32);
@@ -754,7 +759,7 @@ def create(name, snapshot=None):
 
     logger.info('creating hoomd gsd file: ' + name);
 
-    gsd.fl.create(name=name, application='gsd.hoomd ' + gsd.__version__, schema='hoomd', schema_version=[1,2]);
+    gsd.fl.create(name=name, application='gsd.hoomd ' + gsd.__version__, schema='hoomd', schema_version=[1,3]);
     with gsd.fl.GSDFile(name, 'wb') as f:
         traj = HOOMDTrajectory(f);
         if snapshot is not None:
@@ -818,5 +823,5 @@ def open(name, mode='rb'):
                          mode=mode,
                          application='gsd.hoomd ' + gsd.__version__,
                          schema='hoomd',
-                         schema_version=[1,2]);
+                         schema_version=[1,3]);
     return HOOMDTrajectory(gsdfileobj);
