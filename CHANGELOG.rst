@@ -3,6 +3,12 @@ Change Log
 
 `gsd <https://github.com/glotzerlab/gsd>`_ releases follow `semantic versioning <https://semver.org/>`_.
 
+next
+----
+
+* Slicing a HOOMDTrajectory object returns a view that can be used to directly select frames from a subset
+  or sliced again.
+
 v1.7.0 (2019-04-30)
 -------------------
 
