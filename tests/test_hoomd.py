@@ -423,6 +423,59 @@ def test_slicing_and_iteration():
             eq_(len(list(hf_iter)), 10)
             eq_(len(list(hf_iter)), 10)
 
+            # Test frame selection
+            with assert_raises(IndexError):
+                hf[len(hf)]
+            eq_(hf[0].configuration.step, hf[0].configuration.step)
+            eq_(hf[len(hf) - 1].configuration.step, hf[-1].configuration.step)
+
+
+def test_view_slicing_and_iteration():
+    with tempfile.TemporaryDirectory() as d:
+
+        with gsd.hoomd.open(name=d+"/test_slicing.gsd", mode='wb') as hf:
+            hf.extend((create_frame(i) for i in range(40)));
+
+        with gsd.hoomd.open(name=d+"/test_slicing.gsd", mode='rb') as hf:
+            view = hf[::2]
+
+            # Test len()-function on trajectory and sliced view.
+            eq_(len(view), 20)
+            eq_(len(view[:10]), 10)
+            eq_(len(view[::2]), 10)
+
+            # Test len()-function with explicit iterator.
+            eq_(len(iter(view)), len(view))
+            eq_(len(iter(view[:10])), len(view[:10]))
+
+            # Test iteration with implicit iterator.
+            # All iterations are run twice to check for issues
+            # with iterator exhaustion.
+            eq_(len(list(view)), len(view))
+            eq_(len(list(view)), len(view))
+            eq_(len(list(view[:10])), len(view[:10]))
+            eq_(len(list(view[:10])), len(view[:10]))
+            eq_(len(list(view[::2])), len(view[::2]))
+            eq_(len(list(view[::2])), len(view[::2]))
+
+            # Test iteration with explicit iterator.
+            view_iter = iter(view)
+            eq_(len(view_iter), len(view))  # sanity check
+            eq_(len(list(view_iter)), len(view))
+            eq_(len(list(view_iter)), len(view))
+
+            # Test iteration with explicit sliced iterator.
+            view_iter = iter(view[:10])
+            eq_(len(view_iter), 10)  # sanity check
+            eq_(len(list(view_iter)), 10)
+            eq_(len(list(view_iter)), 10)
+
+            # Test frame selection
+            with assert_raises(IndexError):
+                view[len(view)]
+            eq_(view[0].configuration.step, view[0].configuration.step)
+            eq_(view[len(view) - 1].configuration.step, view[-1].configuration.step)
+
 def test_truncate():
     with tempfile.TemporaryDirectory() as d:
         gsd.hoomd.create(name=d+"/test_iteration.gsd");
