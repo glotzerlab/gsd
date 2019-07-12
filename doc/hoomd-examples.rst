@@ -76,16 +76,29 @@ Randomly index frames
 :py:class:`gsd.hoomd.HOOMDTrajectory` supports random indexing of frames in the file. Indexing
 into a trajectory returns a :py:class:`gsd.hoomd.Snapshot`.
 
-Slicing
-^^^^^^^
+Slicing and selection
+^^^^^^^^^^^^^^^^^^^^^
+
+Use the slicing operator to select individual frames or a subset of a trajectory
+works like expected:
 
 .. ipython:: python
 
     t = gsd.hoomd.open(name='test.gsd', mode='rb')
+
     for s in t[5:-2]:
         print(s.configuration.step, end=' ')
 
-Slicing access works like you would expect it to.
+    print('last step', t[-1].configuration.step, end=' ')
+
+    every_2nd_frame = t[::2]  # create a view of a trajectory subset
+    for s in every_2nd_frame[:10]:
+        print(s.configuration.step, end=' ')
+
+Slicing a trajectory creates a trajectory view, which can then be queried for
+length or sliced again.
+Selecting individual frames from a view works exactly like selecting individual
+frames from the original trajectory object.
 
 Pure python reader
 ^^^^^^^^^^^^^^^^^^
