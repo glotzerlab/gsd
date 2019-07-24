@@ -46,8 +46,8 @@ Append frames to a gsd file
 
     t = gsd.hoomd.open(name='test.gsd', mode='wb')
     t.extend( (create_frame(i) for i in range(10)) )
-    t.append( create_frame(11) )
-    # length is 12 because extend added 10, and append added 1
+    t.append( create_frame(10) )
+    # length is 11 because extend() added 10, and append() added 1
     len(t)
 
 Use :py:func:`gsd.hoomd.open` to open a GSD file with the high level interface
