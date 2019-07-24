@@ -92,7 +92,7 @@ works like expected:
     print('last step', t[-1].configuration.step, end=' ')
 
     every_2nd_frame = t[::2]  # create a view of a trajectory subset
-    for s in every_2nd_frame[:10]:
+    for s in every_2nd_frame[:4]:
         print(s.configuration.step, end=' ')
 
 Slicing a trajectory creates a trajectory view, which can then be queried for
