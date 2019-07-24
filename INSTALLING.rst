@@ -132,7 +132,7 @@ Use ``python setup.py`` to install the python module into your virtual environme
 
 .. code-block:: bash
 
-    ▶ python setup.py install
+    ▶ python3 setup.py install
 
 Build with cmake for development
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
