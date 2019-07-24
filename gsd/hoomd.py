@@ -467,6 +467,31 @@ class _HOOMDTrajectoryIterable(object):
     def __len__(self):
         return len(self._indices)
 
+
+class _HOOMDTrajectoryView(object):
+    """A view of a HOOMDTrajectory object.
+
+    Enables the slicing and iteration over a subset of a trajectory
+    instance.
+    """
+
+    def __init__(self, trajectory, indices):
+        self._trajectory = trajectory
+        self._indices = indices
+
+    def __iter__(self):
+        return _HOOMDTrajectoryIterable(self._trajectory, self._indices)
+
+    def __len__(self):
+        return len(self._indices)
+
+    def __getitem__(self, key):
+        if isinstance(key, slice):
+            return type(self)(self._trajectory, self._indices[key])
+        else:
+            return self._trajectory[self._indices[key]]
+
+
 class HOOMDTrajectory(object):
     """ Read and write hoomd gsd files.
 
@@ -718,7 +743,7 @@ class HOOMDTrajectory(object):
         """
 
         if isinstance(key, slice) :
-            return _HOOMDTrajectoryIterable(self, range(*key.indices(len(self))))
+            return _HOOMDTrajectoryView(self, range(*key.indices(len(self))))
         elif isinstance(key, int) :
             if key < 0:
                 key += len(self)
