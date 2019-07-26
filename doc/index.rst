@@ -52,5 +52,6 @@ GSD files:
     :maxdepth: 1
     :caption: Additional information
 
+    credits
     license
     indices
