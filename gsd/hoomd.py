@@ -747,7 +747,7 @@ class HOOMDTrajectory(object):
         elif isinstance(key, int) :
             if key < 0:
                 key += len(self)
-            if key >= len(self):
+            if key >= len(self) or key < -len(self):
                 raise IndexError();
             return self.read_frame(key);
         else:
