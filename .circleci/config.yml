@@ -253,7 +253,7 @@ workflows:
 
       - build_and_test:
           name: gcc48-py36
-          image: ubuntu16.04
+          image: ubuntu18.04
           cc: gcc-4.8
           cxx: g++-4.8
           python-version: "3.6"
