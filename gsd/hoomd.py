@@ -635,7 +635,7 @@ class HOOMDTrajectory(object):
         any default data as non-writable numpy arrays.
         """
 
-        if -len(self) > idx or idx >= len(self):
+        if idx >= len(self):
             raise IndexError;
 
         logger.debug('reading frame ' + str(idx) + ' from: ' + str(self.file));
