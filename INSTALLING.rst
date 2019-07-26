@@ -20,25 +20,11 @@ Then add the ``conda-forge`` channel and install **GSD**:
 
    ▶ conda install -c conda-forge gsd
 
-Singularity / Docker containers
+Singularity / Docker images
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Singularity:
-
-.. code-block:: bash
-
-   ▶ curl -o software.simg https://glotzerlab.engin.umich.edu/downloads/glotzerlab/software-nompi.simg
-
-Docker:
-
-.. code-block:: bash
-
-   ▶ docker pull glotzerlab/software
-
-.. note::
-
-    See the `glotzerlab-software documentation <https://glotzerlab-software.readthedocs.io/>`_ for cluster specific
-    instructions.
+See the `glotzerlab-software documentation <https://glotzerlab-software.readthedocs.io/>`_ for container usage
+information and cluster specific instructions.
 
 PyPI
 ^^^^

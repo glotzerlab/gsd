@@ -15,27 +15,32 @@ Use-cases
 ---------
 
 * capabilities
-    * efficiently store many frames of data from simulation runs
-    * high performance file read and write
-    * support arbitrary chunks of data in each frame (position, orientation, type, etc...)
-    * variable number of named chunks in each frame
-    * variable size of chunks in each frame
-    * each chunk identifies data type
-    * common use cases: NxM arrays in double, float, int, char types.
-    * generic use case: binary blob of N bytes
-    * easy to integrate into other tools
-    * append frames to an existing file with a monotonically increasing frame number
-    * resilient to job kills
+
+  * efficiently store many frames of data from simulation runs
+  * high performance file read and write
+  * support arbitrary chunks of data in each frame (position, orientation, type, etc...)
+  * variable number of named chunks in each frame
+  * variable size of chunks in each frame
+  * each chunk identifies data type
+  * common use cases: NxM arrays in double, float, int, char types.
+  * generic use case: binary blob of N bytes
+  * can be integrated into other tools
+  * append frames to an existing file with a monotonically increasing frame number
+  * resilient to job kills
+
 * queries
-    * number of frames
-    * is named chunk present in frame *i*
-    * type and size of named chunk in frame *i*
-    * read data for named chunk in frame *i*
-    * read only a portion of a chunk
+
+  * number of frames
+  * is named chunk present in frame *i*
+  * type and size of named chunk in frame *i*
+  * read data for named chunk in frame *i*
+  * read only a portion of a chunk
+
 * writes
-    * write data to named chunk in the current frame
-    * write a single data chunk from multiple MPI ranks
-    * end frame and commit to disk
+
+  * write data to named chunk in the current frame
+  * write a single data chunk from multiple MPI ranks
+  * end frame and commit to disk
 
 These capabilities should enable a simple and rich higher level schema for storing particle and other types of
 data. The schema determine which named chunks exist in a given file and what they mean.
@@ -90,24 +95,31 @@ File format
 There are four types of data blocks in a GSD file.
 
 #. Header block
-    * Overall header for the entire file, contains the magic cookie, a format version, the name of the generating
-      application, the schema name, and its version. Some bytes in the header are reserved
-      for future use. Header size: 256 bytes. The header block also includes a pointer to the index, the number
-      of allocated entries, the number of used entries in the index, a pointer to the name list, the size of the name
-      list, and the number of entries used in the name list.
-    * The header is the first 256 bytes in the file.
+
+   * Overall header for the entire file, contains the magic cookie, a format version, the name of the generating
+     application, the schema name, and its version. Some bytes in the header are reserved
+     for future use. Header size: 256 bytes. The header block also includes a pointer to the index, the number
+     of allocated entries, the number of used entries in the index, a pointer to the name list, the size of the name
+     list, and the number of entries used in the name list.
+   * The header is the first 256 bytes in the file.
+
 #. Index block
-    * Index the frame data, size information, location, name id, etc...
-    * The index contains space for any number of ``index_entry`` structs, the header indicates how many slots are used.
-    * When the index fills up, a new index block is allocated at the end of the file with more space and all
-      current index entries are rewritten there.
-    * Index entry size: 32 bytes
+
+   * Index the frame data, size information, location, name id, etc...
+   * The index contains space for any number of ``index_entry`` structs, the header indicates how many slots are used.
+   * When the index fills up, a new index block is allocated at the end of the file with more space and all
+     current index entries are rewritten there.
+   * Index entry size: 32 bytes
+
 #. Name list
-    * List of string names used by index entries.
-    * Each name is a ``name_entry`` struct, which holds up to 63 characters.
-    * The header stores the total number of names available in the list and the number of name slots used.
+
+   * List of string names used by index entries.
+   * Each name is a ``name_entry`` struct, which holds up to 63 characters.
+   * The header stores the total number of names available in the list and the number of name slots used.
+
 #. Data chunk
-    * Raw binary data stored for the named frame data blocks.
+
+   * Raw binary data stored for the named frame data blocks.
 
 Header index, and name blocks are stored in memory as C structs (or arrays of C structs) and written to disk in
 whole chunks.
@@ -206,7 +218,7 @@ cached index data in memory and so forth. A pointer to the handle will be passed
 * ``gsd_handle_t* gsd_open()`` : Open a GSD file and return an allocated handle.
 * ``int gsd_close()`` : Close a GSD file and free all memory associated with it.
 * ``int gsd_end_frame()`` : Complete writing the current frame and flush it to disk. This automatically
-                            starts a new frame.
+  starts a new frame.
 * ``int gsd_write_chunk()`` : Write a chunk out to the current frame
 * ``uint64_t gsd_get_nframes()`` : Get the number of frames written to the file
 * ``int gsd_index_entry_t* gsd_find_chunk()`` : Find a chunk with the given name in the given frame.
