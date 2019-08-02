@@ -3,11 +3,12 @@ Change Log
 
 `gsd <https://github.com/glotzerlab/gsd>`_ releases follow `semantic versioning <https://semver.org/>`_.
 
-v1.8.0 (not yet released)
--------------------------
+v1.8.0 (2019-08-05)
+-------------------
 
 * Slicing a HOOMDTrajectory object returns a view that can be used to directly select frames from a subset
   or sliced again.
+* raise ``IndexError`` when attempting to read frames before the first frame.
 
 v1.7.0 (2019-04-30)
 -------------------
