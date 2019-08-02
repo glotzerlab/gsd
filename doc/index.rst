@@ -6,7 +6,7 @@ GSD documentation
 
 GSD (General Simulation Data) is a file format specification and a library to read and write it. The package also
 contains a python module that reads and writes `hoomd <https://glotzerlab.engin.umich.edu/hoomd-blue/>`_ schema gsd
-files with an easy to use syntax.
+files.
 
 GSD files:
 
@@ -20,7 +20,7 @@ GSD files:
 * Each chunk identifies data type.
 * Common use cases: NxM arrays in double, float, int, char types.
 * Generic use case: binary blob of N bytes.
-* Easy to integrate into other tools with python, or a C API (< 1k lines).
+* Can be integrated into other tools with python, or a C API (< 1k lines).
 * Fast random access to frames.
 
 .. toctree::
@@ -52,5 +52,6 @@ GSD files:
     :maxdepth: 1
     :caption: Additional information
 
+    credits
     license
     indices

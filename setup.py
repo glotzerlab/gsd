@@ -16,7 +16,7 @@ if existing_checksum.strip() != current_checksum.hexdigest():
     sys.exit(1);
 
 fl = Extension('gsd.fl',
-               sources=['gsd/fl{0}.c'.format(sys.version_info.major), 'gsd/gsd.c'],
+               sources=['gsd/fl.c', 'gsd/gsd.c'],
                include_dirs = [numpy.get_include()]
                )
 

@@ -498,7 +498,7 @@ class HOOMDTrajectory(object):
     Args:
         file (:py:class:`gsd.fl.GSDFile`): File to access.
 
-    Create hoomd GSD files with :py:func:`create`.
+    Open hoomd GSD files with :py:func:`open`.
     """
 
     def __init__(self, file):

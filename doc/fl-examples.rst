@@ -51,7 +51,7 @@ to end the frame and start the next one.
 .. note:: While supported, implicit conversion to numpy arrays creates a 2nd copy of the data
           in memory and adds conversion overhead.
 
-.. warning:: Make sure to call ``end_frame()`` before closing the file, or the last frame is lost.
+.. warning:: Make sure to call ``end_frame()`` before closing the file, or the last frame may be lost.
 
 Read data
 ^^^^^^^^^

@@ -16,7 +16,7 @@ else()
     file(SHA256 "${CMAKE_CURRENT_SOURCE_DIR}/fl.pyx" __current_hash)
 
     if ("${__current_hash}" STREQUAL "${__original_hash}")
-        set(FL_SRC "fl${PYTHON_VERSION_MAJOR}.c")
+        set(FL_SRC "fl.c")
     else()
         message(SEND_ERROR "fl.pyx updated, embedded c files out of date. Build with cython enabled.")
     endif()

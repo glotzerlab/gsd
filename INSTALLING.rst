@@ -18,33 +18,13 @@ Then add the ``conda-forge`` channel and install **GSD**:
 
 .. code-block:: bash
 
-   $ conda config --add channels conda-forge
-   $ conda install gsd
+   ▶ conda install -c conda-forge gsd
 
-You can update **GSD** with:
+Singularity / Docker images
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. code-block:: bash
-
-   $ conda update gsd
-
-Docker images
-^^^^^^^^^^^^^
-
-Pull the `glotzerlab-software <https://glotzerlab-software.readthedocs.io>`_ image to get
-**GSD** along with many other tools commonly used in simulation and analysis workflows. See full usage information in the
-`glotzerlab-software documentation <https://glotzerlab-software.readthedocs.io>`_.
-
-Singularity:
-
-.. code-block:: bash
-
-   $ singularity pull shub://glotzerlab/software
-
-Docker:
-
-.. code-block:: bash
-
-   $ docker pull glotzerlab/software
+See the `glotzerlab-software documentation <https://glotzerlab-software.readthedocs.io/>`_ for container usage
+information and cluster specific instructions.
 
 PyPI
 ^^^^
@@ -53,63 +33,92 @@ Use **pip** to install **GSD**:
 
 .. code-block:: bash
 
-   $ pip install gsd
+   ▶ pip install gsd
 
 
 Compile from source
 -------------------
 
-Download source releases directly from the web: https://glotzerlab.engin.umich.edu/Downloads/gsd
+Obtain the source
+^^^^^^^^^^^^^^^^^
+
+Download source releases directly from the web: https://glotzerlab.engin.umich.edu/downloads/gsd
 
 .. code-block:: bash
 
-   $ curl -O https://glotzerlab.engin.umich.edu/Downloads/gsd/gsd-v1.7.0.tar.gz
+   ▶ curl -O https://glotzerlab.engin.umich.edu/downloads/gsd/gsd-v1.7.0.tar.gz
 
 Or, clone using git:
 
 .. code-block:: bash
 
-   $ git clone https://github.com/glotzerlab/gsd
+   ▶ git clone https://github.com/glotzerlab/gsd
 
-Prerequisites
-^^^^^^^^^^^^^
+Configure a virtual environment
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* A standards compliant C compiler
-* Python >= 2.7
-* numpy
+When using a shared Python installation, create a `virtual environment
+<https://docs.python.org/3/library/venv.html>`_ where you can install
+**gsd**::
 
-Optional dependencies
+    ▶ python3 -m venv /path/to/environment --system-site-packages
+
+Activate the environment before configuring and before executing
+**gsd** scripts::
+
+   ▶ source /path/to/environment/bin/activate
+
+.. note::
+
+   Other types of virtual environments (such as *conda*) may work, but are not thoroughly tested.
+
+Install Prerequisites
 ^^^^^^^^^^^^^^^^^^^^^
 
-* Cython >= 0.22 (only needed for non-tagged releases)
+**gsd** requires:
+
+* A standards compliant C compiler
+* Python >= 3.5
+* numpy
+
+Additional packages may be needed:
+
 * nose (unit tests)
 * sphinx (documentation)
 * ipython (documentation)
 * an internet connection (documentation)
+* Cython >= 0.22 (to build non-tagged releases)
 * cmake (for development builds)
-* Python >= 3.2 (to execute unit tests)
+
+Install these tools with your system or virtual environment package manager. GSD developers have had success with
+``pacman`` (`arch linux <https://www.archlinux.org/>`_), ``apt-get`` (`ubuntu <https://ubuntu.com/>`_), `Homebrew
+<https://brew.sh/>`_ (macOS), and `MacPorts <https://www.macports.org/>`_ (macOS)::
+
+    ▶ your-package-manager install ipython python python-nose python-numpy cmake cython python-sphinx python-sphinx_rtd_theme
+
+Typical HPC cluster environments provide python, numpy, and cmake via a module system::
+
+    ▶ module load gcc python cmake
+
+.. note::
+
+    Packages may be named differently, check your system's package list. Install any ``-dev`` packages as needed.
+
+.. tip::
+
+    You can install numpy and other python packages into your virtual environment::
+
+        python3 -m pip install numpy
+
 
 Install with setuptools
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-Use ``python setup.py`` to install the python module with **setuptools**. For example, to install into
-your home directory, execute:
+Use ``python setup.py`` to install the python module into your virtual environment::
 
 .. code-block:: bash
 
-    $ python setup.py install --user
-
-When using conda, you can install into your **conda** site-packages with:
-
-.. code-block:: bash
-
-    $ python setup.py install
-
-Uninstall using pip:
-
-.. code-block:: bash
-
-    $ pip uninstall gsd
+    ▶ python3 setup.py install
 
 Build with cmake for development
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -118,30 +127,27 @@ You can assemble a functional python module in the build directory. Configure wi
 
 .. code-block:: bash
 
-   $ mkdir build
-   $ cd build
-   $ cmake ../
-   $ make
+   ▶ mkdir build
+   ▶ cd build
+   ▶ cmake ../
+   ▶ make
 
-Add ``/path/to/build`` to your ``PYTHONPATH`` to test **GSD**, where ``/path/to`` is the directory containing your
-``build`` directory.
+Add the build directory path to your ``PYTHONPATH`` to test **GSD**:
 
 .. code-block:: bash
 
-   $ export PYTHONPATH=$PYTHONPATH:/path/to/build
+   ▶ export PYTHONPATH=$PYTHONPATH:/path/to/build
 
 Run tests
 ^^^^^^^^^
-
-**GSD** has extensive unit tests to verify correct execution. Tests require python 3.2 or newer to execute.
 
 Run ``nosetests`` in the source directory to execute all unit tests. This requires that the
 python module is on the python path.
 
 .. code-block:: bash
 
-   $ cd /path/to/gsd
-   $ nosetests
+   ▶ cd /path/to/gsd
+   ▶ nosetests
 
 Build user documentation
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -151,10 +157,10 @@ internet connection. To build the documentation:
 
 .. code-block:: bash
 
-   $ cd /path/to/gsd
-   $ cd doc
-   $ make html
-   $ open _build/html/index.html
+   ▶ cd /path/to/gsd
+   ▶ cd doc
+   ▶ make html
+   ▶ open _build/html/index.html
 
 Using the C library
 ^^^^^^^^^^^^^^^^^^^^^^^^
