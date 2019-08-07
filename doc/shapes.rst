@@ -1,0 +1,135 @@
+.. Copyright (c) 2016-2019 The Regents of the University of Michigan
+.. This file is part of the General Simulation Data (GSD) project, released under the BSD 2-Clause License.
+
+Shape Visualization Specification
+=================================
+
+Shape specifications contain information about the shape of individual particles.
+Each particle type stores a JSON-compatible string representation of a key-value dictionary.
+The class of a shape is defined by the ``type`` key.
+All other keys define properties of that shape.
+Keys without a default value are required for a valid shape specification.
+
+.. todo::
+    - Spheres specify diameters but ellipsoids specify radii
+    - Is it weird that only spheres infer their dimensionality?
+    - Ellipses in 2d?
+
+Empty (Undefined) Shape
+-----------------------
+
+A null string or empty dictionary can be used for undefined shapes.
+A visualization application may choose how to interpret this, e.g. by drawing nothing or drawing spheres.
+
+Example::
+
+    {}
+
+Spheres
+-------
+
+Type: ``Sphere``
+
+Spheres' dimensionality (2D circles or 3D spheres) can be inferred from the system box dimensionality.
+
+=============== =============== ====== ==== ======= ======
+Key             Description     Type   Size Default Units
+=============== =============== ====== ==== ======= ======
+diameter        Sphere diameter float  1x1  1.0     length
+
+Example::
+
+    {
+        'type': 'Sphere',
+        'diameter': 2.0
+    }
+
+Ellipsoids
+----------
+
+Type: ``Ellipsoid``
+
+The ellipsoid class has principal axes a, b, c corresponding to its radii in the x, y, and z directions.
+
+=============== ===================== ====== ==== ======= ======
+Key             Description           Type   Size Default Units
+=============== ===================== ====== ==== ======= ======
+a               Radius in x direction float  1x1  0.5     length
+b               Radius in y direction float  1x1  0.5     length
+c               Radius in z direction float  1x1  0.5     length
+
+Example::
+
+    {
+        'type': 'Ellipsoid',
+        'a': 7.0,
+        'b': 5.0,
+        'c': 3.0
+    }
+
+Polygons
+--------
+
+Type: ``Polygon``
+
+Spheropolygons can be represented using this shape type, through the ``rounding_radius`` key.
+Vertices must be specified in a counterclockwise order.
+
+=============== =============== ===== ==== ======= ======
+Key             Description     Type  Size Default Units
+=============== =============== ===== ==== ======= ======
+rounding_radius Rounding radius float 1x1  0.0     length
+vertices        Shape vertices  float Nx2          length
+
+Example::
+
+    {
+        'type': 'Polygon',
+        'rounding_radius': 0.1,
+        'vertices': [[-0.5, -0.5], [0.5, -0.5], [0.5, 0.5]]
+    }
+
+Convex Polyhedra
+----------------
+
+Type: ``ConvexPolyhedron``
+
+Spheropolyhedra can be represented using this shape type, through the ``rounding_radius`` key.
+
+=============== =============== ===== ==== ======= ======
+Key             Description     Type  Size Default Units
+=============== =============== ===== ==== ======= ======
+rounding_radius Rounding radius float 1x1  0.0     length
+vertices        Shape vertices  float Nx3          length
+
+Example::
+
+    {
+        'type': 'ConvexPolyhedron',
+        'rounding_radius': 0.1,
+        'vertices': [[0.5, 0.5, 0.5], [0.5, -0.5, -0.5], [-0.5, 0.5, -0.5], [-0.5, -0.5, 0.5]]
+    }
+
+General 3D Meshes
+-----------------
+
+Type: ``Mesh``
+
+A list of lists of indices are used to specify faces.
+Faces must contain 3 or more vertex indices.
+Faces must be defined with a counterclockwise winding order (to produce an "outward" normal).
+
+=============== =============== ====== ==== ======= ======
+Key             Description     Type   Size Default Units
+=============== =============== ====== ==== ======= ======
+vertices        Rounding radius float  Nx3          length
+indices         Rounding radius uint32              number
+
+
+Example::
+
+    {
+        'type': 'Mesh',
+        'vertices': [[0.5, 0.5, 0.5], [0.5, -0.5, -0.5], [-0.5, 0.5, -0.5], [-0.5, -0.5, 0.5]],
+        'indices': [[1, 2, 3], [1, 4, 2], [1, 3, 4], [2, 4, 3]]
+    }
