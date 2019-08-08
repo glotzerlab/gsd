@@ -583,7 +583,7 @@ cdef class GSDFile:
             Nx1, return a 1D array.
 
         .. tip::
-            Each call to invokes a disk read and allocation of a
+            Each call invokes a disk read and allocation of a
             new numpy array for storage. To avoid overhead, don't call
             :py:meth:`read_chunk()` on the same chunk repeatedly. Cache the
             arrays instead.

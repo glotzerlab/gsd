@@ -47,7 +47,6 @@ Append frames to a gsd file
     t = gsd.hoomd.open(name='test.gsd', mode='wb')
     t.extend( (create_frame(i) for i in range(10)) )
     t.append( create_frame(10) )
-    # length is 11 because extend() added 10, and append() added 1
     len(t)
 
 Use :py:func:`gsd.hoomd.open` to open a GSD file with the high level interface
@@ -79,8 +78,7 @@ into a trajectory returns a :py:class:`gsd.hoomd.Snapshot`.
 Slicing and selection
 ^^^^^^^^^^^^^^^^^^^^^
 
-Use the slicing operator to select individual frames or a subset of a trajectory
-works like expected:
+Use the slicing operator to select individual frames or a subset of a trajectory.
 
 .. ipython:: python
 
@@ -88,8 +86,6 @@ works like expected:
 
     for s in t[5:-2]:
         print(s.configuration.step, end=' ')
-
-    print('last step', t[-1].configuration.step, end=' ')
 
     every_2nd_frame = t[::2]  # create a view of a trajectory subset
     for s in every_2nd_frame[:4]:
@@ -112,8 +108,8 @@ Pure python reader
 You can use GSD without needing to compile C code to read GSD files using
 :py:class:`gsd.pygsd.GSDFile` in combination with :py:class:`gsd.hoomd.HOOMDTrajectory`. It only
 supports the ``rb`` mode and does not read files as fast as the C implementation.
-It takes in a python file-like object, so it can be used with in-memory IO classes,
-grid file classes that access data over the internet, etc...
+It takes in a python file-like object, so it can be used with in-memory IO classes, and
+grid file classes that access data over the internet.
 
 Access state data
 ^^^^^^^^^^^^^^^^^

@@ -15,8 +15,8 @@ for files up to a few thousand frames.
     * :file:`hoomd.py`
 
 
-The reader reads from file-like python objects, which may be useful for reading from in memory buffers, in-database
-grid files, etc... For regular files on the filesystem, and for writing gsd files, use :py:mod:`gsd.fl`.
+The reader reads from file-like python objects, which may be useful for reading from in memory buffers, and in-database
+grid files, For regular files on the filesystem, and for writing gsd files, use :py:mod:`gsd.fl`.
 
 The :py:class:`GSDFile` in this module can be used with the :py:class:`gsd.hoomd.HOOMDTrajectory` hoomd reader:
 
@@ -34,7 +34,7 @@ import struct
 from collections import namedtuple
 import sys
 
-__version__ = "1.7.0";
+__version__ = "1.8.0";
 
 logger = logging.getLogger('gsd.pygsd')
 
@@ -295,7 +295,7 @@ class GSDFile(object):
                     data3 = f.read_chunk(frame=3, name='chunk');
 
         .. tip::
-            Each call to invokes a disk read and allocation of a
+            Each call invokes a disk read and allocation of a
             new numpy array for storage. To avoid overhead, don't call
             :py:meth:`read_chunk()` on the same chunk repeatedly. Cache the
             arrays instead.
