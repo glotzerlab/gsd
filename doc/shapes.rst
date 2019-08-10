@@ -10,11 +10,6 @@ The class of a shape is defined by the ``type`` key.
 All other keys define properties of that shape.
 Keys without a default value are required for a valid shape specification.
 
-.. todo::
-    - Spheres specify diameters but ellipsoids specify radii
-    - Is it weird that only spheres infer their dimensionality?
-    - Ellipses in 2d?
-
 Empty (Undefined) Shape
 -----------------------
 
@@ -35,7 +30,7 @@ Spheres' dimensionality (2D circles or 3D spheres) can be inferred from the syst
 =============== =============== ====== ==== ======= ======
 Key             Description     Type   Size Default Units
 =============== =============== ====== ==== ======= ======
-diameter        Sphere diameter float  1x1  1.0     length
+diameter        Sphere diameter float  1x1          length
 
 Example::
 
@@ -54,9 +49,9 @@ The ellipsoid class has principal axes a, b, c corresponding to its radii in the
 =============== ===================== ====== ==== ======= ======
 Key             Description           Type   Size Default Units
 =============== ===================== ====== ==== ======= ======
-a               Radius in x direction float  1x1  0.5     length
-b               Radius in y direction float  1x1  0.5     length
-c               Radius in z direction float  1x1  0.5     length
+a               Radius in x direction float  1x1          length
+b               Radius in y direction float  1x1          length
+c               Radius in z direction float  1x1          length
 
 Example::
 
@@ -72,8 +67,8 @@ Polygons
 
 Type: ``Polygon``
 
+A simple polygon with its vertices specified in a counterclockwise order.
 Spheropolygons can be represented using this shape type, through the ``rounding_radius`` key.
-Vertices must be specified in a counterclockwise order.
 
 =============== =============== ===== ==== ======= ======
 Key             Description     Type  Size Default Units
@@ -94,6 +89,7 @@ Convex Polyhedra
 
 Type: ``ConvexPolyhedron``
 
+A convex polyhedron with vertices specifying the convex hull of the shape.
 Spheropolyhedra can be represented using this shape type, through the ``rounding_radius`` key.
 
 =============== =============== ===== ==== ======= ======
