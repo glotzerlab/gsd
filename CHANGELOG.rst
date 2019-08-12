@@ -9,6 +9,7 @@ v1.8.0 (2019-08-05)
 * Slicing a HOOMDTrajectory object returns a view that can be used to directly select frames from a subset
   or sliced again.
 * raise ``IndexError`` when attempting to read frames before the first frame.
+* Dropped support for Python 2.
 
 v1.7.0 (2019-04-30)
 -------------------
