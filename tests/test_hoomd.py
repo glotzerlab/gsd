@@ -376,6 +376,15 @@ def test_iteration():
             step = hf[0].configuration.step;
             eq_(step, 1);
 
+            step = hf[-20].configuration.step;
+            eq_(step, 1);
+
+            with assert_raises(IndexError) as cm:
+                step = hf[-21].configuration.step;
+
+            with assert_raises(IndexError) as cm:
+                step = hf[20]
+
             snaps = hf[5:10];
             steps = [snap.configuration.step for snap in snaps];
             eq_(steps, [6,7,8,9,10]);
