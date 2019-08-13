@@ -53,6 +53,7 @@ setup(name = 'gsd',
         ],
 
       install_requires=['numpy>=1.9.3,<2'],
+      python_requires='~=3.5',
       ext_modules = [fl],
       packages = ['gsd']
      )

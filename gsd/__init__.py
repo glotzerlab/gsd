@@ -15,4 +15,8 @@ Attributes:
                        not the file layer version it reads/writes.
 """
 
+import sys
+if sys.version_info < (3, 5) or sys.version_info >= (4, 0):
+    raise RuntimeError("Python ~= 3.5 is required")
+
 __version__ = "1.8.0";
