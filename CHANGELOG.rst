@@ -3,6 +3,12 @@ Change Log
 
 `gsd <https://github.com/glotzerlab/gsd>`_ releases follow `semantic versioning <https://semver.org/>`_.
 
+v1.8.1 (not yet released)
+-------------------------
+
+* Correctly raise ``IndexError`` when attempting to read frames before the first frame.
+* Raise ``RuntimeError`` when importing ``gsd`` in unsupported Python versions.
+
 v1.8.0 (2019-08-05)
 -------------------
 
