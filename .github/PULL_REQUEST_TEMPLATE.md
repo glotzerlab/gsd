@@ -29,3 +29,4 @@ Resolves: #???
 - [ ] I have reviewed the [**Contributor Guidelines**](https://github.com/glotzerlab/gsd/blob/master/CONTRIBUTING.md).
 - [ ] I agree with the terms of the [**GSD Contributor Agreement**](https://github.com/glotzerlab/gsd/blob/master/ContributorAgreement.md).
 - [ ] My name is on the [list of contributors](https://github.com/glotzerlab/gsd/blob/master/doc/credits.rst).
+- [ ] I am a member of the [gsd-contributors team](https://github.com/orgs/glotzerlab/teams/gsd-contributors/members).
