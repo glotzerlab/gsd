@@ -6,4 +6,4 @@ python:
     - method: setuptools
       path: .
 conda:
-    file: environment.yml
+    environment: doc/environment.yml
