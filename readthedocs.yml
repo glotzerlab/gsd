@@ -2,7 +2,7 @@ version: 2
 
 python:
   version: 3.7
-  install: true
+  install:
     - method: setuptools
       path: .
 conda:
