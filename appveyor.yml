@@ -6,7 +6,7 @@ image: Visual Studio 2015
 
 environment:
   PYTHONPATH: c:\projects\gsd\build
-  CONDA:
+  PATH: 'C:\Python37-x64;C:\Python37-x64\Scripts;%PATH%'
 
 platform:
   - x64
@@ -14,14 +14,14 @@ platform:
 configuration: Release
 
 install:
-  - ps: C:\Miniconda35-x64\Scripts\conda install -q -y numpy cython nose
+  - ps: python -m pip --disable-pip-version-check install numpy cython pytest
 
 before_build:
   - ps: mkdir build
   - ps: cd build
-  - ps: cmake ../ -G "Visual Studio 14 2015 Win64" -DPYTHON_EXECUTABLE=C:\Miniconda35-x64\python
+  - ps: cmake ../ -G "Visual Studio 14 2015 Win64"
 
 test_script:
   - ps: cp .\gsd\Release\*.pyd gsd\
   - ps: cd ..
-  - cmd: C:\Miniconda35-x64\Scripts\nosetests --with-xunit
+  - cmd: pytest --junit-xml=test.xml
