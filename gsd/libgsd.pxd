@@ -83,3 +83,4 @@ cdef extern from "gsd.h" nogil:
     int gsd_read_chunk(gsd_handle* handle, void* data, const gsd_index_entry* chunk);
     uint64_t gsd_get_nframes(gsd_handle* handle);
     size_t gsd_sizeof_type(gsd_type type);
+    const char *gsd_find_matching_chunk_name(gsd_handle* handle, const char *match, const char *prev);
