@@ -316,6 +316,7 @@ class Snapshot(object):
         impropers (:py:class:`BondData`): Improper data snapshot.
         pairs (:py:class:`BondData`): Special pair interactions snapshot
         state (dict): Dictionary containing state data
+        log (dict): Dictionary containing logged data
 
     See the HOOMD schema specification for details on entries in the state dictionary. Entries in this dict are the
     chunk name without the state prefix. For example, :chunk:`state/hpmc/sphere/radius` is stored in the dictionary
@@ -332,6 +333,7 @@ class Snapshot(object):
         self.constraints = ConstraintData();
         self.pairs = BondData(2);
         self.state = {}
+        self.log = {};
 
         self._valid_state = ['hpmc/integrate/d',
                              'hpmc/integrate/a',
@@ -570,6 +572,10 @@ class HOOMDTrajectory(object):
         for state,data in snapshot.state.items():
             self.file.write_chunk('state/' + state, data)
 
+        # write log data
+        for log,data in snapshot.log.items():
+            self.file.write_chunk('log/' + log, data)
+
         self.file.end_frame();
 
     def truncate(self):
@@ -723,6 +729,12 @@ class HOOMDTrajectory(object):
         for state in snap._valid_state:
             if self.file.chunk_exists(frame=idx, name='state/' + state):
                 snap.state[state] = self.file.read_chunk(frame=idx, name='state/' + state);
+
+        # read log data
+        logged_data_names = self.file.find_matching_chunk_names('log/')
+        for log in logged_data_names:
+            if self.file.chunk_exists(frame=idx, name=log):
+                snap.log[log[4:]] = self.file.read_chunk(frame=idx, name=log);
 
         # store initial frame
         if self._initial_frame is None and idx == 0:
