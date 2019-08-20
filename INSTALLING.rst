@@ -83,7 +83,7 @@ Install Prerequisites
 
 Additional packages may be needed:
 
-* nose (unit tests)
+* pytest >= 3.9.0 (unit tests)
 * sphinx (documentation)
 * ipython (documentation)
 * an internet connection (documentation)
@@ -94,7 +94,7 @@ Install these tools with your system or virtual environment package manager. GSD
 ``pacman`` (`arch linux <https://www.archlinux.org/>`_), ``apt-get`` (`ubuntu <https://ubuntu.com/>`_), `Homebrew
 <https://brew.sh/>`_ (macOS), and `MacPorts <https://www.macports.org/>`_ (macOS)::
 
-    ▶ your-package-manager install ipython python python-nose python-numpy cmake cython python-sphinx python-sphinx_rtd_theme
+    ▶ your-package-manager install ipython python python-pytest python-numpy cmake cython python-sphinx python-sphinx_rtd_theme
 
 Typical HPC cluster environments provide python, numpy, and cmake via a module system::
 
@@ -141,13 +141,13 @@ Add the build directory path to your ``PYTHONPATH`` to test **GSD**:
 Run tests
 ^^^^^^^^^
 
-Run ``nosetests`` in the source directory to execute all unit tests. This requires that the
-python module is on the python path.
+Run ``pytest`` in the source directory to execute all unit tests. This requires that the
+compiled python module is on the python path.
 
 .. code-block:: bash
 
    ▶ cd /path/to/gsd
-   ▶ nosetests
+   ▶ pytest
 
 Build user documentation
 ^^^^^^^^^^^^^^^^^^^^^^^^
