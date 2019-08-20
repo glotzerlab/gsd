@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <stddef.h>
 
 #include "gsd.h"
 
@@ -963,6 +964,57 @@ size_t gsd_sizeof_type(enum gsd_type type)
     else
         return 0;
     }
+
+/*! \param handle Handle to an open GSD file
+    \param match String to match
+    \param prev Search starting point
+
+    \pre \a handle was opened by gsd_open()
+    \pre \a prev was returned by a previous call to gsd_find_matching_chunk_name
+
+    To find the first matching chunk name, pass NULL for prev. Pass in the previous found string to find the next
+    after that, and so on. Chunk names match if they begin with the string in \a match. Chunk names returned
+    by this function may be present in at least one frame.
+
+    \return Pointer to a string, NULL if no more matching chunks are found found, or NULL if \a prev is invalid
+*/
+const char *gsd_find_matching_chunk_name(struct gsd_handle* handle, const char* match, const char *prev)
+    {
+    if (handle == NULL)
+        return NULL;
+    if (match == NULL)
+        return NULL;
+    if (handle->namelist_num_entries == 0)
+        return NULL;
+
+    // determine search start index
+    size_t start;
+    if (prev == NULL)
+        {
+        start = 0;
+        }
+    else
+        {
+        if (prev < handle->namelist[0].name)
+            return NULL;
+
+        ptrdiff_t d = prev - handle->namelist[0].name;
+        if (d % sizeof(struct gsd_namelist_entry) != 0)
+            return NULL;
+        start = d / sizeof(struct gsd_namelist_entry) + 1;
+        }
+
+    size_t match_len = strnlen(match, sizeof(handle->namelist[0].name));
+    for (size_t i = start; i < handle->namelist_num_entries; i++)
+        {
+        if (0 == strncmp(match, handle->namelist[i].name, match_len))
+            return handle->namelist[i].name;
+        }
+
+    // searched past the end of the list, return NULL
+    return NULL;
+    }
+
 
 // undefine windows wrapper macros
 #ifdef _WIN32
