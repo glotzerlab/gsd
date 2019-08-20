@@ -496,3 +496,33 @@ def test_state(tmp_path):
 
         numpy.testing.assert_array_equal(s.state['hpmc/convex_polyhedron/N'], snap1.state['hpmc/convex_polyhedron/N']);
         numpy.testing.assert_array_equal(s.state['hpmc/convex_polyhedron/vertices'], snap1.state['hpmc/convex_polyhedron/vertices']);
+
+def test_log(tmp_path):
+    snap0 = gsd.hoomd.Snapshot();
+
+    snap0.log['particles/net_force'] = [[1,2,3],[4,5,6]]
+    snap0.log['value/potential_energy'] = [10]
+
+    snap1 = gsd.hoomd.Snapshot();
+
+    snap1.log['particles/pair_lj_energy'] = [1,2,-4,-10]
+    snap1.log['value/pressure'] = [5]
+
+    with gsd.hoomd.open(name=tmp_path / "test_log.gsd", mode='wb') as hf:
+        hf.extend([snap0, snap1]);
+
+    with gsd.hoomd.open(name=tmp_path / "test_log.gsd", mode='rb') as hf:
+        assert len(hf) == 2;
+        s = hf.read_frame(0);
+
+        numpy.testing.assert_array_equal(s.log['particles/net_force'], snap0.log['particles/net_force']);
+        numpy.testing.assert_array_equal(s.log['value/potential_energy'], snap0.log['value/potential_energy']);
+        assert 'particles/pair_lj_energy' not in s.log;
+        assert 'value/pressure' not in s.log;
+
+        s = hf.read_frame(1);
+
+        assert 'particles/net_force' not in s.log;
+        assert 'value/potential_energy' not in s.log;
+        numpy.testing.assert_array_equal(s.log['particles/pair_lj_energy'], snap1.log['particles/pair_lj_energy']);
+        numpy.testing.assert_array_equal(s.log['value/pressure'], snap1.log['value/pressure']);
