@@ -12,12 +12,12 @@ of the existing data chunks. Any newer reader will initialize new data chunks wi
 not present in an older version file.
 
 :Schema name: ``hoomd``
-:Schema version: 1.3
+:Schema version: 1.4
 
 Use-cases
 ---------
 
-There are a few problems with XML, DCD, and other dump files that the GSD schema ``hoomd`` solves.
+The GSD schema ``hoomd`` provides.
 
 #. Every frame of GSD output is viable for restart from ``init.read_gsd``
 #. No need for a separate topology file - everything is in one ``.gsd`` file.
@@ -27,6 +27,7 @@ There are a few problems with XML, DCD, and other dump files that the GSD schema
 #. Simple interface for dump - limited number of options that produce valid files
 #. Binary format on disk
 #. High performance file read and write
+#. Support logging computed quantities
 
 Data chunks
 -----------
@@ -770,3 +771,37 @@ HPMC integrator state
     the shape for type 1 is the next N[1] vertices, and so on...
 
     .. versionadded:: 1.2
+
+Logged data
+------------
+
+Users may store logged data in ``log/*`` data chunks. Logged data encompasses values computed at simulation time that
+are too expensive or cumbersome to re-compute in post processing. This specification does not define specific chunk
+names or define logged data. Users may select any valid name for logged data chunks as appropriate for their workflow.
+
+Logged data chunks do not have default values. If a chunk is not present in a frame, that quantity does not have a
+well-defined value. Users are expected, but not required, to include the same logged data chunks on every frame
+in a GSD file. Implementations are free to return 0's or empty arrays for logged quantities that are missing
+on some frames.
+
+By convention, per-particle logged data should have a chunk name starting with ``log/particles/``. Other logged data,
+such as scalar values, should have a different prefix. This specification may recognize additional conventions
+in later versions without invalidating existing files.
+
+========================================================== ====== ========= ================
+Name                                                       Type   Size      Units
+========================================================== ====== ========= ================
+:chunk:`log/particles/user_defined`                        n/a    NxM       user-defined
+========================================================== ====== ========= ================
+
+.. chunk:: log/particles/user_defined
+
+    :Type: user-defined
+    :Size: NxM
+    :Units: user-defined
+
+    This chunk is a place holder for any number of user defined per-particle quantities. *N* is the number of particles
+    in this frame. *M*, the data type, the units, and the chunk name (after the prefix ``log/particles/`` are
+    user-defined.
+
+    .. versionadded:: 1.4
