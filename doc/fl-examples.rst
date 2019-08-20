@@ -88,6 +88,24 @@ Test if a chunk exists
 :py:meth:`gsd.fl.GSDFile.chunk_exists` tests to see if a chunk by the given name exists in the file
 at the given frame.
 
+Discover chunk names
+^^^^^^^^^^^^^^^^^^^^
+
+.. ipython:: python
+
+    f = gsd.fl.open(name="file.gsd",
+                    mode='rb',
+                    application="My application",
+                    schema="My Schema",
+                    schema_version=[1,0])
+    f.find_matching_chunk_names('')
+    f.find_matching_chunk_names('chunk')
+    f.find_matching_chunk_names('chunk1')
+    f.find_matching_chunk_names('other')
+
+:py:meth:`gsd.fl.GSDFile.find_matching_chunk_names` finds all chunk names present in a GSD file that start with the
+given string.
+
 Read-only access
 ^^^^^^^^^^^^^^^^
 
