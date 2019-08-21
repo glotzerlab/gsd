@@ -38,8 +38,8 @@ diameter        Sphere diameter float  1x1          length
 Example::
 
     {
-        'type': 'Sphere',
-        'diameter': 2.0
+        "type": "Sphere",
+        "diameter": 2.0
     }
 
 Ellipsoids
@@ -60,10 +60,10 @@ c               Radius in z direction float  1x1          length
 Example::
 
     {
-        'type': 'Ellipsoid',
-        'a': 7.0,
-        'b': 5.0,
-        'c': 3.0
+        "type": "Ellipsoid",
+        "a": 7.0,
+        "b": 5.0,
+        "c": 3.0
     }
 
 Polygons
@@ -84,9 +84,9 @@ vertices        Shape vertices  float Nx2          length
 Example::
 
     {
-        'type': 'Polygon',
-        'rounding_radius': 0.1,
-        'vertices': [[-0.5, -0.5], [0.5, -0.5], [0.5, 0.5]]
+        "type": "Polygon",
+        "rounding_radius": 0.1,
+        "vertices": [[-0.5, -0.5], [0.5, -0.5], [0.5, 0.5]]
     }
 
 Convex Polyhedra
@@ -107,9 +107,9 @@ vertices        Shape vertices  float Nx3          length
 Example::
 
     {
-        'type': 'ConvexPolyhedron',
-        'rounding_radius': 0.1,
-        'vertices': [[0.5, 0.5, 0.5], [0.5, -0.5, -0.5], [-0.5, 0.5, -0.5], [-0.5, -0.5, 0.5]]
+        "type": "ConvexPolyhedron",
+        "rounding_radius": 0.1,
+        "vertices": [[0.5, 0.5, 0.5], [0.5, -0.5, -0.5], [-0.5, 0.5, -0.5], [-0.5, -0.5, 0.5]]
     }
 
 General 3D Meshes
@@ -132,7 +132,7 @@ indices         Rounding radius uint32              number
 Example::
 
     {
-        'type': 'Mesh',
-        'vertices': [[0.5, 0.5, 0.5], [0.5, -0.5, -0.5], [-0.5, 0.5, -0.5], [-0.5, -0.5, 0.5]],
-        'indices': [[1, 2, 3], [1, 4, 2], [1, 3, 4], [2, 4, 3]]
+        "type": "Mesh",
+        "vertices": [[0.5, 0.5, 0.5], [0.5, -0.5, -0.5], [-0.5, 0.5, -0.5], [-0.5, -0.5, 0.5]],
+        "indices": [[1, 2, 3], [1, 4, 2], [1, 3, 4], [2, 4, 3]]
     }
