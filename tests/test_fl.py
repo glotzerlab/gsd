@@ -323,14 +323,14 @@ def test_open(tmp_path):
 def test_find_matching_chunk_names(tmp_path):
     data = numpy.array([1,2,3,4,5], dtype=numpy.float32);
 
-    with gsd.fl.GSDFile(name=tmp_path / 'test.gsd', mode='xb', application='test_find_matching_chunk_names', schema='none', schema_version=[1,2]) as f:
+    with gsd.fl.open(name=tmp_path / 'test.gsd', mode='xb', application='test_find_matching_chunk_names', schema='none', schema_version=[1,2]) as f:
         f.write_chunk(name='log/A', data=data);
         f.write_chunk(name='log/chunk2', data=data);
         f.end_frame();
         f.write_chunk(name='data/B', data=data);
         f.end_frame();
 
-    with gsd.fl.GSDFile(name=tmp_path / 'test.gsd', mode='rb', application='test_find_matching_chunk_names', schema='none', schema_version=[1,2]) as f:
+    with gsd.fl.open(name=tmp_path / 'test.gsd', mode='rb', application='test_find_matching_chunk_names', schema='none', schema_version=[1,2]) as f:
         all_chunks = f.find_matching_chunk_names('');
         assert len(all_chunks) == 3;
         assert 'log/A' in all_chunks;
@@ -350,7 +350,7 @@ def test_find_matching_chunk_names(tmp_path):
         assert len(other_chunks) == 0;
 
     # test again with pygsd
-    with gsd.pygsd.GSDFile(file=open(d+"/test.gsd", mode='rb')) as f:
+    with gsd.pygsd.GSDFile(file=open(tmp_path / "test.gsd", mode='rb')) as f:
         all_chunks = f.find_matching_chunk_names('');
         assert len(all_chunks) == 3;
         assert 'log/A' in all_chunks;
