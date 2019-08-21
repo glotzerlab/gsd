@@ -31,6 +31,7 @@ Spheres' dimensionality (2D circles or 3D spheres) can be inferred from the syst
 Key             Description     Type   Size Default Units
 =============== =============== ====== ==== ======= ======
 diameter        Sphere diameter float  1x1          length
+=============== =============== ====== ==== ======= ======
 
 Example::
 
@@ -52,6 +53,7 @@ Key             Description           Type   Size Default Units
 a               Radius in x direction float  1x1          length
 b               Radius in y direction float  1x1          length
 c               Radius in z direction float  1x1          length
+=============== ===================== ====== ==== ======= ======
 
 Example::
 
@@ -75,6 +77,7 @@ Key             Description     Type  Size Default Units
 =============== =============== ===== ==== ======= ======
 rounding_radius Rounding radius float 1x1  0.0     length
 vertices        Shape vertices  float Nx2          length
+=============== =============== ===== ==== ======= ======
 
 Example::
 
@@ -97,6 +100,7 @@ Key             Description     Type  Size Default Units
 =============== =============== ===== ==== ======= ======
 rounding_radius Rounding radius float 1x1  0.0     length
 vertices        Shape vertices  float Nx3          length
+=============== =============== ===== ==== ======= ======
 
 Example::
 
@@ -120,6 +124,7 @@ Key             Description     Type   Size Default Units
 =============== =============== ====== ==== ======= ======
 vertices        Rounding radius float  Nx3          length
 indices         Rounding radius uint32              number
+=============== =============== ====== ==== ======= ======
 
 
 Example::

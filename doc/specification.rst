@@ -8,3 +8,4 @@ Specification
 
     file-layer
     schema-hoomd
+    shapes
