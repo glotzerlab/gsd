@@ -1005,7 +1005,8 @@ const char *gsd_find_matching_chunk_name(struct gsd_handle* handle, const char* 
         }
 
     size_t match_len = strnlen(match, sizeof(handle->namelist[0].name));
-    for (size_t i = start; i < handle->namelist_num_entries; i++)
+    size_t i;
+    for (i = start; i < handle->namelist_num_entries; i++)
         {
         if (0 == strncmp(match, handle->namelist[i].name, match_len))
             return handle->namelist[i].name;
