@@ -350,7 +350,7 @@ def test_find_matching_chunk_names(tmp_path):
         assert len(other_chunks) == 0;
 
     # test again with pygsd
-    with gsd.pygsd.GSDFile(file=open(tmp_path / "test.gsd", mode='rb')) as f:
+    with gsd.pygsd.GSDFile(file=open(str(tmp_path / "test.gsd"), mode='rb')) as f:
         all_chunks = f.find_matching_chunk_names('');
         assert len(all_chunks) == 3;
         assert 'log/A' in all_chunks;
