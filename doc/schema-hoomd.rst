@@ -58,6 +58,7 @@ Name                              Category  Type   Size Default Units
 :chunk:`particles/N`              attribute uint32 1x1  0       number
 :chunk:`particles/types`          attribute int8   NTxM ['A']   UTF-8
 :chunk:`particles/typeid`         attribute uint32 Nx1  0       number
+:chunk:`particles/type_shapes`    attribute int8   NTx1         UTF-8
 :chunk:`particles/mass`           attribute float  Nx1  1.0     mass
 :chunk:`particles/charge`         attribute float  Nx1  0.0     charge
 :chunk:`particles/diameter`       attribute float  Nx1  1.0     length
@@ -173,6 +174,19 @@ Attributes
 
     Store the type id of each particle. All id's must be less than *NT*. A particle with
     type *id* has a type name matching the corresponding row in :chunk:`particles/types`.
+
+.. chunk:: particles/type_shapes
+
+    :Type: int8
+    :Size: NTxM
+    :Default: *empty*
+    :Units: UTF-8
+
+    Store a per-type shape definition for visualization. A dictionary is stored
+    for each of the *NT* types, corresponding to a shape for visualization of
+    that type. *M* must be large enough to accommodate the shape definition as
+    a null-terminated UTF-8 JSON-encoded string. See: :ref:`shapes` for
+    examples.
 
 .. chunk:: particles/mass
 
