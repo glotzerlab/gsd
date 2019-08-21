@@ -21,6 +21,8 @@ for full examples.
 import numpy
 from collections import OrderedDict
 import logging
+import json
+
 try:
     from gsd import fl
 except ImportError:
@@ -103,6 +105,7 @@ class ParticleData(object):
         velocity (`numpy.ndarray` or `array_like` [float, ndim=2, mode='c']): Nx3 array defining particle velocities (:chunk:`particles/velocity`).
         angmom (`numpy.ndarray` or `array_like` [float, ndim=2, mode='c']): Nx4 array defining particle angular momenta (:chunk:`particles/angmom`).
         image (`numpy.ndarray` or `array_like` [int32, ndim=2, mode='c']): Nx3 array defining particle images (:chunk:`particles/image`).
+        type_shapes (list[dict]): Shape specifications for visualizing particle types (:chunk:`particles/type_shapes`).
     """
 
     _default_value = OrderedDict();
@@ -119,6 +122,7 @@ class ParticleData(object):
     _default_value['velocity'] = numpy.array([0,0,0], dtype=numpy.float32);
     _default_value['angmom'] = numpy.array([0,0,0,0], dtype=numpy.float32);
     _default_value['image'] = numpy.array([0,0,0], dtype=numpy.int32);
+    _default_value['type_shapes'] = [{}];
 
     def __init__(self):
         self.N = 0;
@@ -134,6 +138,7 @@ class ParticleData(object):
         self.velocity = None;
         self.angmom = None;
         self.image = None;
+        self.type_shapes = None;
 
     def validate(self):
         """ Validate all attributes.
@@ -559,7 +564,9 @@ class HOOMDTrajectory(object):
                         data = numpy.array([data], dtype=numpy.uint64);
                     if name == 'dimensions':
                         data = numpy.array([data], dtype=numpy.uint8);
-                    if name == 'types':
+                    if name in ('types', 'type_shapes'):
+                        if name == 'type_shapes':
+                            data = [json.dumps(shape_dict) for shape_dict in data]
                         wid = max(len(w) for w in data)+1;
                         b = numpy.array(data, dtype=numpy.dtype((bytes, wid)));
                         data = b.view(dtype=numpy.int8).reshape(len(b), wid);
@@ -698,8 +705,22 @@ class HOOMDTrajectory(object):
                     else:
                         container.types = container._default_value['types'];
 
+            # type shapes
+            if 'type_shapes' in container._default_value and path == 'particles':
+                if self.file.chunk_exists(frame=idx, name=path + '/type_shapes'):
+                    tmp = self.file.read_chunk(frame=idx, name=path + '/type_shapes');
+                    tmp = tmp.view(dtype=numpy.dtype((bytes, tmp.shape[1])));
+                    tmp = tmp.reshape([tmp.shape[0]]);
+                    container.type_shapes = list(json.loads(json_string.decode('UTF-8')) for json_string in tmp)
+                else:
+                    if self._initial_frame is not None:
+                        container.type_shapes = initial_frame_container.type_shapes;
+                    else:
+                        container.type_shapes = container._default_value['type_shapes'];
+
+
             for name in container._default_value:
-                if name == 'N' or name == 'types':
+                if name in ('N', 'types', 'type_shapes'):
                     continue;
 
                 # per particle/bond quantities
