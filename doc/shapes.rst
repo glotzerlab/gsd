@@ -6,8 +6,8 @@
 Shape Visualization Specification
 =================================
 
-Shape specifications contain information about the shape of individual particles.
-Each particle type stores a JSON-compatible string representation of a key-value dictionary.
+The chunk :chunk:`particles/type_shapes` stores information about shapes corresponding to particle types.
+Shape definitions are stored for each type as a UTF-8 encoded JSON string containing key-value pairs.
 The class of a shape is defined by the ``type`` key.
 All other keys define properties of that shape.
 Keys without a default value are required for a valid shape specification.
@@ -15,7 +15,7 @@ Keys without a default value are required for a valid shape specification.
 Empty (Undefined) Shape
 -----------------------
 
-A null string or empty dictionary can be used for undefined shapes.
+An empty dictionary can be used for undefined shapes.
 A visualization application may choose how to interpret this, e.g. by drawing nothing or drawing spheres.
 
 Example::
