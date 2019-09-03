@@ -784,7 +784,7 @@ def create(name, snapshot=None):
 
     logger.info('creating hoomd gsd file: ' + name);
 
-    gsd.fl.create(name=name, application='gsd.hoomd ' + gsd.__version__, schema='hoomd', schema_version=[1,3]);
+    gsd.fl.create(name=str(name), application='gsd.hoomd ' + gsd.__version__, schema='hoomd', schema_version=[1,3]);
     with gsd.fl.GSDFile(name, 'wb') as f:
         traj = HOOMDTrajectory(f);
         if snapshot is not None:
@@ -844,7 +844,7 @@ def open(name, mode='rb'):
     if gsd is None:
         raise RuntimeError("gsd module is not available");
 
-    gsdfileobj = fl.open(name=name,
+    gsdfileobj = fl.open(name=str(name),
                          mode=mode,
                          application='gsd.hoomd ' + gsd.__version__,
                          schema='hoomd',

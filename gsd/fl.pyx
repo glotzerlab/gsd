@@ -160,7 +160,7 @@ def open(name, mode, application, schema, schema_version):
             data
     """
 
-    return GSDFile(name, mode, application, schema, schema_version);
+    return GSDFile(str(name), mode, application, schema, schema_version);
 
 cdef class GSDFile:
     """ GSDFile(name, mode, application, schema, schema_version)
@@ -240,6 +240,7 @@ cdef class GSDFile:
         cdef char * c_application;
         cdef char * c_schema;
         cdef int _c_schema_version;
+        cdef str schema_truncated;
 
         if overwrite:
             # create a new file or overwrite an existing one
@@ -290,8 +291,11 @@ cdef class GSDFile:
 
         # validate schema
         if new_api:
-            if self.schema != schema:
-                raise RuntimeError('file ' + name + ' has incorrect schema: ' + schema);
+            schema_truncated = schema
+            if len(schema_truncated) > 64:
+                schema_truncated = schema_truncated[0:63]
+            if self.schema != schema_truncated:
+                raise RuntimeError('file ' + name + ' has incorrect schema: ' + self.schema);
 
         self.__is_open = True;
 
@@ -772,7 +776,7 @@ def create(name, application, schema, schema_version):
     """
 
     _c_schema_version = libgsd.gsd_make_version(schema_version[0], schema_version[1])
-    retval = libgsd.gsd_create(name.encode('utf-8'), application.encode('utf-8'), schema.encode('utf-8'), _c_schema_version);
+    retval = libgsd.gsd_create(str(name).encode('utf-8'), application.encode('utf-8'), schema.encode('utf-8'), _c_schema_version);
 
     if retval == -1:
         raise IOError(*__format_errno(name));

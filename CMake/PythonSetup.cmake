@@ -85,7 +85,7 @@ include_directories(${NUMPY_INCLUDE_DIR})
 
 #############################################################################################
 # Find cython
-find_program(CYTHON_EXECUTABLE NAMES cython)
+find_program(CYTHON_EXECUTABLE NAMES cython cython3)
 mark_as_advanced(CYTHON_EXECUTABLE)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(cython DEFAULT_MSG CYTHON_EXECUTABLE)
 
