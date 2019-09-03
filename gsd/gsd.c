@@ -34,6 +34,7 @@
 #define read _read
 #define open _open
 #define ftruncate _chsize
+#define fsync _commit
 
 int S_IRUSR = _S_IREAD;
 int S_IWUSR = _S_IWRITE;
