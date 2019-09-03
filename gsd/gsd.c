@@ -140,10 +140,20 @@ static int __gsd_expand_index(struct gsd_handle *handle)
         handle->file_size = handle->header.index_location + total_bytes_written;
         }
 
+    // sync the expanded index
+    int retval = fsync(handle->fd);
+    if (retval != 0)
+        return -1;
+
     // write the new header out
     lseek(handle->fd, 0, SEEK_SET);
     size_t bytes_written = write(handle->fd, &(handle->header), sizeof(struct gsd_header));
     if (bytes_written != sizeof(struct gsd_header))
+        return -1;
+
+    // sync the updated header
+    retval = fsync(handle->fd);
+    if (retval != 0)
         return -1;
 
     return 0;
@@ -184,6 +194,12 @@ uint16_t __gsd_get_id(struct gsd_handle *handle, const char *name, uint8_t appen
             return UINT16_MAX;
 
         handle->namelist_num_entries++;
+
+        // sync the expanded namelist
+        int retval = fsync(handle->fd);
+        if (retval != 0)
+            return -1;
+
         return handle->namelist_num_entries-1;
         }
     else
@@ -246,6 +262,11 @@ int __gsd_initialize_file(int fd, const char *application, const char *schema, u
     // write the namelist out
     bytes_written = write(fd, namelist, sizeof(namelist));
     if (bytes_written != sizeof(namelist))
+        return -1;
+
+    // sync file
+    retval = fsync(fd);
+    if (retval != 0)
         return -1;
 
     return 0;
