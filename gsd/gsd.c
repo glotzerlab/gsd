@@ -34,6 +34,7 @@
 #define read _read
 #define open _open
 #define ftruncate _chsize
+#define fsync _commit
 
 int S_IRUSR = _S_IREAD;
 int S_IWUSR = _S_IWRITE;
@@ -140,10 +141,20 @@ static int __gsd_expand_index(struct gsd_handle *handle)
         handle->file_size = handle->header.index_location + total_bytes_written;
         }
 
+    // sync the expanded index
+    int retval = fsync(handle->fd);
+    if (retval != 0)
+        return -1;
+
     // write the new header out
     lseek(handle->fd, 0, SEEK_SET);
     size_t bytes_written = write(handle->fd, &(handle->header), sizeof(struct gsd_header));
     if (bytes_written != sizeof(struct gsd_header))
+        return -1;
+
+    // sync the updated header
+    retval = fsync(handle->fd);
+    if (retval != 0)
         return -1;
 
     return 0;
@@ -184,6 +195,12 @@ uint16_t __gsd_get_id(struct gsd_handle *handle, const char *name, uint8_t appen
             return UINT16_MAX;
 
         handle->namelist_num_entries++;
+
+        // sync the expanded namelist
+        int retval = fsync(handle->fd);
+        if (retval != 0)
+            return -1;
+
         return handle->namelist_num_entries-1;
         }
     else
@@ -248,7 +265,57 @@ int __gsd_initialize_file(int fd, const char *application, const char *schema, u
     if (bytes_written != sizeof(namelist))
         return -1;
 
+    // sync file
+    retval = fsync(fd);
+    if (retval != 0)
+        return -1;
+
     return 0;
+    }
+
+/*! \internal
+    \brief Utility function to validate index entry
+    \param handle handle to the open gsd file
+    \param idx index of entry to validate
+
+    \returns 1 if the entry is valid, 0 if it is not
+*/
+static int __is_entry_valid(struct gsd_handle *handle, size_t idx)
+    {
+    const struct gsd_index_entry entry = handle->index[idx];
+
+    // check for valid type
+    if (gsd_sizeof_type(entry.type) == 0)
+        {
+        return 0;
+        }
+
+    // validate that we don't read past the end of the file
+    size_t size = entry.N * entry.M * gsd_sizeof_type(entry.type);
+    if ((entry.location + size) > handle->file_size)
+        {
+        return 0;
+        }
+
+    // check for valid frame (frame cannot be more than the number of index entries)
+    if (entry.frame >= handle->header.index_allocated_entries)
+        {
+        return 0;
+        }
+
+    // check for valid id
+    if (entry.id >= handle->namelist_num_entries)
+        {
+        return 0;
+        }
+
+    // check for valid flags
+    if (entry.flags != 0)
+        {
+        return 0;
+        }
+
+    return 1;
     }
 
 /*! \param handle Handle to read the header
@@ -351,6 +418,27 @@ int __gsd_read_header(struct gsd_handle* handle)
             return -1;
         }
 
+    // determine the number of namelist entries (marked by an empty string)
+    // base case: the namelist is full
+    handle->namelist_num_entries = handle->header.namelist_allocated_entries;
+
+    // general case, find the first namelist entry that is the empty string
+    size_t i;
+    for (i = 0; i < handle->header.namelist_allocated_entries; i++)
+        {
+        if (handle->namelist[i].name[0] == 0)
+            {
+            handle->namelist_num_entries = i;
+            break;
+            }
+        }
+
+    // file is corrupt if first index entry is invalid
+    if (handle->index[0].location != 0 && !__is_entry_valid(handle, 0))
+        {
+        return -4;
+        }
+
     if (handle->index[0].location == 0)
         {
         handle->index_num_entries = 0;
@@ -367,6 +455,13 @@ int __gsd_read_header(struct gsd_handle* handle)
             {
             size_t m = (L+R)/2;
 
+            // file is corrupt if any index entry is invalid or frame does not increase monotonically
+            if (handle->index[m].location != 0 &&
+                (!__is_entry_valid(handle, m) || handle->index[m].frame < handle->index[L].frame))
+                {
+                return -4;
+                }
+
             if (handle->index[m].location != 0)
                 L = m;
             else
@@ -376,22 +471,6 @@ int __gsd_read_header(struct gsd_handle* handle)
         // this finds R = the first index entry with location = 0
         handle->index_num_entries = R;
         }
-
-    // determine the number of namelist entries (marked by location = 0)
-    // base case: the namelist is full
-    handle->namelist_num_entries = handle->header.namelist_allocated_entries;
-
-    // general case, find the first namelist entry that is the empty string
-    size_t i;
-    for (i = 0; i < handle->header.namelist_allocated_entries; i++)
-        {
-        if (handle->namelist[i].name[0] == 0)
-            {
-            handle->namelist_num_entries = i;
-            break;
-            }
-        }
-
 
     // determine the current frame counter
     if (handle->index_num_entries == 0)

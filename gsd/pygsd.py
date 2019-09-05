@@ -136,21 +136,6 @@ class GSDFile(object):
         # determine the file size (only works in python 3)
         self.__file.seek(0, 2);
 
-        # read the index block. Since this is a read-only implementation, only read in the used entries
-        self.__index = [];
-        self.__file.seek(self.__header.index_location, 0);
-        for i in range(self.__header.index_allocated_entries):
-            index_entry_raw = self.__file.read(gsd_index_entry_struct.size);
-            if len(index_entry_raw) != gsd_index_entry_struct.size:
-                raise IOError
-
-            idx = gsd_index_entry._make(gsd_index_entry_struct.unpack(index_entry_raw));
-
-            # 0 location signifies end of index
-            if idx.location == 0:
-                break
-            self.__index.append(idx);
-
         # read the namelist block into a dict for easy lookup
         self.__namelist = {};
         c = 0;
@@ -167,7 +152,50 @@ class GSDFile(object):
             self.__namelist[sname] = c;
             c = c + 1;
 
+        # read the index block. Since this is a read-only implementation, only read in the used entries
+        self.__index = [];
+        self.__file.seek(self.__header.index_location, 0);
+        for i in range(self.__header.index_allocated_entries):
+            index_entry_raw = self.__file.read(gsd_index_entry_struct.size);
+            if len(index_entry_raw) != gsd_index_entry_struct.size:
+                raise IOError
+
+            idx = gsd_index_entry._make(gsd_index_entry_struct.unpack(index_entry_raw));
+
+            # 0 location signifies end of index
+            if idx.location == 0:
+                break
+
+            if not self.__is_entry_valid(idx):
+                raise RuntimeError("Corrupt GSD file: " + str(self.__file));
+
+            if i > 0 and idx.frame < self.__index[i-1].frame:
+                raise RuntimeError("Corrupt GSD file: " + str(self.__file));
+
+            self.__index.append(idx);
+
         self.__is_open = True;
+
+    def __is_entry_valid(self, entry):
+        """ Return True if an entry is valid
+        """
+        if entry.type not in gsd_type_mapping:
+            return False;
+
+        size = entry.N * entry.M * gsd_type_mapping[entry.type].itemsize;
+        if size == 0:
+            return False;
+
+        if entry.frame >= self.__header.index_allocated_entries:
+            return False;
+
+        if entry.id >= len(self.__namelist):
+            return False;
+
+        if entry.flags != 0:
+            return False;
+
+        return True;
 
     def close(self):
         """ close()
