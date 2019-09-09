@@ -316,7 +316,7 @@ class Snapshot(object):
         impropers (:py:class:`BondData`): Improper data snapshot.
         pairs (:py:class:`BondData`): Special pair interactions snapshot
         state (dict): Dictionary containing state data
-        log (dict): Dictionary containing logged data
+        log (dict): Dictionary containing logged data (values must be `numpy.ndarray` or `array_like`)
 
     See the HOOMD schema specification for details on entries in the state dictionary. Entries in this dict are the
     chunk name without the state prefix. For example, :chunk:`state/hpmc/sphere/radius` is stored in the dictionary

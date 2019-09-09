@@ -169,3 +169,14 @@ without the 'log/' prefix and gsd will include it in the output. Store per-parti
     s.log['value/potential_energy']
 
 Read logged data from the ``log`` dictionary.
+
+Logged data must be a convertible to a numpy array of a supported type:
+
+.. ipython:: python
+    :okexcept:
+
+    with gsd.hoomd.open(name='example.gsd', mode='wb') as t:
+        s = gsd.hoomd.Snapshot()
+        s.particles.N = 4
+        s.log['invalid'] = dict(a=1, b=5)
+        t.append(s)
