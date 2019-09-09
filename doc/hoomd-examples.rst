@@ -150,11 +150,11 @@ Access logged data
     with gsd.hoomd.open(name='example.gsd', mode='wb') as t:
         s = gsd.hoomd.Snapshot()
         s.particles.N = 4
-        s.log['particles/net_force'] = [[-1,2,-3],
+        s.log['particles/net_force'] = numpy.array([[-1,2,-3],
                                         [0,2,-4],
                                         [-3,2,1],
-                                        [1,2,3]]
-        s.log['value/potential_energy'] = 1
+                                        [1,2,3]], dtype=numpy.float32)
+        s.log['value/potential_energy'] = [1.5]
         t.append(s)
 
 Logged data is stored in the ``log`` dictionary as numpy arrays. Place data into this dictionary directly
