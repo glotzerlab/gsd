@@ -17,7 +17,7 @@ not present in an older version file.
 Use-cases
 ---------
 
-The GSD schema ``hoomd`` provides.
+The GSD schema ``hoomd`` provides:
 
 #. Every frame of GSD output is viable for restart from ``init.read_gsd``
 #. No need for a separate topology file - everything is in one ``.gsd`` file.
