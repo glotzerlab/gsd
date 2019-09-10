@@ -735,6 +735,9 @@ class HOOMDTrajectory(object):
         for log in logged_data_names:
             if self.file.chunk_exists(frame=idx, name=log):
                 snap.log[log[4:]] = self.file.read_chunk(frame=idx, name=log);
+            else:
+                if self._initial_frame is not None:
+                    snap.log[log[4:]] = self._initial_frame.log[log[4:]]
 
         # store initial frame
         if self._initial_frame is None and idx == 0:

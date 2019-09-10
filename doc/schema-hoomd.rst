@@ -779,10 +779,9 @@ Users may store logged data in ``log/*`` data chunks. Logged data encompasses va
 are too expensive or cumbersome to re-compute in post processing. This specification does not define specific chunk
 names or define logged data. Users may select any valid name for logged data chunks as appropriate for their workflow.
 
-Logged data chunks do not have default values. If a chunk is not present in a frame, that quantity does not have a
-well-defined value. Users are expected, but not required, to include the same logged data chunks on every frame
-in a GSD file. Implementations are free to return 0's or empty arrays for logged quantities that are missing
-on some frames.
+For any named logged data chunks present in any frame frame the file: If a chunk is not present in a given frame i != 0,
+the implementation should provide the quantity as read from frame 0 for that frame. GSD files that include a logged
+data chunk only in some frames i != 0 and not in frame 0 are invalid.
 
 By convention, per-particle logged data should have a chunk name starting with ``log/particles/``. Other logged data,
 such as scalar values, should have a different prefix. This specification may recognize additional conventions
