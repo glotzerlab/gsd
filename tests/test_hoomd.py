@@ -162,7 +162,8 @@ def test_fallback(tmp_path):
     snap2 = gsd.hoomd.Snapshot();
     snap2.particles.N = 3;
     snap2.particles.types = ['q', 's'];
-    snap2.particles.type_shapes = [{}, {}]
+    snap2.particles.type_shapes = \
+        [{}, {"type": "Ellipsoid", "a": 7.0, "b": 5.0, "c": 3.0}];
     snap2.bonds.N = 3;
     snap2.angles.N = 4;
     snap2.dihedrals.N = 5;
@@ -279,7 +280,7 @@ def test_fallback(tmp_path):
 
         assert s.particles.N == 3;
         assert s.particles.types == ['q', 's'];
-        assert s.particles.type_shapes == [{}, {}];
+        assert s.particles.type_shapes == snap2.particles.type_shapes;
         numpy.testing.assert_array_equal(s.particles.typeid, numpy.array([0,0,0], dtype=numpy.uint32));
         numpy.testing.assert_array_equal(s.particles.mass, numpy.array([1,1,1], dtype=numpy.float32));
         numpy.testing.assert_array_equal(s.particles.diameter, numpy.array([1,1,1], dtype=numpy.float32));
