@@ -58,7 +58,7 @@ Name                              Category  Type   Size Default Units
 :chunk:`particles/N`              attribute uint32 1x1  0       number
 :chunk:`particles/types`          attribute int8   NTxM ['A']   UTF-8
 :chunk:`particles/typeid`         attribute uint32 Nx1  0       number
-:chunk:`particles/type_shapes`    attribute int8   NTx1         UTF-8
+:chunk:`particles/type_shapes`    attribute int8   NTxM         UTF-8
 :chunk:`particles/mass`           attribute float  Nx1  1.0     mass
 :chunk:`particles/charge`         attribute float  Nx1  0.0     charge
 :chunk:`particles/diameter`       attribute float  Nx1  1.0     length
