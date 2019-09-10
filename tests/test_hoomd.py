@@ -59,6 +59,7 @@ def test_defaults(tmp_path):
         numpy.testing.assert_array_equal(s.configuration.box, numpy.array([1,1,1,0,0,0], dtype=numpy.float32));
         assert s.particles.N == 2;
         assert s.particles.types == ['A'];
+        assert s.particles.type_shapes == [{}];
         numpy.testing.assert_array_equal(s.particles.typeid, numpy.array([0,0], dtype=numpy.uint32));
         numpy.testing.assert_array_equal(s.particles.mass, numpy.array([1,1], dtype=numpy.float32));
         numpy.testing.assert_array_equal(s.particles.diameter, numpy.array([1,1], dtype=numpy.float32));
@@ -109,6 +110,10 @@ def test_fallback(tmp_path):
     snap0.configuration.box = [4,5,6,1.0,0.5,0.25];
     snap0.particles.N = 2;
     snap0.particles.types = ['A', 'B', 'C']
+    snap0.particles.type_shapes = [
+        {"type": "Sphere", "diameter": 2.0},
+        {"type": "Sphere", "diameter": 3.0},
+        {"type": "Sphere", "diameter": 4.0}]
     snap0.particles.typeid = [1,2];
     snap0.particles.mass = [2,3];
     snap0.particles.diameter = [3,4];
@@ -157,6 +162,7 @@ def test_fallback(tmp_path):
     snap2 = gsd.hoomd.Snapshot();
     snap2.particles.N = 3;
     snap2.particles.types = ['q', 's'];
+    snap2.particles.type_shapes = [{}, {}]
     snap2.bonds.N = 3;
     snap2.angles.N = 4;
     snap2.dihedrals.N = 5;
@@ -176,6 +182,7 @@ def test_fallback(tmp_path):
         numpy.testing.assert_array_equal(s.configuration.box, snap0.configuration.box);
         assert s.particles.N == snap0.particles.N;
         assert s.particles.types == snap0.particles.types;
+        assert s.particles.type_shapes == snap0.particles.type_shapes;
         numpy.testing.assert_array_equal(s.particles.typeid, snap0.particles.typeid);
         numpy.testing.assert_array_equal(s.particles.mass, snap0.particles.mass);
         numpy.testing.assert_array_equal(s.particles.diameter, snap0.particles.diameter);
@@ -225,6 +232,7 @@ def test_fallback(tmp_path):
         numpy.testing.assert_array_equal(s.configuration.box, snap0.configuration.box);
         assert s.particles.N == snap0.particles.N;
         assert s.particles.types == snap0.particles.types;
+        assert s.particles.type_shapes == snap0.particles.type_shapes;
         numpy.testing.assert_array_equal(s.particles.typeid, snap0.particles.typeid);
         numpy.testing.assert_array_equal(s.particles.mass, snap0.particles.mass);
         numpy.testing.assert_array_equal(s.particles.diameter, snap0.particles.diameter);
@@ -271,6 +279,7 @@ def test_fallback(tmp_path):
 
         assert s.particles.N == 3;
         assert s.particles.types == ['q', 's'];
+        assert s.particles.type_shapes == [{}, {}];
         numpy.testing.assert_array_equal(s.particles.typeid, numpy.array([0,0,0], dtype=numpy.uint32));
         numpy.testing.assert_array_equal(s.particles.mass, numpy.array([1,1,1], dtype=numpy.float32));
         numpy.testing.assert_array_equal(s.particles.diameter, numpy.array([1,1,1], dtype=numpy.float32));
