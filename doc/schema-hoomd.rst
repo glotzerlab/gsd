@@ -783,14 +783,16 @@ For any named logged data chunks present in any frame frame the file: If a chunk
 the implementation should provide the quantity as read from frame 0 for that frame. GSD files that include a logged
 data chunk only in some frames i != 0 and not in frame 0 are invalid.
 
-By convention, per-particle logged data should have a chunk name starting with ``log/particles/``. Other logged data,
-such as scalar values, should have a different prefix. This specification may recognize additional conventions
-in later versions without invalidating existing files.
+By convention, per-particle and per-bond logged data should have a chunk name starting with ``log/particles/`` and
+``log/bonds``, respectively. Scalar, vector, and string values may be stored under a different prefix starting with
+``log/``. This specification may recognize additional conventions in later versions without invalidating existing files.
 
 ========================================================== ====== ========= ================
 Name                                                       Type   Size      Units
 ========================================================== ====== ========= ================
 :chunk:`log/particles/user_defined`                        n/a    NxM       user-defined
+:chunk:`log/bonds/user_defined`                            n/a    NxM       user-defined
+:chunk:`log/user_defined`                                  n/a    NxM       user-defined
 ========================================================== ====== ========= ================
 
 .. chunk:: log/particles/user_defined
@@ -800,7 +802,30 @@ Name                                                       Type   Size      Unit
     :Units: user-defined
 
     This chunk is a place holder for any number of user defined per-particle quantities. *N* is the number of particles
-    in this frame. *M*, the data type, the units, and the chunk name (after the prefix ``log/particles/`` are
+    in this frame. *M*, the data type, the units, and the chunk name (after the prefix ``log/particles/``) are
     user-defined.
+
+    .. versionadded:: 1.4
+
+.. chunk:: log/bonds/user_defined
+
+    :Type: user-defined
+    :Size: NxM
+    :Units: user-defined
+
+    This chunk is a place holder for any number of user defined per-bond quantities. *N* is the number of bonds
+    in this frame. *M*, the data type, the units, and the chunk name (after the prefix ``log/bonds/``) are
+    user-defined.
+
+    .. versionadded:: 1.4
+
+.. chunk:: log/user_defined
+
+    :Type: user-defined
+    :Size: NxM
+    :Units: user-defined
+
+    This chunk is a place holder for any number of user defined quantities. *N*, *M*, the data type, the
+    units, and the chunk name (after the prefix ``log/``) are user-defined.
 
     .. versionadded:: 1.4
