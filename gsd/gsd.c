@@ -392,12 +392,10 @@ int __gsd_read_header(struct gsd_handle* handle)
         // in append mode, we want to avoid reading the entire index in memory, but we also don't want to bother
         // keeping the mapping up to date. Map the index for now to determine index_num_entries, but then
         // unmap it and use different logic to manage a cache of only unwritten index entries
-        handle->mapped_data = mmap(NULL, handle->file_size, PROT_READ, MAP_SHARED, handle->fd, 0);
+        handle->index = mmap(NULL, sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries, PROT_READ, MAP_SHARED, handle->fd, handle->header.index_location);
 
-        if (handle->mapped_data == MAP_FAILED)
+        if (handle->index == MAP_FAILED)
             return -1;
-
-        handle->index = (struct gsd_index_entry *) (((char *)handle->mapped_data) + handle->header.index_location);
         }
     #endif
 
@@ -490,9 +488,8 @@ int __gsd_read_header(struct gsd_handle* handle)
         #if GSD_USE_MMAP
         // in append mode, we need to tear down the temporary mapping and allocate a temporary buffer
         // to hold indices for a single frame
-        int retval_index = munmap(handle->index, sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries);
-        int retval_namelist = munmap(handle->namelist, sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries);
-        if (retval_index != 0 || retval_namelist != 0)
+        int retval = munmap(handle->index, sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries);
+        if (retval != 0)
             return -1;
         #else
         free(handle->index);
