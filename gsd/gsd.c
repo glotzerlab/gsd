@@ -392,7 +392,7 @@ int __gsd_read_header(struct gsd_handle* handle)
         // in append mode, we want to avoid reading the entire index in memory, but we also don't want to bother
         // keeping the mapping up to date. Map the index for now to determine index_num_entries, but then
         // unmap it and use different logic to manage a cache of only unwritten index entries
-        handle->index = mmap(NULL, sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries, PROT_READ, MAP_SHARED, handle->fd, handle->header.index_location);
+        handle->index = (struct gsd_index_entry *) mmap(NULL, sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries, PROT_READ, MAP_SHARED, handle->fd, handle->header.index_location);
 
         if (handle->index == MAP_FAILED)
             return -1;
