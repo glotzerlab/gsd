@@ -319,3 +319,52 @@ def test_open(tmp_path):
         f.read_chunk(0, name='chunk1');
         f.read_chunk(1, name='chunk1');
         f.read_chunk(2, name='chunk1');
+
+def test_find_matching_chunk_names(tmp_path):
+    data = numpy.array([1,2,3,4,5], dtype=numpy.float32);
+
+    with gsd.fl.open(name=tmp_path / 'test.gsd', mode='xb', application='test_find_matching_chunk_names', schema='none', schema_version=[1,2]) as f:
+        f.write_chunk(name='log/A', data=data);
+        f.write_chunk(name='log/chunk2', data=data);
+        f.end_frame();
+        f.write_chunk(name='data/B', data=data);
+        f.end_frame();
+
+    with gsd.fl.open(name=tmp_path / 'test.gsd', mode='rb', application='test_find_matching_chunk_names', schema='none', schema_version=[1,2]) as f:
+        all_chunks = f.find_matching_chunk_names('');
+        assert len(all_chunks) == 3;
+        assert 'log/A' in all_chunks;
+        assert 'log/chunk2' in all_chunks;
+        assert 'data/B' in all_chunks;
+
+        log_chunks = f.find_matching_chunk_names('log/');
+        assert len(log_chunks) == 2;
+        assert 'log/A' in log_chunks;
+        assert 'log/chunk2' in log_chunks;
+
+        data_chunks = f.find_matching_chunk_names('data/');
+        assert len(data_chunks) == 1;
+        assert 'data/B' in data_chunks;
+
+        other_chunks = f.find_matching_chunk_names('other/');
+        assert len(other_chunks) == 0;
+
+    # test again with pygsd
+    with gsd.pygsd.GSDFile(file=open(str(tmp_path / "test.gsd"), mode='rb')) as f:
+        all_chunks = f.find_matching_chunk_names('');
+        assert len(all_chunks) == 3;
+        assert 'log/A' in all_chunks;
+        assert 'log/chunk2' in all_chunks;
+        assert 'data/B' in all_chunks;
+
+        log_chunks = f.find_matching_chunk_names('log/');
+        assert len(log_chunks) == 2;
+        assert 'log/A' in log_chunks;
+        assert 'log/chunk2' in log_chunks;
+
+        data_chunks = f.find_matching_chunk_names('data/');
+        assert len(data_chunks) == 1;
+        assert 'data/B' in data_chunks;
+
+        other_chunks = f.find_matching_chunk_names('other/');
+        assert len(other_chunks) == 0;

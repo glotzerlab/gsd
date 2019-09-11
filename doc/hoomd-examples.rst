@@ -141,3 +141,42 @@ format. In this example, type 'A' has 3 vertices (the first 3 in the list) and t
         print(s.state['hpmc/convex_polygon/vertices'])
 
 Access read state data in the same way.
+
+Access logged data
+^^^^^^^^^^^^^^^^^^
+
+.. ipython:: python
+
+    with gsd.hoomd.open(name='example.gsd', mode='wb') as t:
+        s = gsd.hoomd.Snapshot()
+        s.particles.N = 4
+        s.log['particles/net_force'] = numpy.array([[-1,2,-3],
+                                        [0,2,-4],
+                                        [-3,2,1],
+                                        [1,2,3]], dtype=numpy.float32)
+        s.log['value/potential_energy'] = [1.5]
+        t.append(s)
+
+Logged data is stored in the ``log`` dictionary as numpy arrays. Place data into this dictionary directly
+without the 'log/' prefix and gsd will include it in the output. Store per-particle quantities with the prefix
+``particles/``. Choose another prefix for other quantities.
+
+.. ipython:: python
+
+    t = gsd.hoomd.open(name='example.gsd', mode='rb')
+    s = t[0]
+    s.log['particles/net_force']
+    s.log['value/potential_energy']
+
+Read logged data from the ``log`` dictionary.
+
+Logged data must be a convertible to a numpy array of a supported type:
+
+.. ipython:: python
+    :okexcept:
+
+    with gsd.hoomd.open(name='example.gsd', mode='wb') as t:
+        s = gsd.hoomd.Snapshot()
+        s.particles.N = 4
+        s.log['invalid'] = dict(a=1, b=5)
+        t.append(s)

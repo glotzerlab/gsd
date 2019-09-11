@@ -150,6 +150,8 @@ def test_fallback(tmp_path):
     snap0.pairs.typeid = [1];
     snap0.pairs.group = [[0,3]];
 
+    snap0.log['value'] = [1, 2, 4, 10, 12, 18, 22]
+
     snap1 = gsd.hoomd.Snapshot();
     snap1.particles.N = 2;
     snap1.particles.position = [[-2, -1, 0], [1, 3.0, 0.5]];
@@ -216,6 +218,8 @@ def test_fallback(tmp_path):
         assert s.pairs.types == snap0.pairs.types;
         numpy.testing.assert_array_equal(s.pairs.typeid, snap0.pairs.typeid);
         numpy.testing.assert_array_equal(s.pairs.group, snap0.pairs.group);
+        assert 'value' in s.log;
+        numpy.testing.assert_array_equal(s.log['value'], snap0.log['value']);
 
         # test that everything but position remained the same in frame 1
         s = hf.read_frame(1);
@@ -266,6 +270,9 @@ def test_fallback(tmp_path):
         numpy.testing.assert_array_equal(s.pairs.typeid, snap0.pairs.typeid);
         numpy.testing.assert_array_equal(s.pairs.group, snap0.pairs.group);
 
+        assert 'value' in s.log;
+        numpy.testing.assert_array_equal(s.log['value'], snap0.log['value']);
+
         # check that the third frame goes back to defaults because it has a different N
         s = hf.read_frame(2);
 
@@ -312,6 +319,8 @@ def test_fallback(tmp_path):
         numpy.testing.assert_array_equal(s.pairs.typeid, numpy.array([0]*7, dtype=numpy.uint32));
         numpy.testing.assert_array_equal(s.pairs.group, numpy.array([[0,0]]*7, dtype=numpy.uint32));
 
+        assert 'value' in s.log;
+        numpy.testing.assert_array_equal(s.log['value'], snap0.log['value']);
 
 def test_fallback2(tmp_path):
     snap0 = gsd.hoomd.Snapshot();
@@ -496,3 +505,38 @@ def test_state(tmp_path):
 
         numpy.testing.assert_array_equal(s.state['hpmc/convex_polyhedron/N'], snap1.state['hpmc/convex_polyhedron/N']);
         numpy.testing.assert_array_equal(s.state['hpmc/convex_polyhedron/vertices'], snap1.state['hpmc/convex_polyhedron/vertices']);
+
+def test_log(tmp_path):
+    snap0 = gsd.hoomd.Snapshot();
+
+    snap0.log['particles/net_force'] = [[1,2,3],[4,5,6]]
+    snap0.log['particles/pair_lj_energy'] = [0,-5,-8,-3]
+    snap0.log['value/potential_energy'] = [10]
+    snap0.log['value/pressure'] = [-3]
+
+    snap1 = gsd.hoomd.Snapshot();
+
+    snap1.log['particles/pair_lj_energy'] = [1,2,-4,-10]
+    snap1.log['value/pressure'] = [5]
+
+    with gsd.hoomd.open(name=tmp_path / "test_log.gsd", mode='wb') as hf:
+        hf.extend([snap0, snap1]);
+
+    with gsd.hoomd.open(name=tmp_path / "test_log.gsd", mode='rb') as hf:
+        assert len(hf) == 2;
+        s = hf.read_frame(0);
+
+        numpy.testing.assert_array_equal(s.log['particles/net_force'], snap0.log['particles/net_force']);
+        numpy.testing.assert_array_equal(s.log['particles/pair_lj_energy'], snap0.log['particles/pair_lj_energy']);
+        numpy.testing.assert_array_equal(s.log['value/potential_energy'], snap0.log['value/potential_energy']);
+        numpy.testing.assert_array_equal(s.log['value/pressure'], snap0.log['value/pressure']);
+
+        s = hf.read_frame(1);
+
+        # unspecified entries pull from frame 0
+        numpy.testing.assert_array_equal(s.log['particles/net_force'], snap0.log['particles/net_force']);
+        numpy.testing.assert_array_equal(s.log['value/potential_energy'], snap0.log['value/potential_energy']);
+
+        # specified entries are different in frame 1
+        numpy.testing.assert_array_equal(s.log['particles/pair_lj_energy'], snap1.log['particles/pair_lj_energy']);
+        numpy.testing.assert_array_equal(s.log['value/pressure'], snap1.log['value/pressure']);

@@ -699,6 +699,57 @@ cdef class GSDFile:
         else:
             return data_array;
 
+    def find_matching_chunk_names(self, match):
+        """ find_matching_chunk_names(match)
+
+        Find all the chunk names in the file that start with the string *match*.
+
+        Args:
+            match (str): Start of the chunk name to match
+
+        Returns:
+            list[str]: Matching chunk names
+
+        Example:
+            .. ipython:: python
+
+                with gsd.fl.open(name='file.gsd', mode='wb', application="My application", schema="My Schema", schema_version=[1,0]) as f:
+                    f.write_chunk(name='data/chunk1', data=numpy.array([1,2,3,4], dtype=numpy.float32));
+                    f.write_chunk(name='data/chunk2', data=numpy.array([[5,6],[7,8]], dtype=numpy.float32));
+                    f.write_chunk(name='input/chunk3', data=numpy.array([9, 10], dtype=numpy.float32));
+                    f.end_frame();
+                    f.write_chunk(name='input/chunk4', data=numpy.array([11, 12, 13, 14], dtype=numpy.float32));
+                    f.end_frame();
+
+                f = gsd.fl.open(name='file.gsd', mode='rb', application="My application", schema="My Schema", schema_version=[1,0])
+
+                f.find_matching_chunk_names('')
+                f.find_matching_chunk_names('data')
+                f.find_matching_chunk_names('input')
+                f.find_matching_chunk_names('other')
+        """
+
+        if not self.__is_open:
+            raise ValueError("File is not open");
+
+        cdef const char * c_found;
+        cdef char * c_match;
+        match_e = match.encode('utf-8')
+        c_match = match_e;
+
+        retval = [];
+
+        with nogil:
+            c_found = libgsd.gsd_find_matching_chunk_name(&self.__handle, c_match, NULL);
+
+        while c_found != NULL:
+            retval.append(c_found.decode('utf-8'))
+
+            with nogil:
+                c_found = libgsd.gsd_find_matching_chunk_name(&self.__handle, c_match, c_found);
+
+        return retval;
+
     def __enter__(self):
         return self;
 

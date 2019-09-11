@@ -154,6 +154,9 @@ uint64_t gsd_get_nframes(struct gsd_handle* handle);
 //! Query size of a GSD type ID
 size_t gsd_sizeof_type(enum gsd_type type);
 
+//! Search for chunk names in a gsd file
+const char *gsd_find_matching_chunk_name(struct gsd_handle* handle, const char* match, const char *prev);
+
 #ifdef __cplusplus
 }
 #endif

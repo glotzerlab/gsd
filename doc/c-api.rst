@@ -25,7 +25,7 @@ Functions
 
     :return: 0 on success, -1 on a file IO failure - see errno for details
 
-.. c:function:: int gsd_open(struct gsd_handle_t* handle, const char *fname, const gsd_open_flag flags)
+.. c:function:: int gsd_open(struct gsd_handle* handle, const char *fname, const gsd_open_flag flags)
 
     Open a GSD file and populates the handle for use by later API calls.
 
@@ -45,7 +45,7 @@ Functions
         * -4: Corrupt file
         * -5: Unable to allocate memory
 
-.. c:function:: int gsd_create_and_open(struct gsd_handle_t* handle, const char *fname, const char *application, const char *schema, uint32_t schema_version, const gsd_open_flag flags, int exclusive_create)
+.. c:function:: int gsd_create_and_open(struct gsd_handle* handle, const char *fname, const char *application, const char *schema, uint32_t schema_version, const gsd_open_flag flags, int exclusive_create)
 
     Create an empty gsd file in a file of the given name. Overwrite any existing file at that location.
     Open the generated gsd file in *handle*.
@@ -67,7 +67,7 @@ Functions
         * -5: Unable to allocate memory
         * -6: Invalid argument
 
-.. c:function:: int gsd_truncate(gsd_handle_t* handle)
+.. c:function:: int gsd_truncate(gsd_handle* handle)
 
     Truncate a GSD file opened by :c:func:`gsd_open()`.
 
@@ -87,7 +87,7 @@ Functions
         * -4: Corrupt file
         * -5: Unable to allocate memory
 
-.. c:function:: int gsd_close(gsd_handle_t* handle)
+.. c:function:: int gsd_close(gsd_handle* handle)
 
     Close a GSD file opened by :c:func:`gsd_open()`.
     Call :c:func:`gsd_end_frame()` after the last call to :c:func:`gsd_write_chunk()` **before** closing
@@ -103,7 +103,7 @@ Functions
 
     :return: 0 on success, -1 on a file IO failure - see errno for details, and -2 on invalid input
 
-.. c:function:: int gsd_end_frame(gsd_handle_t* handle)
+.. c:function:: int gsd_end_frame(gsd_handle* handle)
 
     Move on to the next frame after writing 1 or more chunks with :c:func:`gsd_write_chunk()`.
     Increase the frame counter by 1 and flush the cached index to disk.
@@ -112,7 +112,7 @@ Functions
 
     :return: 0 on success, -1 on a file IO failure - see errno for details, and -2 on invalid input
 
-.. c:function:: int gsd_write_chunk(struct gsd_handle_t* handle, const char *name, gsd_type type, uint64_t N, uint32_t M, uint8_t flags, const void *data)
+.. c:function:: int gsd_write_chunk(struct gsd_handle* handle, const char *name, gsd_type type, uint64_t N, uint32_t M, uint8_t flags, const void *data)
 
     Write a data chunk to the current frame. The chunk name must be unique within each frame.
     The given data chunk is written to the end of the file and its location is updated in the in-memory index.
@@ -128,7 +128,7 @@ Functions
 
     :return: 0 on success, -1 on a file IO failure - see errno for details, and -2 on invalid input
 
-.. c:function:: const struct gsd_index_entry_t* gsd_find_chunk(struct gsd_handle_t* handle, uint64_t frame, const char *name)
+.. c:function:: const struct gsd_index_entry_t* gsd_find_chunk(struct gsd_handle* handle, uint64_t frame, const char *name)
 
     Find a chunk in the GSD file. The found entry contains size and type metadata and can be passed to
     :c:func:`gsd_read_chunk()` to read the data.
@@ -139,7 +139,7 @@ Functions
 
     :return: A pointer to the found chunk, or NULL if not found.
 
-.. c:function:: int gsd_read_chunk(gsd_handle_t* handle, void* data, const gsd_index_entry_t* chunk)
+.. c:function:: int gsd_read_chunk(gsd_handle* handle, void* data, const gsd_index_entry_t* chunk)
 
     Read a chunk from the GSD file. The index entry must first be found by :c:func:`gsd_find_chunk()`.
     ``data`` must point to an allocated buffer with at least ``N * M * gsd_sizeof_type(type)`` bytes.
@@ -154,7 +154,7 @@ Functions
         * -2 on invalid input
         * -3 on invalid file data
 
-.. c:function:: uint64_t gsd_get_nframes(gsd_handle_t* handle)
+.. c:function:: uint64_t gsd_get_nframes(gsd_handle* handle)
 
     Get the number of frames in the GSD file.
 
@@ -178,6 +178,20 @@ Functions
     :param minor: minor version.
 
     :return: a packed version number aaaa.bbbb suitable for storing in a gsd file version entry.
+
+.. c:function:: const char *gsd_find_matching_chunk_name(struct gsd_handle* handle, const char* match, const char *prev)
+
+    Search for chunk names in a gsd file
+
+    :param handle: Handle to an open GSD file
+    :param match: String to match
+    :param prev: Search starting point
+
+    To find the first matching chunk name, pass ``NULL`` for ``prev``. Pass in the previous found string to find the
+    next after that, and so on. Chunk names match if they *begin* with the string in ``match``. Chunk names returned
+    by this function may be present in at least one frame.
+
+    :return: Pointer to a string, ``NULL`` if no more matching chunks are found found, or ``NULL`` if ``prev`` is invalid.
 
 Constants
 ---------
@@ -247,7 +261,7 @@ Open flags
 Data structures
 ---------------
 
-.. c:type:: gsd_handle_t
+.. c:type:: gsd_handle
 
     Handle to an open GSD file. All members are **read-only**. Only public members are documented here.
 

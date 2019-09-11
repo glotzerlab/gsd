@@ -356,6 +356,24 @@ class GSDFile(object):
         else:
             return data_npy.reshape([chunk.N, chunk.M]);
 
+    def find_matching_chunk_names(self, match):
+        """ find_matching_chunk_names(match)
+
+        Find all the chunk names in the file that start with the string *match*.
+
+        Args:
+            match (str): Start of the chunk name to match
+
+        Returns:
+            list[str]: Matching chunk names
+        """
+        result = []
+        for key in self.__namelist.keys():
+            if key.startswith(match):
+                result.append(key);
+
+        return result;
+
     def __enter__(self):
         return self;
 

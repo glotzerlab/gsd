@@ -4,13 +4,13 @@
 		{
 			"path": ".",
             // ignore files that are not likely to be modified by hand
-            "folder_exclude_patterns": [".kdev4", ".settings",  "build*"],
-            "file_exclude_patterns": [".*project", "*.sublime-workspace", "*.kdev4"]
+            "folder_exclude_patterns": [".settings",  "build*", "gsd.egg-info", "doc/_build", "doc/build", "dist"],
+            "file_exclude_patterns": [".*project", "*.sublime-workspace"]
 		}
 	],
     "settings":
     {
-        // set auto indent for 4 spaces and switch to dumb auto modes
+        // set auto indent for 4 spaces and switch to simple auto modes
         "tab_size": 4,
         "auto_match_enabled": false,
         "ensure_newline_at_eof_on_save": true,
