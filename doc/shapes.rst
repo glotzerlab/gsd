@@ -121,12 +121,12 @@ A list of lists of indices are used to specify faces.
 Faces must contain 3 or more vertex indices.
 Faces must be defined with a counterclockwise winding order (to produce an "outward" normal).
 
-=============== =============== ====== ==== ======= ======
-Key             Description     Type   Size Default Units
-=============== =============== ====== ==== ======= ======
-vertices        Rounding radius float  Nx3          length
-indices         Rounding radius uint32              number
-=============== =============== ====== ==== ======= ======
+=============== ================ ====== ==== ======= ======
+Key             Description      Type   Size Default Units
+=============== ================ ====== ==== ======= ======
+vertices        Shape vertices   float  Nx3          length
+indices         Vertices indices uint32              number
+=============== ================ ====== ==== ======= ======
 
 
 Example::
