@@ -834,7 +834,7 @@ int gsd_end_frame(struct gsd_handle* handle)
 
     \post The given data chunk is written to the end of the file and its location is updated in the in-memory index.
 
-    \return 0 on success, -1 on a file IO failure - see errno for details, and -2 on invalid input
+    \return 0 on success, -1 on a file IO failure - see errno for details, -2 on invalid input, and -3 when out of names
 */
 int gsd_write_chunk(struct gsd_handle* handle,
                     const char *name,
@@ -857,6 +857,8 @@ int gsd_write_chunk(struct gsd_handle* handle,
     memset(&index_entry, 0, sizeof(index_entry));
     index_entry.frame = handle->cur_frame;
     index_entry.id = __gsd_get_id(handle, name, 1);
+    if (index_entry.id == UINT16_MAX)
+        return -3;
     index_entry.type = (uint8_t)type;
     index_entry.N = N;
     index_entry.M = M;
