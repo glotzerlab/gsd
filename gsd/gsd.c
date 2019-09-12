@@ -361,7 +361,6 @@ int __gsd_read_header(struct gsd_handle* handle)
         {
         handle->mapped_data = NULL;
         handle->index = (struct gsd_index_entry *) mmap(NULL, sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries, PROT_READ, MAP_SHARED, handle->fd, handle->header.index_location);
-        handle->namelist = (struct gsd_namelist_entry *) mmap(NULL, sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries, PROT_READ, MAP_SHARED, handle->fd, handle->header.namelist_location);
 
         if (handle->index == MAP_FAILED || handle->namelist == MAP_FAILED)
             return -1;
@@ -399,22 +398,20 @@ int __gsd_read_header(struct gsd_handle* handle)
         }
     #endif
 
-    if (handle->open_flags == GSD_OPEN_READWRITE || handle->open_flags == GSD_OPEN_APPEND || !GSD_USE_MMAP)
-        {
-        // validate that the namelist block exists inside the file
-        if (handle->header.namelist_location + sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries > handle->file_size)
-            return -4;
+    // since the namelist is small, we always allocate memory for it rather than memory mapping
+    // validate that the namelist block exists inside the file
+    if (handle->header.namelist_location + sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries > handle->file_size)
+        return -4;
 
-        // read the namelist block
-        handle->namelist = (struct gsd_namelist_entry *)malloc(sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries);
-        if (handle->namelist == NULL)
-            return -5;
+    // read the namelist block
+    handle->namelist = (struct gsd_namelist_entry *)malloc(sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries);
+    if (handle->namelist == NULL)
+        return -5;
 
-        lseek(handle->fd, handle->header.namelist_location, SEEK_SET);
-        bytes_read = read(handle->fd, handle->namelist, sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries);
-        if (bytes_read != sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries)
-            return -1;
-        }
+    lseek(handle->fd, handle->header.namelist_location, SEEK_SET);
+    bytes_read = read(handle->fd, handle->namelist, sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries);
+    if (bytes_read != sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries)
+        return -1;
 
     // determine the number of namelist entries (marked by an empty string)
     // base case: the namelist is full
