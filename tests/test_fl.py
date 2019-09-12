@@ -368,3 +368,13 @@ def test_find_matching_chunk_names(tmp_path):
 
         other_chunks = f.find_matching_chunk_names('other/');
         assert len(other_chunks) == 0;
+
+def test_chunk_name_limit(tmp_path):
+    with gsd.fl.open(name=tmp_path / 'test.gsd', mode='xb', application='test_chunk_name_limit', schema='none', schema_version=[1,2]) as f:
+        for i in range(128):
+            f.write_chunk(name=str(i), data=numpy.array([i], dtype=numpy.int32))
+
+        # A bug in GSD limits files to 128 chunk names:
+        # see https://github.com/glotzerlab/gsd/issues/43
+        with pytest.raises(Exception) as cm:
+            f.write_chunk(name='128', data=numpy.array([i], dtype=numpy.int32))

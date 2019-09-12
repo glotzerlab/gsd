@@ -523,6 +523,8 @@ cdef class GSDFile:
             raise IOError(*__format_errno(name));
         elif retval == -2:
             raise RuntimeError("GSD file is opened read only: " + self.name);
+        elif retval == -3:
+            raise RuntimeError("Name list full: " + self.name);
         elif retval != 0:
             raise RuntimeError("Unknown error");
 
