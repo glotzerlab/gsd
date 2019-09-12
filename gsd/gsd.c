@@ -359,13 +359,13 @@ int __gsd_read_header(struct gsd_handle* handle)
     #if GSD_USE_MMAP
     if (handle->open_flags == GSD_OPEN_READONLY)
         {
-        unsigned int page_size = getpagesize();
-        unsigned int index_size = sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries;
-        unsigned int block_size = ((index_size / page_size) + 1) * page_size;
-        handle->mapped_data = mmap(NULL, block_size, PROT_READ, MAP_SHARED, handle->fd, 0);
-        handle->index = (struct gsd_index_entry *) (((char *)handle->mapped_data) + handle->header.index_location);
+        size_t page_size = getpagesize();
+        size_t index_size = sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries;
+        size_t offset = (handle->header.index_location / page_size) * page_size;
+        handle->mapped_data = mmap(NULL, index_size+(handle->header.index_location - offset), PROT_READ, MAP_SHARED, handle->fd, offset);
+        handle->index = (struct gsd_index_entry *) (((char *)handle->mapped_data) + (handle->header.index_location - offset));
 
-        if (handle->index == MAP_FAILED)
+        if (handle->mapped_data == MAP_FAILED)
             return -1;
         }
     else if (handle->open_flags == GSD_OPEN_READWRITE)
@@ -396,16 +396,15 @@ int __gsd_read_header(struct gsd_handle* handle)
         // unmap it and use different logic to manage a cache of only unwritten index entries
 
         // mmap may fail if offset is not a multiple of the page size, so we
-        // always memory map from the beginning of the file to the index.
-        // Integer division of the index size by the page size then adding one
-        // indicates how many pages must be allocated
-        unsigned int page_size = getpagesize();
-        unsigned int index_size = sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries;
-        unsigned int block_size = ((index_size / page_size) + 1) * page_size;
-        handle->mapped_data = mmap(NULL, block_size, PROT_READ, MAP_SHARED, handle->fd, 0);
-        handle->index = (struct gsd_index_entry *) (((char *)handle->mapped_data) + handle->header.index_location);
+        // always memory map from the beginning of the file and then access the
+        // index pointer by its offset.
+        size_t page_size = getpagesize();
+        size_t index_size = sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries;
+        size_t offset = (handle->header.index_location / page_size) * page_size;
+        handle->mapped_data = mmap(NULL, index_size+(handle->header.index_location - offset), PROT_READ, MAP_SHARED, handle->fd, offset);
+        handle->index = (struct gsd_index_entry *) (((char *)handle->mapped_data) + (handle->header.index_location - offset));
 
-        if (handle->index == MAP_FAILED)
+        if (handle->mapped_data == MAP_FAILED)
             return -1;
         }
     #endif
@@ -497,10 +496,10 @@ int __gsd_read_header(struct gsd_handle* handle)
         #if GSD_USE_MMAP
         // in append mode, we need to tear down the temporary mapping and allocate a temporary buffer
         // to hold indices for a single frame
-        unsigned int page_size = getpagesize();
-        unsigned int index_size = sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries;
-        unsigned int block_size = ((index_size / page_size) + 1) * page_size;
-        int retval = munmap(handle->mapped_data, block_size);
+        size_t page_size = getpagesize();
+        size_t index_size = sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries;
+        size_t offset = (handle->header.index_location / page_size) * page_size;
+        int retval = munmap(handle->mapped_data, index_size+(handle->header.index_location - offset));
         handle->index = NULL;
 
         if (retval != 0)
@@ -752,10 +751,10 @@ int gsd_close(struct gsd_handle* handle)
     #if GSD_USE_MMAP
     if (handle->mapped_data != NULL)
         {
-        unsigned int page_size = getpagesize();
-        unsigned int index_size = sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries;
-        unsigned int block_size = ((index_size / page_size) + 1) * page_size;
-        int retval = munmap(handle->mapped_data, block_size);
+        size_t page_size = getpagesize();
+        size_t index_size = sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries;
+        size_t offset = (handle->header.index_location / page_size) * page_size;
+        int retval = munmap(handle->mapped_data, index_size+(handle->header.index_location - offset));
         handle->mapped_data = NULL;
         handle->index = NULL;
 
