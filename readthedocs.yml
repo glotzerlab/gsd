@@ -7,3 +7,4 @@ python:
       path: .
 conda:
     environment: doc/environment.yml
+formats: all
