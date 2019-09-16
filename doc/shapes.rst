@@ -118,7 +118,7 @@ General 3D Meshes
 Type: ``Mesh``
 
 A list of lists of indices are used to specify faces.
-Faces must contain 3 or more vertex indices.
+Faces must contain 3 or more vertex indices. The vertex indices must be zero-based.
 Faces must be defined with a counterclockwise winding order (to produce an "outward" normal).
 
 =============== ================ ====== ==== ======= ======
