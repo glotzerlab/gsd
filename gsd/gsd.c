@@ -359,13 +359,14 @@ int __gsd_read_header(struct gsd_handle* handle)
     #if GSD_USE_MMAP
     if (handle->open_flags == GSD_OPEN_READONLY)
         {
-        handle->mapped_data = mmap(NULL, handle->file_size, PROT_READ, MAP_SHARED, handle->fd, 0);
+        size_t page_size = getpagesize();
+        size_t index_size = sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries;
+        size_t offset = (handle->header.index_location / page_size) * page_size;
+        handle->mapped_data = mmap(NULL, index_size+(handle->header.index_location - offset), PROT_READ, MAP_SHARED, handle->fd, offset);
+        handle->index = (struct gsd_index_entry *) (((char *)handle->mapped_data) + (handle->header.index_location - offset));
 
         if (handle->mapped_data == MAP_FAILED)
             return -1;
-
-        handle->index = (struct gsd_index_entry *) (((char *)handle->mapped_data) + handle->header.index_location);
-        handle->namelist = (struct gsd_namelist_entry *) (((char *)handle->mapped_data) + handle->header.namelist_location);
         }
     else if (handle->open_flags == GSD_OPEN_READWRITE)
     #endif
@@ -393,31 +394,35 @@ int __gsd_read_header(struct gsd_handle* handle)
         // in append mode, we want to avoid reading the entire index in memory, but we also don't want to bother
         // keeping the mapping up to date. Map the index for now to determine index_num_entries, but then
         // unmap it and use different logic to manage a cache of only unwritten index entries
-        handle->mapped_data = mmap(NULL, handle->file_size, PROT_READ, MAP_SHARED, handle->fd, 0);
+
+        // mmap may fail if offset is not a multiple of the page size, so we
+        // always memory map from the beginning of the file and then access the
+        // index pointer by its offset.
+        size_t page_size = getpagesize();
+        size_t index_size = sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries;
+        size_t offset = (handle->header.index_location / page_size) * page_size;
+        handle->mapped_data = mmap(NULL, index_size+(handle->header.index_location - offset), PROT_READ, MAP_SHARED, handle->fd, offset);
+        handle->index = (struct gsd_index_entry *) (((char *)handle->mapped_data) + (handle->header.index_location - offset));
 
         if (handle->mapped_data == MAP_FAILED)
             return -1;
-
-        handle->index = (struct gsd_index_entry *) (((char *)handle->mapped_data) + handle->header.index_location);
         }
     #endif
 
-    if (handle->open_flags == GSD_OPEN_READWRITE || handle->open_flags == GSD_OPEN_APPEND || !GSD_USE_MMAP)
-        {
-        // validate that the namelist block exists inside the file
-        if (handle->header.namelist_location + sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries > handle->file_size)
-            return -4;
+    // since the namelist is small, we always allocate memory for it rather than memory mapping
+    // validate that the namelist block exists inside the file
+    if (handle->header.namelist_location + sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries > handle->file_size)
+        return -4;
 
-        // read the namelist block
-        handle->namelist = (struct gsd_namelist_entry *)malloc(sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries);
-        if (handle->namelist == NULL)
-            return -5;
+    // read the namelist block
+    handle->namelist = (struct gsd_namelist_entry *)malloc(sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries);
+    if (handle->namelist == NULL)
+        return -5;
 
-        lseek(handle->fd, handle->header.namelist_location, SEEK_SET);
-        bytes_read = read(handle->fd, handle->namelist, sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries);
-        if (bytes_read != sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries)
-            return -1;
-        }
+    lseek(handle->fd, handle->header.namelist_location, SEEK_SET);
+    bytes_read = read(handle->fd, handle->namelist, sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries);
+    if (bytes_read != sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries)
+        return -1;
 
     // determine the number of namelist entries (marked by an empty string)
     // base case: the namelist is full
@@ -491,7 +496,12 @@ int __gsd_read_header(struct gsd_handle* handle)
         #if GSD_USE_MMAP
         // in append mode, we need to tear down the temporary mapping and allocate a temporary buffer
         // to hold indices for a single frame
-        int retval = munmap(handle->mapped_data, handle->file_size);
+        size_t page_size = getpagesize();
+        size_t index_size = sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries;
+        size_t offset = (handle->header.index_location / page_size) * page_size;
+        int retval = munmap(handle->mapped_data, index_size+(handle->header.index_location - offset));
+        handle->index = NULL;
+
         if (retval != 0)
             return -1;
         #else
@@ -741,21 +751,21 @@ int gsd_close(struct gsd_handle* handle)
     #if GSD_USE_MMAP
     if (handle->mapped_data != NULL)
         {
-        munmap(handle->mapped_data, handle->file_size);
+        size_t page_size = getpagesize();
+        size_t index_size = sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries;
+        size_t offset = (handle->header.index_location / page_size) * page_size;
+        int retval = munmap(handle->mapped_data, index_size+(handle->header.index_location - offset));
+        handle->mapped_data = NULL;
         handle->index = NULL;
-        handle->namelist = NULL;
+
+        if (retval != 0)
+            return -1;
 
         memset(handle, 0, sizeof(struct gsd_handle));
         }
     else
     #endif
         {
-        if (handle->namelist != NULL)
-            {
-            free(handle->namelist);
-            handle->namelist = NULL;
-            }
-
         if (handle->index != NULL)
             {
             free(handle->index);
@@ -763,6 +773,12 @@ int gsd_close(struct gsd_handle* handle)
 
             memset(handle, 0, sizeof(struct gsd_handle));
             }
+        }
+
+    if (handle->namelist != NULL)
+        {
+        free(handle->namelist);
+        handle->namelist = NULL;
         }
 
     // close the file
