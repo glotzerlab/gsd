@@ -3,6 +3,19 @@ Change Log
 
 `gsd <https://github.com/glotzerlab/gsd>`_ releases follow `semantic versioning <https://semver.org/>`_.
 
+v1.9.0 (2019-09-18)
+-------------------
+
+* File API: Add ``find_matching_chunk_names()``
+* ``HOOMD`` schema 1.4: Add user defined logged data.
+* ``HOOMD`` schema 1.4: Add ``type_shapes`` specification.
+* pytest >= 3.9.0 is required to run unit tests.
+* ``gsd.fl.open`` and ``gsd.hoomd.open`` accept objects implementing ``os.PathLike``.
+* Report an error when attempting to write a chunk that fails to allocate a name.
+* Reduce virtual memory usage in ``rb`` and ``wb`` open modes.
+* Additional checks for corrupt GSD files on open.
+* Synchronize after expanding file index.
+
 v1.8.1 (2019-08-19)
 -------------------
 
