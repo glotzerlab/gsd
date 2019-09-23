@@ -1,4 +1,4 @@
-version: '1.9.0.{build}-{branch}'
+version: '1.9.1.{build}-{branch}'
 
 clone_folder: c:\projects\gsd
 
