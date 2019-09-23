@@ -457,7 +457,7 @@ cdef class GSDFile:
         data_array = data_array.view();
 
         cdef uint64_t N;
-        cdef uint8_t M;
+        cdef uint64_t M;
 
         if len(data_array.shape) > 2:
             raise ValueError("GSD can only write 1 or 2 dimensional arrays: " + name);
@@ -465,8 +465,6 @@ cdef class GSDFile:
         if len(data_array.shape) == 1:
             data_array = data_array.reshape([data_array.shape[0], 1]);
 
-        if data_array.shape[1] > 255:
-            raise ValueError("Dimension 2 is greater than 255 in chunk: " + name);
         N = data_array.shape[0];
         M = data_array.shape[1];
 
