@@ -3,6 +3,11 @@ Change Log
 
 `gsd <https://github.com/glotzerlab/gsd>`_ releases follow `semantic versioning <https://semver.org/>`_.
 
+v1.9.1 (2019-09-23)
+-------------------
+
+* Support writing chunks wider than 255 from Python.
+
 v1.9.0 (2019-09-18)
 -------------------
 
