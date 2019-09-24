@@ -6,3 +6,5 @@ build/*
 dist
 gsd.egg-info
 __pycache__
+.vscode/
+*.code-workspace
