@@ -157,9 +157,9 @@ jobs:
                 name: Test wheels (old numpy)
                 working_directory: /root/code
                 command: |
-                  "${PYBIN}/pip" install pytest --progress-bar=off --ignore-glob='*_largefile.py'
+                  "${PYBIN}/pip" install pytest --progress-bar=off
                   "${PYBIN}/pip" install gsd --no-index -f dist --progress-bar=off
-                  "${PYBIN}/pytest"
+                  "${PYBIN}/pytest --ignore-glob='*_largefile.py'"
             - run:
                 name: Test wheels (latest numpy)
                 working_directory: /root/code
