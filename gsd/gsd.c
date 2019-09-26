@@ -324,13 +324,13 @@ static int __is_entry_valid(struct gsd_handle *handle, size_t idx)
     const struct gsd_index_entry entry = handle->index[idx];
 
     // check for valid type
-    if (gsd_sizeof_type(entry.type) == 0)
+    if (gsd_sizeof_type((enum gsd_type)entry.type) == 0)
         {
         return 0;
         }
 
     // validate that we don't read past the end of the file
-    size_t size = entry.N * entry.M * gsd_sizeof_type(entry.type);
+    size_t size = entry.N * entry.M * gsd_sizeof_type((enum gsd_type)entry.type);
     if ((entry.location + size) > handle->file_size)
         {
         return 0;
@@ -1049,7 +1049,7 @@ int gsd_read_chunk(struct gsd_handle* handle, void* data, const struct gsd_index
     if (handle->open_flags == GSD_OPEN_APPEND)
         return -2;
 
-    size_t size = chunk->N * chunk->M * gsd_sizeof_type(chunk->type);
+    size_t size = chunk->N * chunk->M * gsd_sizeof_type((enum gsd_type)chunk->type);
     if (size == 0)
         return -3;
     if (chunk->location == 0)
