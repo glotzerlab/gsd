@@ -38,7 +38,7 @@ commands:
     steps:
       - run:
           name: Unit test
-          command: mkdir test-results && cd code/tests && ${PYTEST} --junit-xml=/home/ci/project/test-results/test.xml
+          command: mkdir test-results && cd code/tests && ${PYTEST} --junit-xml=/home/ci/project/test-results/test.xml --ignore-glob='*_largefile.py'
       - store_artifacts:
           path: test-results
           destination: test-results
@@ -157,7 +157,7 @@ jobs:
                 name: Test wheels (old numpy)
                 working_directory: /root/code
                 command: |
-                  "${PYBIN}/pip" install pytest --progress-bar=off
+                  "${PYBIN}/pip" install pytest --progress-bar=off --ignore-glob='*_largefile.py'
                   "${PYBIN}/pip" install gsd --no-index -f dist --progress-bar=off
                   "${PYBIN}/pytest"
             - run:
@@ -166,7 +166,7 @@ jobs:
                 command: |
                   "${PYBIN}/pip" install numpy --upgrade --progress-bar=off
                   "${PYBIN}/pip" install gsd --no-index -f dist --progress-bar=off
-                  "${PYBIN}/pytest"
+                  "${PYBIN}/pytest" --ignore-glob='*_largefile.py'
       - when:
           condition: << parameters.build-sdist >>
           steps:
