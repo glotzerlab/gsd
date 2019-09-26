@@ -43,7 +43,7 @@ int S_IWGRP = _S_IWRITE;
 
 ssize_t pread(int fd, void *buf, size_t count, int64_t offset)
     {
-    // Note: does not support >4GiB reads
+    // Note: _read only accepts unsigned int values
     if (count > UINT_MAX)
         return -1;
 
@@ -56,7 +56,7 @@ ssize_t pread(int fd, void *buf, size_t count, int64_t offset)
 
 ssize_t pwrite(int fd, const void *buf, size_t count, int64_t offset)
     {
-    // Note: does not support >4GiB writes
+    // Note: _write only accepts unsigned int values
     if (count > UINT_MAX)
         return -1;
 
@@ -79,8 +79,8 @@ static ssize_t __pwrite_retry(int fd, const void *buf, size_t count, int64_t off
         {
         size_t to_write = count - total_bytes_written;
         #ifdef _WIN32
-        // win32 _write takes in 32-bit count values
-        if (to_write > UINT_MAX) to_write = UINT_MAX;
+        // win32 _write raises an error for writes greater than INT_MAX
+        if (to_write > INT_MAX) to_write = INT_MAX;
         #endif
 
         errno = 0;
@@ -104,8 +104,8 @@ static ssize_t __pread_retry(int fd, void *buf, size_t count, int64_t offset)
         {
         size_t to_read = count - total_bytes_read;
         #ifdef _WIN32
-        // win32 _read takes in 32-bit count values
-        if (to_read > UINT_MAX) to_read = UINT_MAX;
+        // win32 _read raises an error for writes greater than INT_MAX
+        if (to_read > INT_MAX) to_read = INT_MAX;
         #endif
 
         errno = 0;
