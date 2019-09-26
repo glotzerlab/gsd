@@ -42,7 +42,7 @@ int S_IWUSR = _S_IWRITE;
 int S_IRGRP = _S_IREAD;
 int S_IWGRP = _S_IWRITE;
 
-size_t pread(int fd, void *buf, size_t count, int64_t offset)
+ssize_t pread(int fd, void *buf, size_t count, int64_t offset)
     {
     int64_t oldpos = _telli64(fd);
     _lseeki64(fd, offset, SEEK_SET);
@@ -51,7 +51,7 @@ size_t pread(int fd, void *buf, size_t count, int64_t offset)
     return result;
     }
 
-size_t pwrite(int fd, void *buf, size_t count, int64_t offset)
+ssize_t pwrite(int fd, void *buf, size_t count, int64_t offset)
     {
     int64_t oldpos = _telli64(fd);
     _lseeki64(fd, offset, SEEK_SET);
@@ -61,6 +61,24 @@ size_t pwrite(int fd, void *buf, size_t count, int64_t offset)
     }
 
 #endif
+
+static ssize_t __pwrite_retry(int fd, void *buf, size_t count, int64_t offset)
+    {
+    ssize_t total_bytes_written = 0;
+    char *ptr = (char *)buf;
+
+    // perform multiple pwrite calls to complete a large write sucessfully
+    while (total_bytes_written < count)
+        {
+        ssize_t bytes_written = pwrite(fd, ptr + total_bytes_written, count - total_bytes_written, offset + total_bytes_written);
+        if (bytes_written == -1)
+            return -1;
+
+        total_bytes_written += bytes_written;
+        }
+
+    return total_bytes_written;
+    }
 
 /*! \internal
     \brief Utility function to expand the memory space for the index block
@@ -116,8 +134,8 @@ static int __gsd_expand_index(struct gsd_handle *handle)
             if (bytes_read != bytes_to_copy)
                 return -1;
 
-            size_t bytes_written = pwrite(handle->fd, buf, bytes_to_copy, new_index_location + total_bytes_written);
-            if (bytes_written != bytes_to_copy)
+            ssize_t bytes_written = __pwrite_retry(handle->fd, buf, bytes_to_copy, new_index_location + total_bytes_written);
+            if (bytes_written == -1)
                 return -1;
             total_bytes_written += bytes_written;
             }
@@ -131,8 +149,8 @@ static int __gsd_expand_index(struct gsd_handle *handle)
             if (new_index_bytes - total_bytes_written < buf_size)
                 bytes_to_copy = new_index_bytes - total_bytes_written;
 
-            size_t bytes_written = pwrite(handle->fd, buf, bytes_to_copy, new_index_location + total_bytes_written);
-            if (bytes_written != bytes_to_copy)
+            ssize_t bytes_written = __pwrite_retry(handle->fd, buf, bytes_to_copy, new_index_location + total_bytes_written);
+            if (bytes_written == -1)
                 return -1;
             total_bytes_written += bytes_written;
             }
@@ -822,12 +840,12 @@ int gsd_end_frame(struct gsd_handle* handle)
         if (handle->open_flags != GSD_OPEN_APPEND)
             data += handle->index_written_entries;
 
-        size_t bytes_written = pwrite(handle->fd,
-                                     data,
-                                     sizeof(struct gsd_index_entry)*entries_to_write,
-                                     write_pos);
+        size_t bytes_written = __pwrite_retry(handle->fd,
+                                              data,
+                                              sizeof(struct gsd_index_entry)*entries_to_write,
+                                              write_pos);
 
-        if (bytes_written != sizeof(struct gsd_index_entry) * entries_to_write)
+        if (bytes_written == -1)
             return -1;
 
         handle->index_written_entries += entries_to_write;
@@ -884,8 +902,8 @@ int gsd_write_chunk(struct gsd_handle* handle,
     index_entry.location = handle->file_size;
 
     // write the data
-    size_t bytes_written = pwrite(handle->fd, data, size, index_entry.location);
-    if (bytes_written != size)
+    size_t bytes_written = __pwrite_retry(handle->fd, data, size, index_entry.location);
+    if (bytes_written == -1)
         return -1;
 
     // update the file_size in the handle
