@@ -441,8 +441,11 @@ int __gsd_read_header(struct gsd_handle* handle)
         if (handle->index == NULL)
             return -5;
 
-        lseek(handle->fd, handle->header.index_location, SEEK_SET);
-        bytes_read = __pread_retry(handle->fd, handle->index, sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries, sizeof(struct gsd_header));
+        bytes_read = __pread_retry(handle->fd,
+                                   handle->index,
+                                   sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries,
+                                   handle->header.index_location);
+
         if (bytes_read == -1 || bytes_read != sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries)
             return -1;
         }
