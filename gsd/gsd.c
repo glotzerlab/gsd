@@ -70,8 +70,9 @@ static ssize_t __pwrite_retry(int fd, const void *buf, size_t count, int64_t off
     // perform multiple pwrite calls to complete a large write sucessfully
     while (total_bytes_written < count)
         {
+        errno = 0;
         ssize_t bytes_written = pwrite(fd, ptr + total_bytes_written, count - total_bytes_written, offset + total_bytes_written);
-        if (bytes_written == -1)
+        if (bytes_written == -1 | (bytes_written == 0 && errno != 0))
             return -1;
 
         total_bytes_written += bytes_written;
@@ -88,8 +89,9 @@ static ssize_t __pread_retry(int fd, void *buf, size_t count, int64_t offset)
     // perform multiple pread calls to complete a large write sucessfully
     while (total_bytes_read < count)
         {
+        errno = 0;
         ssize_t bytes_read = pread(fd, ptr + total_bytes_read, count - total_bytes_read, offset + total_bytes_read);
-        if (bytes_read == -1)
+        if (bytes_read == -1 | (bytes_read == 0 && errno != 0))
             return -1;
 
         total_bytes_read += bytes_read;
