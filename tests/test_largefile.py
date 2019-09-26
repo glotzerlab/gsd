@@ -9,7 +9,7 @@ import pytest
 def test_large_N(tmp_path, N):
     s = gsd.hoomd.Snapshot()
     s.particles.N = int(N)
-    s.particles.position = a = numpy.linspace([0, 1, 2], [0+N, 1+N, 2+N], num=N, endpoint=False, dtype=numpy.float32)
+    s.particles.position = numpy.linspace(0, 3*N, num=3*N, endpoint=False, dtype=numpy.float32).reshape([N,3])
 
     with gsd.hoomd.open(name=tmp_path / "test_large_N.gsd",mode="wb") as f:
         f.append(s)
