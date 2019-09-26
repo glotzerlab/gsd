@@ -149,7 +149,11 @@ static int __gsd_expand_index(struct gsd_handle *handle)
 
         // now, put the new larger index at the end of the file
         handle->header.index_location = lseek(handle->fd, 0, SEEK_END);
-        ssize_t bytes_written = __pwrite_retry(handle->fd, handle->index, sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries, handle->header.index_location);
+        ssize_t bytes_written = __pwrite_retry(handle->fd,
+                                               handle->index,
+                                               sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries,
+                                               handle->header.index_location);
+
         if (bytes_written == -1 || bytes_written != sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries)
             return -1;
 
@@ -173,11 +177,19 @@ static int __gsd_expand_index(struct gsd_handle *handle)
             if (old_index_bytes - total_bytes_written < buf_size)
                 bytes_to_copy = old_index_bytes - total_bytes_written;
 
-            ssize_t bytes_read = __pread_retry(handle->fd, buf, bytes_to_copy, old_index_location + total_bytes_written);
+            ssize_t bytes_read = __pread_retry(handle->fd,
+                                               buf,
+                                               bytes_to_copy,
+                                               old_index_location + total_bytes_written);
+
             if (bytes_read == -1 || bytes_read != bytes_to_copy)
                 return -1;
 
-            ssize_t bytes_written = __pwrite_retry(handle->fd, buf, bytes_to_copy, new_index_location + total_bytes_written);
+            ssize_t bytes_written = __pwrite_retry(handle->fd,
+                                                   buf,
+                                                   bytes_to_copy,
+                                                   new_index_location + total_bytes_written);
+
             if (bytes_written == -1 || bytes_written != bytes_to_copy)
                 return -1;
             total_bytes_written += bytes_written;
@@ -192,7 +204,11 @@ static int __gsd_expand_index(struct gsd_handle *handle)
             if (new_index_bytes - total_bytes_written < buf_size)
                 bytes_to_copy = new_index_bytes - total_bytes_written;
 
-            ssize_t bytes_written = __pwrite_retry(handle->fd, buf, bytes_to_copy, new_index_location + total_bytes_written);
+            ssize_t bytes_written = __pwrite_retry(handle->fd,
+                                                   buf,
+                                                   bytes_to_copy,
+                                                   new_index_location + total_bytes_written);
+
             if (bytes_written == -1 || bytes_written != bytes_to_copy)
                 return -1;
             total_bytes_written += bytes_written;
@@ -248,7 +264,12 @@ uint16_t __gsd_get_id(struct gsd_handle *handle, const char *name, uint8_t appen
         handle->namelist[handle->namelist_num_entries].name[sizeof(struct gsd_namelist_entry)-1] = 0;
 
         // update the namelist on disk
-        ssize_t bytes_written = __pwrite_retry(handle->fd, &(handle->namelist[handle->namelist_num_entries]), sizeof(struct gsd_namelist_entry), handle->header.namelist_location + sizeof(struct gsd_namelist_entry)*handle->namelist_num_entries);
+        ssize_t bytes_written = __pwrite_retry(handle->fd,
+                                               &(handle->namelist[handle->namelist_num_entries]),
+                                               sizeof(struct gsd_namelist_entry),
+                                               handle->header.namelist_location
+                                                   + sizeof(struct gsd_namelist_entry)*handle->namelist_num_entries);
+
         if (bytes_written == -1 || bytes_written != sizeof(struct gsd_namelist_entry))
             return UINT16_MAX;
 
@@ -279,7 +300,6 @@ int __gsd_initialize_file(int fd, const char *application, const char *schema, u
         return -1;
 
     int retval = ftruncate(fd, 0);
-    lseek(fd, 0, SEEK_SET);
     if (retval != 0)
         return retval;
 
@@ -390,7 +410,6 @@ int __gsd_read_header(struct gsd_handle* handle)
         return -1;
 
     // read the header
-    lseek(handle->fd, 0, SEEK_SET);
     ssize_t bytes_read = __pread_retry(handle->fd, &handle->header, sizeof(struct gsd_header), 0);
     if (bytes_read == -1)
         {
@@ -480,7 +499,11 @@ int __gsd_read_header(struct gsd_handle* handle)
     if (handle->namelist == NULL)
         return -5;
 
-    bytes_read = __pread_retry(handle->fd, handle->namelist, sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries, handle->header.namelist_location);
+    bytes_read = __pread_retry(handle->fd,
+                               handle->namelist,
+                               sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries,
+                               handle->header.namelist_location);
+
     if (bytes_read == -1 || bytes_read != sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries)
         return -1;
 
