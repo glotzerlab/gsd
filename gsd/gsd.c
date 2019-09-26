@@ -49,7 +49,7 @@ ssize_t pread(int fd, void *buf, size_t count, int64_t offset)
 
     int64_t oldpos = _telli64(fd);
     _lseeki64(fd, offset, SEEK_SET);
-    size_t result = _read(fd, buf, (unsigned int)count);
+    ssize_t result = _read(fd, buf, (unsigned int)count);
     _lseeki64(fd, oldpos, SEEK_SET);
     return result;
     }
@@ -62,7 +62,7 @@ ssize_t pwrite(int fd, const void *buf, size_t count, int64_t offset)
 
     int64_t oldpos = _telli64(fd);
     _lseeki64(fd, offset, SEEK_SET);
-    size_t result = _write(fd, buf, (unsigned int)count);  // Note: does not support >4GB writes
+    ssize_t result = _write(fd, buf, (unsigned int)count);
     _lseeki64(fd, oldpos, SEEK_SET);
     return result;
     }
