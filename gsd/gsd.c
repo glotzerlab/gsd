@@ -62,10 +62,10 @@ ssize_t pwrite(int fd, void *buf, size_t count, int64_t offset)
 
 #endif
 
-static ssize_t __pwrite_retry(int fd, void *buf, size_t count, int64_t offset)
+static ssize_t __pwrite_retry(int fd, const void *buf, size_t count, int64_t offset)
     {
     ssize_t total_bytes_written = 0;
-    char *ptr = (char *)buf;
+    const char *ptr = (char *)buf;
 
     // perform multiple pwrite calls to complete a large write sucessfully
     while (total_bytes_written < count)
@@ -78,6 +78,24 @@ static ssize_t __pwrite_retry(int fd, void *buf, size_t count, int64_t offset)
         }
 
     return total_bytes_written;
+    }
+
+static ssize_t __pread_retry(int fd, void *buf, size_t count, int64_t offset)
+    {
+    ssize_t total_bytes_read = 0;
+    char *ptr = (char *)buf;
+
+    // perform multiple pread calls to complete a large write sucessfully
+    while (total_bytes_read < count)
+        {
+        ssize_t bytes_read = pread(fd, ptr + total_bytes_read, count - total_bytes_read, offset + total_bytes_read);
+        if (bytes_read == -1)
+            return -1;
+
+        total_bytes_read += bytes_read;
+        }
+
+    return total_bytes_read;
     }
 
 /*! \internal
@@ -130,8 +148,8 @@ static int __gsd_expand_index(struct gsd_handle *handle)
             if (old_index_bytes - total_bytes_written < buf_size)
                 bytes_to_copy = old_index_bytes - total_bytes_written;
 
-            size_t bytes_read = pread(handle->fd, buf, bytes_to_copy, old_index_location + total_bytes_written);
-            if (bytes_read != bytes_to_copy)
+            ssize_t bytes_read = __pread_retry(handle->fd, buf, bytes_to_copy, old_index_location + total_bytes_written);
+            if (bytes_read == -1)
                 return -1;
 
             ssize_t bytes_written = __pwrite_retry(handle->fd, buf, bytes_to_copy, new_index_location + total_bytes_written);
@@ -352,13 +370,10 @@ int __gsd_read_header(struct gsd_handle* handle)
 
     // read the header
     lseek(handle->fd, 0, SEEK_SET);
-    size_t bytes_read = read(handle->fd, &handle->header, sizeof(struct gsd_header));
-    if (bytes_read != sizeof(struct gsd_header))
+    ssize_t bytes_read = __pread_retry(handle->fd, &handle->header, sizeof(struct gsd_header), 0);
+    if (bytes_read == -1)
         {
-        if (errno != 0)
-            return -1;
-        else
-            return -2;
+        return -1;
         }
 
     // validate the header
@@ -402,8 +417,8 @@ int __gsd_read_header(struct gsd_handle* handle)
             return -5;
 
         lseek(handle->fd, handle->header.index_location, SEEK_SET);
-        bytes_read = read(handle->fd, handle->index, sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries);
-        if (bytes_read != sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries)
+        bytes_read = __pread_retry(handle->fd, handle->index, sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries, sizeof(struct gsd_header));
+        if (bytes_read == -1)
             return -1;
         }
     #if GSD_USE_MMAP
@@ -437,9 +452,8 @@ int __gsd_read_header(struct gsd_handle* handle)
     if (handle->namelist == NULL)
         return -5;
 
-    lseek(handle->fd, handle->header.namelist_location, SEEK_SET);
-    bytes_read = read(handle->fd, handle->namelist, sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries);
-    if (bytes_read != sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries)
+    bytes_read = __pread_retry(handle->fd, handle->namelist, sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries, handle->header.namelist_location);
+    if (bytes_read == -1)
         return -1;
 
     // determine the number of namelist entries (marked by an empty string)
@@ -1041,8 +1055,8 @@ int gsd_read_chunk(struct gsd_handle* handle, void* data, const struct gsd_index
         return -3;
         }
 
-    size_t bytes_read = pread(handle->fd, data, size, chunk->location);
-    if (bytes_read != size)
+    ssize_t bytes_read = __pread_retry(handle->fd, data, size, chunk->location);
+    if (bytes_read == -1)
         {
         return -1;
         }
