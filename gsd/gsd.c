@@ -43,18 +43,26 @@ int S_IWGRP = _S_IWRITE;
 
 ssize_t pread(int fd, void *buf, size_t count, int64_t offset)
     {
+    // Note: does not support >4GiB reads
+    if (count > UINT_MAX)
+        return -1;
+
     int64_t oldpos = _telli64(fd);
     _lseeki64(fd, offset, SEEK_SET);
-    size_t result = _read(fd, buf, count);  // Note: does not support >4GB reads
+    size_t result = _read(fd, buf, (unsigned int)count);
     _lseeki64(fd, oldpos, SEEK_SET);
     return result;
     }
 
-ssize_t pwrite(int fd, void *buf, size_t count, int64_t offset)
+ssize_t pwrite(int fd, const void *buf, size_t count, int64_t offset)
     {
+    // Note: does not support >4GiB writes
+    if (count > UINT_MAX)
+        return -1;
+
     int64_t oldpos = _telli64(fd);
     _lseeki64(fd, offset, SEEK_SET);
-    size_t result = _write(fd, buf, count);  // Note: does not support >4GB writes
+    size_t result = _write(fd, buf, (unsigned int)count);  // Note: does not support >4GB writes
     _lseeki64(fd, oldpos, SEEK_SET);
     return result;
     }
@@ -63,7 +71,7 @@ ssize_t pwrite(int fd, void *buf, size_t count, int64_t offset)
 
 static ssize_t __pwrite_retry(int fd, const void *buf, size_t count, int64_t offset)
     {
-    ssize_t total_bytes_written = 0;
+    size_t total_bytes_written = 0;
     const char *ptr = (char *)buf;
 
     // perform multiple pwrite calls to complete a large write sucessfully
@@ -88,7 +96,7 @@ static ssize_t __pwrite_retry(int fd, const void *buf, size_t count, int64_t off
 
 static ssize_t __pread_retry(int fd, void *buf, size_t count, int64_t offset)
     {
-    ssize_t total_bytes_read = 0;
+    size_t total_bytes_read = 0;
     char *ptr = (char *)buf;
 
     // perform multiple pread calls to complete a large write sucessfully
@@ -141,7 +149,7 @@ static int __gsd_expand_index(struct gsd_handle *handle)
 
         // now, put the new larger index at the end of the file
         handle->header.index_location = lseek(handle->fd, 0, SEEK_END);
-        size_t bytes_written = __pwrite_retry(handle->fd, handle->index, sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries, handle->header.index_location);
+        ssize_t bytes_written = __pwrite_retry(handle->fd, handle->index, sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries, handle->header.index_location);
         if (bytes_written == -1 || bytes_written != sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries)
             return -1;
 
@@ -201,7 +209,7 @@ static int __gsd_expand_index(struct gsd_handle *handle)
         return -1;
 
     // write the new header out
-    size_t bytes_written = __pwrite_retry(handle->fd, &(handle->header), sizeof(struct gsd_header), 0);
+    ssize_t bytes_written = __pwrite_retry(handle->fd, &(handle->header), sizeof(struct gsd_header), 0);
     if (bytes_written == -1 || bytes_written != sizeof(struct gsd_header))
         return -1;
 
@@ -240,7 +248,7 @@ uint16_t __gsd_get_id(struct gsd_handle *handle, const char *name, uint8_t appen
         handle->namelist[handle->namelist_num_entries].name[sizeof(struct gsd_namelist_entry)-1] = 0;
 
         // update the namelist on disk
-        size_t bytes_written = __pwrite_retry(handle->fd, &(handle->namelist[handle->namelist_num_entries]), sizeof(struct gsd_namelist_entry), handle->header.namelist_location + sizeof(struct gsd_namelist_entry)*handle->namelist_num_entries);
+        ssize_t bytes_written = __pwrite_retry(handle->fd, &(handle->namelist[handle->namelist_num_entries]), sizeof(struct gsd_namelist_entry), handle->header.namelist_location + sizeof(struct gsd_namelist_entry)*handle->namelist_num_entries);
         if (bytes_written == -1 || bytes_written != sizeof(struct gsd_namelist_entry))
             return UINT16_MAX;
 
@@ -293,7 +301,7 @@ int __gsd_initialize_file(int fd, const char *application, const char *schema, u
     memset(header.reserved, 0, sizeof(header.reserved));
 
     // write the header out
-    size_t bytes_written = __pwrite_retry(fd, &header, sizeof(header), 0);
+    ssize_t bytes_written = __pwrite_retry(fd, &header, sizeof(header), 0);
     if (bytes_written == -1 || bytes_written != sizeof(header))
         return -1;
 
