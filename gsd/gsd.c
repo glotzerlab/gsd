@@ -31,11 +31,10 @@
 // define windows wrapper functions
 #ifdef _WIN32
 #define lseek _lseeki64
-#define write _write
-#define read _read
 #define open _open
 #define ftruncate _chsize
 #define fsync _commit
+typedef int64_t ssize_t;
 
 int S_IRUSR = _S_IREAD;
 int S_IWUSR = _S_IWRITE;
@@ -70,8 +69,14 @@ static ssize_t __pwrite_retry(int fd, const void *buf, size_t count, int64_t off
     // perform multiple pwrite calls to complete a large write sucessfully
     while (total_bytes_written < count)
         {
+        size_t to_write = count - total_bytes_written;
+        #ifdef _WIN32
+        // win32 _write takes in 32-bit count values
+        if (to_write > UINT_MAX) to_write = UINT_MAX;
+        #endif
+
         errno = 0;
-        ssize_t bytes_written = pwrite(fd, ptr + total_bytes_written, count - total_bytes_written, offset + total_bytes_written);
+        ssize_t bytes_written = pwrite(fd, ptr + total_bytes_written, to_write, offset + total_bytes_written);
         if (bytes_written == -1 || (bytes_written == 0 && errno != 0))
             return -1;
 
@@ -89,8 +94,14 @@ static ssize_t __pread_retry(int fd, void *buf, size_t count, int64_t offset)
     // perform multiple pread calls to complete a large write sucessfully
     while (total_bytes_read < count)
         {
+        size_t to_read = count - total_bytes_read;
+        #ifdef _WIN32
+        // win32 _read takes in 32-bit count values
+        if (to_read > UINT_MAX) to_read = UINT_MAX;
+        #endif
+
         errno = 0;
-        ssize_t bytes_read = pread(fd, ptr + total_bytes_read, count - total_bytes_read, offset + total_bytes_read);
+        ssize_t bytes_read = pread(fd, ptr + total_bytes_read, to_read, offset + total_bytes_read);
         if (bytes_read == -1 || (bytes_read == 0 && errno != 0))
             return -1;
 
