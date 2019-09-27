@@ -136,7 +136,5 @@ stages:
       clean: all
 
     steps:
-    - checkout: self
-      submodules: true
     - template: templates/build.yml
     - template: templates/sphinx_doc.yml
