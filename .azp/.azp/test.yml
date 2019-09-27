@@ -7,6 +7,7 @@ trigger:
 variables:
   image_root: glotzerlab/ci:2019.09
   private_image_root: joaander/ci:2019.09
+  python: python3
 
 stages:
 - stage: build_test
@@ -86,7 +87,7 @@ stages:
     steps:
     - script: brew install python cython cmake ninja numpy
       displayName: Brew install prereqs
-    - script: python3 -m pip install pytest
+    - script: $(python) -m pip install pytest
       displayName: Pip install prereqs
     - template: templates/build.yml
     - template: templates/unit_test.yml
@@ -101,6 +102,9 @@ stages:
     - script: python -m pip --disable-pip-version-check install numpy cython pytest
       displayName: Pip install prereqs
     - template: templates/build.yml
+    - script: cp .\gsd\Release\*.pyd gsd\
+      workingDirectory: $(Build.BinariesDirectory)
+      displayName: Copy pyd files
     - template: templates/unit_test.yml
 
 
@@ -112,9 +116,11 @@ stages:
         vs2017_py37:
           win_image: vs2017-win2016
           python_version: 3.7
+          python: python            # windows images use `python`, not `python3`
         vs2019_py37:
           win_image: windows-2019
           python_version: 3.7
+          python: python            # windows images use `python`, not `python3`
 
     pool:
       vmImage: '$(win_image)'
@@ -125,9 +131,12 @@ stages:
         versionSpec: $(python_version)
         addToPath: true
         architecture: 'x64'
-    - script: python -m pip --disable-pip-version-check install numpy cython pytest
+    - script: $(python) -m pip --disable-pip-version-check install numpy cython pytest
       displayName: Pip install prereqs
     - template: templates/build.yml
+    - script: cp .\gsd\Release\*.pyd gsd\
+      workingDirectory: $(Build.BinariesDirectory)
+      displayName: Copy pyd files
     - template: templates/unit_test.yml
 
 
