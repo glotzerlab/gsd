@@ -135,10 +135,10 @@ stages:
         versionSpec: $(python_version)
         addToPath: true
         architecture: $(architecture)
-    - script: $(python) -m pip --disable-pip-version-check install numpy cython pytest
+    - powershell: $(python) -m pip --disable-pip-version-check install numpy cython pytest
       displayName: Pip install prereqs
     - template: templates/build.yml
-    - script: cp .\gsd\Release\*.pyd gsd\
+    - powershell: cp .\gsd\Release\*.pyd gsd\
       workingDirectory: $(Build.BinariesDirectory)
       displayName: Copy pyd files
     - template: templates/unit_test.yml
