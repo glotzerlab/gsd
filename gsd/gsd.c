@@ -16,6 +16,10 @@
 
 #endif
 
+#ifdef __APPLE__
+#include <limits.h>
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <fcntl.h>
