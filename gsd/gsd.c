@@ -78,8 +78,8 @@ static ssize_t __pwrite_retry(int fd, const void *buf, size_t count, int64_t off
     while (total_bytes_written < count)
         {
         size_t to_write = count - total_bytes_written;
-        #ifdef _WIN32
-        // win32 _write raises an error for writes greater than INT_MAX
+        #if defined(_WIN32) || defined(__APPLE__)
+        // win32 and apple  raiss an errosr for writes greater than INT_MAX
         if (to_write > INT_MAX/2) to_write = INT_MAX/2;
         #endif
 
@@ -103,8 +103,8 @@ static ssize_t __pread_retry(int fd, void *buf, size_t count, int64_t offset)
     while (total_bytes_read < count)
         {
         size_t to_read = count - total_bytes_read;
-        #ifdef _WIN32
-        // win32 _read raises an error for writes greater than INT_MAX
+        #if defined(_WIN32) || defined(__APPLE__)
+        // win32 and apple raise an errors for reads greater than INT_MAX
         if (to_read > INT_MAX/2) to_read = INT_MAX/2;
         #endif
 
