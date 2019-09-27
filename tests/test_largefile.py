@@ -4,18 +4,23 @@
 import gsd.hoomd
 import numpy
 import pytest
+import gc
 
-@pytest.mark.parametrize("N", [2**26, 2**27, 179000000])
+@pytest.mark.parametrize("N", [2**27, 2**28, 2**29+1])
 def test_large_N(tmp_path, N):
-    s = gsd.hoomd.Snapshot()
-    s.particles.N = int(N)
-    s.particles.position = numpy.zeros([N,3]);
-    s.particles.position[:,0] = numpy.linspace(0, 1, num=N, endpoint=False, dtype=numpy.float32)
-    s.particles.position[:,1] = numpy.linspace(1, 2, num=N, endpoint=False, dtype=numpy.float32)
-    s.particles.position[:,2] = numpy.linspace(2, 3, num=N, endpoint=False, dtype=numpy.float32)
+    gc.collect()
 
-    with gsd.hoomd.open(name=tmp_path / "test_large_N.gsd",mode="wb") as f:
-        f.append(s)
+    data = numpy.linspace(0, N, num=N, endpoint=False, dtype=numpy.uint32)
+    with gsd.fl.open(name=tmp_path / 'test_large_N.gsd', mode='xb', application='test_large_N', schema='none', schema_version=[1,2]) as f:
+        f.write_chunk(name='data', data=data);
+        f.end_frame();
 
-    with gsd.hoomd.open(name=tmp_path / "test_large_N.gsd",mode="rb") as f:
-        numpy.testing.assert_array_equal(f[0].particles.position, s.particles.position)
+    with gsd.fl.open(name=tmp_path / 'test_large_N.gsd', mode='rb', application='test_large_N', schema='none', schema_version=[1,2]) as f:
+        read_data = f.read_chunk(frame=0, name='data');
+
+        # compare the array with memory usage so this test can pass on CI platforms
+        diff = (data-read_data)
+        data = None; read_data = None; gc.collect()
+        diff = diff**2;
+
+        assert numpy.sum(diff) == 0
