@@ -1,0 +1,11 @@
+steps:
+- script: python3 -m pytest -o junit_suite_name="${AGENT_JOBNAME}" --junit-xml=$(Common.TestResultsDirectory)/test.xml
+  displayName: Unit test
+  env:
+    PYTHONPATH: $(Build.BinariesDirectory)
+
+- task: PublishTestResults@2
+  condition: always()
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '$(Common.TestResultsDirectory)/test.xml'

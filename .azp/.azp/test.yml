@@ -1,0 +1,142 @@
+trigger:
+  batch: true
+  branches:
+    include:
+    - '*'
+
+variables:
+  image_root: glotzerlab/ci:2019.09
+  private_image_root: joaander/ci:2019.09
+
+stages:
+- stage: build_test
+  displayName: Unit test
+  dependsOn: []
+
+  jobs:
+  - job: linux_cpu
+    displayName: Linux
+    strategy:
+      matrix:
+        clang8_py37:
+          container_image: ubuntu19.04
+          cc: clang-8
+          cxx: clang++-8
+        clang7_py37:
+          container_image: ubuntu19.04
+          cc: clang-7
+          cxx: clang++-7
+        gcc9_py37:
+          container_image: ubuntu19.04
+          cc: gcc-9
+          cxx: g++-9
+        gcc8_py36:
+          container_image: ubuntu18.04
+          cc: gcc-8
+          cxx: g++-8
+        gcc7_py36:
+          container_image: ubuntu18.04
+          cc: gcc-7
+          cxx: g++-7
+        gcc6_py36:
+          container_image: ubuntu18.04
+          cc: gcc-6
+          cxx: g++-6
+        gcc5_py36:
+          container_image: ubuntu18.04
+          cc: gcc-5
+          cxx: g++-5
+        gcc48_py36:
+          container_image: ubuntu18.04
+          cc: gcc-4.8
+          cxx: g++-4.8
+        clang6_py36:
+          container_image: ubuntu18.04
+          cc: clang-6.0
+          cxx: clang++-6.0
+        clang5_py36:
+          container_image: ubuntu18.04
+          cc: clang-5.0
+          cxx: clang++-5.0
+
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    container:
+      image: $(image_root)-$(container_image)
+      options: -u 0
+
+    steps:
+    - template: templates/build.yml
+    - template: templates/unit_test.yml
+
+  - job: mac
+    displayName: Mac
+
+    strategy:
+      matrix:
+        mac10_13:
+          mac_image: macOS-10.13
+        mac10_14:
+          mac_image: macOS-10.14
+
+    pool:
+      vmImage: '$(mac_image)'
+
+    steps:
+    - script: brew install python cython cmake ninja numpy
+      displayName: Brew install prereqs
+    - script: python3 -m pip install pytest
+      displayName: Pip install prereqs
+    - template: templates/build.yml
+    - template: templates/unit_test.yml
+
+  - job: win
+    displayName: Win
+
+    strategy:
+      matrix:
+        vs2015:
+          win_image: vs2015-win2012r2
+        vs2017:
+          win_image: vs2017-win2016
+        vs2019:
+          win_image: windows-2019
+
+    pool:
+      vmImage: '$(win_image)'
+
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.7.4'
+        addToPath: true
+        architecture: 'x64'
+    - script: python -m pip --disable-pip-version-check install numpy cython pytest
+      displayName: Pip install prereqs
+    - template: templates/build.yml
+    - template: templates/unit_test.yml
+
+
+- stage: doc
+  displayName: Documentation
+  dependsOn: []
+
+  jobs:
+  - job: sphinx_doc
+    displayName: Sphinx
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    container:
+      image: $(image_root)-ubuntu18.04
+      options: -u 0
+
+    workspace:
+      clean: all
+
+    steps:
+    - checkout: self
+      submodules: true
+    - template: templates/build.yml
+    - template: templates/sphinx_doc.yml
