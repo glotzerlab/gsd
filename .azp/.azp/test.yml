@@ -98,7 +98,7 @@ stages:
       vmImage: 'vs2015-win2012r2'
 
     steps:
-    - script: python3 -m pip --disable-pip-version-check install numpy cython pytest
+    - script: python -m pip --disable-pip-version-check install numpy cython pytest
       displayName: Pip install prereqs
     - template: templates/build.yml
     - template: templates/unit_test.yml
@@ -125,7 +125,7 @@ stages:
         versionSpec: $(python_version)
         addToPath: true
         architecture: 'x64'
-    - script: python3 -m pip --disable-pip-version-check install numpy cython pytest
+    - script: python -m pip --disable-pip-version-check install numpy cython pytest
       displayName: Pip install prereqs
     - template: templates/build.yml
     - template: templates/unit_test.yml

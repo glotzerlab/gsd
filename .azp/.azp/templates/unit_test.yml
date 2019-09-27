@@ -1,5 +1,5 @@
 steps:
-- script: python3 -m pytest -o junit_suite_name="${AGENT_JOBNAME}" --junit-xml=$(Common.TestResultsDirectory)/test.xml
+- script: python -m pytest -o junit_suite_name="${AGENT_JOBNAME}" --junit-xml=$(Common.TestResultsDirectory)/test.xml
   displayName: Unit test
   workingDirectory: tests
   env:
