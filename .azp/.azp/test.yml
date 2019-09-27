@@ -92,37 +92,39 @@ stages:
     - template: templates/build.yml
     - template: templates/unit_test.yml
 
-  - job: win2015
-    displayName: Win vs2015_py36
-
-    pool:
-      vmImage: 'vs2015-win2012r2'
-
-    steps:
-    - script: $(python) -m pip --disable-pip-version-check install numpy cython pytest
-      displayName: Pip install prereqs
-    - template: templates/build.yml
-    - script: cp .\gsd\Release\*.pyd gsd\
-      workingDirectory: $(Build.BinariesDirectory)
-      displayName: Copy pyd files
-    - template: templates/unit_test.yml
-
-
   - job: win
     displayName: Win
 
     strategy:
       matrix:
-        vs2017_py37:
+        vs2017_py37_x64:
           win_image: vs2017-win2016
           python_version: 3.7
           python: python            # windows images use `python`, not `python3`
-          CMAKE_GENERATOR_PLATFORM: Win64
-        vs2019_py37:
+          CMAKE_GENERATOR: Visual Studio 15 2017
+          CMAKE_GENERATOR_PLATFORM: x64
+          architecture: 'x64'
+        vs2017_py37_x32:
+          win_image: vs2017-win2016
+          python_version: 3.7
+          python: python            # windows images use `python`, not `python3`
+          CMAKE_GENERATOR: Visual Studio 15 2017
+          CMAKE_GENERATOR_PLATFORM: Win32
+          architecture: 'x86'
+        vs2019_py37_x64:
           win_image: windows-2019
           python_version: 3.7
           python: python            # windows images use `python`, not `python3`
-          CMAKE_GENERATOR_PLATFORM: Win64
+          CMAKE_GENERATOR: Visual Studio 16 2019
+          CMAKE_GENERATOR_PLATFORM: x64
+          architecture: 'x64'
+        vs2019_py37_x32:
+          win_image: windows-2019
+          python_version: 3.7
+          python: python            # windows images use `python`, not `python3`
+          CMAKE_GENERATOR: Visual Studio 16 2019
+          CMAKE_GENERATOR_PLATFORM: Win32
+          architecture: 'x86'
 
     pool:
       vmImage: '$(win_image)'
@@ -132,7 +134,7 @@ stages:
       inputs:
         versionSpec: $(python_version)
         addToPath: true
-        architecture: 'x64'
+        architecture: $(architecture)
     - script: $(python) -m pip --disable-pip-version-check install numpy cython pytest
       displayName: Pip install prereqs
     - template: templates/build.yml
