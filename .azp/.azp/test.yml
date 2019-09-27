@@ -99,7 +99,7 @@ stages:
       vmImage: 'vs2015-win2012r2'
 
     steps:
-    - script: python -m pip --disable-pip-version-check install numpy cython pytest
+    - script: $(python) -m pip --disable-pip-version-check install numpy cython pytest
       displayName: Pip install prereqs
     - template: templates/build.yml
     - script: cp .\gsd\Release\*.pyd gsd\
@@ -117,10 +117,12 @@ stages:
           win_image: vs2017-win2016
           python_version: 3.7
           python: python            # windows images use `python`, not `python3`
+          CMAKE_GENERATOR_PLATFORM: Win64
         vs2019_py37:
           win_image: windows-2019
           python_version: 3.7
           python: python            # windows images use `python`, not `python3`
+          CMAKE_GENERATOR_PLATFORM: Win64
 
     pool:
       vmImage: '$(win_image)'
