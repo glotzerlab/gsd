@@ -7,6 +7,7 @@ steps:
     cmakeArgs: $(Build.SourcesDirectory)
     workingDirectory: $(Build.BinariesDirectory)
 
-- script: cmake --build . --config Release --target all
+- script: ls $(Build.BinariesDirectory)
+
+- script: cmake --build $(Build.BinariesDirectory) --config Release --target all
   displayName: Compile
-  workingDirectory: $(Build.BinariesDirectory)

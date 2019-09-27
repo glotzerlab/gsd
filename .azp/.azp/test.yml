@@ -96,12 +96,15 @@ stages:
 
     strategy:
       matrix:
-        vs2015:
+        vs2015_py36:
           win_image: vs2015-win2012r2
-        vs2017:
+          python_version: 3.6
+        vs2017_py37:
           win_image: vs2017-win2016
-        vs2019:
+          python_version: 3.7
+        vs2019_py37:
           win_image: windows-2019
+          python_version: 3.7
 
     pool:
       vmImage: '$(win_image)'
@@ -109,7 +112,7 @@ stages:
     steps:
     - task: UsePythonVersion@0
       inputs:
-        versionSpec: '3.7.4'
+        versionSpec: $(python_version)
         addToPath: true
         architecture: 'x64'
     - script: python -m pip --disable-pip-version-check install numpy cython pytest
