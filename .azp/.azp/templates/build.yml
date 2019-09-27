@@ -9,5 +9,5 @@ steps:
 
 - script: ls $(Build.BinariesDirectory)
 
-- script: cmake --build $(Build.BinariesDirectory) --config Release --target all
+- script: cmake --build $(Build.BinariesDirectory) --config Release
   displayName: Compile

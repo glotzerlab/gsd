@@ -91,14 +91,24 @@ stages:
     - template: templates/build.yml
     - template: templates/unit_test.yml
 
+  - job: win2015
+    displayName: Win vs2015_py36
+
+    pool:
+      vmImage: 'vs2015-win2012r2'
+
+    steps:
+    - script: python3 -m pip --disable-pip-version-check install numpy cython pytest
+      displayName: Pip install prereqs
+    - template: templates/build.yml
+    - template: templates/unit_test.yml
+
+
   - job: win
     displayName: Win
 
     strategy:
       matrix:
-        vs2015_py36:
-          win_image: vs2015-win2012r2
-          python_version: 3.6
         vs2017_py37:
           win_image: vs2017-win2016
           python_version: 3.7
@@ -115,7 +125,7 @@ stages:
         versionSpec: $(python_version)
         addToPath: true
         architecture: 'x64'
-    - script: python -m pip --disable-pip-version-check install numpy cython pytest
+    - script: python3 -m pip --disable-pip-version-check install numpy cython pytest
       displayName: Pip install prereqs
     - template: templates/build.yml
     - template: templates/unit_test.yml
