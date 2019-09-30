@@ -11,16 +11,16 @@ def test_create(tmp_path):
         assert hf.file.schema == 'hoomd';
         assert hf.file.schema_version >= (1,0);
 
-def test_append(tmp_path):
+def test_append(tmp_path, open_mode):
     snap = gsd.hoomd.Snapshot();
     snap.particles.N = 10;
 
-    with gsd.hoomd.open(name=tmp_path / "test_append.gsd", mode='wb') as hf:
+    with gsd.hoomd.open(name=tmp_path / "test_append.gsd", mode=open_mode.write) as hf:
         for i in range(5):
             snap.configuration.step=i+1;
             hf.append(snap);
 
-    with gsd.hoomd.open(name=tmp_path / "test_append.gsd", mode='rb') as hf:
+    with gsd.hoomd.open(name=tmp_path / "test_append.gsd", mode=open_mode.read) as hf:
         assert len(hf) == 5;
 
 def create_frame(i):
@@ -28,17 +28,17 @@ def create_frame(i):
     snap.configuration.step = i+1;
     return snap
 
-def test_extend(tmp_path):
+def test_extend(tmp_path, open_mode):
     snap = gsd.hoomd.Snapshot();
     snap.particles.N = 10;
 
-    with gsd.hoomd.open(name=tmp_path / "test_extend.gsd", mode='wb') as hf:
+    with gsd.hoomd.open(name=tmp_path / "test_extend.gsd", mode=open_mode.write) as hf:
         hf.extend((create_frame(i) for i in range(5)));
 
-    with gsd.hoomd.open(name=tmp_path / "test_extend.gsd", mode='rb') as hf:
+    with gsd.hoomd.open(name=tmp_path / "test_extend.gsd", mode=open_mode.read) as hf:
         assert len(hf) == 5;
 
-def test_defaults(tmp_path):
+def test_defaults(tmp_path, open_mode):
     snap = gsd.hoomd.Snapshot();
     snap.particles.N = 2;
     snap.bonds.N = 3;
@@ -48,10 +48,10 @@ def test_defaults(tmp_path):
     snap.constraints.N = 4;
     snap.pairs.N = 7;
 
-    with gsd.hoomd.open(name=tmp_path / "test_defaults.gsd", mode='wb') as hf:
+    with gsd.hoomd.open(name=tmp_path / "test_defaults.gsd", mode=open_mode.write) as hf:
         hf.append(snap);
 
-    with gsd.hoomd.open(name=tmp_path / "test_defaults.gsd", mode='rb') as hf:
+    with gsd.hoomd.open(name=tmp_path / "test_defaults.gsd", mode=open_mode.read) as hf:
         s = hf.read_frame(0);
 
         assert s.configuration.step == 0;
@@ -103,7 +103,7 @@ def test_defaults(tmp_path):
 
         assert len(s.state) == 0
 
-def test_fallback(tmp_path):
+def test_fallback(tmp_path, open_mode):
     snap0 = gsd.hoomd.Snapshot();
     snap0.configuration.step = 10000;
     snap0.configuration.dimensions = 2;
@@ -173,10 +173,10 @@ def test_fallback(tmp_path):
     snap2.constraints.N = 4;
     snap2.pairs.N = 7;
 
-    with gsd.hoomd.open(name=tmp_path / "test_fallback.gsd", mode='wb') as hf:
+    with gsd.hoomd.open(name=tmp_path / "test_fallback.gsd", mode=open_mode.write) as hf:
         hf.extend([snap0, snap1, snap2]);
 
-    with gsd.hoomd.open(name=tmp_path / "test_fallback.gsd", mode='rb') as hf:
+    with gsd.hoomd.open(name=tmp_path / "test_fallback.gsd", mode=open_mode.read) as hf:
         assert len(hf) == 3;
         s = hf.read_frame(0);
 
@@ -332,7 +332,7 @@ def test_fallback(tmp_path):
         assert 'value' in s.log;
         numpy.testing.assert_array_equal(s.log['value'], snap0.log['value']);
 
-def test_fallback2(tmp_path):
+def test_fallback2(tmp_path, open_mode):
     snap0 = gsd.hoomd.Snapshot();
     snap0.configuration.step = 1;
     snap0.configuration.dimensions = 3;
@@ -344,20 +344,20 @@ def test_fallback2(tmp_path):
     snap1.particles.N = 2;
     snap1.particles.position = [[1,2,3],[4,5,6]];
 
-    with gsd.hoomd.open(name=tmp_path / "test_fallback2.gsd", mode='wb') as hf:
+    with gsd.hoomd.open(name=tmp_path / "test_fallback2.gsd", mode=open_mode.write) as hf:
         hf.extend([snap0, snap1]);
 
-    with gsd.hoomd.open(name=tmp_path / "test_fallback2.gsd", mode='rb') as hf:
+    with gsd.hoomd.open(name=tmp_path / "test_fallback2.gsd", mode=open_mode.read) as hf:
         assert len(hf) == 2;
 
         s = hf.read_frame(1);
         numpy.testing.assert_array_equal(s.particles.mass, snap0.particles.mass);
 
-def test_iteration(tmp_path):
-    with gsd.hoomd.open(name=tmp_path / "test_iteration.gsd", mode='wb') as hf:
+def test_iteration(tmp_path, open_mode):
+    with gsd.hoomd.open(name=tmp_path / "test_iteration.gsd", mode=open_mode.write) as hf:
         hf.extend((create_frame(i) for i in range(20)));
 
-    with gsd.hoomd.open(name=tmp_path / "test_iteration.gsd", mode='rb') as hf:
+    with gsd.hoomd.open(name=tmp_path / "test_iteration.gsd", mode=open_mode.read) as hf:
         step = hf[-1].configuration.step;
         assert step == 20;
 
@@ -391,11 +391,11 @@ def test_iteration(tmp_path):
         steps = [snap.configuration.step for snap in snaps];
         assert steps == [16,17];
 
-def test_slicing_and_iteration(tmp_path):
-    with gsd.hoomd.open(name=tmp_path / "test_slicing.gsd", mode='wb') as hf:
+def test_slicing_and_iteration(tmp_path, open_mode):
+    with gsd.hoomd.open(name=tmp_path / "test_slicing.gsd", mode=open_mode.write) as hf:
         hf.extend((create_frame(i) for i in range(20)));
 
-    with gsd.hoomd.open(name=tmp_path / "test_slicing.gsd", mode='rb') as hf:
+    with gsd.hoomd.open(name=tmp_path / "test_slicing.gsd", mode=open_mode.read) as hf:
         # Test len()-function on trajectory and sliced trajectory.
         assert len(hf) == 20
         assert len(hf[:10]) == 10
@@ -431,11 +431,11 @@ def test_slicing_and_iteration(tmp_path):
         assert hf[len(hf) - 1].configuration.step == hf[-1].configuration.step
 
 
-def test_view_slicing_and_iteration(tmp_path):
-    with gsd.hoomd.open(name=tmp_path / "test_slicing.gsd", mode='wb') as hf:
+def test_view_slicing_and_iteration(tmp_path, open_mode):
+    with gsd.hoomd.open(name=tmp_path / "test_slicing.gsd", mode=open_mode.write) as hf:
         hf.extend((create_frame(i) for i in range(40)));
 
-    with gsd.hoomd.open(name=tmp_path / "test_slicing.gsd", mode='rb') as hf:
+    with gsd.hoomd.open(name=tmp_path / "test_slicing.gsd", mode=open_mode.read) as hf:
         view = hf[::2]
 
         # Test len()-function on trajectory and sliced view.
@@ -487,7 +487,7 @@ def test_truncate(tmp_path):
         assert len(hf) == 0;
         assert hf._initial_frame is None;
 
-def test_state(tmp_path):
+def test_state(tmp_path, open_mode):
     snap0 = gsd.hoomd.Snapshot();
 
     snap0.state['hpmc/sphere/radius'] = [2.0]
@@ -501,10 +501,10 @@ def test_state(tmp_path):
                                                       [0, 1, 1],
                                                       [1, 0, 0]];
 
-    with gsd.hoomd.open(name=tmp_path / "test_state.gsd", mode='wb') as hf:
+    with gsd.hoomd.open(name=tmp_path / "test_state.gsd", mode=open_mode.write) as hf:
         hf.extend([snap0, snap1]);
 
-    with gsd.hoomd.open(name=tmp_path / "test_state.gsd", mode='rb') as hf:
+    with gsd.hoomd.open(name=tmp_path / "test_state.gsd", mode=open_mode.read) as hf:
         assert len(hf) == 2;
         s = hf.read_frame(0);
 
@@ -516,7 +516,7 @@ def test_state(tmp_path):
         numpy.testing.assert_array_equal(s.state['hpmc/convex_polyhedron/N'], snap1.state['hpmc/convex_polyhedron/N']);
         numpy.testing.assert_array_equal(s.state['hpmc/convex_polyhedron/vertices'], snap1.state['hpmc/convex_polyhedron/vertices']);
 
-def test_log(tmp_path):
+def test_log(tmp_path, open_mode):
     snap0 = gsd.hoomd.Snapshot();
 
     snap0.log['particles/net_force'] = [[1,2,3],[4,5,6]]
@@ -529,10 +529,10 @@ def test_log(tmp_path):
     snap1.log['particles/pair_lj_energy'] = [1,2,-4,-10]
     snap1.log['value/pressure'] = [5]
 
-    with gsd.hoomd.open(name=tmp_path / "test_log.gsd", mode='wb') as hf:
+    with gsd.hoomd.open(name=tmp_path / "test_log.gsd", mode=open_mode.write) as hf:
         hf.extend([snap0, snap1]);
 
-    with gsd.hoomd.open(name=tmp_path / "test_log.gsd", mode='rb') as hf:
+    with gsd.hoomd.open(name=tmp_path / "test_log.gsd", mode=open_mode.read) as hf:
         assert len(hf) == 2;
         s = hf.read_frame(0);
 

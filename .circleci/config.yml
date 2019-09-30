@@ -1,20 +1,5 @@
 version: 2.1
 
-executors:
-  glotzerlab:
-    parameters:
-      image:
-        type: string
-      python-version:
-        type: string
-    docker:
-      - image: glotzerlab/ci:2019.08-<< parameters.image >>
-    environment:
-      PYTHONPATH: /home/ci/project/build
-      PYTHON: "/usr/bin/python<< parameters.python-version >>"
-      PYTEST: "/usr/bin/python<< parameters.python-version >> -m pytest"
-    working_directory: /home/ci/project
-
 commands:
   build:
     parameters:
@@ -38,7 +23,7 @@ commands:
     steps:
       - run:
           name: Unit test
-          command: mkdir test-results && cd code/tests && ${PYTEST} --junit-xml=/home/ci/project/test-results/test.xml
+          command: mkdir test-results && cd code/tests && ${PYTEST} --junit-xml=/home/ci/project/test-results/test.xml --ignore-glob='*_largefile.py'
       - store_artifacts:
           path: test-results
           destination: test-results
@@ -51,37 +36,6 @@ commands:
 
 
 jobs:
-  build_and_test:
-    parameters:
-      image:
-        type: string
-      cc:
-        type: string
-      cxx:
-        type: string
-      python-version:
-        type: string
-      build-docs:
-        default: false
-        type: boolean
-      cmake:
-        default: /usr/bin/cmake
-        type: string
-    executor:
-      name: glotzerlab
-      image: << parameters.image >>
-      python-version: << parameters.python-version >>
-    steps:
-      - build:
-          cc: << parameters.cc >>
-          cxx: << parameters.cxx >>
-          cmake: << parameters.cmake >>
-      - test
-      - when:
-          condition: << parameters.build-docs >>
-          steps:
-            - sphinx
-
   pypi-linux-wheels:
     parameters:
       python:
@@ -159,14 +113,14 @@ jobs:
                 command: |
                   "${PYBIN}/pip" install pytest --progress-bar=off
                   "${PYBIN}/pip" install gsd --no-index -f dist --progress-bar=off
-                  "${PYBIN}/pytest"
+                  "${PYBIN}/pytest" --ignore-glob='*_largefile.py'
             - run:
                 name: Test wheels (latest numpy)
                 working_directory: /root/code
                 command: |
                   "${PYBIN}/pip" install numpy --upgrade --progress-bar=off
                   "${PYBIN}/pip" install gsd --no-index -f dist --progress-bar=off
-                  "${PYBIN}/pytest"
+                  "${PYBIN}/pytest" --ignore-glob='*_largefile.py'
       - when:
           condition: << parameters.build-sdist >>
           steps:
@@ -192,80 +146,10 @@ jobs:
             - run: echo "Branch build, skipping upload"
       - store_artifacts:
           path: /root/code/dist
+
 workflows:
   test:
     jobs:
-      - build_and_test:
-          name: clang8-py37
-          image: ubuntu19.04
-          cc: clang-8
-          cxx: clang++-8
-          python-version: "3.7"
-
-      - build_and_test:
-          name: clang7-py37
-          image: ubuntu19.04
-          cc: clang-7
-          cxx: clang++-7
-          python-version: "3.7"
-
-      - build_and_test:
-          name: gcc9-py37
-          image: ubuntu19.04
-          cc: gcc-9
-          cxx: g++-9
-          python-version: "3.7"
-
-      - build_and_test:
-          name: gcc8-py36
-          image: ubuntu18.04
-          cc: gcc-8
-          cxx: g++-8
-          python-version: "3.6"
-
-      - build_and_test:
-          name: gcc7-py36-docs
-          image: ubuntu18.04
-          cc: gcc-7
-          cxx: g++-7
-          python-version: "3.6"
-          build-docs: true
-
-      - build_and_test:
-          name: gcc6-py36
-          image: ubuntu18.04
-          cc: gcc-6
-          cxx: g++-6
-          python-version: "3.6"
-
-      - build_and_test:
-          name: clang6-py36
-          image: ubuntu18.04
-          cc: clang-6.0
-          cxx: clang++-6.0
-          python-version: "3.6"
-
-      - build_and_test:
-          name: clang5-py36
-          image: ubuntu18.04
-          cc: clang-5.0
-          cxx: clang++-5.0
-          python-version: "3.6"
-
-      - build_and_test:
-          name: gcc5-py36
-          image: ubuntu18.04
-          cc: gcc-5
-          cxx: g++-5
-          python-version: "3.6"
-
-      - build_and_test:
-          name: gcc48-py36
-          image: ubuntu18.04
-          cc: gcc-4.8
-          cxx: g++-4.8
-          python-version: "3.6"
-
       - pypi-linux-wheels:
           name: wheel-build-cp35m
           python: cp35-cp35m
