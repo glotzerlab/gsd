@@ -83,7 +83,7 @@ static ssize_t __pwrite_retry(int fd, const void *buf, size_t count, int64_t off
         {
         size_t to_write = count - total_bytes_written;
         #if defined(_WIN32) || defined(__APPLE__)
-        // win32 and apple  raise an errors for writes greater than INT_MAX
+        // win32 and apple raise an error for writes greater than INT_MAX
         if (to_write > INT_MAX/2) to_write = INT_MAX/2;
         #endif
 
