@@ -909,7 +909,7 @@ int gsd_end_frame(struct gsd_handle* handle)
         if (handle->open_flags != GSD_OPEN_APPEND)
             data += handle->index_written_entries;
 
-        size_t bytes_written = __pwrite_retry(handle->fd,
+        ssize_t bytes_written = __pwrite_retry(handle->fd,
                                               data,
                                               sizeof(struct gsd_index_entry)*entries_to_write,
                                               write_pos);
@@ -971,7 +971,7 @@ int gsd_write_chunk(struct gsd_handle* handle,
     index_entry.location = handle->file_size;
 
     // write the data
-    size_t bytes_written = __pwrite_retry(handle->fd, data, size, index_entry.location);
+    ssize_t bytes_written = __pwrite_retry(handle->fd, data, size, index_entry.location);
     if (bytes_written == -1 || bytes_written != size)
         return -1;
 
