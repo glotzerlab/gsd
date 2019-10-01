@@ -5,6 +5,7 @@ set(PYTHON_MODULE_BASE_DIR "gsd")
 
 add_subdirectory(CMake)
 include(CFlagsSetup)
+include(LinterSetup)
 
 #############################################################################################
 # Find libraries
