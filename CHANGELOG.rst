@@ -3,8 +3,8 @@ Change Log
 
 `gsd <https://github.com/glotzerlab/gsd>`_ releases follow `semantic versioning <https://semver.org/>`_.
 
-v1.9.2 (not yet released)
--------------------------
+v1.9.2 (2019-10-01)
+-------------------
 
 * Support chunk sizes larger than 2GiB
 
