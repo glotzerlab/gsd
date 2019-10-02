@@ -195,6 +195,8 @@ stages:
         architecture: $(architecture)
     - powershell: python -m venv $(Build.BinariesDirectory)/venv
       displayName: Create venv
+    - powershell: $(python) -m pip install -U pip
+      displayName: Upgrade pip
     - powershell: $(python) -m pip --disable-pip-version-check install numpy cython pytest
       displayName: Pip install prereqs
     - powershell: $(python) -m pip install --no-build-isolation --no-use-pep517 .
@@ -256,6 +258,8 @@ stages:
       displayName: Brew install prereqs
     - script: python3 -m venv $(Build.BinariesDirectory)/venv
       displayName: Create venv
+    - powershell: $(python) -m pip install -U pip
+      displayName: Upgrade pip
     - script: $(python) -m pip --disable-pip-version-check install numpy cython pytest
       displayName: Pip install prereqs
     - script: $(python) -m pip install --no-build-isolation --no-use-pep517 .
