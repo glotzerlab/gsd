@@ -197,7 +197,7 @@ stages:
       displayName: Create venv
     - powershell: $(python) -m pip --disable-pip-version-check install numpy cython pytest
       displayName: Pip install prereqs
-    - powershell: $(python) -m pip install --no-build-isolation --no-use-pep517 .
+    - powershell: $(python) -m pip install --no-build-isolation .
       displayName: Pip install gsd
     - template: templates/unit_test.yml
 
@@ -231,7 +231,7 @@ stages:
 #      displayName: Create venv
 #    - script: $(python) -m pip --disable-pip-version-check install numpy cython pytest
 #      displayName: Pip install prereqs
-    - script: $(python) -m pip install --user --no-build-isolation --no-use-pep517 .
+    - script: $(python) -m pip install --user --no-build-isolation .
       displayName: Pip install gsd
     - template: templates/unit_test.yml
 
@@ -258,7 +258,7 @@ stages:
       displayName: Create venv
     - script: $(python) -m pip --disable-pip-version-check install numpy cython pytest
       displayName: Pip install prereqs
-    - script: $(python) -m pip install --no-build-isolation --no-use-pep517 .
+    - script: $(python) -m pip install --no-build-isolation .
       displayName: Pip install gsd
     - template: templates/unit_test.yml
 
