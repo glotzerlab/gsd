@@ -76,9 +76,9 @@ stages:
 
     strategy:
       matrix:
-        gcc9_py38:
-        gcc7_py37:
-        gcc7_py36:
+        gcc9_py38
+        gcc7_py37
+        gcc7_py36
 
     pool:
       vmImage: 'ubuntu-16.04'
@@ -88,10 +88,10 @@ stages:
       options: -u 0
 
     steps:
-   - script: python3 -m venv $(Build.BinariesDirectory)/venv --system-site-packages
-     displayName: Create venv
-   - script: $(python) -m pip --disable-pip-version-check install numpy cython pytest
-     displayName: Pip install prereqs
+    - script: python3 -m venv $(Build.BinariesDirectory)/venv --system-site-packages
+      displayName: Create venv
+    - script: $(python) -m pip --disable-pip-version-check install numpy cython pytest
+      displayName: Pip install prereqs
     - script: $(python) -m pip install --user --no-build-isolation --no-use-pep517 .
       displayName: Pip install gsd
     - template: templates/unit_test.yml

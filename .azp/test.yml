@@ -20,19 +20,19 @@ stages:
     strategy:
       # the matrix job name sets the name of the docker image
       matrix:
-        gcc9_py38:
-        clang9_py38:
-        clang8_py38:
-        clang7_py38:
-        gcc8_py37:
-        gcc7_py37:
-        gcc6_py37:
-        gcc5_py37:
-        gcc48_py37:
-        clang6_py37:
-        clang5_py37:
-        clang4_py37:
-        gcc7_py36:
+        gcc9_py38
+        clang9_py38
+        clang8_py38
+        clang7_py38
+        gcc8_py37
+        gcc7_py37
+        gcc6_py37
+        gcc5_py37
+        gcc48_py37
+        clang6_py37
+        clang5_py37
+        clang4_py37
+        gcc7_py36
 
     pool:
       vmImage: 'ubuntu-16.04'
