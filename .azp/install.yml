@@ -76,9 +76,9 @@ stages:
 
     strategy:
       matrix:
-        - gcc9_py38
-        - gcc7_py37
-        - gcc7_py36
+        gcc9_py38:
+        gcc7_py37:
+        gcc7_py36:
 
     pool:
       vmImage: 'ubuntu-16.04'
