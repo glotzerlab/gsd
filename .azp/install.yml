@@ -71,9 +71,6 @@ stages:
   - job: linux_pip
     displayName: Linux (pip)
 
-    variables:
-      python: $(Build.BinariesDirectory)/venv/bin/python
-
     strategy:
       matrix:
         gcc9_py38:
@@ -91,19 +88,12 @@ stages:
       options: -u 0
 
     steps:
-    - script: python3 -m venv $(Build.BinariesDirectory)/venv --system-site-packages
-      displayName: Create venv
-    - script: $(python) -m pip --disable-pip-version-check install numpy cython pytest
-      displayName: Pip install prereqs
-    - script: $(python) -m pip install --no-build-isolation --no-use-pep517 .
+    - script: $(python) -m pip install --user --no-build-isolation --no-use-pep517 .
       displayName: Pip install gsd
     - template: templates/unit_test.yml
 
   - job: mac_pip
     displayName: Mac (pip)
-
-    variables:
-      python: $(Build.BinariesDirectory)/venv/bin/python
 
     strategy:
       matrix:
@@ -118,12 +108,10 @@ stages:
     steps:
     - script: brew install python cmake ninja
       displayName: Brew install prereqs
-    - script: python3 -m venv $(Build.BinariesDirectory)/venv --system-site-packages
-      displayName: Create venv
     - script: $(python) -m pip install -U pip
       displayName: Upgrade pip
     - script: $(python) -m pip --disable-pip-version-check install numpy cython pytest
       displayName: Pip install prereqs
-    - script: $(python) -m pip install --no-build-isolation --no-use-pep517 .
+    - script: $(python) -m pip install --user --no-build-isolation --no-use-pep517 .
       displayName: Pip install gsd
     - template: templates/unit_test.yml
