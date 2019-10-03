@@ -5,8 +5,7 @@ trigger:
     - '*'
 
 variables:
-  image_root: glotzerlab/ci:2019.09
-  private_image_root: joaander/ci:2019.09
+  image_root: glotzerlab/ci:2019.10
   python: python3
   pytest_options:
 
@@ -19,53 +18,27 @@ stages:
   - job: linux_cpu
     displayName: Linux
     strategy:
+      # the matrix job name sets the name of the docker image
       matrix:
-        clang8_py37:
-          container_image: ubuntu19.04
-          cc: clang-8
-          cxx: clang++-8
-        clang7_py37:
-          container_image: ubuntu19.04
-          cc: clang-7
-          cxx: clang++-7
-        gcc9_py37:
-          container_image: ubuntu19.04
-          cc: gcc-9
-          cxx: g++-9
-        gcc8_py36:
-          container_image: ubuntu18.04
-          cc: gcc-8
-          cxx: g++-8
-        gcc7_py36:
-          container_image: ubuntu18.04
-          cc: gcc-7
-          cxx: g++-7
-        gcc6_py36:
-          container_image: ubuntu18.04
-          cc: gcc-6
-          cxx: g++-6
-        gcc5_py36:
-          container_image: ubuntu18.04
-          cc: gcc-5
-          cxx: g++-5
-        gcc48_py36:
-          container_image: ubuntu18.04
-          cc: gcc-4.8
-          cxx: g++-4.8
-        clang6_py36:
-          container_image: ubuntu18.04
-          cc: clang-6.0
-          cxx: clang++-6.0
-        clang5_py36:
-          container_image: ubuntu18.04
-          cc: clang-5.0
-          cxx: clang++-5.0
+        - gcc9_py38
+        - clang9_py38
+        - clang8_py38
+        - clang7_py38
+        - gcc8_py37
+        - gcc7_py37
+        - gcc6_py37
+        - gcc5_py37
+        - gcc48_py37
+        - clang6_py37
+        - clang5_py37
+        - clang4_py37
+        - gcc7_py36
 
     pool:
       vmImage: 'ubuntu-16.04'
 
     container:
-      image: $(image_root)-$(container_image)
+      image: $(image_root)-$(System.JobName)
       options: -u 0
 
     steps:
@@ -193,7 +166,7 @@ stages:
         versionSpec: $(python_version)
         addToPath: true
         architecture: $(architecture)
-    - powershell: python -m venv $(Build.BinariesDirectory)/venv
+    - powershell: python -m venv $(Build.BinariesDirectory)/venv --system-site-packages
       displayName: Create venv
     - powershell: $(python) -m pip install -U pip
       displayName: Upgrade pip
@@ -206,33 +179,27 @@ stages:
   - job: linux_pip
     displayName: Linux (pip)
 
- #   variables:
- #     python: $(Build.BinariesDirectory)/venv/bin/python
+   variables:
+     python: $(Build.BinariesDirectory)/venv/bin/python
 
     strategy:
       matrix:
-        gcc9_py37:
-          container_image: ubuntu19.04
-          cc: gcc-8
-          cxx: g++-8
-        gcc7_py36:
-          container_image: ubuntu18.04
-          cc: gcc-7
-          cxx: g++-7
+        - gcc9_py38
+        - gcc7_py37
+        - gcc7_py36
 
     pool:
       vmImage: 'ubuntu-16.04'
 
     container:
-      image: $(image_root)-$(container_image)
+      image: $(image_root)-$(System.JobName)
       options: -u 0
 
     steps:
-# todo: enable when the container has python3-venv installed
-#    - script: python3 -m venv $(Build.BinariesDirectory)/venv
-#      displayName: Create venv
-#    - script: $(python) -m pip --disable-pip-version-check install numpy cython pytest
-#      displayName: Pip install prereqs
+   - script: python3 -m venv $(Build.BinariesDirectory)/venv --system-site-packages
+     displayName: Create venv
+   - script: $(python) -m pip --disable-pip-version-check install numpy cython pytest
+     displayName: Pip install prereqs
     - script: $(python) -m pip install --user --no-build-isolation --no-use-pep517 .
       displayName: Pip install gsd
     - template: templates/unit_test.yml
@@ -256,7 +223,7 @@ stages:
     steps:
     - script: brew install python cmake ninja
       displayName: Brew install prereqs
-    - script: python3 -m venv $(Build.BinariesDirectory)/venv
+    - script: python3 -m venv $(Build.BinariesDirectory)/venv --system-site-packages
       displayName: Create venv
     - powershell: $(python) -m pip install -U pip
       displayName: Upgrade pip
