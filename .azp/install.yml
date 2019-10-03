@@ -1,0 +1,126 @@
+trigger:
+  batch: true
+  branches:
+    include:
+    - '*'
+
+variables:
+  image_root: glotzerlab/ci:2019.10
+  python: python3
+  pytest_options:
+
+stages:
+- stage: pip_install
+  displayName: Pip install
+  dependsOn: []
+
+  jobs:
+  - job: win_pip
+    displayName: Win (pip)
+
+    variables:
+      python: $(Build.BinariesDirectory)\venv\Scripts\python
+
+    strategy:
+      matrix:
+        vs2017_py37_x64:
+          win_image: vs2017-win2016
+          python_version: 3.7
+          CMAKE_GENERATOR: Visual Studio 15 2017
+          CMAKE_GENERATOR_PLATFORM: x64
+          architecture: 'x64'
+        vs2019_py37_x64:
+          win_image: windows-2019
+          python_version: 3.7
+          CMAKE_GENERATOR: Visual Studio 16 2019
+          CMAKE_GENERATOR_PLATFORM: x64
+          architecture: 'x64'
+        vs2019_py36_x64:
+          win_image: windows-2019
+          python_version: 3.6
+          CMAKE_GENERATOR: Visual Studio 16 2019
+          CMAKE_GENERATOR_PLATFORM: x64
+          architecture: 'x64'
+        vs2019_py37_x32:
+          win_image: windows-2019
+          python_version: 3.7
+          CMAKE_GENERATOR: Visual Studio 16 2019
+          CMAKE_GENERATOR_PLATFORM: Win32
+          architecture: 'x86'
+          pytest_options: --ignore-glob="*_largefile.py"
+
+    pool:
+      vmImage: '$(win_image)'
+
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: $(python_version)
+        addToPath: true
+        architecture: $(architecture)
+    - powershell: python -m venv $(Build.BinariesDirectory)/venv --system-site-packages
+      displayName: Create venv
+    - powershell: $(python) -m pip install -U pip
+      displayName: Upgrade pip
+    - powershell: $(python) -m pip --disable-pip-version-check install numpy cython pytest
+      displayName: Pip install prereqs
+    - powershell: $(python) -m pip install --no-build-isolation --no-use-pep517 .
+      displayName: Pip install gsd
+    - template: templates/unit_test.yml
+
+  - job: linux_pip
+    displayName: Linux (pip)
+
+    variables:
+      python: $(Build.BinariesDirectory)/venv/bin/python
+
+    strategy:
+      matrix:
+        - gcc9_py38
+        - gcc7_py37
+        - gcc7_py36
+
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    container:
+      image: $(image_root)-$(System.JobName)
+      options: -u 0
+
+    steps:
+   - script: python3 -m venv $(Build.BinariesDirectory)/venv --system-site-packages
+     displayName: Create venv
+   - script: $(python) -m pip --disable-pip-version-check install numpy cython pytest
+     displayName: Pip install prereqs
+    - script: $(python) -m pip install --user --no-build-isolation --no-use-pep517 .
+      displayName: Pip install gsd
+    - template: templates/unit_test.yml
+
+  - job: mac_pip
+    displayName: Mac (pip)
+
+    variables:
+      python: $(Build.BinariesDirectory)/venv/bin/python
+
+    strategy:
+      matrix:
+        mac10_13:
+          mac_image: macOS-10.13
+        mac10_14:
+          mac_image: macOS-10.14
+
+    pool:
+      vmImage: '$(mac_image)'
+
+    steps:
+    - script: brew install python cmake ninja
+      displayName: Brew install prereqs
+    - script: python3 -m venv $(Build.BinariesDirectory)/venv --system-site-packages
+      displayName: Create venv
+    - powershell: $(python) -m pip install -U pip
+      displayName: Upgrade pip
+    - script: $(python) -m pip --disable-pip-version-check install numpy cython pytest
+      displayName: Pip install prereqs
+    - script: $(python) -m pip install --no-build-isolation --no-use-pep517 .
+      displayName: Pip install gsd
+    - template: templates/unit_test.yml
