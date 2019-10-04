@@ -3,6 +3,11 @@ Change Log
 
 `gsd <https://github.com/glotzerlab/gsd>`_ releases follow `semantic versioning <https://semver.org/>`_.
 
+v1.9.3 (2019-10-04)
+-------------------
+
+* Fixed preprocessor directive affecting Windows builds using setup.py.
+
 v1.9.2 (2019-10-01)
 -------------------
 
