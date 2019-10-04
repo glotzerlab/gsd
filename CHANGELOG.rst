@@ -7,6 +7,7 @@ v1.9.3 (2019-10-04)
 -------------------
 
 * Fixed preprocessor directive affecting Windows builds using setup.py.
+* Documentation updates
 
 v1.9.2 (2019-10-01)
 -------------------
