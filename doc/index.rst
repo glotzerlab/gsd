@@ -7,8 +7,8 @@ GSD documentation
 The **GSD** file format is the native file format for `HOOMD-blue <https://glotzerlab.engin.umich.edu/hoomd-blue/>`_.
 **GSD** files store trajectories of the HOOMD-blue system state in a binary file with efficient random access to
 frames. **GSD** allows all particle and topology properties to vary from one frame to the next. Use the **GSD** Python
-API to specify the initial condition for a HOOMD-simulation or analyze simulation output with a script. Read a **GSD**
-trajectory with a visualization tool to explore the behavior of the simulation.
+API to specify the initial condition for a HOOMD-blue simulation or analyze trajectory output with a script. Read a
+**GSD** trajectory with a visualization tool to explore the behavior of the simulation.
 
 * `GitHub Repository <https://github.com/glotzerlab/gsd>`_: **GSD** source code and issue tracker.
 * `HOOMD-blue <https://glotzerlab.engin.umich.edu/hoomd-blue/>`_: Simulation engine that reads and writes GSD files.
