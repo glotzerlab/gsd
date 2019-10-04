@@ -6,6 +6,6 @@ Specification
 
 .. toctree::
 
-    file-layer
     schema-hoomd
     shapes
+    file-layer

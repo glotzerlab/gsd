@@ -1,10 +1,10 @@
 Installation
 ============
 
-**GSD** binaries are available in the `glotzerlab-software <https://glotzerlab-software.readthedocs.io>`_
+**gsd** binaries are available in the `glotzerlab-software <https://glotzerlab-software.readthedocs.io>`_
 `Docker <https://hub.docker.com/>`_/`Singularity <https://www.sylabs.io/>`_ images and in packages on
-`conda-forge <https://conda-forge.org/>`_ and `PyPI <https://pypi.org/>`_. You can also compile **GSD** from source,
-embed ``gsd.c`` in your code, or read gsd files with a single file pure python reader ``pygsd.py``.
+`conda-forge <https://conda-forge.org/>`_ and `PyPI <https://pypi.org/>`_. You can also compile **gsd** from source,
+embed ``gsd.c`` in your code, or read gsd files with a pure Python reader ``pygsd.py``.
 
 Binaries
 --------
@@ -12,13 +12,13 @@ Binaries
 Anaconda package
 ^^^^^^^^^^^^^^^^
 
-**GSD** is available on `conda-forge <https://conda-forge.org/>`_. To install, first download and install
+**gsd** is available on `conda-forge <https://conda-forge.org/>`_. To install, first download and install
 `miniconda <http://conda.pydata.org/miniconda.html>`_.
-Then add the ``conda-forge`` channel and install **GSD**:
+Then add the **conda-forge** channel and install **gsd**:
 
 .. code-block:: bash
 
-   ▶ conda install -c conda-forge gsd
+   $ conda install -c conda-forge gsd
 
 Singularity / Docker images
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -29,11 +29,11 @@ information and cluster specific instructions.
 PyPI
 ^^^^
 
-Use **pip** to install **GSD**:
+Use **pip** to install **gsd**:
 
 .. code-block:: bash
 
-   ▶ pip install gsd
+   $ pip install gsd
 
 
 Compile from source
@@ -52,7 +52,7 @@ Or, clone using git:
 
 .. code-block:: bash
 
-   ▶ git clone https://github.com/glotzerlab/gsd
+   $ git clone https://github.com/glotzerlab/gsd
 
 Configure a virtual environment
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -61,12 +61,12 @@ When using a shared Python installation, create a `virtual environment
 <https://docs.python.org/3/library/venv.html>`_ where you can install
 **gsd**::
 
-    ▶ python3 -m venv /path/to/environment --system-site-packages
+    $ python3 -m venv /path/to/environment --system-site-packages
 
 Activate the environment before configuring and before executing
 **gsd** scripts::
 
-   ▶ source /path/to/environment/bin/activate
+   $ source /path/to/environment/bin/activate
 
 .. note::
 
@@ -83,22 +83,22 @@ Install Prerequisites
 
 Additional packages may be needed:
 
-* pytest >= 3.9.0 (unit tests)
-* sphinx (documentation)
-* ipython (documentation)
+* **pytest** >= 3.9.0 (unit tests)
+* **Sphinx** (documentation)
+* **IPython** (documentation)
 * an internet connection (documentation)
-* Cython >= 0.22 (to build non-tagged releases)
-* cmake (for development builds)
+* **Cython** >= 0.22 (to build non-tagged releases)
+* **CMake** (for development builds)
 
-Install these tools with your system or virtual environment package manager. GSD developers have had success with
+Install these tools with your system or virtual environment package manager. **gsd** developers have had success with
 ``pacman`` (`arch linux <https://www.archlinux.org/>`_), ``apt-get`` (`ubuntu <https://ubuntu.com/>`_), `Homebrew
 <https://brew.sh/>`_ (macOS), and `MacPorts <https://www.macports.org/>`_ (macOS)::
 
-    ▶ your-package-manager install ipython python python-pytest python-numpy cmake cython python-sphinx python-sphinx_rtd_theme
+    $ your-package-manager install ipython python python-pytest python-numpy cmake cython python-sphinx python-sphinx_rtd_theme
 
-Typical HPC cluster environments provide python, numpy, and cmake via a module system::
+Typical HPC cluster environments provide **Python**, **numpy**, and **cmake** via a module system::
 
-    ▶ module load gcc python cmake
+    $ module load gcc python cmake
 
 .. note::
 
@@ -114,29 +114,29 @@ Typical HPC cluster environments provide python, numpy, and cmake via a module s
 Install with setuptools
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-Use ``python setup.py`` to install the python module into your virtual environment::
+Use **pip** to install the python module into your virtual environment::
 
 .. code-block:: bash
 
-    ▶ python3 setup.py install
+    $ python3 -m pip install .
 
-Build with cmake for development
+Build with CMake for development
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-You can assemble a functional python module in the build directory. Configure with **cmake** and compile with **make**.
+You can assemble a functional python module in the build directory. Configure with **CMake** and compile with **make**.
 
 .. code-block:: bash
 
-   ▶ mkdir build
-   ▶ cd build
-   ▶ cmake ../
-   ▶ make
+   $ mkdir build
+   $ cd build
+   $ cmake ../
+   $ make
 
-Add the build directory path to your ``PYTHONPATH`` to test **GSD**:
+Add the build directory path to your ``PYTHONPATH`` to test **gsd** or build documentation:
 
 .. code-block:: bash
 
-   ▶ export PYTHONPATH=$PYTHONPATH:/path/to/build
+   $ export PYTHONPATH=$PYTHONPATH:/path/to/build
 
 Run tests
 ^^^^^^^^^
@@ -146,30 +146,37 @@ compiled python module is on the python path.
 
 .. code-block:: bash
 
-   ▶ cd /path/to/gsd
-   ▶ pytest
+   $ cd /path/to/gsd
+   $ pytest
 
 Build user documentation
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-Build the user documentation with **sphinx**. ``ipython`` is also required to build the documentation, as is an active
-internet connection. To build the documentation:
+Build the user documentation with **Sphinx**. **IPython** is required to build the documentation, as is an active
+internet connection. First, you need to compile and install **gsd**. If you compiled with **CMake**, add **gsd**
+to your ``PYTHONPATH`` first:
 
 .. code-block:: bash
 
-   ▶ cd /path/to/gsd
-   ▶ cd doc
-   ▶ make html
-   ▶ open _build/html/index.html
+   $ export PYTHONPATH=$PYTHONPATH:/path/to/build
+
+To build the documentation:
+
+.. code-block:: bash
+
+   $ cd /path/to/gsd
+   $ cd doc
+   $ make html
+   $ open _build/html/index.html
 
 Using the C library
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-GSD is implemented in less than 1k lines of C code. It doesn't build a shared library, just
-copy ``gsd/gsd.h`` and ``gsd/gsd.c`` into your project and compile it directly in.
+**gsd** is implemented in a single C file. Copy ``gsd/gsd.h`` and ``gsd/gsd.c`` into your project.
 
 Using the pure python reader
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If you only need to read files, you can skip installing and just extract the module modules ``gsd/pygsd.py`` and
-``gsd/hoomd.py``. Together, these implement a pure-python reader for GSD and hoomd files - no C compiler required.
+``gsd/hoomd.py``. Together, these implement a pure Python reader for **gsd** and **HOOMD** files - no C compiler
+required.

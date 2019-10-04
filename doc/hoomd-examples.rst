@@ -3,9 +3,9 @@
 HOOMD
 -----
 
-:py:mod:`gsd.hoomd` provides high-level access to HOOMD schema GSD files.
+:py:mod:`gsd.hoomd` provides high-level access to **HOOMD** schema **GSD** files.
 
-View the page source to find unformatted example code that can be easily copied.
+View the page source to find unformatted example code.
 
 Define a snapshot
 ^^^^^^^^^^^^^^^^^
@@ -19,10 +19,9 @@ Define a snapshot
     s.particles.position = [[0,0,0],[1,1,1], [-1,-1,-1], [1,-1,-1]]
     s.configuration.box = [3, 3, 3, 0, 0, 0]
 
-:py:mod:`gsd.hoomd` represents the state of a single frame with an instance of the
-class :py:class:`gsd.hoomd.Snapshot`. Instantiate this class to create a system
-configuration. All fields default to ``None`` and are only written into the file
-if not ``None`` and do not match the data in the first frame, or defaults specified
+:py:mod:`gsd.hoomd` represents the state of a single frame with an instance of the class
+:py:class:`gsd.hoomd.Snapshot`. Instantiate this class to create a system configuration. All fields default to ``None``
+and are only written into the file if not ``None`` and do not match the data in the first frame, or defaults specified
 in the schema.
 
 Create a hoomd gsd file
@@ -49,7 +48,7 @@ Append frames to a gsd file
     t.append( create_frame(10) )
     len(t)
 
-Use :py:func:`gsd.hoomd.open` to open a GSD file with the high level interface
+Use :py:func:`gsd.hoomd.open` to open a **GSD** file with the high level interface
 :py:class:`gsd.hoomd.HOOMDTrajectory`. It behaves like a python :py:class:`list`, with
 :py:meth:`gsd.hoomd.HOOMDTrajectory.append` and :py:meth:`gsd.hoomd.HOOMDTrajectory.extend`
 methods.
@@ -105,10 +104,9 @@ Pure python reader
     t = gsd.hoomd.HOOMDTrajectory(f);
     t[3].particles.position
 
-You can use GSD without needing to compile C code to read GSD files using
-:py:class:`gsd.pygsd.GSDFile` in combination with :py:class:`gsd.hoomd.HOOMDTrajectory`. It only
-supports the ``rb`` mode and does not read files as fast as the C implementation.
-It takes in a python file-like object, so it can be used with in-memory IO classes, and
+You can use **GSD** without needing to compile C code to read **GSD** files using :py:class:`gsd.pygsd.GSDFile` in
+combination with :py:class:`gsd.hoomd.HOOMDTrajectory`. It only supports the ``rb`` mode and does not read files as
+fast as the C implementation. It takes in a python file-like object, so it can be used with in-memory IO classes, and
 grid file classes that access data over the internet.
 
 Access state data

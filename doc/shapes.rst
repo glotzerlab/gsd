@@ -3,8 +3,8 @@
 
 .. _shapes:
 
-Shape Visualization Specification
-=================================
+Shape Visualization
+===================
 
 The chunk :chunk:`particles/type_shapes` stores information about shapes corresponding to particle types.
 Shape definitions are stored for each type as a UTF-8 encoded JSON string containing key-value pairs.

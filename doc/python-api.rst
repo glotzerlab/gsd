@@ -4,9 +4,8 @@
 gsd python package
 ==================
 
-GSD provides an optional python API. This is the most convenient way for
-users to read and write GSD files. Developers, or users not working with
-the python language, may want to use the :ref:`c_api_`.
+**GSD** provides a **Python** API intended for most users. Developers, or users not working with the Python language,
+may want to use the :ref:`c_api_`.
 
 Submodules
 ----------
@@ -15,8 +14,8 @@ Submodules
    :maxdepth: 3
 
    python-module-gsd.fl
-   python-module-gsd.pygsd
    python-module-gsd.hoomd
+   python-module-gsd.pygsd
 
 Package contents
 ----------------
@@ -28,8 +27,8 @@ Package contents
 Logging
 -------
 
-All python modules in GSD use the python standard library module :py:mod:`logging`
-to log events. Use this module to control the verbosity and output destination::
+All python modules in **GSD** use the python standard library module :py:mod:`logging` to log events. Use this module
+to control the verbosity and output destination::
 
     import logging
     logging.basicConfig(level=logging.INFO)

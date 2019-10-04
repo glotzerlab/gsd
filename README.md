@@ -1,27 +1,22 @@
 # GSD
 
-GSD (General Simulation Data) is a file format specification and a library to read and write it. The package also
-contains a python module that reads and writes [hoomd](https://glotzerlab.engin.umich.edu/hoomd-blue/) schema gsd
-files.
+The **GSD** file format is the native file format for [HOOMD-blue](https://glotzerlab.engin.umich.edu/hoomd-blue/).
+**GSD** files store trajectories of the HOOMD-blue system state in a binary file with efficient random access to
+frames. **GSD** allows all particle and topology properties to vary from one frame to the next. Use the **GSD** Python
+API to specify the initial condition for a HOOMD-simulation or analyze simulation output with a script. Read a **GSD**
+trajectory with a visualization tool to explore the behavior of the simulation.
 
-See the [full GSD documentation](http://gsd.readthedocs.io) at readthedocs.io.
+## Resources
 
-## Overview
-
-GSD files:
-
-* Efficiently store many frames of data from simulation runs.
-* High performance file read and write.
-* Support arbitrary chunks of data in each frame (position, orientation, type, etc...).
-* Append frames to an existing file with a monotonically increasing frame number.
-* Resilient to job kills.
-* Variable number of named chunks in each frame.
-* Variable size of chunks in each frame.
-* Each chunk identifies data type.
-* Common use cases: NxM arrays in double, float, int, char types.
-* Generic use case: binary blob of N bytes.
-* Can be integrated into other tools with python, or a C API (< 1k lines).
-* Fast random access to frames.
+* [GSD documentation](http://gsd.readthedocs.io): Tutorials, Python API, C API, usage information, and format
+  specification.
+* [Installation Guide](INSTALLING.rst): Instructions for installing and compiling **GSD**.
+* [HOOMD-blue](https://glotzerlab.engin.umich.edu/hoomd-blue/): Simulation engine that reads and writes **GSD** files.
+* [hoomd-users Google Group](https://groups.google.com/d/forum/hoomd-users):
+  Ask questions to the **HOOMD-blue** community.
+* [freud](https://freud.readthedocs.io): A powerful set of tools for analyzing trajectories.
+* [OVITO](https://www.ovito.org/): The Open Visualization Tool works with **GSD** files.
+* [gsd-vmd plugin](https://github.com/mphoward/gsd-vmd): VMD plugin to support **GSD** files.
 
 ## HOOMD examples
 

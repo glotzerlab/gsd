@@ -6,9 +6,8 @@
 C API
 =====
 
-The GSD C API consists of a single header and source file (less than 1k lines of
-code). It does not build as a shared library. Instead, it is intended that
-developers simply drop the implementation into any package that needs it.
+The GSD C API consists of a single header and source file. Developers can drop the implementation into any package that
+needs it.
 
 Functions
 ---------
