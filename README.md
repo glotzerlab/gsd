@@ -89,3 +89,4 @@ with gsd.fl.open(name='file.gsd', mode='rb') as f:
         position = f.read_chunk(frame=i, name='position');
         do_something(position);
 ```
+
