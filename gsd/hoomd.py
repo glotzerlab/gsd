@@ -20,6 +20,7 @@ for full examples.
 
 import numpy
 from collections import OrderedDict
+from pickle import PickleError
 import logging
 import json
 
@@ -529,6 +530,17 @@ class HOOMDTrajectory(object):
     def __len__(self):
         """ The number of frames in the trajectory. """
         return self.file.nframes;
+
+    def __getstate__(self):
+        if self.file.mode not in ['rb', 'rb+']:
+            raise PickleError("Only trajectories in read only "
+                              "mode can be pickled.")
+        state = dict(name=self.file.name, mode=self.file.mode)
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__ = open(name=state['name'], mode=state['mode']).__dict__
+        return self
 
     def append(self, snapshot):
         """ Append a snapshot to a hoomd gsd file.
