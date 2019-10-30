@@ -193,13 +193,13 @@ Use multiprocessing with HOOMDTrajectory
          Np.append(len(traj_frame.particles.position))
       return Np
 
-   with gsd.hoomd.open(name='example.gsd', mode='rb') as t:
+   with gsd.hoomd.open(name='test.gsd', mode='rb') as t:
       frames = len(t)
       cores = mp.cpu_count()
       frames_per_core = frames // cores
       end_frames = [fr for fr in range(0, frames, frames_per_core)]
       end_frames.append(frames)
-      frame_slices = [slice(end_frames[i], end_frames[i+1]) for i in range(len(end_frames)]
+      frame_slices = [slice(end_frames[i], end_frames[i+1]) for i in range(len(end_frames) - 1)]
       with mp.Pool(processes=cores) as pool:
          result = pool.map(cnt_part, [(t, slc) for slc in frame_slices])
 
