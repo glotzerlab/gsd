@@ -205,6 +205,6 @@ Use multiprocessing with HOOMDTrajectory
 
 :py:class:`gsd.hoomd.HOOMDTrajectory` can be pickled when in read mode to allow
 for multiprocessing through pythons native multiprocessing library. Here
-`cnt_part` finds the number of particles in each frame and appends it to a list.
+``cnt_part`` finds the number of particles in each frame and appends it to a list.
 This code would result in a list of list of all particle numbers throughout the
 trajectory file.
