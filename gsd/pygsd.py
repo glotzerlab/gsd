@@ -374,6 +374,12 @@ class GSDFile(object):
 
         return result;
 
+    def __getstate__(self):
+        return dict(name=self.name)
+
+    def __setstate__(self, state):
+        self.__init__(open(state['name'], 'rb'))
+
     def __enter__(self):
         return self;
 
