@@ -4,6 +4,7 @@
 import gsd.fl
 import gsd.hoomd
 import numpy
+import pickle
 import pytest
 
 def test_create(tmp_path):
@@ -550,3 +551,15 @@ def test_log(tmp_path, open_mode):
         # specified entries are different in frame 1
         numpy.testing.assert_array_equal(s.log['particles/pair_lj_energy'], snap1.log['particles/pair_lj_energy']);
         numpy.testing.assert_array_equal(s.log['value/pressure'], snap1.log['value/pressure']);
+
+def test_pickle(tmp_path, open_mode):
+    with gsd.hoomd.open(name=tmp_path / "test_pickling.gsd",
+                        mode=open_mode.write) as traj:
+        traj.extend((create_frame(i) for i in range(20)))
+        with pytest.raises(pickle.PickleError):
+            pkl = pickle.dumps(traj)
+    with gsd.hoomd.open(name=tmp_path / "test_pickling.gsd",
+                        mode=open_mode.read) as traj:
+        pkl = pickle.dumps(traj)
+        with pickle.loads(pkl) as hf:
+            assert len(hf) == 20

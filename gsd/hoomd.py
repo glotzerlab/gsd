@@ -20,6 +20,7 @@ for full examples.
 
 import numpy
 from collections import OrderedDict
+from pickle import PickleError
 import logging
 import json
 

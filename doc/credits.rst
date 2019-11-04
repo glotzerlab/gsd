@@ -10,3 +10,4 @@ The following people contributed to GSD.
 * Jens Glaser, University of Michigan
 * Vyas Ramasubramani, University of Michigan
 * Luis Y. Rivera-Rivera, University of Michigan
+* Brandon Butler, University of Michigan

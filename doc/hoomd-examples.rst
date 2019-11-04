@@ -178,3 +178,25 @@ Logged data must be a convertible to a numpy array of a supported type:
         s.particles.N = 4
         s.log['invalid'] = dict(a=1, b=5)
         t.append(s)
+
+Use multiprocessing with HOOMDTrajectory
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. ipython:: python
+
+   import multiprocessing as mp
+
+   def cnt_part(args):
+      t, frame = args
+      return len(t[frame].particles.position)
+
+   with gsd.hoomd.open(name='test.gsd', mode='rb') as t:
+      with mp.Pool(processes=mp.cpu_count()) as pool:
+         result = pool.map(cnt_part, [(t, frame) for frame in range(len(t))])
+
+:py:class:`gsd.hoomd.HOOMDTrajectory` and both :py:class:`gsd.fl.GSDFile` and
+:py:class:`gsd.pygsd.GSDFile` can be pickled when in read mode to allow for
+multiprocessing through pythons native multiprocessing library. Here
+``cnt_part`` finds the number of particles in each frame and appends it to a
+list.  This code would result in a list of all particle numbers throughout the
+trajectory file.

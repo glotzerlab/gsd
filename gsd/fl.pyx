@@ -18,6 +18,7 @@ from libc.errno cimport errno
 cimport libgsd
 cimport numpy
 import os
+from pickle import PickleError
 import logging
 import numpy
 
@@ -755,6 +756,15 @@ cdef class GSDFile:
 
     def __exit__(self, exc_type, exc_value, traceback):
         self.close()
+
+    def __reduce__(self):
+        """Allows filehandles to be pickled when in read only mode."""
+        if self.mode not in ['rb', 'rb+']:
+            raise PickleError("Only read only GSDFiles can be pickled.")
+        return (GSDFile,
+                (self.name, self.mode, self.application,
+                    self.schema, self.schema_version),
+                )
 
     property name:
         def __get__(self):
