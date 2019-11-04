@@ -562,6 +562,5 @@ def test_pickle(tmp_path, open_mode):
                         mode=open_mode.read) as traj:
         pkl = pickle.dumps(traj)
         hf = pickle.loads(pkl)
-        print(dir(hf))
         assert len(hf) == 20
         hf.file.close()
