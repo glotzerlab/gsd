@@ -561,6 +561,5 @@ def test_pickle(tmp_path, open_mode):
     with gsd.hoomd.open(name=tmp_path / "test_pickling.gsd",
                         mode=open_mode.read) as traj:
         pkl = pickle.dumps(traj)
-        hf = pickle.loads(pkl)
-        assert len(hf) == 20
-        hf.file.close()
+        with pickle.loads(pkl) as hf:
+            assert len(hf) == 20
