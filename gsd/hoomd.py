@@ -532,7 +532,7 @@ class HOOMDTrajectory(object):
         return self.file.nframes;
 
     def __getstate__(self):
-        '''Checks if in read mode and removes file handle from __dict__'''
+        '''Checks if in read mode and passes necessary reset information'''
         if self.file.mode not in ['rb', 'rb+']:
             raise PickleError("Only trajectories in read only "
                               "mode can be pickled.")
