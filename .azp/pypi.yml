@@ -1,0 +1,120 @@
+trigger:
+  branches:
+    include:
+    - '*'
+  tags:
+    include:
+    - 'v*'
+
+pr: none
+
+stages:
+- stage: build_sdist
+  displayName: Build sdist
+
+  variables:
+    PYBIN: /opt/python/cp37-cp37m/bin
+
+  jobs:
+  - job: linux_cpu
+    displayName: Linux
+
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    container:
+      image: quay.io/pypa/manylinux1_x86_64
+      options: -u 0
+
+    steps:
+    - script: echo "##vso[task.prependpath]$PYBIN:${HOME}/.local/bin"
+      displayName: Update PATH
+    - script: pip3 --disable-pip-version-check install numpy twine --progress-bar=off --user
+      displayName: Pip install prereqs
+    - script: python3 setup.py sdist
+      displayName: Build sdist
+    - script: twine upload --disable-progress-bar dist/*
+      displayName: Upload sdist
+      env:
+        TWINE_USERNAME: $(TWINE_USERNAME)
+        TWINE_PASSWORD: $(TWINE_PASSWORD)
+      condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/v')
+
+- stage: build_wheels
+  displayName: Build wheels
+  dependsOn: []
+
+  jobs:
+  - job: linux_cpu
+    displayName: Linux
+    strategy:
+      matrix:
+        cp36:
+          PYBIN: /opt/python/cp36-cp36m/bin
+        cp37:
+          PYBIN: /opt/python/cp37-cp37m/bin
+        cp38:
+          PYBIN: /opt/python/cp38-cp38/bin
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    container:
+      image: quay.io/pypa/manylinux1_x86_64
+      options: -u 0
+
+    steps:
+    - script: echo "##vso[task.prependpath]$PYBIN:${HOME}/.local/bin"
+      displayName: Update PATH
+
+    - script: pip3 --disable-pip-version-check install cython twine pytest --ignore-installed -q --progress-bar=off --user
+      displayName: Pip install prereqs
+
+    - script: >
+          curl -sSLO https://github.com/numpy/numpy/archive/v1.9.3.tar.gz &&
+          tar -xzf v1.9.3.tar.gz &&
+          cd numpy-1.9.3 &&
+          rm -f numpy/random/mtrand/mtrand.c &&
+          rm -f PKG-INFO &&
+          pip3 --disable-pip-version-check install . --no-deps --ignore-installed -v --progress-bar=off --user -q
+      displayName: Build numpy
+      workingDirectory: $(Pipeline.Workspace)
+
+    - script: >
+          cd gsd &&
+          python3 -m cython -3 -I . fl.pyx -o fl.c &&
+          sha256sum fl.pyx | awk '{ print $1 }' > fl.pyx.sha256
+      displayName: Cythonize code
+      workingDirectory: $(Build.SourcesDirectory)
+
+    - script: pip3 wheel -w wheels/ . --no-deps --progress-bar=off --no-build-isolation --no-use-pep517
+      displayName: Compile gsd wheel
+
+    - script: >
+          for whl in wheels/gsd*.whl; do
+              auditwheel repair $whl -w dist/
+          done
+      displayName: Audit wheel
+
+    - script: pip3 --disable-pip-version-check install gsd --no-index -f dist --progress-bar=off --user
+      displayName: Install wheel (old numpy)
+
+    - script: pytest
+      displayName: Test wheel (old numpy)
+      workingDirectory: tests
+
+    - script: pip3 --disable-pip-version-check install numpy --upgrade --progress-bar=off --user
+      displayName: Upgrade numpy
+
+    - script: pip3 --disable-pip-version-check install gsd --no-index -f dist --progress-bar=off --user
+      displayName: Install wheel (latest numpy)
+
+    - script: pytest
+      displayName: Test wheel (latest numpy)
+      workingDirectory: tests
+
+    - script: twine upload --disable-progress-bar dist/*
+      displayName: Upload wheel
+      env:
+        TWINE_USERNAME: $(TWINE_USERNAME)
+        TWINE_PASSWORD: $(TWINE_PASSWORD)
+      condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/v')
