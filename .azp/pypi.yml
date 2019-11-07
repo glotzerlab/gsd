@@ -6,8 +6,6 @@ trigger:
     include:
     - 'v*'
 
-pr: none
-
 stages:
 - stage: build_sdist
   displayName: Build sdist
