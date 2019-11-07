@@ -66,9 +66,9 @@ stages:
       vmImage: '$(mac_image)'
 
     steps:
-    - script: brew install python cmake ninja numpy
+    - script: brew install python cmake ninja
       displayName: Brew install prereqs
-    - script: $(python) -m pip install pytest cython
+    - script: $(python) -m pip --disable-pip-version-check install pytest cython numpy
       displayName: Pip install prereqs
     - template: templates/build.yml
     - template: templates/unit_test.yml
