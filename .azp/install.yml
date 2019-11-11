@@ -23,6 +23,12 @@ stages:
           CMAKE_GENERATOR: Visual Studio 15 2017
           CMAKE_GENERATOR_PLATFORM: x64
           architecture: 'x64'
+        vs2019_py38_x64:
+          win_image: windows-2019
+          python_version: 3.8
+          CMAKE_GENERATOR: Visual Studio 16 2019
+          CMAKE_GENERATOR_PLATFORM: x64
+          architecture: 'x64'
         vs2019_py37_x64:
           win_image: windows-2019
           python_version: 3.7
