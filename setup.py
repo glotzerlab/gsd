@@ -9,8 +9,8 @@ from Cython.Build import cythonize
 extensions = cythonize(
     [Extension(
         'gsd.fl',
-        sources=['gsd/fl.c', 'gsd/gsd.c'],
-        include_dirs=[numpy.get_include(), 'gsd']
+        sources=['gsd/fl.pyx', 'gsd/gsd.c'],
+        include_dirs=[numpy.get_include(), 'gsd'],
     )],
     compiler_directives={'language_level': 3}
 )
