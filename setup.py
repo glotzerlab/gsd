@@ -10,7 +10,7 @@ extensions = cythonize(
     [Extension(
         'gsd.fl',
         sources=['gsd/fl.pyx', 'gsd/gsd.c'],
-        include_dirs=[numpy.get_include(), 'gsd'],
+        include_dirs=[numpy.get_include()],
     )],
     compiler_directives={'language_level': 3}
 )
