@@ -47,7 +47,7 @@ setup(name = 'gsd',
             "Topic :: Scientific/Engineering :: Physics",
         ],
 
-      install_requires=['numpy>=1.9.3,<2'],
+      install_requires=['cython', 'numpy>=1.9.3,<2'],
       python_requires='~=3.5',
       ext_modules = extensions,
       packages = ['gsd']
