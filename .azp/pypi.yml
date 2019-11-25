@@ -77,13 +77,6 @@ stages:
       displayName: Build numpy
       workingDirectory: $(Pipeline.Workspace)
 
-    - script: >
-          cd gsd &&
-          python3 -m cython -3 -I . fl.pyx -o fl.c &&
-          sha256sum fl.pyx | awk '{ print $1 }' > fl.pyx.sha256
-      displayName: Cythonize code
-      workingDirectory: $(Build.SourcesDirectory)
-
     - script: pip3 wheel -w wheels/ . --no-deps --progress-bar=off --no-build-isolation --no-use-pep517
       displayName: Compile gsd wheel
 
