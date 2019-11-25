@@ -27,7 +27,7 @@ stages:
     steps:
     - script: echo "##vso[task.prependpath]$PYBIN:${HOME}/.local/bin"
       displayName: Update PATH
-    - script: pip3 --disable-pip-version-check install numpy twine --progress-bar=off --user
+    - script: pip3 --disable-pip-version-check install cython numpy twine --progress-bar=off --user
       displayName: Pip install prereqs
     - script: python3 setup.py sdist
       displayName: Build sdist
