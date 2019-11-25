@@ -4,21 +4,16 @@ import numpy
 import sys
 import hashlib
 import os
+from Cython.Build import cythonize
 
-current_checksum = hashlib.sha256()
-with open('gsd/fl.pyx') as f:
-    current_checksum.update(f.read().encode('UTF-8'))
-with open('gsd/fl.pyx.sha256') as f:
-    existing_checksum = f.read();
-
-if existing_checksum.strip() != current_checksum.hexdigest():
-    print('fl.pyx has been updated, it needs to be cythonized before setup.py can continue.');
-    sys.exit(1);
-
-fl = Extension('gsd.fl',
-               sources=['gsd/fl.c', 'gsd/gsd.c'],
-               include_dirs = [numpy.get_include()]
-               )
+extensions = cythonize(
+    [Extension(
+        'gsd.fl',
+        sources=['gsd/fl.pyx', 'gsd/gsd.c'],
+        include_dirs=[numpy.get_include()],
+    )],
+    compiler_directives={'language_level': 3}
+)
 
 # Read README for PyPI, fallback to short description if it fails.
 desc = 'General simulation data file format.'
@@ -52,8 +47,8 @@ setup(name = 'gsd',
             "Topic :: Scientific/Engineering :: Physics",
         ],
 
-      install_requires=['numpy>=1.9.3,<2'],
+      install_requires=['cython', 'numpy>=1.9.3,<2'],
       python_requires='~=3.5',
-      ext_modules = [fl],
+      ext_modules = extensions,
       packages = ['gsd']
      )

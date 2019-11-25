@@ -77,9 +77,10 @@ Install Prerequisites
 
 **gsd** requires:
 
-* A standards compliant C compiler
-* Python >= 3.5
-* numpy
+* **C compiler** (tested with gcc 4.8-9.0, clang 4-9, vs2017-2019)
+* **Python** >= 3.5
+* **numpy** >= 1.9.3
+* **Cython** >= 0.22
 
 Additional packages may be needed:
 
@@ -87,7 +88,6 @@ Additional packages may be needed:
 * **Sphinx** (documentation)
 * **IPython** (documentation)
 * an internet connection (documentation)
-* **Cython** >= 0.22 (to build non-tagged releases)
 * **CMake** (for development builds)
 
 Install these tools with your system or virtual environment package manager. **gsd** developers have had success with
@@ -114,11 +114,11 @@ Typical HPC cluster environments provide **Python**, **numpy**, and **cmake** vi
 Install with setuptools
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-Use **pip** to install the python module into your virtual environment::
+Use **pip** to install the python module into your virtual environment:
 
 .. code-block:: bash
 
-    $ python3 -m pip install .
+   $ python3 -m pip install .
 
 Build with CMake for development
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

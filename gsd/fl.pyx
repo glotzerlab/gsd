@@ -15,7 +15,7 @@ See :ref:`fl-examples` for detailed example code.
 
 from libc.stdint cimport uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, uint64_t, int64_t
 from libc.errno cimport errno
-cimport libgsd
+cimport gsd.libgsd as libgsd
 cimport numpy
 import os
 from pickle import PickleError

@@ -27,7 +27,7 @@ stages:
     steps:
     - script: echo "##vso[task.prependpath]$PYBIN:${HOME}/.local/bin"
       displayName: Update PATH
-    - script: pip3 --disable-pip-version-check install numpy twine --progress-bar=off --user
+    - script: pip3 --disable-pip-version-check install cython numpy twine --progress-bar=off --user
       displayName: Pip install prereqs
     - script: python3 setup.py sdist
       displayName: Build sdist
@@ -76,13 +76,6 @@ stages:
           pip3 --disable-pip-version-check install . --no-deps --ignore-installed -v --progress-bar=off --user -q
       displayName: Build numpy
       workingDirectory: $(Pipeline.Workspace)
-
-    - script: >
-          cd gsd &&
-          python3 -m cython -3 -I . fl.pyx -o fl.c &&
-          sha256sum fl.pyx | awk '{ print $1 }' > fl.pyx.sha256
-      displayName: Cythonize code
-      workingDirectory: $(Build.SourcesDirectory)
 
     - script: pip3 wheel -w wheels/ . --no-deps --progress-bar=off --no-build-isolation --no-use-pep517
       displayName: Compile gsd wheel
