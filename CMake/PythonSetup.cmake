@@ -80,17 +80,15 @@ mark_as_advanced(NUMPY_INCLUDE_DIR)
 endif (NUMPY_INCLUDE_DIR)
 
 include_directories(${NUMPY_INCLUDE_DIR})
-#add_definitions(-DPY_ARRAY_UNIQUE_SYMBOL=PyArrayHandle)
 # add_definitions(-DNPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION)
 
 #############################################################################################
 # Find cython
 find_program(CYTHON_EXECUTABLE NAMES cython cython3)
-mark_as_advanced(CYTHON_EXECUTABLE)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(cython DEFAULT_MSG CYTHON_EXECUTABLE)
 
 if (NOT CYTHON_EXECUTABLE)
-    message(STATUS "cython not found, will fall back on embedded .c files")
+    message(ERROR "cython not found")
 endif()
 
 #############################################################################################
