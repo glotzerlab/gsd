@@ -1,13 +1,16 @@
 Change Log
 ==========
 
-`GSD <https://github.com/glotzerlab/gsd>`_ releases follow `semantic versioning <https://semver.org/>`_.
+`GSD <https://github.com/glotzerlab/gsd>`_ releases follow `semantic versioning
+<https://semver.org/>`_.
 
-v1.10.0 (not yet released)
---------------------------
+v1.10.0 (2019-11-26)
+--------------------
 
 * Improve performance of first frame write.
 * Allow pickling of GSD file handles opened in read only mode.
+* Removed Cython-generated code from repository. ``fl.pyx`` will be cythonized
+  during installation.
 
 v1.9.3 (2019-10-04)
 -------------------
