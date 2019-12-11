@@ -152,3 +152,47 @@ stages:
     steps:
     - template: templates/build.yml
     - template: templates/sphinx_doc.yml
+
+-stage: style:
+  displayName: Style checks
+  dependsOn: []
+
+  jobs:
+  - job: clang_format
+    displayName: clang-format
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    container:
+      image: $(image_root)-clang9_py38
+      options: -u 0
+
+    workspace:
+      clean: all
+
+    steps:
+    - script: ./run-clang-format -r gsd
+      displayName: Run clang-format
+
+  - job: clang_tidy
+    displayName: clang-tidy
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    container:
+      image: $(image_root)-clang9_py38
+      options: -u 0
+
+    workspace:
+      clean: all
+
+    steps:
+    - checkout: self
+      submodules: true
+
+    - task: CMake@1
+      inputs:
+        cmakeArgs: $(Build.SourcesDirectory)
+        workingDirectory: $(Build.BinariesDirectory)
+    - script: clang-tidy -p=$(Build.BinariesDirectory) gsd/*.c gsd/*.h --quiet --warnings-as-errors="*"
+      displayName: Run clang-tidy
