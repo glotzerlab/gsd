@@ -171,6 +171,8 @@ stages:
       clean: all
 
     steps:
+    - checkout: self
+      submodules: true
     - script: ./run-clang-format -r gsd
       displayName: Run clang-format
 
@@ -194,5 +196,24 @@ stages:
       inputs:
         cmakeArgs: $(Build.SourcesDirectory)
         workingDirectory: $(Build.BinariesDirectory)
-    - script: clang-tidy -p=$(Build.BinariesDirectory) gsd/*.c gsd/*.h --quiet --warnings-as-errors="*"
+
+        - script: clang-tidy -p=$(Build.BinariesDirectory) gsd/*.c gsd/*.h --quiet --warnings-as-errors="*"
       displayName: Run clang-tidy
+
+  - job: flake8
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    container:
+      image: $(image_root)-clang9_py38
+      options: -u 0
+
+    workspace:
+      clean: all
+
+    steps:
+    - checkout: self
+      submodules: true
+
+    - script: flake8
+      displayName: Run flake8
