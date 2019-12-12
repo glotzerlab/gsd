@@ -1,8 +1,8 @@
 // Copyright (c) 2016-2019 The Regents of the University of Michigan
 // This file is part of the General Simulation Data (GSD) project, released under the BSD 2-Clause License.
 
-#ifndef __GSD_H__
-#define __GSD_H__
+#ifndef GSD_H
+#define GSD_H
 
 #include <stdint.h>
 #include <string.h>
@@ -163,4 +163,4 @@ const char *gsd_find_matching_chunk_name(struct gsd_handle* handle, const char* 
 }
 #endif
 
-#endif  // #ifndef __GSD_H__
+#endif  // #ifndef GSD_H
