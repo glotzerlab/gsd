@@ -19,31 +19,99 @@ extern "C" {
 /// Identifiers for the gsd data chunk element types
 enum gsd_type
     {
-    GSD_TYPE_UINT8=1,
+    /// Unsigned 8-bit integer.
+    GSD_TYPE_UINT8 = 1,
+
+    /// Unsigned 16-bit integer.
     GSD_TYPE_UINT16,
+
+    /// Unsigned 32-bit integer.
     GSD_TYPE_UINT32,
+
+    /// Unsigned 53-bit integer.
     GSD_TYPE_UINT64,
+
+    /// Signed 8-bit integer.
     GSD_TYPE_INT8,
+
+    /// Signed 16-bit integer.
     GSD_TYPE_INT16,
+
+    /// Signed 32-bit integer.
     GSD_TYPE_INT32,
+
+    /// Signed 64-bit integer.
     GSD_TYPE_INT64,
+
+    /// 32-bit floating point number.
     GSD_TYPE_FLOAT,
+
+    /// 64-bit floating point number.
     GSD_TYPE_DOUBLE
     };
 
 /// Flag for GSD file open options
 enum gsd_open_flag
     {
-    GSD_OPEN_READWRITE=1,
+    /// Open for both reading and writing
+    GSD_OPEN_READWRITE = 1,
+
+    /// Open only for reading
     GSD_OPEN_READONLY,
+
+    /// Open only for writing
     GSD_OPEN_APPEND
     };
 
-/// Maximum size of a GSD chunk name in memory
-enum { GSD_NAME_SIZE = 64 };
+/// Error return values
+enum gsd_error
+    {
+    /// Success.
+    GSD_SUCCESS = 0,
 
-/// Reserved bytes in the header structure
-enum { GSD_RESERVED_BYTES = 80 };
+    /// IO error. Check ``errno`` for details
+    GSD_ERROR_IO = -1,
+
+    /// Invalid argument passed to function.
+    GSD_ERROR_INVALID_ARGUMENT = -2,
+
+    /// The file is not a GSD file.
+    GSD_ERROR_NOT_A_GSD_FILE = -3,
+
+    /// The GSD file version cannot be read.
+    GSD_ERROR_INVALID_GSD_FILE_VERSION = -4,
+
+    /// The GSD file is corrupt.
+    GSD_ERROR_FILE_CORRUPT = -5,
+
+    /// GSD failed to allocated memory.
+    GSD_ERROR_MEMORY_ALLOCATION_FAILED = -6,
+
+    /// The GSD file cannot store any additional unique data chunk names.
+    GSD_ERROR_NAMELIST_FULL = -7,
+
+    /** This API call requires that the GSD file opened in with the mode GSD_OPEN_APPEND or
+        GSD_OPEN_READWRITE.
+    */
+    GSD_ERROR_FILE_MUST_BE_WRITABLE = -8,
+
+    /** This API call requires that the GSD file opened the mode GSD_OPEN_READ or
+        GSD_OPEN_READWRITE.
+    */
+    GSD_ERROR_FILE_MUST_BE_READABLE = -9,
+    };
+
+enum
+    {
+    /// Maximum size of a GSD chunk name in memory
+    GSD_NAME_SIZE = 64
+    };
+
+enum
+    {
+    /// Reserved bytes in the header structure
+    GSD_RESERVED_BYTES = 80
+    };
 
 /** GSD file header
 
@@ -199,7 +267,9 @@ uint32_t gsd_make_version(unsigned int major, unsigned int minor);
 
     The generated gsd file is not opened. Call gsd_open() to open it for writing.
 
-    @return 0 on success, -1 on a file IO failure - see errno for details
+    @return
+      - GSD_SUCCESS (0) on success. Negative value on failure:
+      - GSD_ERROR_IO: IO error (check errno).
 */
 int gsd_create(const char *fname, const char *application, const char *schema, uint32_t schema_version);
 
@@ -220,13 +290,13 @@ int gsd_create(const char *fname, const char *application, const char *schema, u
 
     The file descriptor is closed if there when an error opening the file.
 
-    @return 0 on success. Negative value on failure:
-        * -1: IO error (check errno)
-        * -2: Not a GSD file
-        * -3: Invalid GSD file version
-        * -4: Corrupt file
-        * -5: Unable to allocate memory
-        * -6: Invalid argument
+    @return
+      - GSD_SUCCESS (0) on success. Negative value on failure:
+      - GSD_ERROR_IO: IO error (check errno).
+      - GSD_ERROR_NOT_A_GSD_FILE: Not a GSD file.
+      - GSD_ERROR_INVALID_GSD_FILE_VERSION: Invalid GSD file version.
+      - GSD_ERROR_FILE_CORRUPT: Corrupt file.
+      - GSD_ERROR_MEMORY_ALLOCATION_FAILED: Unable to allocate memory.
 */
 int gsd_create_and_open(struct gsd_handle* handle,
                         const char *fname,
@@ -252,12 +322,13 @@ int gsd_create_and_open(struct gsd_handle* handle,
     optimized to only load as much of the index as needed. GSD_OPEN_READWRITE needs to store the
     entire index in memory: in files with millions of chunks, this can add up to GiB.
 
-    @return 0 on success. Negative value on failure:
-        * -1: IO error (check errno)
-        * -2: Not a GSD file
-        * -3: Invalid GSD file version
-        * -4: Corrupt file
-        * -5: Unable to allocate memory
+    @return
+      - GSD_SUCCESS (0) on success. Negative value on failure:
+      - GSD_ERROR_IO: IO error (check errno).
+      - GSD_ERROR_NOT_A_GSD_FILE: Not a GSD file.
+      - GSD_ERROR_INVALID_GSD_FILE_VERSION: Invalid GSD file version.
+      - GSD_ERROR_FILE_CORRUPT: Corrupt file.
+      - GSD_ERROR_MEMORY_ALLOCATION_FAILED: Unable to allocate memory.
 */
 int gsd_open(struct gsd_handle* handle, const char *fname, enum gsd_open_flag flags);
 
@@ -270,12 +341,13 @@ int gsd_open(struct gsd_handle* handle, const char *fname, enum gsd_open_flag fl
     Truncate does not close and reopen the file, so it is suitable for writing restart files on
     Lustre file systems without any metadata access.
 
-    @return 0 on success. Negative value on failure:
-      * -1: IO error (check errno)
-      * -2: Invalid input
-      * -3: Invalid GSD file version
-      * -4: Corrupt file
-      * -5: Unable to allocate memory
+    @return
+      - GSD_SUCCESS (0) on success. Negative value on failure:
+      - GSD_ERROR_IO: IO error (check errno).
+      - GSD_ERROR_NOT_A_GSD_FILE: Not a GSD file.
+      - GSD_ERROR_INVALID_GSD_FILE_VERSION: Invalid GSD file version.
+      - GSD_ERROR_FILE_CORRUPT: Corrupt file.
+      - GSD_ERROR_MEMORY_ALLOCATION_FAILED: Unable to allocate memory.
 */
 int gsd_truncate(struct gsd_handle* handle);
 
@@ -294,7 +366,10 @@ int gsd_truncate(struct gsd_handle* handle);
     are not updated in the index until gsd_end_frame() is called. This is by design to prevent
     partial frames in files.
 
-    @return 0 on success, -1 on a file IO failure - see errno for details, and -2 on invalid input
+    @return
+      - GSD_SUCCESS (0) on success. Negative value on failure:
+      - GSD_ERROR_IO: IO error (check errno).
+      - GSD_ERROR_INVALID_ARGUMENT: *handle* is NULL.
 */
 int gsd_close(struct gsd_handle* handle);
 
@@ -307,7 +382,11 @@ int gsd_close(struct gsd_handle* handle);
 
     @post The current frame counter is increased by 1 and cached indexes are written to disk.
 
-    @return 0 on success, -1 on a file IO failure - see errno for details, and -2 on invalid input
+    @return
+      - GSD_SUCCESS (0) on success. Negative value on failure:
+      - GSD_ERROR_IO: IO error (check errno).
+      - GSD_ERROR_INVALID_ARGUMENT: *handle* is NULL.
+      - GSD_ERROR_FILE_MUST_BE_WRITABLE: The file was opened read-only.
 */
 int gsd_end_frame(struct gsd_handle* handle);
 
@@ -328,8 +407,14 @@ int gsd_end_frame(struct gsd_handle* handle);
     @post The given data chunk is written to the end of the file and its location is updated in the
     in-memory index.
 
-    @return 0 on success, -1 on a file IO failure - see errno for details, -2 on invalid input, and
-    -3 when out of names
+    @return
+      - GSD_SUCCESS (0) on success. Negative value on failure:
+      - GSD_ERROR_IO: IO error (check errno).
+      - GSD_ERROR_INVALID_ARGUMENT: *handle* is NULL, *N* == 0, *M* == 0, *type* is invalid, or
+        *flags* != 0.
+      - GSD_ERROR_FILE_MUST_BE_WRITABLE: The file was opened read-only.
+      - GSD_ERROR_NAMELIST_FULL: The file cannot store any additional unique chunk names.
+      - GSD_ERROR_MEMORY_ALLOCATION_FAILED: failed to allocate memory.
 */
 int gsd_write_chunk(struct gsd_handle* handle,
                     const char *name,
@@ -350,7 +435,7 @@ int gsd_write_chunk(struct gsd_handle* handle,
     The found entry contains size and type metadata and can be passed to gsd_read_chunk() to read
     the data.
 
-    @return A pointer to the found chunk, or NULL if not found
+    @return A pointer to the found chunk, or NULL if not found.
 */
 const struct gsd_index_entry* gsd_find_chunk(struct gsd_handle* handle, uint64_t frame, const char *name);
 
@@ -364,7 +449,12 @@ const struct gsd_index_entry* gsd_find_chunk(struct gsd_handle* handle, uint64_t
     @pre *chunk* was found by gsd_find_chunk().
     @pre *data* points to an allocated buffer with at least `N * M * gsd_sizeof_type(type)` bytes.
 
-    @return 0 on success, -1 on a file IO failure - see errno for details, and -2 on invalid input
+    @return
+      - GSD_SUCCESS (0) on success. Negative value on failure:
+      - GSD_ERROR_IO: IO error (check errno).
+      - GSD_ERROR_INVALID_ARGUMENT: *handle* is NULL, *data* is NULL, or *chunk* is NULL.
+      - GSD_ERROR_FILE_MUST_BE_READABLE: The file was opened in append mode.
+      - GSD_ERROR_FILE_CORRUPT: The GSD file is corrupt.
 */
 int gsd_read_chunk(struct gsd_handle* handle, void* data, const struct gsd_index_entry* chunk);
 

@@ -29,7 +29,10 @@ Functions
     :param schema_version: Version of the scheme data to be written (make with
       :c:func:`gsd_make_version()`).
 
-    :return: 0 on success, -1 on a file IO failure - see errno for details.
+    :return:
+
+      * GSD_SUCCESS (0) on success. Negative value on failure:
+      * GSD_ERROR_IO: IO error (check errno).
 
 .. c:function:: int gsd_create_and_open(struct gsd_handle* handle, \
                                         const char *fname, \
@@ -53,14 +56,14 @@ Functions
     :param exclusive_create: Set to non-zero to force exclusive creation of the
       file.
 
-    :return: 0 on success. Negative value on failure:
+    :return:
 
-        * -1: IO error (check errno)
-        * -2: Not a GSD file
-        * -3: Invalid GSD file version
-        * -4: Corrupt file
-        * -5: Unable to allocate memory
-        * -6: Invalid argument
+      * GSD_SUCCESS (0) on success. Negative value on failure:
+      * GSD_ERROR_IO: IO error (check errno).
+      * GSD_ERROR_NOT_A_GSD_FILE: Not a GSD file.
+      * GSD_ERROR_INVALID_GSD_FILE_VERSION: Invalid GSD file version.
+      * GSD_ERROR_FILE_CORRUPT: Corrupt file.
+      * GSD_ERROR_MEMORY_ALLOCATION_FAILED: Unable to allocate memory.
 
 .. c:function:: int gsd_open(struct gsd_handle* handle, \
                              const char *fname, \
@@ -78,13 +81,14 @@ Functions
     needed. ``GSD_OPEN_READWRITE`` needs to store the entire index in memory: in
     files with millions of chunks, this can add up to GiB.
 
-    :return: 0 on success. Negative value on failure:
+    :return:
 
-        * -1: IO error (check errno)
-        * -2: Not a GSD file
-        * -3: Invalid GSD file version
-        * -4: Corrupt file
-        * -5: Unable to allocate memory
+      * GSD_SUCCESS (0) on success. Negative value on failure:
+      * GSD_ERROR_IO: IO error (check errno).
+      * GSD_ERROR_NOT_A_GSD_FILE: Not a GSD file.
+      * GSD_ERROR_INVALID_GSD_FILE_VERSION: Invalid GSD file version.
+      * GSD_ERROR_FILE_CORRUPT: Corrupt file.
+      * GSD_ERROR_MEMORY_ALLOCATION_FAILED: Unable to allocate memory.
 
 .. c:function:: int gsd_truncate(gsd_handle* handle)
 
@@ -98,13 +102,14 @@ Functions
 
     :param handle: Open GSD file to truncate.
 
-    :return: 0 on success. Negative value on failure:
+    :return:
 
-        * -1: IO error (check errno)
-        * -2: Not a GSD file
-        * -3: Invalid GSD file version
-        * -4: Corrupt file
-        * -5: Unable to allocate memory
+      * GSD_SUCCESS (0) on success. Negative value on failure:
+      * GSD_ERROR_IO: IO error (check errno).
+      * GSD_ERROR_NOT_A_GSD_FILE: Not a GSD file.
+      * GSD_ERROR_INVALID_GSD_FILE_VERSION: Invalid GSD file version.
+      * GSD_ERROR_FILE_CORRUPT: Corrupt file.
+      * GSD_ERROR_MEMORY_ALLOCATION_FAILED: Unable to allocate memory.
 
 .. c:function:: int gsd_close(gsd_handle* handle)
 
@@ -119,8 +124,11 @@ Functions
         are not updated in the index until :c:func:`gsd_end_frame()` is called.
         This is by design to prevent partial frames in files.
 
-    :return: 0 on success, -1 on a file IO failure - see errno for details, and
-      -2 on invalid input
+    :return:
+
+      * GSD_SUCCESS (0) on success. Negative value on failure:
+      * GSD_ERROR_IO: IO error (check errno).
+      * GSD_ERROR_INVALID_ARGUMENT: *handle* is NULL.
 
 .. c:function:: int gsd_end_frame(gsd_handle* handle)
 
@@ -128,8 +136,12 @@ Functions
 
     :param handle: Handle to an open GSD file.
 
-    :return: 0 on success, -1 on a file IO failure - see errno for details, and
-      -2 on invalid input
+    :return:
+
+      * GSD_SUCCESS (0) on success. Negative value on failure:
+      * GSD_ERROR_IO: IO error (check errno).
+      * GSD_ERROR_INVALID_ARGUMENT: *handle* is NULL.
+      * GSD_ERROR_FILE_MUST_BE_WRITABLE: The file was opened read-only.
 
 .. c:function:: int gsd_write_chunk(struct gsd_handle* handle, \
                                     const char *name, \
@@ -153,8 +165,15 @@ Functions
     :param flags: Unused, set to 0.
     :param data: Data buffer.
 
-    :return: 0 on success, -1 on a file IO failure - see errno for details, and
-      -2 on invalid input, and -3 when out of names
+    :return:
+
+      * GSD_SUCCESS (0) on success. Negative value on failure:
+      * GSD_ERROR_IO: IO error (check errno).
+      * GSD_ERROR_INVALID_ARGUMENT: *handle* is NULL, *N* == 0, *M* == 0, *type* is invalid, or
+        *flags* != 0.
+      * GSD_ERROR_FILE_MUST_BE_WRITABLE: The file was opened read*only.
+      * GSD_ERROR_NAMELIST_FULL: The file cannot store any additional unique chunk names.
+      * GSD_ERROR_MEMORY_ALLOCATION_FAILED: failed to allocate memory.
 
 .. c:function:: const struct gsd_index_entry_t* gsd_find_chunk( \
                              struct gsd_handle* handle, \
@@ -184,9 +203,11 @@ Functions
 
     :return: 0 on success
 
-        * -1 on a file IO failure - see errno for details
-        * -2 on invalid input
-        * -3 on invalid file data
+      * GSD_SUCCESS (0) on success. Negative value on failure:
+      * GSD_ERROR_IO: IO error (check errno).
+      * GSD_ERROR_INVALID_ARGUMENT: *handle* is NULL, *data* is NULL, or *chunk* is NULL.
+      * GSD_ERROR_FILE_MUST_BE_READABLE: The file was opened in append mode.
+      * GSD_ERROR_FILE_CORRUPT: The GSD file is corrupt.
 
 .. c:function:: uint64_t gsd_get_nframes(gsd_handle* handle)
 
@@ -299,6 +320,52 @@ Open flags
 
     Open file in **append only** mode.
 
+Error values
+^^^^^^^^^^^^
+
+.. c:var:: gsd_error GSD_SUCCESS
+
+    Success.
+
+.. c:var:: gsd_error GSD_ERROR_IO
+
+    IO error. Check ``errno`` for details.
+
+.. c:var:: gsd_error GSD_ERROR_INVALID_ARGUMENT
+
+    Invalid argument passed to function.
+
+.. c:var:: gsd_error GSD_ERROR_NOT_A_GSD_FILE
+
+    The file is not a GSD file.
+
+.. c:var:: gsd_error GSD_ERROR_INVALID_GSD_FILE_VERSION
+
+    The GSD file version cannot be read.
+
+.. c:var:: gsd_error GSD_ERROR_FILE_CORRUPT
+
+    The GSD file is corrupt.
+
+.. c:var:: gsd_error GSD_ERROR_MEMORY_ALLOCATION_FAILED
+
+    GSD failed to allocated memory.
+
+.. c:var:: gsd_error GSD_ERROR_NAMELIST_FULL
+
+    The GSD file cannot store any additional unique data chunk names.
+
+.. c:var:: gsd_error GSD_ERROR_FILE_MUST_BE_WRITABLE
+
+    This API call requires that the GSD file opened in with the mode
+    GSD_OPEN_APPEND or GSD_OPEN_READWRITE.
+
+.. c:var:: gsd_error GSD_ERROR_FILE_MUST_BE_READABLE
+
+    This API call requires that the GSD file opened the mode GSD_OPEN_READ
+    or GSD_OPEN_READWRITE.
+
+
 Data structures
 ---------------
 
@@ -367,6 +434,10 @@ Data structures
 .. c:type:: gsd_type
 
     Enum defining the file type of the GSD data chunk.
+
+.. c:type:: gsd_error
+
+    Enum defining the possible error return values.
 
 .. c:type:: uint8_t
 
