@@ -153,7 +153,7 @@ stages:
     - template: templates/build.yml
     - template: templates/sphinx_doc.yml
 
--stage: style:
+- stage: style
   displayName: Style checks
   dependsOn: []
 
@@ -197,7 +197,7 @@ stages:
         cmakeArgs: $(Build.SourcesDirectory)
         workingDirectory: $(Build.BinariesDirectory)
 
-        - script: clang-tidy -p=$(Build.BinariesDirectory) gsd/*.c gsd/*.h --quiet --warnings-as-errors="*"
+    - script: clang-tidy -p=$(Build.BinariesDirectory) gsd/*.c gsd/*.h --quiet --warnings-as-errors="*"
       displayName: Run clang-tidy
 
   - job: flake8
