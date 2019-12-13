@@ -173,7 +173,7 @@ stages:
     steps:
     - checkout: self
       submodules: true
-    - script: ./run-clang-format -r gsd
+    - script: ./run-clang-format.py -r gsd
       displayName: Run clang-format
 
   - job: clang_tidy
