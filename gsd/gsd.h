@@ -40,10 +40,10 @@ enum gsd_open_flag
     };
 
 /// Maximum size of a GSD chunk name in memory
-const int GSD_NAME_SIZE = 64;
+enum { GSD_NAME_SIZE = 64 };
 
 /// Reserved bytes in the header structure
-const int GSD_RESERVED_BYTES = 80;
+enum { GSD_RESERVED_BYTES = 80 };
 
 /** GSD file header
 
