@@ -1,5 +1,6 @@
 # Copyright (c) 2016-2019 The Regents of the University of Michigan
-# This file is part of the General Simulation Data (GSD) project, released under the BSD 2-Clause License.
+# This file is part of the General Simulation Data (GSD) project, released under
+# the BSD 2-Clause License.
 
 """ The GSD main module
 
@@ -11,7 +12,8 @@ script::
     f = gsd.fl.GSDFile('filename', 'rb');
 
 Attributes:
-    __version__ (str): GSD software version number. This is the version number of the software package as a whole,
+    __version__ (str): GSD software version number. This is the version number
+                       of the software package as a whole,
                        not the file layer version it reads/writes.
 """
 
@@ -19,4 +21,4 @@ import sys
 if sys.version_info < (3, 5) or sys.version_info >= (4, 0):
     raise RuntimeError("Python ~= 3.5 is required")
 
-__version__ = "1.10.0";
+__version__ = "1.10.0"
