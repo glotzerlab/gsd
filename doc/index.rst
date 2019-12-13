@@ -45,6 +45,12 @@ API to specify the initial condition for a HOOMD-blue simulation or analyze traj
 
 .. toctree::
     :maxdepth: 1
+    :caption: Contributing
+
+    style
+
+.. toctree::
+    :maxdepth: 1
     :caption: Additional information
 
     credits

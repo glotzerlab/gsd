@@ -1,13 +1,13 @@
-Contributions are welcomed via [pull requests on GitHub](https://github.com/glotzerlab/gsd/pulls). Contact
-the **GSD** developers before starting work to ensure it meshes well with the planned development direction and
-standards set for the project.
+Contributions are welcomed via [pull requests on GitHub](https://github.com/glotzerlab/gsd/pulls).
+Contact the **GSD** developers before starting work to ensure it meshes well with the planned
+development direction and standards set for the project.
 
 # Features
 
 ## Implement functionality in a general and flexible fashion
 
-New features should be applicable to a variety of use-cases. The **GSD** developers can assist you in designing
-flexible interfaces.
+New features should be applicable to a variety of use-cases. The **GSD** developers can assist you
+in designing flexible interfaces.
 
 ## Maintain performance of existing code paths
 
@@ -26,19 +26,19 @@ are loosely coupled should be proposed in separate pull requests.
 
 ## Agree to the Contributor Agreement
 
-All contributors must agree to the Contributor Agreement ([ContributorAgreement.md](ContributorAgreement.md)) before
-their pull request can be merged.
+All contributors must agree to the Contributor Agreement
+([ContributorAgreement.md](ContributorAgreement.md)) before their pull request can be merged.
 
 # Source code
 
 ## Use a consistent style
 
-[SourceConventions.md](SourceConventions.md) defines the style guidelines for **GSD** code.
+[style.rst](doc/style.rst) defines the style guidelines for **GSD** code.
 
 ## Document code with comments
 
-Use doxygen header comments for classes, functions, etc. Also comment complex sections of code so that other
-developers can understand them.
+Use doxygen header comments for classes, functions, etc. Also comment complex sections of code so
+that other developers can understand them.
 
 ## Compile without warnings
 
@@ -52,7 +52,8 @@ Add unit tests for all new functionality.
 
 ## Validity tests
 
-The developer should run research-scale simulations using the new functionality and ensure that it behaves as intended.
+The developer should run research-scale simulations using the new functionality and ensure that it
+behaves as intended.
 
 # User documentation
 
@@ -66,8 +67,9 @@ Add demonstrations of new functionality to the documentation examples pages.
 
 ## Document version status
 
-Each user-facing Python class, method, etc. with a docstring should have [versionadded, versionchanged, and
-deprecated Sphinx directives](https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#directive-versionadded)
+Each user-facing Python class, method, etc. with a docstring should have [versionadded,
+versionchanged, and deprecated Sphinx
+directives](https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#directive-versionadded)
 so that users will be aware of how functionality changes from version to version.
 
 ## Add developer to the credits

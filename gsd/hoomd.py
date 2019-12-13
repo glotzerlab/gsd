@@ -49,7 +49,7 @@ class ConfigurationData(object):
           (:chunk:`configuration/dimensions`).
         box (`numpy.ndarray` or `array_like` [float, ndim=1, mode='c']):
           Box dimensions (:chunk:`configuration/box`)
-          - [lx, ly, lz, xy, xz, yz].
+          [lx, ly, lz, xy, xz, yz].
     """
 
     _default_value = OrderedDict()
@@ -115,7 +115,7 @@ class ParticleData(object):
         body (`numpy.ndarray` or `array_like` [int32, ndim=1, mode='c']):
           N length array defining particle bodies (:chunk:`particles/body`).
         moment_inertia (`numpy.ndarray` or `array_like`
-                        [float, ndim=2, mode='c']):
+          [float, ndim=2, mode='c']):
           Nx3 array defining particle moments of inertia
           (:chunk:`particles/moment_inertia`).
         velocity (`numpy.ndarray` or `array_like` [float, ndim=2, mode='c']):
@@ -260,11 +260,11 @@ class BondData(object):
           :chunk:`dihedrals/types`, :chunk:`impropers/types`,
           :chunk:`pairs/types`).
         typeid (`numpy.ndarray` or `array_like` [uint32, ndim=1, mode='c']):
-          - N length array defining bond type ids (:chunk:`bonds/typeid`,
+          N length array defining bond type ids (:chunk:`bonds/typeid`,
           :chunk:`angles/typeid`, :chunk:`dihedrals/typeid`,
           :chunk:`impropers/typeid`, :chunk:`pairs/types`).
         group (`numpy.ndarray` or `array_like` [uint32, ndim=2, mode='c']):
-          - NxM array defining tags in the particle bonds (:chunk:`bonds/group`,
+          NxM array defining tags in the particle bonds (:chunk:`bonds/group`,
           :chunk:`angles/group`, :chunk:`dihedrals/group`,
           :chunk:`impropers/group`, :chunk:`pairs/group`).
     """
