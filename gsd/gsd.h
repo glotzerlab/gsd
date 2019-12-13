@@ -54,34 +54,34 @@ enum { GSD_RESERVED_BYTES = 80 };
 */
 struct gsd_header
     {
-    /// Magic number marking that this is a GSD file
+    /// Magic number marking that this is a GSD file.
     uint64_t magic;
 
-    /// Location of the chunk index in the file
+    /// Location of the chunk index in the file.
     uint64_t index_location;
 
-    /// Number of index entries that will fit in the space allocated
+    /// Number of index entries that will fit in the space allocated.
     uint64_t index_allocated_entries;
 
-    /// Location of the name list in the file
+    /// Location of the name list in the file.
     uint64_t namelist_location;
 
-    /// Number of namelist entries that will fit in the space allocated
+    /// Number of namelist entries that will fit in the space allocated.
     uint64_t namelist_allocated_entries;
 
-    /// Schema version: from gsd_make_version()
+    /// Schema version: from gsd_make_version().
     uint32_t schema_version;
 
-    /// GSD file format version from gsd_make_version()
+    /// GSD file format version from gsd_make_version().
     uint32_t gsd_version;
 
-    /// Name of the application that generated this file
+    /// Name of the application that generated this file.
     char application[GSD_NAME_SIZE];
 
-    /// Name of data schema
+    /// Name of data schema.
     char schema[GSD_NAME_SIZE];
 
-    /// Reserved for future use
+    /// Reserved for future use.
     char reserved[GSD_RESERVED_BYTES];
     };
 
@@ -93,25 +93,25 @@ struct gsd_header
 */
 struct gsd_index_entry
     {
-    /// Frame index of the chunk
+    /// Frame index of the chunk.
     uint64_t frame;
 
-    /// Number of rows in the chunk
+    /// Number of rows in the chunk.
     uint64_t N;
 
-    /// Location of the chunk in the file
+    /// Location of the chunk in the file.
     int64_t location;
 
-    /// Number of columns in the chunk
+    /// Number of columns in the chunk.
     uint32_t M;
 
-    /// Index of the chunk name in the name list
+    /// Index of the chunk name in the name list.
     uint16_t id;
 
-    /// Data type of the chunk: one of gsd_type
+    /// Data type of the chunk: one of gsd_type.
     uint8_t type;
 
-    /// Flags (for internal use)
+    /// Flags (for internal use).
     uint8_t flags;
     };
 
@@ -189,10 +189,10 @@ uint32_t gsd_make_version(unsigned int major, unsigned int minor);
 
 /** Create a GSD file
 
-    @param fname File name
-    @param application Generating application name (truncated to 63 chars)
-    @param schema Schema name for data to be written in this GSD file (truncated to 63 chars)
-    @param schema_version Version of the scheme data to be written (make with gsd_make_version())
+    @param fname File name.
+    @param application Generating application name (truncated to 63 chars).
+    @param schema Schema name for data to be written in this GSD file (truncated to 63 chars).
+    @param schema_version Version of the scheme data to be written (make with gsd_make_version()).
 
     @post Create an empty gsd file in a file of the given name. Overwrite any existing file at that
     location.
@@ -205,15 +205,15 @@ int gsd_create(const char *fname, const char *application, const char *schema, u
 
 /** Create and open a GSD file
 
-    @param handle Handle to open
-    @param fname File name
-    @param application Generating application name (truncated to 63 chars)
-    @param schema Schema name for data to be written in this GSD file (truncated to 63 chars)
-    @param schema_version Version of the scheme data to be written (make with gsd_make_version())
-    @param flags Either GSD_OPEN_READWRITE, or GSD_OPEN_APPEND
-    @param exclusive_create Set to non-zero to force exclusive creation of the file
+    @param handle Handle to open.
+    @param fname File name.
+    @param application Generating application name (truncated to 63 chars).
+    @param schema Schema name for data to be written in this GSD file (truncated to 63 chars).
+    @param schema_version Version of the scheme data to be written (make with gsd_make_version()).
+    @param flags Either GSD_OPEN_READWRITE, or GSD_OPEN_APPEND.
+    @param exclusive_create Set to non-zero to force exclusive creation of the file.
 
-    @post Create an empty gsd file in a file of the given name. Overwrite any existing file at that
+    @post Create an empty gsd file with the given name. Overwrite any existing file at that
     location.
 
     Open the generated gsd file in *handle*.
@@ -238,15 +238,19 @@ int gsd_create_and_open(struct gsd_handle* handle,
 
 /** Open a GSD file
 
-    @param handle Handle to open
-    @param fname File name to open
-    @param flags Either GSD_OPEN_READWRITE, GSD_OPEN_READONLY, or GSD_OPEN_APPEND
+    @param handle Handle to open.
+    @param fname File name to open.
+    @param flags Either GSD_OPEN_READWRITE, GSD_OPEN_READONLY, or GSD_OPEN_APPEND.
 
     @pre The file name *fname* is a GSD file.
 
     @post Open a GSD file and populates the handle for use by API calls.
 
-    The file descriptor is closed if there when an error opening the file.
+    The file descriptor is closed if there is an error opening the file.
+
+    Prefer the modes GSD_OPEN_APPEND for writing and GSD_OPEN_READONLY for reading. These modes are
+    optimized to only load as much of the index as needed. GSD_OPEN_READWRITE needs to store the
+    entire index in memory: in files with millions of chunks, this can add up to GiB.
 
     @return 0 on success. Negative value on failure:
         * -1: IO error (check errno)
@@ -259,24 +263,25 @@ int gsd_open(struct gsd_handle* handle, const char *fname, enum gsd_open_flag fl
 
 /** Truncate a GSD file
 
-    @param handle Handle to an open GSD file
+    @param handle Open GSD file to truncate.
 
-    Truncate the gsd file, then write a new header. Truncating a file removes all frames and data
-    chunks. The application, schema, and schema version are not modified. Truncating may be useful
-    when writing restart files to reduce the metadata load on Lustre file servers.
+    After truncating, a file will have no frames and no data chunks. The file size will be that of a
+    newly created gsd file. The application, schema, and schema version metadata will be kept.
+    Truncate does not close and reopen the file, so it is suitable for writing restart files on
+    Lustre file systems without any metadata access.
 
     @return 0 on success. Negative value on failure:
-        * -1: IO error (check errno)
-        * -2: Invalid input
-        * -3: Invalid GSD file version
-        * -4: Corrupt file
-        * -5: Unable to allocate memory
+      * -1: IO error (check errno)
+      * -2: Invalid input
+      * -3: Invalid GSD file version
+      * -4: Corrupt file
+      * -5: Unable to allocate memory
 */
 int gsd_truncate(struct gsd_handle* handle);
 
 /** Close a GSD file
 
-    @param handle Handle to an open GSD file
+    @param handle GSD file to close.
 
     @pre *handle* was opened by gsd_open().
     @pre gsd_end_frame() has been called since the last call to gsd_write_chunk().
@@ -293,7 +298,7 @@ int gsd_truncate(struct gsd_handle* handle);
 */
 int gsd_close(struct gsd_handle* handle);
 
-/** Commit the current frame and increment the frame counter
+/** Commit the current frame and increment the frame counter.
 
     @param handle Handle to an open GSD file
 
@@ -308,13 +313,13 @@ int gsd_end_frame(struct gsd_handle* handle);
 
 /** Write a data chunk to the current frame
 
-    @param handle Handle to an open GSD file
-    @param name Name of the data chunk (truncated to 63 chars)
-    @param type type ID that identifies the type of data in *data*
-    @param N Number of rows in the data
-    @param M Number of columns in the data
-    @param flags set to 0, non-zero values reserved for future use
-    @param data Data buffer
+    @param handle Handle to an open GSD file.
+    @param name Name of the data chunk (truncated to 63 chars).
+    @param type type ID that identifies the type of data in *data*.
+    @param N Number of rows in the data.
+    @param M Number of columns in the data.
+    @param flags set to 0, non-zero values reserved for future use.
+    @param data Data buffer.
 
     @pre *handle* was opened by gsd_open().
     @pre *name* is a unique name for data chunks in the given frame.
@@ -342,17 +347,20 @@ int gsd_write_chunk(struct gsd_handle* handle,
 
     @pre *handle* was opened by gsd_open() in read or readwrite mode.
 
+    The found entry contains size and type metadata and can be passed to gsd_read_chunk() to read
+    the data.
+
     @return A pointer to the found chunk, or NULL if not found
 */
 const struct gsd_index_entry* gsd_find_chunk(struct gsd_handle* handle, uint64_t frame, const char *name);
 
 /** Read a chunk from the GSD file
 
-    @param handle Handle to an open GSD file
-    @param data Data buffer to read into
-    @param chunk Chunk to read
+    @param handle Handle to an open GSD file.
+    @param data Data buffer to read into.
+    @param chunk Chunk to read.
 
-    @pre *handle* was opened by gsd_open() in read or readwrite mode.
+    @pre *handle* was opened in read or readwrite mode.
     @pre *chunk* was found by gsd_find_chunk().
     @pre *data* points to an allocated buffer with at least `N * M * gsd_sizeof_type(type)` bytes.
 
@@ -366,23 +374,23 @@ int gsd_read_chunk(struct gsd_handle* handle, void* data, const struct gsd_index
 
     @pre *handle* was opened by gsd_open().
 
-    @return The number of frames in the file, or 0 on error
+    @return The number of frames in the file, or 0 on error.
 */
 uint64_t gsd_get_nframes(struct gsd_handle* handle);
 
-/** Query size of a GSD type ID
+/** Query size of a GSD type ID.
 
-    @param type Type ID to query
+    @param type Type ID to query.
 
     @return Size of the given type in bytes, or 0 for an unknown type ID.
 */
 size_t gsd_sizeof_type(enum gsd_type type);
 
-/** Search for chunk names in a gsd file
+/** Search for chunk names in a gsd file.
 
-    @param handle Handle to an open GSD file
-    @param match String to match
-    @param prev Search starting point
+    @param handle Handle to an open GSD file.
+    @param match String to match.
+    @param prev Search starting point.
 
     @pre *handle* was opened by gsd_open()
     @pre *prev* was returned by a previous call to gsd_find_matching_chunk_name()
