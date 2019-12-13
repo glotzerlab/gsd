@@ -86,7 +86,7 @@ ssize_t pwrite(int fd, const void *buf, size_t count, int64_t offset)
 
     @param d pointer to memory region
     @param size_data size of the memory region in bytes
-    @param size_to_remove size of the area to zero in bytes
+    @param size_to_zero size of the area to zero in bytes
 */
 void gsd_zero_memory(void *d, size_t size_data, size_t size_to_zero)
     {
@@ -354,9 +354,13 @@ uint16_t __gsd_get_id(struct gsd_handle *handle, const char *name, uint8_t appen
     return UINT16_MAX;
     }
 
-/*! \param fd file descriptor to initialize
+/** @internal
+    @brief Truncate the file and write a new gsd header.
 
-    Truncate the file and write a new gsd header.
+    @param fd file descriptor to initialize
+    @param application Generating application name (truncated to 63 chars)
+    @param schema Schema name for data to be written in this GSD file (truncated to 63 chars)
+    @param schema_version Version of the scheme data to be written (make with gsd_make_version())
 */
 int __gsd_initialize_file(int fd, const char *application, const char *schema, uint32_t schema_version)
     {
@@ -712,27 +716,11 @@ int __gsd_read_header(struct gsd_handle* handle)
     return 0;
     }
 
-/*! \param major major version
-    \param minor minor version
-
-    \return a packed version number aaaa.bbbb suitable for storing in a gsd file version entry.
-*/
 uint32_t gsd_make_version(unsigned int major, unsigned int minor)
     {
     return major << 16 | minor;
     }
 
-/*! \param fname File name
-    \param application Generating application name (truncated to 63 chars)
-    \param schema Schema name for data to be written in this GSD file (truncated to 63 chars)
-    \param schema_version Version of the scheme data to be written (make with gsd_make_version())
-
-    \post Create an empty gsd file in a file of the given name. Overwrite any existing file at that location.
-
-    The generated gsd file is not opened. Call gsd_open() to open it for writing.
-
-    \return 0 on success, -1 on a file IO failure - see errno for details
-*/
 int gsd_create(const char *fname, const char *application, const char *schema, uint32_t schema_version)
     {
     int extra_flags = 0;
@@ -747,28 +735,6 @@ int gsd_create(const char *fname, const char *application, const char *schema, u
     return retval;
     }
 
-/*! \param handle Handle to open
-    \param fname File name
-    \param application Generating application name (truncated to 63 chars)
-    \param schema Schema name for data to be written in this GSD file (truncated to 63 chars)
-    \param schema_version Version of the scheme data to be written (make with gsd_make_version())
-    \param flags Either GSD_OPEN_READWRITE, or GSD_OPEN_APPEND
-    \param exclusive_create Set to non-zero to force exclusive creation of the file
-
-    \post Create an empty gsd file in a file of the given name. Overwrite any existing file at that location.
-
-    Open the generated gsd file in *handle*.
-
-    The file descriptor is closed if there when an error opening the file.
-
-    \return 0 on success. Negative value on failure:
-        * -1: IO error (check errno)
-        * -2: Not a GSD file
-        * -3: Invalid GSD file version
-        * -4: Corrupt file
-        * -5: Unable to allocate memory
-        * -6: Invalid argument
-*/
 int gsd_create_and_open(struct gsd_handle* handle,
                         const char *fname,
                         const char *application,
@@ -819,23 +785,6 @@ int gsd_create_and_open(struct gsd_handle* handle,
     return retval;
     }
 
-/*! \param handle Handle to open
-    \param fname File name to open
-    \param flags Either GSD_OPEN_READWRITE, GSD_OPEN_READONLY, or GSD_OPEN_APPEND
-
-    \pre The file name \a fname is a GSD file.
-
-    \post Open a GSD file and populates the handle for use by API calls.
-
-    The file descriptor is closed if there when an error opening the file.
-
-    \return 0 on success. Negative value on failure:
-        * -1: IO error (check errno)
-        * -2: Not a GSD file
-        * -3: Invalid GSD file version
-        * -4: Corrupt file
-        * -5: Unable to allocate memory
-*/
 int gsd_open(struct gsd_handle* handle, const char *fname, const enum gsd_open_flag flags)
     {
     // allocate the handle
@@ -874,19 +823,6 @@ int gsd_open(struct gsd_handle* handle, const char *fname, const enum gsd_open_f
     return retval;
     }
 
-/*! \param handle Handle to an open GSD file
-
-    Truncate the gsd file, then write a new header. Truncating a file removes all frames and data chunks. The
-    application, schema, and schema version are not modified. Truncating may be useful when writing restart files
-    to reduce the metadata load on Lustre file servers.
-
-    \return 0 on success. Negative value on failure:
-        * -1: IO error (check errno)
-        * -2: Invalid input
-        * -3: Invalid GSD file version
-        * -4: Corrupt file
-        * -5: Unable to allocate memory
-*/
 int gsd_truncate(struct gsd_handle* handle)
     {
     if (handle == NULL)
@@ -926,20 +862,6 @@ int gsd_truncate(struct gsd_handle* handle)
     return __gsd_read_header(handle);
     }
 
-/*! \param handle Handle to an open GSD file
-
-    \pre \a handle was opened by gsd_open().
-    \pre gsd_end_frame() has been called since the last call to gsd_write_chunk().
-
-    \post The file is closed.
-    \post \a handle is freed and can no longer be used.
-
-    \warning Do not write chunks to the file with gsd_write_chunk() and then immediately close the file with gsd_close().
-    This will result in data loss. Data chunks written by gsd_write_chunk() are not updated in the index until
-    gsd_end_frame() is called. This is by design to prevent partial frames in files.
-
-    \return 0 on success, -1 on a file IO failure - see errno for details, and -2 on invalid input
-*/
 int gsd_close(struct gsd_handle* handle)
     {
     if (handle == NULL)
@@ -996,15 +918,6 @@ int gsd_close(struct gsd_handle* handle)
     return 0;
     }
 
-/*! \param handle Handle to an open GSD file
-
-    \pre \a handle was opened by gsd_open().
-    \pre gsd_write_chunk() has been called at least once since the last call to gsd_end_frame().
-
-    \post The current frame counter is increased by 1 and cached indexes are written to disk.
-
-    \return 0 on success, -1 on a file IO failure - see errno for details, and -2 on invalid input
-*/
 int gsd_end_frame(struct gsd_handle* handle)
     {
     if (handle == NULL)
@@ -1062,22 +975,6 @@ int gsd_end_frame(struct gsd_handle* handle)
     return 0;
     }
 
-/*! \param handle Handle to an open GSD file
-    \param name Name of the data chunk (truncated to 63 chars)
-    \param type type ID that identifies the type of data in \a data
-    \param N Number of rows in the data
-    \param M Number of columns in the data
-    \param flags set to 0, non-zero values reserved for future use
-    \param data Data buffer
-
-    \pre \a handle was opened by gsd_open().
-    \pre \a name is a unique name for data chunks in the given frame.
-    \pre data is allocated and contains at least `N * M * gsd_sizeof_type(type)` bytes.
-
-    \post The given data chunk is written to the end of the file and its location is updated in the in-memory index.
-
-    \return 0 on success, -1 on a file IO failure - see errno for details, -2 on invalid input, and -3 when out of names
-*/
 int gsd_write_chunk(struct gsd_handle* handle,
                     const char *name,
                     enum gsd_type type,
@@ -1161,12 +1058,6 @@ int gsd_write_chunk(struct gsd_handle* handle,
     return 0;
     }
 
-/*! \param handle Handle to an open GSD file
-
-    \pre \a handle was opened by gsd_open().
-
-    \return The number of frames in the file, or 0 on error
-*/
 uint64_t gsd_get_nframes(struct gsd_handle* handle)
     {
     if (handle == NULL)
@@ -1176,14 +1067,6 @@ uint64_t gsd_get_nframes(struct gsd_handle* handle)
     return handle->cur_frame;
     }
 
-/*! \param handle Handle to an open GSD file
-    \param frame Frame to look for chunk
-    \param name Name of the chunk to find
-
-    \pre \a handle was opened by gsd_open() in read or readwrite mode.
-
-    \return A pointer to the found chunk, or NULL if not found
-*/
 const struct gsd_index_entry* gsd_find_chunk(struct gsd_handle* handle, uint64_t frame, const char *name)
     {
     if (handle == NULL)
@@ -1246,16 +1129,6 @@ const struct gsd_index_entry* gsd_find_chunk(struct gsd_handle* handle, uint64_t
     return NULL;
     }
 
-/*! \param handle Handle to an open GSD file
-    \param data Data buffer to read into
-    \param chunk Chunk to read
-
-    \pre \a handle was opened by gsd_open() in read or readwrite mode.
-    \pre \a chunk was found by gsd_find_chunk().
-    \pre \a data points to an allocated buffer with at least `N * M * gsd_sizeof_type(type)` bytes.
-
-    \return 0 on success, -1 on a file IO failure - see errno for details, and -2 on invalid input
-*/
 int gsd_read_chunk(struct gsd_handle* handle, void* data, const struct gsd_index_entry* chunk)
     {
     if (handle == NULL)
@@ -1300,10 +1173,6 @@ int gsd_read_chunk(struct gsd_handle* handle, void* data, const struct gsd_index
     return 0;
     }
 
-/*! \param type Type ID to query
-
-    \return Size of the given type, or 0 for an unknown type ID.
-*/
 size_t gsd_sizeof_type(enum gsd_type type)
     {
     size_t val = 0;
@@ -1354,19 +1223,6 @@ size_t gsd_sizeof_type(enum gsd_type type)
     return val;
     }
 
-/*! \param handle Handle to an open GSD file
-    \param match String to match
-    \param prev Search starting point
-
-    \pre \a handle was opened by gsd_open()
-    \pre \a prev was returned by a previous call to gsd_find_matching_chunk_name
-
-    To find the first matching chunk name, pass NULL for prev. Pass in the previous found string to find the next
-    after that, and so on. Chunk names match if they begin with the string in \a match. Chunk names returned
-    by this function may be present in at least one frame.
-
-    \return Pointer to a string, NULL if no more matching chunks are found found, or NULL if \a prev is invalid
-*/
 const char *gsd_find_matching_chunk_name(struct gsd_handle* handle, const char* match, const char *prev)
     {
     if (handle == NULL)
@@ -1416,7 +1272,6 @@ const char *gsd_find_matching_chunk_name(struct gsd_handle* handle, const char* 
     // searched past the end of the list, return NULL
     return NULL;
     }
-
 
 // undefine windows wrapper macros
 #ifdef _WIN32

@@ -8,3 +8,4 @@ gsd.egg-info
 __pycache__
 .vscode/
 *.code-workspace
+devdoc
