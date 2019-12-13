@@ -17,8 +17,7 @@ if (CLANG_TIDY_EXE)
     set_target_properties(gsd_objects PROPERTIES C_CLANG_TIDY "${DO_CLANG_TIDY}")
 endif()
 
-add_library(fl SHARED fl.c)
-target_link_libraries(fl gsd_objects)
+add_library(fl SHARED fl.c gsd.c)
 
 set_target_properties(fl PROPERTIES PREFIX "" OUTPUT_NAME "fl" MACOSX_RPATH "On")
 if(APPLE)

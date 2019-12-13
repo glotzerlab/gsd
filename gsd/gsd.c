@@ -41,6 +41,9 @@ const size_t GSD_INITIAL_INDEX_SIZE = 128;
 /// Initial namelist size
 const size_t GSD_INITIAL_NAMELIST_SIZE = 128;
 
+/// Size of the temporary copy buffer
+enum { GSD_COPY_BUFFER_SIZE = 1024*16 };
+
 // define windows wrapper functions
 #ifdef _WIN32
 #define lseek _lseeki64
@@ -210,8 +213,7 @@ static int __gsd_expand_index(struct gsd_handle *handle)
         {
         // in append mode, we don't have the whole index stored in memory. Instead, we need to copy it in chunks
         // from the file's old position to the new position
-        const size_t buf_size = 1024*16;
-        char buf[buf_size];
+        char buf[GSD_COPY_BUFFER_SIZE];
 
         int64_t new_index_location = lseek(handle->fd, 0, SEEK_END);
         int64_t old_index_location = handle->header.index_location;
@@ -219,8 +221,8 @@ static int __gsd_expand_index(struct gsd_handle *handle)
         size_t old_index_bytes = old_size * sizeof(struct gsd_index_entry);
         while (total_bytes_written < old_index_bytes)
             {
-            size_t bytes_to_copy = buf_size;
-            if (old_index_bytes - total_bytes_written < buf_size)
+            size_t bytes_to_copy = GSD_COPY_BUFFER_SIZE;
+            if (old_index_bytes - total_bytes_written < GSD_COPY_BUFFER_SIZE)
                 {
                 bytes_to_copy = old_index_bytes - total_bytes_written;
                 }
@@ -249,13 +251,13 @@ static int __gsd_expand_index(struct gsd_handle *handle)
             }
 
         // fill the new index space with 0s
-        gsd_zero_memory(buf, buf_size, buf_size);
+        gsd_zero_memory(buf, GSD_COPY_BUFFER_SIZE, GSD_COPY_BUFFER_SIZE);
 
         size_t new_index_bytes = new_size * sizeof(struct gsd_index_entry);
         while (total_bytes_written < new_index_bytes)
             {
-            size_t bytes_to_copy = buf_size;
-            if (new_index_bytes - total_bytes_written < buf_size)
+            size_t bytes_to_copy = GSD_COPY_BUFFER_SIZE;
+            if (new_index_bytes - total_bytes_written < GSD_COPY_BUFFER_SIZE)
                 {
                 bytes_to_copy = new_index_bytes - total_bytes_written;
                 }
