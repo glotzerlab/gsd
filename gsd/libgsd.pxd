@@ -21,6 +21,18 @@ cdef extern from "gsd.h" nogil:
         GSD_OPEN_READONLY
         GSD_OPEN_APPEND
 
+    cdef enum gsd_error:
+        GSD_SUCCESS = 0
+        GSD_ERROR_IO = -1
+        GSD_ERROR_INVALID_ARGUMENT = -2
+        GSD_ERROR_NOT_A_GSD_FILE = -3
+        GSD_ERROR_INVALID_GSD_FILE_VERSION = -4
+        GSD_ERROR_FILE_CORRUPT = -5
+        GSD_ERROR_MEMORY_ALLOCATION_FAILED = -6
+        GSD_ERROR_NAMELIST_FULL = -7
+        GSD_ERROR_FILE_MUST_BE_WRITABLE = -8
+        GSD_ERROR_FILE_MUST_BE_READABLE = -9
+
     cdef struct gsd_header:
         uint64_t magic;
         uint32_t gsd_version;

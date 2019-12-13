@@ -31,10 +31,39 @@ cdef __format_errno(fname):
     """ Return a tuple for constructing an IOError """
     return (errno, os.strerror(errno), fname);
 
+cdef __raise_on_error(retval, extra):
+    """ Raise the appropriate error type.
+
+    Args:
+        retval: Return value from a gsd C API call
+        extra: Extra string to pass along with the exception
+    """
+    if retval == libgsd.GSD_ERROR_IO:
+        raise IOError(*__format_errno(extra))
+    elif retval == libgsd.GSD_ERROR_NOT_A_GSD_FILE:
+        raise RuntimeError("Not a GSD file: " + extra)
+    elif retval == libgsd.GSD_ERROR_INVALID_GSD_FILE_VERSION:
+        raise RuntimeError("Unsupported GSD file version: " + extra)
+    elif retval == libgsd.GSD_ERROR_FILE_CORRUPT:
+        raise RuntimeError("Corrupt GSD file: " + extra)
+    elif retval == libgsd.GSD_ERROR_MEMORY_ALLOCATION_FAILED:
+        raise MemoryError("Memory allocation failed: " + extra)
+    elif retval == libgsd.GSD_ERROR_NAMELIST_FULL:
+        raise RuntimeError("GSD namelist is full: " + extra)
+    elif retval == libgsd.GSD_ERROR_FILE_MUST_BE_WRITABLE:
+        raise RuntimeError("File must be writable: " + extra)
+    elif retval == libgsd.GSD_ERROR_FILE_MUST_BE_READABLE:
+        raise RuntimeError("File must be readable: " + extra)
+    elif retval == libgsd.GSD_ERROR_INVALID_ARGUMENT:
+        raise RuntimeError("Invalid gsd argument: " + extra)
+    elif retval != 0:
+        raise RuntimeError("Unknown error: " + extra)
+
 # Getter methods for 2D numpy arrays of all supported types
 # cython needs strongly typed numpy arrays to get a void *
 # to the data, so we implement each by hand here and dispacth
 # from the read and write routines
+
 cdef void * __get_ptr_uint8(data):
     cdef numpy.ndarray[uint8_t, ndim=2, mode="c"] data_array_uint8;
     data_array_uint8 = data;
@@ -275,20 +304,7 @@ cdef class GSDFile:
             with nogil:
                 retval = libgsd.gsd_open(&self.__handle, c_name, c_flags);
 
-        if retval == -1:
-            raise IOError(*__format_errno(name));
-        elif retval == -2:
-            raise RuntimeError("Not a GSD file: " + name);
-        elif retval == -3:
-            raise RuntimeError("Unsupported GSD file version: " + name);
-        elif retval == -4:
-            raise RuntimeError("Corrupt GSD file: " + name);
-        elif retval == -5:
-            raise MemoryError("Unable to allocate GSD index: " + name);
-        elif retval == -6:
-            raise MemoryError("Invalid gsd argument: " + name);
-        elif retval != 0:
-            raise RuntimeError("Unknown error");
+        __raise_on_error(retval, name)
 
         # validate schema
         if new_api:
@@ -327,8 +343,10 @@ cdef class GSDFile:
         if self.__is_open:
             logger.info('closing file: ' + self.name);
             with nogil:
-                libgsd.gsd_close(&self.__handle);
+                retval = libgsd.gsd_close(&self.__handle);
             self.__is_open = False;
+
+        __raise_on_error(retval, self.name)
 
     def truncate(self):
         """ truncate()
@@ -360,18 +378,7 @@ cdef class GSDFile:
         with nogil:
             retval = libgsd.gsd_truncate(&self.__handle);
 
-        if retval == -1:
-            raise IOError(*__format_errno(self.name));
-        elif retval == -2:
-            raise RuntimeError("Not a GSD file: " + self.name);
-        elif retval == -3:
-            raise RuntimeError("Unsupported GSD file version: " + self.name);
-        elif retval == -4:
-            raise RuntimeError("Corrupt GSD file: " + self.name);
-        elif retval == -5:
-            raise MemoryError("Unable to allocate GSD index: " + self.name);
-        elif retval != 0:
-            raise RuntimeError("Unknown error");
+        __raise_on_error(retval, self.name)
 
 
     def end_frame(self):
@@ -410,12 +417,7 @@ cdef class GSDFile:
         with nogil:
             retval = libgsd.gsd_end_frame(&self.__handle)
 
-        if retval == -1:
-            raise IOError(*__format_errno(self.name));
-        elif retval == -2:
-            raise RuntimeError("GSD file is opened read only: " + self.name);
-        elif retval != 0:
-            raise RuntimeError("Unknown error");
+        __raise_on_error(retval, self.name)
 
     def write_chunk(self, name, data):
         """ write_chunk(name, data)
@@ -518,14 +520,7 @@ cdef class GSDFile:
                                            0,
                                            data_ptr);
 
-        if retval == -1:
-            raise IOError(*__format_errno(name));
-        elif retval == -2:
-            raise RuntimeError("GSD file is opened read only: " + self.name);
-        elif retval == -3:
-            raise RuntimeError("Name list full: " + self.name);
-        elif retval != 0:
-            raise RuntimeError("Unknown error");
+        __raise_on_error(retval, self.name)
 
     def chunk_exists(self, frame, name):
         """ chunk_exists(frame, name)
@@ -686,14 +681,7 @@ cdef class GSDFile:
                                                data_ptr,
                                                index_entry);
 
-            if retval == -1:
-                raise IOError(*__format_errno(name));
-            elif retval == -2:
-                raise RuntimeError("Programming error: " + self.name);
-            elif retval == -3:
-                raise RuntimeError("Corrupt chunk: " + str(frame) + " / " + name + " in file" + self.name);
-            elif retval != 0:
-                raise RuntimeError("Unknown error");
+            __raise_on_error(retval, self.name)
 
         if index_entry.M == 1:
             return data_array.reshape([index_entry.N]);
@@ -839,7 +827,4 @@ def create(name, application, schema, schema_version):
     _c_schema_version = libgsd.gsd_make_version(schema_version[0], schema_version[1])
     retval = libgsd.gsd_create(str(name).encode('utf-8'), application.encode('utf-8'), schema.encode('utf-8'), _c_schema_version);
 
-    if retval == -1:
-        raise IOError(*__format_errno(name));
-    elif retval != 0:
-        raise RuntimeError("Unknown error");
+    __raise_on_error(retval, name)
