@@ -1,12 +1,13 @@
 // Copyright (c) 2016-2019 The Regents of the University of Michigan
-// This file is part of the General Simulation Data (GSD) project, released under the BSD 2-Clause License.
+// This file is part of the General Simulation Data (GSD) project, released under the BSD 2-Clause
+// License.
 
 #ifndef GSD_H
 #define GSD_H
 
+#include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
-#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -18,7 +19,7 @@ extern "C" {
 
 /// Identifiers for the gsd data chunk element types
 enum gsd_type
-    {
+{
     /// Unsigned 8-bit integer.
     GSD_TYPE_UINT8 = 1,
 
@@ -48,11 +49,11 @@ enum gsd_type
 
     /// 64-bit floating point number.
     GSD_TYPE_DOUBLE
-    };
+};
 
 /// Flag for GSD file open options
 enum gsd_open_flag
-    {
+{
     /// Open for both reading and writing
     GSD_OPEN_READWRITE = 1,
 
@@ -61,11 +62,11 @@ enum gsd_open_flag
 
     /// Open only for writing
     GSD_OPEN_APPEND
-    };
+};
 
 /// Error return values
 enum gsd_error
-    {
+{
     /// Success.
     GSD_SUCCESS = 0,
 
@@ -99,19 +100,19 @@ enum gsd_error
         GSD_OPEN_READWRITE.
     */
     GSD_ERROR_FILE_MUST_BE_READABLE = -9,
-    };
+};
 
 enum
-    {
+{
     /// Maximum size of a GSD chunk name in memory
     GSD_NAME_SIZE = 64
-    };
+};
 
 enum
-    {
+{
     /// Reserved bytes in the header structure
     GSD_RESERVED_BYTES = 80
-    };
+};
 
 /** GSD file header
 
@@ -121,7 +122,7 @@ enum
     @warning All members are **read-only** to the caller.
 */
 struct gsd_header
-    {
+{
     /// Magic number marking that this is a GSD file.
     uint64_t magic;
 
@@ -151,7 +152,7 @@ struct gsd_header
 
     /// Reserved for future use.
     char reserved[GSD_RESERVED_BYTES];
-    };
+};
 
 /** Index entry
 
@@ -160,7 +161,7 @@ struct gsd_header
     @warning All members are **read-only** to the caller.
 */
 struct gsd_index_entry
-    {
+{
     /// Frame index of the chunk.
     uint64_t frame;
 
@@ -181,7 +182,7 @@ struct gsd_index_entry
 
     /// Flags (for internal use).
     uint8_t flags;
-    };
+};
 
 /** Namelist entry
 
@@ -190,10 +191,10 @@ struct gsd_index_entry
     @warning All members are **read-only** to the caller.
 */
 struct gsd_namelist_entry
-    {
+{
     /// Entry name
     char name[GSD_NAME_SIZE];
-    };
+};
 
 /** File handle
 
@@ -205,7 +206,7 @@ struct gsd_namelist_entry
     @warning All members are **read-only** to the caller.
 */
 struct gsd_handle
-    {
+{
     /// File descriptor
     int fd;
 
@@ -213,16 +214,16 @@ struct gsd_handle
     struct gsd_header header;
 
     /// Pointer to mapped data
-    void *mapped_data;
+    void* mapped_data;
 
     /// Size of temporary buffer to store index entries to append
     size_t append_index_size;
 
     /// Pointer to the data chunk index
-    struct gsd_index_entry *index;
+    struct gsd_index_entry* index;
 
     /// Pointer to the name list
-    struct gsd_namelist_entry *namelist;
+    struct gsd_namelist_entry* namelist;
 
     /// Number of entries in the name list
     uint64_t namelist_num_entries;
@@ -244,7 +245,7 @@ struct gsd_handle
 
     /// Whether the handle requires an fsync call (new data was written)
     bool needs_sync;
-    };
+};
 
 /** Specify a version
 
@@ -271,7 +272,10 @@ uint32_t gsd_make_version(unsigned int major, unsigned int minor);
       - GSD_SUCCESS (0) on success. Negative value on failure:
       - GSD_ERROR_IO: IO error (check errno).
 */
-int gsd_create(const char *fname, const char *application, const char *schema, uint32_t schema_version);
+int gsd_create(const char* fname,
+               const char* application,
+               const char* schema,
+               uint32_t schema_version);
 
 /** Create and open a GSD file
 
@@ -299,9 +303,9 @@ int gsd_create(const char *fname, const char *application, const char *schema, u
       - GSD_ERROR_MEMORY_ALLOCATION_FAILED: Unable to allocate memory.
 */
 int gsd_create_and_open(struct gsd_handle* handle,
-                        const char *fname,
-                        const char *application,
-                        const char *schema,
+                        const char* fname,
+                        const char* application,
+                        const char* schema,
                         uint32_t schema_version,
                         enum gsd_open_flag flags,
                         int exclusive_create);
@@ -330,7 +334,7 @@ int gsd_create_and_open(struct gsd_handle* handle,
       - GSD_ERROR_FILE_CORRUPT: Corrupt file.
       - GSD_ERROR_MEMORY_ALLOCATION_FAILED: Unable to allocate memory.
 */
-int gsd_open(struct gsd_handle* handle, const char *fname, enum gsd_open_flag flags);
+int gsd_open(struct gsd_handle* handle, const char* fname, enum gsd_open_flag flags);
 
 /** Truncate a GSD file
 
@@ -417,12 +421,12 @@ int gsd_end_frame(struct gsd_handle* handle);
       - GSD_ERROR_MEMORY_ALLOCATION_FAILED: failed to allocate memory.
 */
 int gsd_write_chunk(struct gsd_handle* handle,
-                    const char *name,
+                    const char* name,
                     enum gsd_type type,
                     uint64_t N,
                     uint32_t M,
                     uint8_t flags,
-                    const void *data);
+                    const void* data);
 
 /** Find a chunk in the GSD file
 
@@ -437,7 +441,8 @@ int gsd_write_chunk(struct gsd_handle* handle,
 
     @return A pointer to the found chunk, or NULL if not found.
 */
-const struct gsd_index_entry* gsd_find_chunk(struct gsd_handle* handle, uint64_t frame, const char *name);
+const struct gsd_index_entry*
+gsd_find_chunk(struct gsd_handle* handle, uint64_t frame, const char* name);
 
 /** Read a chunk from the GSD file
 
@@ -492,10 +497,11 @@ size_t gsd_sizeof_type(enum gsd_type type);
     @return Pointer to a string, NULL if no more matching chunks are found found, or NULL if *prev*
     is invalid
 */
-const char *gsd_find_matching_chunk_name(struct gsd_handle* handle, const char* match, const char *prev);
+const char*
+gsd_find_matching_chunk_name(struct gsd_handle* handle, const char* match, const char* prev);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif  // #ifndef GSD_H
+#endif // #ifndef GSD_H
