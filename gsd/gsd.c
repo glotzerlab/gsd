@@ -54,6 +54,16 @@ enum
     GSD_COPY_BUFFER_SIZE = 1024 * 16
 };
 
+/** Name id mapping
+
+     A string name paired with an ID. Used for storing sorted name/id mappings
+*/
+struct gsd_name_id_entry
+{
+    /// Entry name
+    char name[GSD_NAME_SIZE];
+};
+
 // define windows wrapper functions
 #ifdef _WIN32
 #define lseek _lseeki64
@@ -345,57 +355,120 @@ static int gsd_expand_index(struct gsd_handle* handle)
 }
 
 /** @internal
-    @brief utility function to search the namelist and return the id assigned to the name
+    @brief utility function to search the namelist and return the index of the name
 
     @param handle handle to the open gsd file
     @param name string name
-    @param append Set to true to allow appending new names into the index, false to disallow
 
-    @return the id assigned to the name, or UINT16_MAX if not found and append is false
+    @return the index of the name in handle->names[] or UINT16_MAX if not found
 */
-uint16_t gsd_get_id(struct gsd_handle* handle, const char* name, uint8_t append)
+uint16_t gsd_find_name(struct gsd_handle* handle, const char* name)
 {
     // search for the name in the namelist
     size_t i;
     for (i = 0; i < handle->namelist_num_entries; i++)
     {
-        if (0 == strncmp(name, handle->namelist[i].name, sizeof(handle->namelist[i].name)))
+        size_t bytes_remaining = &(handle->namelist[handle->namelist_num_entries - 1].name[0])
+                                 + sizeof(handle->namelist[i].name) - handle->names[i];
+        // TODO: remove 64 char limit
+        if (bytes_remaining > 63)
+            {
+            bytes_remaining = 63;
+            }
+        if (0 == strncmp(name, handle->names[i], bytes_remaining))
         {
-            return i;
+            return (uint16_t)i;
         }
     }
+    return UINT16_MAX;
+}
 
-    // append the name if allowed
-    if (append
-        && (handle->open_flags == GSD_OPEN_READWRITE || handle->open_flags == GSD_OPEN_APPEND)
-        && handle->namelist_num_entries < handle->header.namelist_allocated_entries)
+/** @internal
+    @brief utility function to append a name to the namelist
+
+    @param handle handle to the open gsd file
+    @param name string name
+
+    @return
+      - GSD_SUCCESS (0) on success. Negative value on failure:
+      - GSD_ERROR_IO: IO error (check errno).
+      - GSD_ERROR_MEMORY_ALLOCATION_FAILED: Unable to allocate memory.
+      - GSD_ERROR_FILE_MUST_BE_WRITABLE: File must not be read only.
+*/
+int gsd_append_name(struct gsd_handle* handle, const char* name)
+{
+    if (handle->open_flags == GSD_OPEN_READONLY)
     {
-        strncpy(handle->namelist[handle->namelist_num_entries].name,
-                name,
-                sizeof(struct gsd_namelist_entry) - 1);
-        handle->namelist[handle->namelist_num_entries].name[sizeof(struct gsd_namelist_entry) - 1]
-            = 0;
-
-        // update the namelist on disk
-        ssize_t bytes_written = gsd_pwrite_retry(handle->fd,
-                                                 &(handle->namelist[handle->namelist_num_entries]),
-                                                 sizeof(struct gsd_namelist_entry),
-                                                 handle->header.namelist_location
-                                                     + sizeof(struct gsd_namelist_entry)
-                                                           * handle->namelist_num_entries);
-
-        if (bytes_written != sizeof(struct gsd_namelist_entry))
-        {
-            return UINT16_MAX;
-        }
-
-        handle->namelist_num_entries++;
-
-        // mark that synchronization is needed
-        handle->needs_sync = true;
-
-        return handle->namelist_num_entries - 1;
+        return GSD_ERROR_FILE_MUST_BE_WRITABLE;
     }
+
+    if (handle->namelist_num_entries == handle->header.namelist_allocated_entries)
+    {
+        // TODO: expand index
+        return GSD_ERROR_NAMELIST_FULL;
+    }
+
+    // add the name to the end of the index
+    strncpy(handle->namelist[handle->namelist_num_entries].name,
+            name,
+            sizeof(struct gsd_namelist_entry) - 1);
+    handle->namelist[handle->namelist_num_entries].name[sizeof(struct gsd_namelist_entry) - 1] = 0;
+
+    // update the namelist on disk
+    ssize_t bytes_written
+        = gsd_pwrite_retry(handle->fd,
+                           &(handle->namelist[handle->namelist_num_entries]),
+                           sizeof(struct gsd_namelist_entry),
+                           handle->header.namelist_location
+                               + sizeof(struct gsd_namelist_entry) * handle->namelist_num_entries);
+
+    if (bytes_written != sizeof(struct gsd_namelist_entry))
+    {
+        return GSD_ERROR_IO;
+    }
+
+    // mark that synchronization is needed
+    handle->needs_sync = true;
+
+    // expand the names[] list if needed
+    if (handle->namelist_num_entries + 1 > handle->names_allocated_size)
+    {
+        handle->names_allocated_size *= 2;
+        handle->names = realloc(handle->names, sizeof(char*) * handle->names_allocated_size);
+        if (handle->names == NULL)
+        {
+            return GSD_ERROR_MEMORY_ALLOCATION_FAILED;
+        }
+    }
+
+    // update the names[] list
+    handle->names[handle->namelist_num_entries]
+        = handle->namelist[handle->namelist_num_entries].name;
+
+    // the names list is no longer sorted
+    handle->names_sorted = false;
+
+    // return the last index in the list
+    handle->namelist_num_entries++;
+    return GSD_SUCCESS;
+}
+
+/** @internal
+    @brief utility function to search the namelist and return the id assigned to the name
+
+    @param handle handle to the open gsd file
+    @param name string name
+
+    @return the id assigned to the name, or UINT16_MAX if not found and append is false
+*/
+uint16_t gsd_get_id(struct gsd_handle* handle, const char* name)
+{
+    uint16_t id = gsd_find_name(handle, name);
+    if (id != UINT16_MAX)
+        {
+        // TODO: indirect ID to the actual ID
+        return id;
+        }
 
     // otherwise, return not found
     return UINT16_MAX;
@@ -707,6 +780,25 @@ int gsd_read_header(struct gsd_handle* handle)
         }
     }
 
+    // allocate and assign pointers to names
+    handle->names_allocated_size = handle->namelist_num_entries;
+    if (handle->names_allocated_size == 0)
+    {
+        handle->names_allocated_size = GSD_INITIAL_NAMELIST_SIZE;
+    }
+
+    handle->names = malloc(sizeof(char *) * handle->names_allocated_size);
+    if (handle->names == NULL)
+    {
+        return GSD_ERROR_MEMORY_ALLOCATION_FAILED;
+    }
+
+    for (i = 0; i < handle->namelist_num_entries; i++)
+    {
+        handle->names[i] = handle->namelist[i].name;
+    }
+    handle->names_sorted = false; // TODO: sort names
+
     // file is corrupt if first index entry is invalid
     if (handle->index[0].location != 0 && !gsd_is_entry_valid(handle, 0))
     {
@@ -931,6 +1023,12 @@ int gsd_truncate(struct gsd_handle* handle)
         handle->namelist = NULL;
     }
 
+    if (handle->names != NULL)
+    {
+        free(handle->names);
+        handle->names = NULL;
+    }
+
     if (handle->index != NULL)
     {
         free(handle->index);
@@ -997,6 +1095,12 @@ int gsd_close(struct gsd_handle* handle)
     {
         free(handle->namelist);
         handle->namelist = NULL;
+    }
+
+    if (handle->names != NULL)
+    {
+        free(handle->names);
+        handle->names = NULL;
     }
 
     // close the file
@@ -1098,10 +1202,22 @@ int gsd_write_chunk(struct gsd_handle* handle,
     struct gsd_index_entry index_entry;
     gsd_zero_memory(&index_entry, sizeof(index_entry), sizeof(index_entry));
     index_entry.frame = handle->cur_frame;
-    index_entry.id = gsd_get_id(handle, name, 1);
+    index_entry.id = gsd_get_id(handle, name);
     if (index_entry.id == UINT16_MAX)
     {
-        return GSD_ERROR_NAMELIST_FULL;
+        // not found, append to the index
+        int retval = gsd_append_name(handle, name);
+        if (retval != GSD_SUCCESS)
+        {
+            return retval;
+        }
+
+        index_entry.id = gsd_get_id(handle, name);
+        if (index_entry.id == UINT16_MAX)
+        {
+            // this should never happen
+            return GSD_ERROR_NAMELIST_FULL;
+        }
     }
     index_entry.type = (uint8_t)type;
     index_entry.N = N;
@@ -1187,7 +1303,7 @@ gsd_find_chunk(struct gsd_handle* handle, uint64_t frame, const char* name)
     }
 
     // find the id for the given name
-    uint16_t match_id = gsd_get_id(handle, name, 0);
+    uint16_t match_id = gsd_get_id(handle, name);
     if (match_id == UINT16_MAX)
     {
         return NULL;
@@ -1347,26 +1463,22 @@ gsd_find_matching_chunk_name(struct gsd_handle* handle, const char* match, const
     }
     else
     {
-        if (prev < handle->namelist[0].name)
+        uint16_t found = gsd_find_name(handle, prev);
+        if (found == UINT16_MAX)
         {
+            // prev is not in the list
             return NULL;
         }
-
-        ptrdiff_t d = prev - handle->namelist[0].name;
-        if (d % sizeof(struct gsd_namelist_entry) != 0)
-        {
-            return NULL;
-        }
-        start = d / sizeof(struct gsd_namelist_entry) + 1;
+        start = (size_t)found + 1;
     }
 
-    size_t match_len = strnlen(match, sizeof(handle->namelist[0].name));
+    size_t match_len = strlen(match);
     size_t i;
     for (i = start; i < handle->namelist_num_entries; i++)
     {
-        if (0 == strncmp(match, handle->namelist[i].name, match_len))
+        if (0 == strncmp(match, handle->names[i], match_len))
         {
-            return handle->namelist[i].name;
+            return handle->names[i];
         }
     }
 

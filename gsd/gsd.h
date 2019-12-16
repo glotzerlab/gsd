@@ -245,6 +245,15 @@ struct gsd_handle
 
     /// Whether the handle requires an fsync call (new data was written)
     bool needs_sync;
+
+    /// True when *names* is sorted
+    bool names_sorted;
+
+    /// Access the names in the namelist
+    char** names;
+
+    /// Number of allocated pointers in *names*
+    size_t names_allocated_size;
 };
 
 /** Specify a version
