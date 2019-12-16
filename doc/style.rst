@@ -43,6 +43,8 @@ C
 
     * Functions: lowercase with words separated by underscores
       ``function_name``.
+    * Structures: lowercase with words separated by underscores
+      ``struct_name``.
     * Constants: all upper-case with words separated by underscores
       ``SOME_CONSTANT``.
 
