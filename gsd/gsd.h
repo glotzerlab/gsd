@@ -196,6 +196,19 @@ struct gsd_namelist_entry
     char name[GSD_NAME_SIZE];
 };
 
+/** Name id mapping
+
+     A string name paired with an ID. Used for storing sorted name/id mappings
+*/
+struct gsd_name_id_pair
+{
+    /// Name
+    char *name;
+
+    /// Entry id
+    uint16_t id;
+};
+
 /** File handle
 
     A handle to an open GSD file.
@@ -246,14 +259,17 @@ struct gsd_handle
     /// Whether the handle requires an fsync call (new data was written)
     bool needs_sync;
 
-    /// True when *names* is sorted
-    bool names_sorted;
-
     /// Access the names in the namelist
-    char** names;
+    struct gsd_name_id_pair* names;
 
     /// Number of allocated pointers in *names*
     size_t names_allocated_size;
+
+    /// True when *names* is sorted
+    bool names_sorted;
+
+    /// Number of namelist entries written to the file
+    uint64_t namelist_written_entries;
 };
 
 /** Specify a version
