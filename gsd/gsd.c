@@ -361,8 +361,6 @@ static void gsd_sort_name_id_pairs(struct gsd_handle* handle)
           handle->namelist_num_entries,
           sizeof(struct gsd_name_id_pair),
           gsd_cmp_name_id_pair);
-
-    handle->names_sorted = true;
 }
 
 /** @internal
@@ -372,71 +370,51 @@ static void gsd_sort_name_id_pairs(struct gsd_handle* handle)
     @param name string name
 
     @return the index of the name in handle->names[] or UINT16_MAX if not found
+    @warning gsd_find_name() only searches entries that have already been commited by
+             gsd_end_frame(). This is fine because a name may only appear once per frame.
 */
 static uint16_t gsd_find_name(struct gsd_handle* handle, const char* name)
 {
-    // search for the name in the namelist
+    // return not found if the list is empty
     if (handle->namelist_written_entries == 0)
     {
         return UINT16_MAX;
     }
 
-    if (handle->names_sorted)
-    {
-        // binary search for the first index entry at the requested frame
-        size_t L = 0;
-        size_t R = handle->namelist_written_entries;
+    // binary search for the first index entry at the requested frame
+    size_t L = 0;
+    size_t R = handle->namelist_written_entries;
 
-        // base case:
-        int cmp = strcmp(name, handle->names[L].name);
+    // base case:
+    int cmp = strcmp(name, handle->names[L].name);
+    if (cmp < 0)
+    {
+        return UINT16_MAX;
+    }
+    else if (cmp == 0)
+    {
+        return L;
+    }
+
+    // progressively narrow the search window by halves
+    do
+    {
+        size_t m = (L + R) / 2;
+        cmp = strcmp(name, handle->names[m].name);
+
         if (cmp < 0)
         {
-            return UINT16_MAX;
+            R = m;
         }
         else if (cmp == 0)
         {
-            return L;
+            return (uint16_t)m;
         }
-
-        // progressively narrow the search window by halves
-        do
+        else
         {
-            size_t m = (L + R) / 2;
-            cmp = strcmp(name, handle->names[m].name);
-
-            if (cmp < 0)
-            {
-                R = m;
-            }
-            else if (cmp == 0)
-            {
-                return (uint16_t)m;
-            }
-            else
-            {
-                L = m;
-            }
-        } while ((R - L) > 1);
-    }
-    else
-    {
-        // less efficient linear search
-        size_t i;
-        for (i = 0; i < handle->namelist_written_entries; i++)
-        {
-            size_t bytes_remaining = &(handle->namelist[handle->namelist_num_entries - 1].name[0])
-                                    + sizeof(handle->namelist[i].name) - handle->names[i].name;
-            // TODO: remove 64 char limit
-            if (bytes_remaining > 63)
-                {
-                bytes_remaining = 63;
-                }
-            if (0 == strncmp(name, handle->names[i].name, bytes_remaining))
-            {
-                return (uint16_t)i;
-            }
+            L = m;
         }
-    }
+    } while ((R - L) > 1);
 
     return UINT16_MAX;
 }
@@ -491,8 +469,8 @@ static int gsd_append_name(uint16_t* id, struct gsd_handle* handle, const char* 
     handle->names[handle->namelist_num_entries].id = handle->namelist_num_entries;
 
     // increment the number of names in the list
-    handle->namelist_num_entries++;
     *id = (uint16_t)handle->namelist_num_entries;
+    handle->namelist_num_entries++;
 
     return GSD_SUCCESS;
 }
@@ -847,7 +825,6 @@ static int gsd_read_header(struct gsd_handle* handle)
 
     // sort the names
     gsd_sort_name_id_pairs(handle);
-    handle->names_sorted = true;
 
     // file is corrupt if first index entry is invalid
     if (handle->index[0].location != 0 && !gsd_is_entry_valid(handle, 0))
@@ -1224,27 +1201,18 @@ int gsd_end_frame(struct gsd_handle* handle)
             return GSD_ERROR_IO;
         }
 
-        // mark that synchronization is needed
-        handle->needs_sync = true;
-        handle->names_sorted = false;
-        handle->namelist_written_entries = handle->namelist_num_entries;
-    }
 
-    // this sync is triggered by the namelist update
-    if (handle->needs_sync)
-    {
+        handle->namelist_written_entries = handle->namelist_num_entries;
+
+        // sort written names for search on the next frame
+        gsd_sort_name_id_pairs(handle);
+
+        // ensure that the new namelist is comitted to the disk
         int retval = fsync(handle->fd);
         if (retval != 0)
         {
             return GSD_ERROR_IO;
         }
-        handle->needs_sync = false;
-    }
-
-    if (!handle->names_sorted)
-    {
-        gsd_sort_name_id_pairs(handle);
-        handle->names_sorted = true;
     }
 
     return GSD_SUCCESS;
@@ -1457,11 +1425,11 @@ int gsd_read_chunk(struct gsd_handle* handle, void* data, const struct gsd_index
         return GSD_ERROR_FILE_CORRUPT;
     }
 
-    // ssize_t bytes_read = gsd_pread_retry(handle->fd, data, size, chunk->location);
-    // if (bytes_read == -1 || bytes_read != size)
-    // {
-    //     return GSD_ERROR_IO;
-    // }
+    ssize_t bytes_read = gsd_pread_retry(handle->fd, data, size, chunk->location);
+    if (bytes_read == -1 || bytes_read != size)
+    {
+        return GSD_ERROR_IO;
+    }
 
     return GSD_SUCCESS;
 }

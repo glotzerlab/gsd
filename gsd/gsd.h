@@ -256,17 +256,11 @@ struct gsd_handle
     /// Flags passed to gsd_open() when opening this handle
     enum gsd_open_flag open_flags;
 
-    /// Whether the handle requires an fsync call (new data was written)
-    bool needs_sync;
-
     /// Access the names in the namelist
     struct gsd_name_id_pair* names;
 
     /// Number of allocated pointers in *names*
     size_t names_allocated_size;
-
-    /// True when *names* is sorted
-    bool names_sorted;
 
     /// Number of namelist entries written to the file
     uint64_t namelist_written_entries;
