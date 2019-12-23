@@ -209,6 +209,28 @@ struct gsd_name_id_pair
     uint16_t id;
 };
 
+/** Array of index entries
+
+    May point to a mapped location of index entries in the file or an in-memory buffer.
+*/
+struct gsd_index_buffer
+{
+    /// Indices in the buffer
+    struct gsd_index_entry* data;
+
+    /// Number of entries in the buffer
+    size_t size;
+
+    /// Number of entries available in the buffer
+    size_t reserved;
+
+    /// Pointer to mapped data (NULL if not mapped)
+    void* mapped_data;
+
+    /// Number of bytes mapped
+    size_t mapped_len;
+};
+
 /** File handle
 
     A handle to an open GSD file.
@@ -226,26 +248,17 @@ struct gsd_handle
     /// The file header
     struct gsd_header header;
 
-    /// Pointer to mapped data
-    void* mapped_data;
+    /// Mapped data chunk index
+    struct gsd_index_buffer file_index;
 
-    /// Size of temporary buffer to store index entries to append
-    size_t append_index_size;
-
-    /// Pointer to the data chunk index
-    struct gsd_index_entry* index;
+    /// Buffered index entries to append to the current frame
+    struct gsd_index_buffer frame_index;
 
     /// Pointer to the name list
     struct gsd_namelist_entry* namelist;
 
     /// Number of entries in the name list
     uint64_t namelist_num_entries;
-
-    /// Number of index entries comitted to the file
-    uint64_t index_written_entries;
-
-    /// Number of entries in the index
-    uint64_t index_num_entries;
 
     /// The index of the last frame in the file
     uint64_t cur_frame;
