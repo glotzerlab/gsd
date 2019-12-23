@@ -255,7 +255,7 @@ static int gsd_is_entry_valid(struct gsd_handle* handle, size_t idx)
 
     @returns GSD_SUCCESS on success, GSD_* error codes on error.
 */
-static int gsd_index_buffer_allocate(struct gsd_index_buffer *buf, size_t reserve)
+inline static int gsd_index_buffer_allocate(struct gsd_index_buffer *buf, size_t reserve)
 {
     if (buf == NULL || buf->mapped_data || buf->data || reserve == 0 || buf->reserved != 0
         || buf->size != 0)
@@ -403,7 +403,7 @@ static int gsd_index_buffer_map(struct gsd_index_buffer *buf, struct gsd_handle 
 
     @returns GSD_SUCCESS on success, GSD_* error codes on error.
 */
-static int gsd_index_buffer_free(struct gsd_index_buffer *buf)
+inline static int gsd_index_buffer_free(struct gsd_index_buffer *buf)
 {
     if (buf == NULL || buf->data == NULL)
     {
@@ -441,7 +441,7 @@ static int gsd_index_buffer_free(struct gsd_index_buffer *buf)
 
     @returns GSD_SUCCESS on success, GSD_* error codes on error.
 */
-static int gsd_index_buffer_add(struct gsd_index_buffer *buf, struct gsd_index_entry **entry)
+inline static int gsd_index_buffer_add(struct gsd_index_buffer *buf, struct gsd_index_entry **entry)
 {
     if (buf == NULL || buf->mapped_data || entry == NULL)
     {
@@ -489,7 +489,7 @@ static int gsd_expand_file_index(struct gsd_handle* handle)
     // multiply the index size each time it grows
     // this allows the index to grow rapidly to accommodate new frames
     // TODO: make some plots and determine a good factor
-    const int multiplication_factor = 8;
+    const int multiplication_factor = 2;
 
     // save the old size and update the new size
     size_t size_old = handle->header.index_allocated_entries;
@@ -580,6 +580,43 @@ inline static int gsd_cmp_name_id_pair(const void *p1, const void *p2)
     return strcmp(((struct gsd_name_id_pair*)p1)->name,
                   ((struct gsd_name_id_pair*)p2)->name);
     }
+
+inline static int gsd_cmp_index_entry(const void *p1, const void *p2)
+{
+    struct gsd_index_entry *a = (struct gsd_index_entry*)p1;
+    struct gsd_index_entry *b = (struct gsd_index_entry*)p2;
+    int result = 0;
+
+    if (a->frame < b->frame)
+    {
+        result = -1;
+    }
+
+    if (a->frame > b->frame)
+    {
+        result = 1;
+    }
+
+    if (a->frame == b->frame)
+    {
+        if (a->id < b->id)
+        {
+            result = -1;
+        }
+
+        if (a->id > b->id)
+        {
+            result = 1;
+        }
+
+        if (a->id == b->id)
+        {
+            result = 0;
+        }
+    }
+
+    return result;
+}
 
 /** @internal
     @brief Sort the name/id mapping
@@ -1224,6 +1261,12 @@ int gsd_end_frame(struct gsd_handle* handle)
         {
             gsd_expand_file_index(handle);
         }
+
+        // sort the index before writing (TODO: uncomment)
+        // qsort(handle->frame_index.data,
+        //       handle->frame_index.size,
+        //       sizeof(struct gsd_index_entry),
+        //       gsd_cmp_index_entry);
 
         // write the frame index entries to the file
         int64_t write_pos = handle->header.index_location
