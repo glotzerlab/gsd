@@ -231,6 +231,22 @@ struct gsd_index_buffer
     size_t mapped_len;
 };
 
+/** Write buffer
+
+    Buffer of small data chunks held for a buffered write at the end of a frame.
+*/
+struct gsd_write_buffer
+{
+    /// Data
+    char *data;
+
+    /// Number of bytes in the buffer
+    size_t size;
+
+    /// Number of bytes available in the buffer
+    size_t reserved;
+};
+
 /** File handle
 
     A handle to an open GSD file.
@@ -251,8 +267,14 @@ struct gsd_handle
     /// Mapped data chunk index
     struct gsd_index_buffer file_index;
 
-    /// Buffered index entries to append to the current frame
+    /// Index entries to append to the current frame
     struct gsd_index_buffer frame_index;
+
+    /// Buffered index entries to append to the current frame
+    struct gsd_index_buffer buffer_index;
+
+    /// Buffered write data
+    struct gsd_write_buffer write_buffer;
 
     /// Pointer to the name list
     struct gsd_namelist_entry* namelist;

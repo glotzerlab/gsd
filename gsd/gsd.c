@@ -60,6 +60,12 @@ enum
     GSD_INITIAL_FRAME_INDEX_SIZE = 16
 };
 
+/// Size of write buffer
+enum
+{
+    GSD_WRITE_BUFFER_SIZE = 16*1024*1024
+};
+
 // define windows wrapper functions
 #ifdef _WIN32
 #define lseek _lseeki64
@@ -243,6 +249,55 @@ static int gsd_is_entry_valid(struct gsd_handle* handle, size_t idx)
     }
 
     return 1;
+}
+
+/** @internal
+    @brief Allocate a write buffer
+
+    @param buf Buffer to allocate.
+    @param reserve Number of bytes to allocate.
+
+    @returns GSD_SUCCESS on success, GSD_* error codes on error.
+*/
+inline static int gsd_write_buffer_allocate(struct gsd_write_buffer *buf, size_t reserve)
+{
+    if (buf == NULL || buf->data || reserve == 0 || buf->reserved != 0
+        || buf->size != 0)
+    {
+        return GSD_ERROR_INVALID_ARGUMENT;
+    }
+
+    buf->data = (char*)malloc(sizeof(char) * reserve);
+    if (buf->data == NULL)
+    {
+        return GSD_ERROR_MEMORY_ALLOCATION_FAILED;
+    }
+
+    buf->size = 0;
+    buf->reserved = reserve;
+    gsd_util_zero_memory(buf->data, reserve);
+
+    return GSD_SUCCESS;
+}
+
+/** @internal
+    @brief Free the memory allocated by the write buffer or unmap the mapped memory.
+
+    @param buf Buffer to free.
+
+    @returns GSD_SUCCESS on success, GSD_* error codes on error.
+*/
+inline static int gsd_write_buffer_free(struct gsd_write_buffer *buf)
+{
+    if (buf == NULL || buf->data == NULL)
+    {
+        return GSD_ERROR_INVALID_ARGUMENT;
+    }
+
+    free(buf->data);
+
+    gsd_util_zero_memory(buf, sizeof(struct gsd_write_buffer));
+    return GSD_SUCCESS;
 }
 
 /** @internal
@@ -574,6 +629,76 @@ static int gsd_expand_file_index(struct gsd_handle* handle)
 
     return GSD_SUCCESS;
 }
+
+/** @internal
+    @brief Flush the write buffer.
+
+    gsd_write_frame() writes small data chunks into the write buffer. It adds index entries for
+    these chunks to gsd_handle::buffer_index with locations offset from the start of the write
+    buffer. gsd_flush_write_buffer() writes the buffer to the end of the file, moves the index
+    entries to gsd_handle::frame_index and updates the location to reference the beginning of the
+    file.
+
+    @param handle Handle to flush the write buffer.
+    @returns GSD_SUCCESS on success or GSD_* error codes on error
+*/
+static int gsd_flush_write_buffer(struct gsd_handle *handle)
+{
+    if (handle == NULL)
+    {
+        return GSD_ERROR_INVALID_ARGUMENT;
+    }
+
+    if (handle->write_buffer.size == 0)
+    {
+        // nothing to do
+        return GSD_SUCCESS;
+    }
+
+    if (handle->buffer_index.size == 0)
+    {
+        // error: bytes in buffer, but no index for them
+        return GSD_ERROR_INVALID_ARGUMENT;
+    }
+
+    // write the buffer to the end of the file
+    uint64_t offset = handle->file_size;
+    ssize_t bytes_written = gsd_io_pwrite_retry(handle->fd,
+                                                handle->write_buffer.data,
+                                                handle->write_buffer.size,
+                                                offset);
+
+    if (bytes_written == -1 || bytes_written != handle->write_buffer.size)
+    {
+        return GSD_ERROR_IO;
+    }
+
+    handle->file_size += handle->write_buffer.size;
+
+    // reset write_buffer for new data
+    handle->write_buffer.size = 0;
+
+    // move buffer_index entries to file_index
+    size_t i;
+    for (i = 0; i < handle->buffer_index.size; i++)
+    {
+        struct gsd_index_entry *new_index;
+        int retval = gsd_index_buffer_add(&handle->frame_index, &new_index);
+        if (retval != GSD_SUCCESS)
+        {
+            return retval;
+        }
+
+        *new_index = handle->buffer_index.data[i];
+        new_index->location += offset;
+    }
+
+    // clear the buffer index for new entries
+    handle->buffer_index.size = 0;
+
+    return GSD_SUCCESS;
+}
+
 
 inline static int gsd_cmp_name_id_pair(const void *p1, const void *p2)
     {
@@ -989,6 +1114,18 @@ static int gsd_initialize_handle(struct gsd_handle* handle)
         {
             return retval;
         }
+
+        retval = gsd_index_buffer_allocate(&handle->buffer_index, GSD_INITIAL_FRAME_INDEX_SIZE);
+        if (retval != GSD_SUCCESS)
+        {
+            return retval;
+        }
+
+        retval = gsd_write_buffer_allocate(&handle->write_buffer, GSD_WRITE_BUFFER_SIZE);
+        if (retval != GSD_SUCCESS)
+        {
+            return retval;
+        }
     }
 
     return GSD_SUCCESS;
@@ -1147,6 +1284,24 @@ int gsd_truncate(struct gsd_handle* handle)
         }
     }
 
+    if (handle->buffer_index.reserved > 0)
+    {
+        retval = gsd_index_buffer_free(&handle->buffer_index);
+        if (retval != GSD_SUCCESS)
+        {
+            return retval;
+        }
+    }
+
+    if (handle->write_buffer.reserved > 0)
+    {
+        retval = gsd_write_buffer_free(&handle->write_buffer);
+        if (retval != GSD_SUCCESS)
+        {
+            return retval;
+        }
+    }
+
     // keep a copy of the old header
     struct gsd_header old_header = handle->header;
     retval = gsd_initialize_file(handle->fd,
@@ -1181,6 +1336,24 @@ int gsd_close(struct gsd_handle* handle)
     if (handle->frame_index.reserved > 0)
     {
         retval = gsd_index_buffer_free(&handle->frame_index);
+        if (retval != GSD_SUCCESS)
+        {
+            return retval;
+        }
+    }
+
+    if (handle->buffer_index.reserved > 0)
+    {
+        retval = gsd_index_buffer_free(&handle->buffer_index);
+        if (retval != GSD_SUCCESS)
+        {
+            return retval;
+        }
+    }
+
+    if (handle->write_buffer.reserved > 0)
+    {
+        retval = gsd_write_buffer_free(&handle->write_buffer);
         if (retval != GSD_SUCCESS)
         {
             return retval;
@@ -1251,6 +1424,13 @@ int gsd_end_frame(struct gsd_handle* handle)
         {
             return GSD_ERROR_IO;
         }
+    }
+
+    // flush the write buffer
+    int retval = gsd_flush_write_buffer(handle);
+    if (retval != 0)
+    {
+        return retval;
     }
 
     // write the frame index to the file
@@ -1337,35 +1517,66 @@ int gsd_write_chunk(struct gsd_handle* handle,
         }
     }
 
-    // add an entry to the frame index
-    struct gsd_index_entry *index_entry;
-    int retval = gsd_index_buffer_add(&handle->frame_index, &index_entry);
-    if (retval != GSD_SUCCESS)
-    {
-        return retval;
-    }
-
-    // populate fields in the index_entry data
-    gsd_util_zero_memory(index_entry, sizeof(struct gsd_index_entry));
-    index_entry->frame = handle->cur_frame;
-    index_entry->id = id;
-    index_entry->type = (uint8_t)type;
-    index_entry->N = N;
-    index_entry->M = M;
+    struct gsd_index_entry entry;
+    // populate fields in the entry's data
+    gsd_util_zero_memory(&entry, sizeof(struct gsd_index_entry));
+    entry.frame = handle->cur_frame;
+    entry.id = id;
+    entry.type = (uint8_t)type;
+    entry.N = N;
+    entry.M = M;
     size_t size = N * M * gsd_sizeof_type(type);
 
-    // find the location at the end of the file for the chunk
-    index_entry->location = handle->file_size;
-
-    // write the data
-    ssize_t bytes_written = gsd_io_pwrite_retry(handle->fd, data, size, index_entry->location);
-    if (bytes_written == -1 || bytes_written != size)
+    // decide whether to write this chunk to the buffer or straight to disk
+    if (size < handle->write_buffer.reserved/2)
     {
-        return GSD_ERROR_IO;
-    }
+        // flush the buffer if this entry won't fit
+        if (size > (handle->write_buffer.reserved - handle->write_buffer.size))
+        {
+            gsd_flush_write_buffer(handle);
+        }
 
-    // update the file_size in the handle
-    handle->file_size += bytes_written;
+        entry.location = handle->write_buffer.size;
+
+        // add an entry to the buffer index
+        struct gsd_index_entry *index_entry;
+
+        int retval = gsd_index_buffer_add(&handle->buffer_index, &index_entry);
+        if (retval != GSD_SUCCESS)
+        {
+            return retval;
+        }
+        *index_entry = entry;
+
+        // copy the data to the buffer
+        memcpy(handle->write_buffer.data + handle->write_buffer.size, data, size);
+        handle->write_buffer.size += size;
+    }
+    else
+    {
+        // add an entry to the frame index
+        struct gsd_index_entry *index_entry;
+
+        int retval = gsd_index_buffer_add(&handle->frame_index, &index_entry);
+        if (retval != GSD_SUCCESS)
+        {
+            return retval;
+        }
+        *index_entry = entry;
+
+        // find the location at the end of the file for the chunk
+        index_entry->location = handle->file_size;
+
+        // write the data
+        ssize_t bytes_written = gsd_io_pwrite_retry(handle->fd, data, size, index_entry->location);
+        if (bytes_written == -1 || bytes_written != size)
+        {
+            return GSD_ERROR_IO;
+        }
+
+        // update the file_size in the handle
+        handle->file_size += bytes_written;
+    }
 
     return GSD_SUCCESS;
 }
