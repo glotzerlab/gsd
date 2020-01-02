@@ -46,4 +46,10 @@ int main(int argc, char **argv)
     double time_per_key = time_span.count() / double(n_keys) / double(n_frames);
 
     std::cout << "Write time: " << time_per_key/1e-6 << " microseconds/key." << endl;
+
+    gsd_close(&handle);
+
+    gsd_open(&handle, "test.gsd", GSD_OPEN_READONLY);
+    std::cout << "Frames: " << gsd_get_nframes(&handle) << std::endl;
+    gsd_close(&handle);
     }
