@@ -196,17 +196,33 @@ struct gsd_namelist_entry
     char name[GSD_NAME_SIZE];
 };
 
-/** Name id mapping
+/** Name/id mapping
 
-     A string name paired with an ID. Used for storing sorted name/id mappings
+    A string name paired with an ID. Used for storing sorted name/id mappings in a hash map.
 */
 struct gsd_name_id_pair
 {
-    /// Name
+    /// Pointer to name (actual name storage is allocated in gsd_handle)
     char *name;
+
+    /// Next name/id pair with the same hash
+    struct gsd_name_id_pair *next;
 
     /// Entry id
     uint16_t id;
+};
+
+/** Name/id hash map
+
+    A hash map of string names to integer identifiers.
+*/
+struct gsd_name_id_map
+{
+    /// Name/id mappings
+    struct gsd_name_id_pair *v;
+
+    /// Number of entries in the mapping
+    size_t size;
 };
 
 /** Array of index entries
@@ -292,7 +308,7 @@ struct gsd_handle
     enum gsd_open_flag open_flags;
 
     /// Access the names in the namelist
-    struct gsd_name_id_pair* names;
+    struct gsd_name_id_map name_map;
 
     /// Number of allocated pointers in *names*
     size_t names_allocated_size;

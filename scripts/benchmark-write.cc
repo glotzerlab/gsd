@@ -28,9 +28,19 @@ int main(int argc, char **argv)
          << "and " << key_size << " double(s) per key" << endl;
     gsd_handle handle;
     gsd_create_and_open(&handle, "test.gsd", "app", "schema", 0, GSD_OPEN_APPEND, 0);
+    for (size_t frame = 0; frame < n_frames/2; frame++)
+        {
+        for (auto name : names)
+            {
+            gsd_write_chunk(&handle, name.c_str(), GSD_TYPE_DOUBLE, key_size, 1, 0, &data[0]);
+            }
+        gsd_end_frame(&handle);
+        }
+    fsync(handle.fd);
+
     auto t1 = chrono::high_resolution_clock::now();
 
-    for (size_t frame = 0; frame < n_frames; frame++)
+    for (size_t frame = 0; frame < n_frames/2; frame++)
         {
         for (auto name : names)
             {
@@ -43,7 +53,7 @@ int main(int argc, char **argv)
     auto t2 = chrono::high_resolution_clock::now();
 
     chrono::duration<double> time_span = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
-    double time_per_key = time_span.count() / double(n_keys) / double(n_frames);
+    double time_per_key = time_span.count() / double(n_keys) / double(n_frames/2);
 
     std::cout << "Write time: " << time_per_key/1e-6 << " microseconds/key." << endl;
 
