@@ -56,4 +56,4 @@ def create_file(N, size, write_keys):
 if __name__ == '__main__':
     names = [str(i) for i in range(65534)]
 
-    create_file(1, 128*1024**2, names)
+    create_file(1, 4*1024**3, names)

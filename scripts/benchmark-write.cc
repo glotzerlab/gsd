@@ -12,7 +12,7 @@ using namespace std;
 int main(int argc, char **argv)
     {
     size_t n_keys = 65534;
-    size_t n_frames = 100;
+    size_t n_frames = 1000;
     size_t key_size = 1;
 
     vector<double> data(key_size);

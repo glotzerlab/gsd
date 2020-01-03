@@ -20,8 +20,8 @@ def read_sequential_file(file, read_keys, nframes_read):
         read_frame(file, i, read_keys)
 
 
-def read_random_file(file, read_keys):
-    frames = list(range(0, file.nframes))
+def read_random_file(file, read_keys, nframes_read):
+    frames = list(range(0, nframes_read))
     random.shuffle(frames)
 
     for i, f in enumerate(frames[:]):
@@ -37,25 +37,25 @@ def read_file(read_keys):
 
         print("Open time:", (end - start)/1e-3, "ms")
 
-        nframes_read = min(f.nframes, 10)
+        nframes_read = min(f.nframes, 100)
 
         # Read the file sequentially and measure the time taken
         start = time.time()
         read_sequential_file(f, read_keys, nframes_read)
         end = time.time()
 
-        print("Sequential read time:", (end - start)/1e-3/nframes_read/len(read_keys), "ms / key")
+        print("Sequential read time:", (end - start)/1e-6/nframes_read/len(read_keys), "us / key")
 
         # # drop the file system cache
-        # call(['sudo', '/bin/sync'])
-        # call(['sudo', '/sbin/sysctl', 'vm.drop_caches=3'], stdout=PIPE)
+        call(['sudo', '/bin/sync'])
+        call(['sudo', '/sbin/sysctl', 'vm.drop_caches=3'], stdout=PIPE)
 
-        # # Read the file randomly and measure the time taken
-        # start = time.time()
-        # read_random_file(f, read_keys)
-        # end = time.time()
+        # Read the file randomly and measure the time taken
+        start = time.time()
+        read_random_file(f, read_keys, nframes_read)
+        end = time.time()
 
-        # print("Random read time:", (end - start)/1e-3/f.nframes/len(read_keys), "ms / key")
+        print("Random read time:", (end - start)/1e-6/nframes_read/len(read_keys), "us / key")
 
 if __name__ == '__main__':
     names = [str(i) for i in range(1000)]
