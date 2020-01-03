@@ -11,7 +11,7 @@ using namespace std;
 
 int main(int argc, char **argv)
     {
-    size_t n_keys = 1000;
+    size_t n_keys = 40000;
     vector<char> data;
 
     vector<string> names;

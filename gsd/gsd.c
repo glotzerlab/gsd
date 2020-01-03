@@ -283,7 +283,7 @@ static int gsd_name_id_map_free(struct gsd_name_id_map* map)
 
     @returns Hashed value of the string.
 */
-static unsigned long gsd_hash_str(const unsigned char *str)
+inline static unsigned long gsd_hash_str(const unsigned char *str)
 {
     unsigned long hash = 5381; // NOLINT
     int c;
@@ -305,7 +305,7 @@ static unsigned long gsd_hash_str(const unsigned char *str)
 
     @returns GSD_SUCCESS on success, GSD_* error codes on error.
 */
-static int gsd_name_id_map_insert(struct gsd_name_id_map* map, const char *str, uint16_t id)
+inline static int gsd_name_id_map_insert(struct gsd_name_id_map* map, const char *str, uint16_t id)
 {
     if (map == NULL || map->v == NULL || map->size == 0)
     {
@@ -354,7 +354,7 @@ static int gsd_name_id_map_insert(struct gsd_name_id_map* map, const char *str, 
 
     @returns The ID if found, or UINT16_MAX if not found.
 */
-static uint16_t gsd_name_id_map_find(struct gsd_name_id_map* map, const char *str)
+inline static uint16_t gsd_name_id_map_find(struct gsd_name_id_map* map, const char *str)
 {
     if (map == NULL || map->v == NULL || map->size == 0)
     {
@@ -394,7 +394,7 @@ static uint16_t gsd_name_id_map_find(struct gsd_name_id_map* map, const char *st
 
     @returns 1 if the entry is valid, 0 if it is not
 */
-static int gsd_is_entry_valid(struct gsd_handle* handle, size_t idx)
+inline static int gsd_is_entry_valid(struct gsd_handle* handle, size_t idx)
 {
     const struct gsd_index_entry entry = handle->file_index.data[idx];
 
@@ -677,7 +677,7 @@ static int gsd_index_buffer_free(struct gsd_index_buffer *buf)
 
     @returns GSD_SUCCESS on success, GSD_* error codes on error.
 */
-static int gsd_index_buffer_add(struct gsd_index_buffer *buf, struct gsd_index_entry **entry)
+inline static int gsd_index_buffer_add(struct gsd_index_buffer *buf, struct gsd_index_entry **entry)
 {
     if (buf == NULL || buf->mapped_data || entry == NULL || buf->reserved == 0)
     {
@@ -930,7 +930,7 @@ inline static int gsd_cmp_index_entry(const void *p1, const void *p2)
       - GSD_ERROR_MEMORY_ALLOCATION_FAILED: Unable to allocate memory.
       - GSD_ERROR_FILE_MUST_BE_WRITABLE: File must not be read only.
 */
-static int gsd_append_name(uint16_t* id, struct gsd_handle* handle, const char* name)
+inline static int gsd_append_name(uint16_t* id, struct gsd_handle* handle, const char* name)
 {
     if (handle->open_flags == GSD_OPEN_READONLY)
     {
@@ -1507,11 +1507,11 @@ int gsd_end_frame(struct gsd_handle* handle)
             gsd_expand_file_index(handle);
         }
 
-        // sort the index before writing (TODO: uncomment)
-        // qsort(handle->frame_index.data,
-        //       handle->frame_index.size,
-        //       sizeof(struct gsd_index_entry),
-        //       gsd_cmp_index_entry);
+        // sort the index before writing (TODO: insertion sort or priority queue?)
+        qsort(handle->frame_index.data,
+              handle->frame_index.size,
+              sizeof(struct gsd_index_entry),
+              gsd_cmp_index_entry);
 
         // write the frame index entries to the file
         int64_t write_pos = handle->header.index_location
@@ -1682,35 +1682,28 @@ gsd_find_chunk(struct gsd_handle* handle, uint64_t frame, const char* name)
         return NULL;
     }
 
-    // binary search for the first index entry at the requested frame
+    // binary search for the index entry
     size_t L = 0;
-    size_t R = handle->file_index.size;
+    size_t R = handle->file_index.size-1;
+    struct gsd_index_entry T;
+    T.frame = frame;
+    T.id = match_id;
 
-    // progressively narrow the search window by halves
-    do
+    while (L <= R)
     {
         size_t m = (L + R) / 2;
-
-        if (frame < handle->file_index.data[m].frame)
+        int cmp = gsd_cmp_index_entry(handle->file_index.data + m, &T);
+        if (cmp == -1)
         {
-            R = m;
+            L = m + 1;
+        }
+        else if (cmp == 1)
+        {
+            R = m - 1;
         }
         else
         {
-            L = m;
-        }
-    } while ((R - L) > 1);
-
-    // this finds L = the rightmost index with the desired frame
-    int64_t cur_index;
-
-    // search all index entries with the matching frame
-    for (cur_index = L; (cur_index >= 0) && (handle->file_index.data[cur_index].frame == frame); cur_index--)
-    {
-        // if the frame matches, check the id
-        if (match_id == handle->file_index.data[cur_index].id)
-        {
-            return &(handle->file_index.data[cur_index]);
+            return &(handle->file_index.data[m]);
         }
     }
 
