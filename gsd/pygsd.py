@@ -147,7 +147,7 @@ class GSDFile(object):
                 and self.__header.gsd_version != (0 << 16 | 3)):
             raise RuntimeError("Unsupported GSD file version: "
                                + str(self.__file))
-        if self.__header.gsd_version >= (2 << 16):
+        if self.__header.gsd_version >= (3 << 16):
             raise RuntimeError("Unsupported GSD file version: "
                                + str(self.__file))
 
@@ -253,6 +253,7 @@ class GSDFile(object):
         else:
             return None
 
+        # TODO: optimize for v2.0 files
         # binary search for the first index entry at the requested frame
         L = 0
         R = len(self.__index)

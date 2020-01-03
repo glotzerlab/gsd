@@ -7,6 +7,11 @@ import gsd.pygsd
 import numpy
 import platform
 import pytest
+import random
+import pathlib
+import os
+
+test_path = pathlib.Path(os.path.realpath(__file__)).parent
 
 
 def test_create(tmp_path):
@@ -84,7 +89,7 @@ def test_metadata(tmp_path, open_mode):
         assert f.schema == 'none'
         assert f.schema_version == (1, 2)
         assert f.nframes == 150
-        assert f.gsd_version == (1, 0)
+        assert f.gsd_version == (2, 0)
 
     # test again with pygsd
     with gsd.pygsd.GSDFile(file=open(str(tmp_path / 'test_metadata.gsd'),
@@ -95,7 +100,7 @@ def test_metadata(tmp_path, open_mode):
         assert f.schema == 'none'
         assert f.schema_version == (1, 2)
         assert f.nframes == 150
-        assert f.gsd_version == (1, 0)
+        assert f.gsd_version == (2, 0)
 
 
 def test_append(tmp_path, open_mode):
@@ -520,3 +525,40 @@ def test_chunk_name_limit(tmp_path, open_mode):
         # see https://github.com/glotzerlab/gsd/issues/43
         with pytest.raises(Exception):
             f.write_chunk(name='128', data=numpy.array([i], dtype=numpy.int32))
+
+
+def test_many_names(tmp_path, open_mode):
+    values = list(range(1000))
+
+    with gsd.fl.open(name=tmp_path / 'test.gsd', mode=open_mode.write,
+                        application='test_many_names',
+                        schema='none',
+                        schema_version=[1, 2]) as f:
+        for frame in range(5):
+            random.shuffle(values)
+            for value in values:
+                f.write_chunk(name=str(value),
+                                data=numpy.array([value * 13], dtype=numpy.int32))
+            f.end_frame()
+
+    with gsd.fl.open(name=tmp_path / 'test.gsd',
+                     mode=open_mode.read,
+                     application='test_many_names',
+                     schema='none',
+                     schema_version=[1, 2]) as f:
+
+        for frame in range(5):
+            random.shuffle(values)
+            for value in values:
+                data=numpy.array([value * 13], dtype=numpy.int32)
+                data_read = f.read_chunk(frame=frame, name=str(value))
+                numpy.testing.assert_array_equal(data, data_read)
+
+    with gsd.pygsd.GSDFile(file=open(str(tmp_path / 'test.gsd'), mode='rb')) \
+            as f:
+        for frame in range(5):
+            random.shuffle(values)
+            for value in values:
+                data=numpy.array([value * 13], dtype=numpy.int32)
+                data_read = f.read_chunk(frame=frame, name=str(value))
+                numpy.testing.assert_array_equal(data, data_read)

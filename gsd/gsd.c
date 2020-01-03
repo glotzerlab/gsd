@@ -841,6 +841,12 @@ inline static int gsd_index_buffer_sort(struct gsd_index_buffer *buf)
         return GSD_ERROR_INVALID_ARGUMENT;
     }
 
+    // arrays of size 0 or 1 are already sorted
+    if (buf->size <= 1)
+    {
+        return GSD_SUCCESS;
+    }
+
     gsd_heapify(buf);
 
     size_t end = buf->size - 1;
@@ -870,7 +876,6 @@ static int gsd_expand_file_index(struct gsd_handle* handle)
 
     // multiply the index size each time it grows
     // this allows the index to grow rapidly to accommodate new frames
-    // TODO: make some plots and determine a good factor
     const int multiplication_factor = 2;
 
     // save the old size and update the new size
@@ -1102,7 +1107,7 @@ static int gsd_initialize_file(int fd,
     gsd_util_zero_memory(&header, sizeof(header));
 
     header.magic = GSD_MAGIC_ID;
-    header.gsd_version = gsd_make_version(1, 0);
+    header.gsd_version = gsd_make_version(2, 0);
     strncpy(header.application, application, sizeof(header.application) - 1);
     header.application[sizeof(header.application) - 1] = 0;
     strncpy(header.schema, schema, sizeof(header.schema) - 1);
@@ -1194,7 +1199,7 @@ static int gsd_initialize_handle(struct gsd_handle* handle)
         return GSD_ERROR_INVALID_GSD_FILE_VERSION;
     }
 
-    if (handle->header.gsd_version >= gsd_make_version(2, 0))
+    if (handle->header.gsd_version >= gsd_make_version(3, 0))
     {
         return GSD_ERROR_INVALID_GSD_FILE_VERSION;
     }
@@ -1617,7 +1622,11 @@ int gsd_end_frame(struct gsd_handle* handle)
         }
 
         // sort the index before writing
-        gsd_index_buffer_sort(&handle->frame_index);
+        retval = gsd_index_buffer_sort(&handle->frame_index);
+        if (retval != 0)
+        {
+            return retval;
+        }
 
         // write the frame index entries to the file
         int64_t write_pos = handle->header.index_location
@@ -1788,28 +1797,66 @@ gsd_find_chunk(struct gsd_handle* handle, uint64_t frame, const char* name)
         return NULL;
     }
 
-    // binary search for the index entry
-    size_t L = 0;
-    size_t R = handle->file_index.size-1;
-    struct gsd_index_entry T;
-    T.frame = frame;
-    T.id = match_id;
-
-    while (L <= R)
+    if (handle->header.gsd_version >= gsd_make_version(2,0))
     {
-        size_t m = (L + R) / 2;
-        int cmp = gsd_cmp_index_entry(handle->file_index.data + m, &T);
-        if (cmp == -1)
+        // gsd 2.0 files sort the entire index
+        // binary search for the index entry
+        size_t L = 0;
+        size_t R = handle->file_index.size-1;
+        struct gsd_index_entry T;
+        T.frame = frame;
+        T.id = match_id;
+
+        while (L <= R)
         {
-            L = m + 1;
+            size_t m = (L + R) / 2;
+            int cmp = gsd_cmp_index_entry(handle->file_index.data + m, &T);
+            if (cmp == -1)
+            {
+                L = m + 1;
+            }
+            else if (cmp == 1)
+            {
+                R = m - 1;
+            }
+            else
+            {
+                return &(handle->file_index.data[m]);
+            }
         }
-        else if (cmp == 1)
+    }
+    else
+    {
+        // gsd 1.0 file: use binary search to find the frame and linear search to find the entry
+        size_t L = 0;
+        size_t R = handle->file_index.size;
+
+        // progressively narrow the search window by halves
+        do
         {
-            R = m - 1;
-        }
-        else
+            size_t m = (L + R) / 2;
+
+            if (frame < handle->file_index.data[m].frame)
+            {
+                R = m;
+            }
+            else
+            {
+                L = m;
+            }
+        } while ((R - L) > 1);
+
+        // this finds L = the rightmost index with the desired frame
+        int64_t cur_index;
+
+        // search all index entries with the matching frame
+        for (cur_index = L; (cur_index >= 0) && (handle->file_index.data[cur_index].frame == frame); cur_index--)
         {
-            return &(handle->file_index.data[m]);
+            // if the frame matches, check the id
+            if (match_id == handle->file_index.data[cur_index].id)
+            {
+                return &(handle->file_index.data[cur_index]);
+            }
         }
     }
 
