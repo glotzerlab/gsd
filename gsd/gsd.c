@@ -708,6 +708,152 @@ inline static int gsd_index_buffer_add(struct gsd_index_buffer *buf, struct gsd_
     return GSD_SUCCESS;
 }
 
+inline static int gsd_cmp_index_entry(const void *p1, const void *p2)
+{
+    struct gsd_index_entry *a = (struct gsd_index_entry*)p1;
+    struct gsd_index_entry *b = (struct gsd_index_entry*)p2;
+    int result = 0;
+
+    if (a->frame < b->frame)
+    {
+        result = -1;
+    }
+
+    if (a->frame > b->frame)
+    {
+        result = 1;
+    }
+
+    if (a->frame == b->frame)
+    {
+        if (a->id < b->id)
+        {
+            result = -1;
+        }
+
+        if (a->id > b->id)
+        {
+            result = 1;
+        }
+
+        if (a->id == b->id)
+        {
+            result = 0;
+        }
+    }
+
+    return result;
+}
+
+
+/** @internal
+    @brief Compute heap parent node.
+    @param i Node index.
+*/
+inline static size_t gsd_heap_parent(size_t i)
+{
+    return (i-1)/2;
+}
+
+/** @internal
+    @brief Compute heap left child.
+    @param i Node index.
+*/
+inline static size_t gsd_heap_left_child(size_t i)
+{
+    return 2*i + 1;
+}
+
+/** @internal
+    @brief Swap the nodes *a* and *b* in the buffer
+    @param buf Buffer.
+    @param a First index to swap.
+    @param b Second index to swap.
+*/
+inline static void gsd_heap_swap(struct gsd_index_buffer *buf, size_t a, size_t b)
+{
+    struct gsd_index_entry tmp = buf->data[a];
+    buf->data[a] = buf->data[b];
+    buf->data[b] = tmp;
+}
+
+/** @internal
+    @brief Shift heap node downward
+    @param buf Buffer.
+    @param start First index of the valid heap in *buf*.
+*/
+inline static void gsd_heap_shift_down(struct gsd_index_buffer *buf, size_t start, size_t end)
+{
+    size_t root = start;
+
+    while (gsd_heap_left_child(root) <= end)
+    {
+        size_t child = gsd_heap_left_child(root);
+        size_t swap = root;
+
+        if (gsd_cmp_index_entry(buf->data + swap, buf->data + child) < 0)
+        {
+            swap = child;
+        }
+        if (child+1 <= end && gsd_cmp_index_entry(buf->data + swap, buf->data + child + 1) < 0)
+        {
+            swap = child+1;
+        }
+
+        if (swap == root)
+        {
+            return;
+        }
+
+        gsd_heap_swap(buf, root, swap);
+        root = swap;
+    }
+}
+
+/** @internal
+    @brief Convert unordered index buffer to a heap
+    @param buf Buffer.
+*/
+inline static void gsd_heapify(struct gsd_index_buffer *buf)
+{
+    ssize_t start = gsd_heap_parent(buf->size-1);
+
+    while (start >= 0)
+    {
+        gsd_heap_shift_down(buf, start, buf->size - 1);
+        start--;
+    }
+}
+
+/** @internal
+    @brief Sort the index buffer.
+
+    @param buf Buffer to sort.
+
+    Sorts an in-memory index buffer. Does not accept mapped indices.
+
+    @returns GSD_SUCCESS on success, GSD_* error codes on error.
+*/
+inline static int gsd_index_buffer_sort(struct gsd_index_buffer *buf)
+{
+    if (buf == NULL || buf->mapped_data || buf->reserved == 0)
+    {
+        return GSD_ERROR_INVALID_ARGUMENT;
+    }
+
+    gsd_heapify(buf);
+
+    size_t end = buf->size - 1;
+    while (end > 0)
+    {
+        gsd_heap_swap(buf, end, 0);
+        end = end - 1;
+        gsd_heap_shift_down(buf, 0, end);
+    }
+
+    return GSD_SUCCESS;
+}
+
 /** @internal
     @brief Utility function to expand the memory space for the index block in the file.
 
@@ -878,43 +1024,6 @@ static int gsd_flush_write_buffer(struct gsd_handle *handle)
     handle->buffer_index.size = 0;
 
     return GSD_SUCCESS;
-}
-
-inline static int gsd_cmp_index_entry(const void *p1, const void *p2)
-{
-    struct gsd_index_entry *a = (struct gsd_index_entry*)p1;
-    struct gsd_index_entry *b = (struct gsd_index_entry*)p2;
-    int result = 0;
-
-    if (a->frame < b->frame)
-    {
-        result = -1;
-    }
-
-    if (a->frame > b->frame)
-    {
-        result = 1;
-    }
-
-    if (a->frame == b->frame)
-    {
-        if (a->id < b->id)
-        {
-            result = -1;
-        }
-
-        if (a->id > b->id)
-        {
-            result = 1;
-        }
-
-        if (a->id == b->id)
-        {
-            result = 0;
-        }
-    }
-
-    return result;
 }
 
 /** @internal
@@ -1507,11 +1616,8 @@ int gsd_end_frame(struct gsd_handle* handle)
             gsd_expand_file_index(handle);
         }
 
-        // sort the index before writing (TODO: insertion sort or priority queue?)
-        qsort(handle->frame_index.data,
-              handle->frame_index.size,
-              sizeof(struct gsd_index_entry),
-              gsd_cmp_index_entry);
+        // sort the index before writing
+        gsd_index_buffer_sort(&handle->frame_index);
 
         // write the frame index entries to the file
         int64_t write_pos = handle->header.index_location
