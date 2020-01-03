@@ -10,6 +10,7 @@ import pytest
 import random
 import pathlib
 import os
+import shutil
 
 test_path = pathlib.Path(os.path.realpath(__file__)).parent
 
@@ -554,11 +555,96 @@ def test_many_names(tmp_path, open_mode):
                 data_read = f.read_chunk(frame=frame, name=str(value))
                 numpy.testing.assert_array_equal(data, data_read)
 
-    with gsd.pygsd.GSDFile(file=open(str(tmp_path / 'test.gsd'), mode='rb')) \
-            as f:
+    with gsd.pygsd.GSDFile(file=open(str(tmp_path / 'test.gsd'),
+                                     mode='rb')) as f:
         for frame in range(5):
             random.shuffle(values)
             for value in values:
                 data=numpy.array([value * 13], dtype=numpy.int32)
+                data_read = f.read_chunk(frame=frame, name=str(value))
+                numpy.testing.assert_array_equal(data, data_read)
+
+
+def test_gsd_v1_read(open_mode):
+    values = list(range(127))
+
+    with gsd.fl.open(name=test_path / 'test_gsd_v1.gsd',
+                     mode=open_mode.read,
+                     application='test_gsd_v1',
+                     schema='none',
+                     schema_version=[1, 2]) as f:
+
+        assert f.gsd_version == (1, 0)
+
+        for frame in range(5):
+            random.shuffle(values)
+            for value in values:
+                data = numpy.array([value * 13], dtype=numpy.int32)
+                data_read = f.read_chunk(frame=frame, name=str(value))
+                numpy.testing.assert_array_equal(data, data_read)
+
+    with gsd.pygsd.GSDFile(file=open(str(test_path / 'test_gsd_v1.gsd'),
+                                     mode='rb')) as f:
+
+        assert f.gsd_version == (1, 0)
+
+        for frame in range(5):
+            random.shuffle(values)
+            for value in values:
+                data = numpy.array([value * 13], dtype=numpy.int32)
+                data_read = f.read_chunk(frame=frame, name=str(value))
+                numpy.testing.assert_array_equal(data, data_read)
+
+
+def test_gsd_v1_update(tmp_path, open_mode):
+    values = list(range(127))
+
+    shutil.copy(test_path / 'test_gsd_v1.gsd', tmp_path / 'test_gsd_v1.gsd')
+
+    with gsd.fl.open(name=tmp_path / 'test_gsd_v1.gsd',
+                     mode=open_mode.write,
+                     application='test_gsd_v1',
+                     schema='none',
+                     schema_version=[1, 2]) as f:
+
+        assert f.gsd_version == (1, 0)
+
+        # TODO: call update method
+
+        assert f.gsd_version == (2, 0)
+
+        for frame in range(5):
+            random.shuffle(values)
+            for value in values:
+                data = numpy.array([value * 13], dtype=numpy.int32)
+                data_read = f.read_chunk(frame=frame, name=str(value))
+                numpy.testing.assert_array_equal(data, data_read)
+
+    with gsd.fl.open(name=tmp_path / 'test_gsd_v1.gsd',
+                     mode=open_mode.read,
+                     application='test_gsd_v1',
+                     schema='none',
+                     schema_version=[1, 2]) as f:
+
+        assert f.gsd_version == (2, 0)
+
+        for frame in range(5):
+            random.shuffle(values)
+            for value in values:
+                data = numpy.array([value * 13], dtype=numpy.int32)
+                data_read = f.read_chunk(frame=frame, name=str(value))
+                numpy.testing.assert_array_equal(data, data_read)
+
+
+
+    with gsd.pygsd.GSDFile(file=open(str(tmp_path / 'test_gsd_v1.gsd'),
+                                     mode='rb')) as f:
+
+        assert f.gsd_version == (2, 0)
+
+        for frame in range(5):
+            random.shuffle(values)
+            for value in values:
+                data = numpy.array([value * 13], dtype=numpy.int32)
                 data_read = f.read_chunk(frame=frame, name=str(value))
                 numpy.testing.assert_array_equal(data, data_read)
