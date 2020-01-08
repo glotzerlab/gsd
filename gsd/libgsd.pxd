@@ -59,19 +59,36 @@ cdef extern from "gsd.h" nogil:
     cdef struct gsd_namelist_entry:
         char name[64]
 
+    cdef struct gsd_index_buffer:
+        gsd_index_entry *data
+        size_t size
+        size_t reserved
+        void *mapped_data
+        size_t mapped_len
+
+    cdef struct gsd_name_id_map:
+        void *v
+        size_t size
+
+    cdef struct gsd_write_buffer:
+        char *data
+        size_t size
+        size_t reserved
+
     cdef struct gsd_handle:
         int fd
         gsd_header header
-        void *mapped_data
-        size_t append_index_size
-        gsd_index_entry *index
+        gsd_index_buffer file_index
+        gsd_index_buffer frame_index
+        gsd_index_buffer buffer_index
+        gsd_write_buffer write_buffer
         gsd_namelist_entry *namelist
         uint64_t namelist_num_entries
-        uint64_t index_written_entries
-        uint64_t index_num_entries
         uint64_t cur_frame
         int64_t file_size
         gsd_open_flag open_flags
+        gsd_name_id_map name_map
+        uint64_t namelist_written_entries
 
     uint32_t gsd_make_version(unsigned int major, unsigned int minor)
     int gsd_create(const char *fname,
@@ -107,3 +124,4 @@ cdef extern from "gsd.h" nogil:
     const char *gsd_find_matching_chunk_name(gsd_handle* handle,
                                              const char *match,
                                              const char *prev)
+    int gsd_upgrade(gsd_handle *handle)
