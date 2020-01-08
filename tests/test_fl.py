@@ -602,14 +602,15 @@ def test_gsd_v1_update(tmp_path, open_mode):
     shutil.copy(test_path / 'test_gsd_v1.gsd', tmp_path / 'test_gsd_v1.gsd')
 
     with gsd.fl.open(name=tmp_path / 'test_gsd_v1.gsd',
-                     mode=open_mode.write,
+                     mode='rb+',
                      application='test_gsd_v1',
                      schema='none',
                      schema_version=[1, 2]) as f:
 
+        print(f.gsd_version)
         assert f.gsd_version == (1, 0)
 
-        # TODO: call update method
+        f.upgrade()
 
         assert f.gsd_version == (2, 0)
 
