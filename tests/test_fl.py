@@ -532,14 +532,14 @@ def test_many_names(tmp_path, open_mode):
     values = list(range(1000))
 
     with gsd.fl.open(name=tmp_path / 'test.gsd', mode=open_mode.write,
-                        application='test_many_names',
-                        schema='none',
-                        schema_version=[1, 2]) as f:
+                     application='test_many_names',
+                     schema='none',
+                     schema_version=[1, 2]) as f:
         for frame in range(5):
             random.shuffle(values)
             for value in values:
                 f.write_chunk(name=str(value),
-                                data=numpy.array([value * 13], dtype=numpy.int32))
+                              data=numpy.array([value * 13], dtype=numpy.int32))
             f.end_frame()
 
     with gsd.fl.open(name=tmp_path / 'test.gsd',
@@ -551,7 +551,7 @@ def test_many_names(tmp_path, open_mode):
         for frame in range(5):
             random.shuffle(values)
             for value in values:
-                data=numpy.array([value * 13], dtype=numpy.int32)
+                data = numpy.array([value * 13], dtype=numpy.int32)
                 data_read = f.read_chunk(frame=frame, name=str(value))
                 numpy.testing.assert_array_equal(data, data_read)
 
@@ -560,7 +560,7 @@ def test_many_names(tmp_path, open_mode):
         for frame in range(5):
             random.shuffle(values)
             for value in values:
-                data=numpy.array([value * 13], dtype=numpy.int32)
+                data = numpy.array([value * 13], dtype=numpy.int32)
                 data_read = f.read_chunk(frame=frame, name=str(value))
                 numpy.testing.assert_array_equal(data, data_read)
 
@@ -635,8 +635,6 @@ def test_gsd_v1_update(tmp_path, open_mode):
                 data = numpy.array([value * 13], dtype=numpy.int32)
                 data_read = f.read_chunk(frame=frame, name=str(value))
                 numpy.testing.assert_array_equal(data, data_read)
-
-
 
     with gsd.pygsd.GSDFile(file=open(str(tmp_path / 'test_gsd_v1.gsd'),
                                      mode='rb')) as f:
