@@ -48,12 +48,6 @@ enum
     GSD_INITIAL_NAMELIST_SIZE = 65535
 };
 
-/// Size of the temporary copy buffer
-enum
-{
-    GSD_COPY_BUFFER_SIZE = 1024 * 16
-};
-
 /// Size of initial frame index
 enum
 {
@@ -2007,6 +2001,100 @@ gsd_find_matching_chunk_name(struct gsd_handle* handle, const char* match, const
 
     // searched past the end of the list, return NULL
     return NULL;
+}
+
+int gsd_upgrade(struct gsd_handle* handle)
+{
+    if (handle == NULL)
+    {
+        return GSD_ERROR_INVALID_ARGUMENT;
+    }
+    if (handle->open_flags == GSD_OPEN_READONLY)
+    {
+        return GSD_ERROR_INVALID_ARGUMENT;
+    }
+
+    if (handle->header.gsd_version < gsd_make_version(2,0))
+    {
+        if (handle->file_index.size > 0)
+        {
+            // make a copy of the file index
+            struct gsd_index_buffer buf;
+            gsd_util_zero_memory(&buf, sizeof(struct gsd_index_buffer));
+            int retval = gsd_index_buffer_allocate(&buf, handle->file_index.size);
+            if (retval != GSD_SUCCESS)
+            {
+                return retval;
+            }
+            memcpy(buf.data, handle->file_index.data, sizeof(struct gsd_index_entry) * handle->file_index.size);
+            buf.size = handle->file_index.size;
+
+            // sort the copy and write it back out to the file
+            retval = gsd_index_buffer_sort(&buf);
+            if (retval != GSD_SUCCESS)
+            {
+                gsd_index_buffer_free(&buf);
+                return retval;
+            }
+
+            ssize_t bytes_written = gsd_io_pwrite_retry(handle->fd,
+                                                        buf.data,
+                                                        sizeof(struct gsd_index_entry) * buf.size,
+                                                        handle->header.index_location);
+
+            if (bytes_written == -1 || bytes_written != sizeof(struct gsd_index_entry) * buf.size)
+            {
+                gsd_index_buffer_free(&buf);
+                return GSD_ERROR_IO;
+            }
+
+            retval = gsd_index_buffer_free(&buf);
+            if (retval != GSD_SUCCESS)
+            {
+                return retval;
+            }
+
+            // sync the updated index
+            retval = fsync(handle->fd);
+            if (retval != 0)
+            {
+                return GSD_ERROR_IO;
+            }
+        }
+
+        // label the file as a v2.0 file
+        handle->header.gsd_version = gsd_make_version(2,0);
+
+        // write the new header out
+        ssize_t bytes_written
+            = gsd_io_pwrite_retry(handle->fd, &(handle->header), sizeof(struct gsd_header), 0);
+        if (bytes_written != sizeof(struct gsd_header))
+        {
+            return GSD_ERROR_IO;
+        }
+
+        // sync the updated header
+        int retval = fsync(handle->fd);
+        if (retval != 0)
+        {
+            return GSD_ERROR_IO;
+        }
+
+        // remap the file index
+        retval = gsd_index_buffer_free(&handle->file_index);
+        if (retval != 0)
+        {
+            return retval;
+        }
+
+        retval = gsd_index_buffer_map(&handle->file_index, handle);
+        if (retval != 0)
+        {
+            return retval;
+        }
+    }
+
+    return GSD_SUCCESS;
 }
 
 // undefine windows wrapper macros

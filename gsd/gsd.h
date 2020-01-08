@@ -310,9 +310,6 @@ struct gsd_handle
     /// Access the names in the namelist
     struct gsd_name_id_map name_map;
 
-    /// Number of allocated pointers in *names*
-    size_t names_allocated_size;
-
     /// Number of namelist entries written to the file
     uint64_t namelist_written_entries;
 };
@@ -569,6 +566,21 @@ size_t gsd_sizeof_type(enum gsd_type type);
 */
 const char*
 gsd_find_matching_chunk_name(struct gsd_handle* handle, const char* match, const char* prev);
+
+
+/** Upgrade a GSD file to the latest specification
+
+    @param handle Handle to an open GSD file
+
+    @pre *handle* was opened by gsd_open() with a writable mode.
+    @return
+      - GSD_SUCCESS (0) on success. Negative value on failure:
+      - GSD_ERROR_IO: IO error (check errno).
+      - GSD_ERROR_INVALID_ARGUMENT: *handle* is NULL
+      - GSD_ERROR_FILE_MUST_BE_WRITABLE: The file was opened in read-only mode.
+*/
+int gsd_upgrade(struct gsd_handle* handle);
+
 
 #ifdef __cplusplus
 }

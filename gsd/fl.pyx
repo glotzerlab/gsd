@@ -301,7 +301,7 @@ cdef class GSDFile:
 
         if overwrite:
             # create a new file or overwrite an existing one
-            logger.info('opening file: ' + name + ' with mode: ' + mode
+            logger.info('overwriting file: ' + name + ' with mode: ' + mode
                         + ', application: ' + application
                         + ', schema: ' + schema
                         + ', and schema_version: ' + str(schema_version))
@@ -847,6 +847,24 @@ cdef class GSDFile:
                                                               c_found)
 
         return retval
+
+    def upgrade(self):
+        """ upgrade()
+
+        Upgrade a GSD file to the v2 specification in place. The file must be
+        open in a writable mode.
+
+        """
+
+        if not self.__is_open:
+            raise ValueError("File is not open")
+
+        logger.info('upgrading file: ' + self.name)
+
+        with nogil:
+            retval = libgsd.gsd_upgrade(&self.__handle)
+
+        __raise_on_error(retval, self.name)
 
     def __enter__(self):
         return self
