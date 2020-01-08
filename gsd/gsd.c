@@ -221,13 +221,11 @@ static int gsd_name_id_map_allocate(struct gsd_name_id_map* map, size_t size)
         return GSD_ERROR_INVALID_ARGUMENT;
     }
 
-    map->v = (struct gsd_name_id_pair*)malloc(sizeof(struct gsd_name_id_pair) * size);
+    map->v = calloc(size, sizeof(struct gsd_name_id_pair));
     if (map->v == NULL)
     {
         return GSD_ERROR_MEMORY_ALLOCATION_FAILED;
     }
-
-    gsd_util_zero_memory(map->v, sizeof(struct gsd_name_id_pair) * size);
 
     map->size = size;
 
@@ -252,11 +250,14 @@ static int gsd_name_id_map_free(struct gsd_name_id_map* map)
     size_t i;
     for (i = 0; i < map->size; i++)
     {
+        free(map->v[i].name);
+
         struct gsd_name_id_pair *cur = map->v[i].next;
         while (cur != NULL)
         {
             struct gsd_name_id_pair *prev = cur;
             cur = cur->next;
+            free(prev->name);
             free(prev);
         }
     }
@@ -311,7 +312,12 @@ inline static int gsd_name_id_map_insert(struct gsd_name_id_map* map, const char
     // base case: no conflict
     if (map->v[hash].name == NULL)
     {
-        map->v[hash].name = (char*)str;
+        map->v[hash].name = calloc(strlen(str)+1, sizeof(char));
+        if (map->v[hash].name == NULL)
+        {
+            return GSD_ERROR_MEMORY_ALLOCATION_FAILED;
+        }
+        memcpy(map->v[hash].name, str, strlen(str)+1);
         map->v[hash].id = id;
         map->v[hash].next = NULL;
     }
@@ -326,13 +332,18 @@ inline static int gsd_name_id_map_insert(struct gsd_name_id_map* map, const char
         }
 
         // allocate and insert a new entry
-        insert_point->next = (struct gsd_name_id_pair*)malloc(sizeof(struct gsd_name_id_pair));
+        insert_point->next = malloc(sizeof(struct gsd_name_id_pair));
         if (insert_point->next == NULL)
         {
             return GSD_ERROR_MEMORY_ALLOCATION_FAILED;
         }
 
-        insert_point->next->name = (char*)str;
+        insert_point->next->name = calloc(strlen(str)+1, sizeof(char));
+        if (insert_point->next->name == NULL)
+        {
+            return GSD_ERROR_MEMORY_ALLOCATION_FAILED;
+        }
+        memcpy(insert_point->next->name, str, strlen(str)+1);
         insert_point->next->id = id;
         insert_point->next->next = NULL;
     }
@@ -434,7 +445,7 @@ inline static int gsd_is_entry_valid(struct gsd_handle* handle, size_t idx)
 
     @returns GSD_SUCCESS on success, GSD_* error codes on error.
 */
-static int gsd_write_buffer_allocate(struct gsd_write_buffer *buf, size_t reserve)
+static int gsd_byte_buffer_allocate(struct gsd_byte_buffer *buf, size_t reserve)
 {
     if (buf == NULL || buf->data || reserve == 0 || buf->reserved != 0
         || buf->size != 0)
@@ -442,7 +453,7 @@ static int gsd_write_buffer_allocate(struct gsd_write_buffer *buf, size_t reserv
         return GSD_ERROR_INVALID_ARGUMENT;
     }
 
-    buf->data = (char*)malloc(sizeof(char) * reserve);
+    buf->data = calloc(reserve, sizeof(char));
     if (buf->data == NULL)
     {
         return GSD_ERROR_MEMORY_ALLOCATION_FAILED;
@@ -450,7 +461,44 @@ static int gsd_write_buffer_allocate(struct gsd_write_buffer *buf, size_t reserv
 
     buf->size = 0;
     buf->reserved = reserve;
-    gsd_util_zero_memory(buf->data, reserve);
+
+    return GSD_SUCCESS;
+}
+
+/** @internal
+    @brief Append bytes to a byte buffer
+
+    @param buf Buffer to append to.
+    @param data Data to append.
+    @param size Number of bytes in *data*.
+
+    @returns GSD_SUCCESS on success, GSD_* error codes on error.
+*/
+static int gsd_byte_buffer_append(struct gsd_byte_buffer *buf, const char *data, size_t size)
+{
+    if (buf == NULL || buf->data == NULL || size == 0 || buf->reserved == 0)
+    {
+        return GSD_ERROR_INVALID_ARGUMENT;
+    }
+
+    if (buf->size + size > buf->reserved)
+    {
+        // reallocate by doubling
+        size_t new_reserved = buf->reserved * 2;
+        buf->data = realloc(buf->data, sizeof(char) * new_reserved);
+        if (buf->data == NULL)
+        {
+            return GSD_ERROR_MEMORY_ALLOCATION_FAILED;
+        }
+
+        // zero the new memory
+        gsd_util_zero_memory(buf->data + buf->reserved,
+                             sizeof(char) * (new_reserved - buf->reserved));
+        buf->reserved = new_reserved;
+    }
+
+    memcpy(buf->data + buf->size, data, size);
+    buf->size += size;
 
     return GSD_SUCCESS;
 }
@@ -462,7 +510,7 @@ static int gsd_write_buffer_allocate(struct gsd_write_buffer *buf, size_t reserv
 
     @returns GSD_SUCCESS on success, GSD_* error codes on error.
 */
-static int gsd_write_buffer_free(struct gsd_write_buffer *buf)
+static int gsd_byte_buffer_free(struct gsd_byte_buffer *buf)
 {
     if (buf == NULL || buf->data == NULL)
     {
@@ -471,7 +519,7 @@ static int gsd_write_buffer_free(struct gsd_write_buffer *buf)
 
     free(buf->data);
 
-    gsd_util_zero_memory(buf, sizeof(struct gsd_write_buffer));
+    gsd_util_zero_memory(buf, sizeof(struct gsd_byte_buffer));
     return GSD_SUCCESS;
 }
 
@@ -493,7 +541,7 @@ static int gsd_index_buffer_allocate(struct gsd_index_buffer *buf, size_t reserv
         return GSD_ERROR_INVALID_ARGUMENT;
     }
 
-    buf->data = (struct gsd_index_entry*)malloc(sizeof(struct gsd_index_entry) * reserve);
+    buf->data = calloc(reserve, sizeof(struct gsd_index_entry));
     if (buf->data == NULL)
     {
         return GSD_ERROR_MEMORY_ALLOCATION_FAILED;
@@ -503,8 +551,6 @@ static int gsd_index_buffer_allocate(struct gsd_index_buffer *buf, size_t reserv
     buf->reserved = reserve;
     buf->mapped_data = NULL;
     buf->mapped_len = 0;
-
-    gsd_util_zero_memory(buf->data, sizeof(struct gsd_index_entry) * reserve);
 
     return GSD_SUCCESS;
 }
@@ -682,8 +728,8 @@ inline static int gsd_index_buffer_add(struct gsd_index_buffer *buf, struct gsd_
     {
         // grow the array
         size_t new_reserved = buf->reserved * 2;
-        buf->data = (struct gsd_index_entry*)realloc(buf->data,
-                                                     sizeof(struct gsd_index_entry) * new_reserved);
+        buf->data = realloc(buf->data,
+                            sizeof(struct gsd_index_entry) * new_reserved);
         if (buf->data == NULL)
         {
             return GSD_ERROR_MEMORY_ALLOCATION_FAILED;
@@ -892,22 +938,21 @@ static int gsd_expand_file_index(struct gsd_handle* handle)
     handle->file_size = handle->header.index_location + bytes_written;
 
     // write 0's to the new index entries in the file
-    size_t bytes_to_zero = sizeof(struct gsd_index_entry) * (size_new - size_old);
-    struct gsd_index_entry *zeros = (struct gsd_index_entry *)malloc(bytes_to_zero);
+    struct gsd_index_entry *zeros = calloc((size_new - size_old), sizeof(struct gsd_index_entry));
     if (zeros == NULL)
     {
         return GSD_ERROR_MEMORY_ALLOCATION_FAILED;
     }
 
-    gsd_util_zero_memory(zeros, bytes_to_zero);
     bytes_written = gsd_io_pwrite_retry(handle->fd,
                                         zeros,
-                                        bytes_to_zero,
+                                        sizeof(struct gsd_index_entry) * (size_new - size_old),
                                         handle->file_size);
 
     free(zeros);
 
-    if (bytes_written == -1 || bytes_written != bytes_to_zero)
+    if (bytes_written == -1
+        || bytes_written != sizeof(struct gsd_index_entry) * (size_new - size_old))
     {
         return GSD_ERROR_IO;
     }
@@ -1210,8 +1255,7 @@ static int gsd_initialize_handle(struct gsd_handle* handle)
     }
 
     // read the namelist block
-    handle->namelist = (struct gsd_namelist_entry*)malloc(
-        sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries);
+    handle->namelist = calloc(handle->header.namelist_allocated_entries, sizeof(struct gsd_namelist_entry));
     if (handle->namelist == NULL)
     {
         return GSD_ERROR_MEMORY_ALLOCATION_FAILED;
@@ -1296,7 +1340,7 @@ static int gsd_initialize_handle(struct gsd_handle* handle)
             return retval;
         }
 
-        retval = gsd_write_buffer_allocate(&handle->write_buffer, GSD_WRITE_BUFFER_SIZE);
+        retval = gsd_byte_buffer_allocate(&handle->write_buffer, GSD_WRITE_BUFFER_SIZE);
         if (retval != GSD_SUCCESS)
         {
             return retval;
@@ -1471,7 +1515,7 @@ int gsd_truncate(struct gsd_handle* handle)
 
     if (handle->write_buffer.reserved > 0)
     {
-        retval = gsd_write_buffer_free(&handle->write_buffer);
+        retval = gsd_byte_buffer_free(&handle->write_buffer);
         if (retval != GSD_SUCCESS)
         {
             return retval;
@@ -1529,7 +1573,7 @@ int gsd_close(struct gsd_handle* handle)
 
     if (handle->write_buffer.reserved > 0)
     {
-        retval = gsd_write_buffer_free(&handle->write_buffer);
+        retval = gsd_byte_buffer_free(&handle->write_buffer);
         if (retval != GSD_SUCCESS)
         {
             return retval;
@@ -1722,9 +1766,8 @@ int gsd_write_chunk(struct gsd_handle* handle,
         }
         *index_entry = entry;
 
-        // copy the data to the buffer
-        memcpy(handle->write_buffer.data + handle->write_buffer.size, data, size);
-        handle->write_buffer.size += size;
+        // add the data to the write buffer
+        gsd_byte_buffer_append(&handle->write_buffer, data, size);
     }
     else
     {

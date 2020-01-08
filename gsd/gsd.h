@@ -247,11 +247,12 @@ struct gsd_index_buffer
     size_t mapped_len;
 };
 
-/** Write buffer
+/** Byte buffer
 
-    Buffer of small data chunks held for a buffered write at the end of a frame.
+    Used to buffer of small data chunks held for a buffered write at the end of a frame. Also
+    used to hold the names.
 */
-struct gsd_write_buffer
+struct gsd_byte_buffer
 {
     /// Data
     char *data;
@@ -290,7 +291,7 @@ struct gsd_handle
     struct gsd_index_buffer buffer_index;
 
     /// Buffered write data
-    struct gsd_write_buffer write_buffer;
+    struct gsd_byte_buffer write_buffer;
 
     /// Pointer to the name list
     struct gsd_namelist_entry* namelist;
