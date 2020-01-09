@@ -1223,18 +1223,25 @@ inline static int gsd_append_name(uint16_t* id, struct gsd_handle* handle, const
         name_v1[GSD_NAME_SIZE-1] = 0;
         gsd_byte_buffer_append(&handle->frame_names.data, name_v1, GSD_NAME_SIZE);
         handle->frame_names.n_names++;
+
+        // update the name/id mapping with the truncated name
+        int retval = gsd_name_id_map_insert(&handle->name_map, name_v1, *id);
+        if (retval != GSD_SUCCESS)
+        {
+            return retval;
+        }
     }
     else
     {
         gsd_byte_buffer_append(&handle->frame_names.data, name, strlen(name)+1);
         handle->frame_names.n_names++;
-    }
 
-    // update the name/id mapping
-    int retval = gsd_name_id_map_insert(&handle->name_map, name, *id);
-    if (retval != GSD_SUCCESS)
-    {
-        return retval;
+        // update the name/id mapping
+        int retval = gsd_name_id_map_insert(&handle->name_map, name, *id);
+        if (retval != GSD_SUCCESS)
+        {
+            return retval;
+        }
     }
 
     return GSD_SUCCESS;
