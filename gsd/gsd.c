@@ -45,7 +45,7 @@ enum
 /// Initial namelist size
 enum
 {
-    GSD_INITIAL_NAMELIST_SIZE = 65535
+    GSD_INITIAL_NAME_BUFFER_SIZE = 1024
 };
 
 /// Size of initial frame index
@@ -423,7 +423,7 @@ inline static int gsd_is_entry_valid(struct gsd_handle* handle, size_t idx)
     }
 
     // check for valid id
-    if (entry.id >= handle->namelist_num_entries)
+    if (entry.id >= (handle->file_names.n_names + handle->frame_names.n_names))
     {
         return 0;
     }
@@ -481,13 +481,16 @@ static int gsd_byte_buffer_append(struct gsd_byte_buffer *buf, const char *data,
         return GSD_ERROR_INVALID_ARGUMENT;
     }
 
-    if (buf->size + size > buf->reserved)
+    while (buf->size + size > buf->reserved)
     {
         // reallocate by doubling
         size_t new_reserved = buf->reserved * 2;
+        char *old_data = buf->data;
         buf->data = realloc(buf->data, sizeof(char) * new_reserved);
         if (buf->data == NULL)
         {
+            // this free should not be necessary, but clang-tidy disagrees
+            free(old_data);
             return GSD_ERROR_MEMORY_ALLOCATION_FAILED;
         }
 
@@ -1071,11 +1074,123 @@ static int gsd_flush_write_buffer(struct gsd_handle *handle)
 }
 
 /** @internal
+    @brief Flush the name buffer.
+
+    gsd_write_frame() adds new names to the frame_names buffer. gsd_flush_name_buffer() flushes
+    this buffer at the end of a frame write and commits the new names to the file. If necessary,
+    the namelist is written to a new location in the file.
+
+    @param handle Handle to flush the write buffer.
+    @returns GSD_SUCCESS on success or GSD_* error codes on error
+*/
+static int gsd_flush_name_buffer(struct gsd_handle *handle)
+{
+    if (handle == NULL)
+    {
+        return GSD_ERROR_INVALID_ARGUMENT;
+    }
+
+    if (handle->frame_names.n_names == 0)
+    {
+        // nothing to do
+        return GSD_SUCCESS;
+    }
+
+    if (handle->frame_names.data.size == 0)
+    {
+        // error: bytes in buffer, but no names for them
+        return GSD_ERROR_INVALID_ARGUMENT;
+    }
+
+    size_t old_reserved = handle->file_names.data.reserved;
+    size_t old_size = handle->file_names.data.size;
+
+    // add the new names to the file name list and zero the frame list
+    int retval = gsd_byte_buffer_append(&handle->file_names.data,
+                                        handle->frame_names.data.data,
+                                        handle->frame_names.data.size);
+    if (retval != GSD_SUCCESS)
+    {
+        return retval;
+    }
+
+    handle->file_names.n_names += handle->frame_names.n_names;
+    handle->frame_names.n_names = 0;
+    handle->frame_names.data.size = 0;
+    gsd_util_zero_memory(handle->frame_names.data.data, handle->frame_names.data.reserved);
+
+    // reserved space must be a multiple of the GSD name size
+    if (handle->file_names.data.reserved % GSD_NAME_SIZE != 0)
+    {
+        return GSD_ERROR_INVALID_ARGUMENT;
+    }
+
+    if (handle->file_names.data.reserved > old_reserved)
+    {
+        // write the new name list to the end of the file
+        uint64_t offset = handle->file_size;
+        ssize_t bytes_written = gsd_io_pwrite_retry(handle->fd,
+                                                    handle->file_names.data.data,
+                                                    handle->file_names.data.reserved,
+                                                    offset);
+
+        if (bytes_written == -1 || bytes_written != handle->file_names.data.reserved)
+        {
+            return GSD_ERROR_IO;
+        }
+
+        // sync the updated name list
+        retval = fsync(handle->fd);
+        if (retval != 0)
+        {
+            return GSD_ERROR_IO;
+        }
+
+        handle->file_size += handle->file_names.data.reserved;
+        handle->header.namelist_location = offset;
+        handle->header.namelist_allocated_entries = handle->file_names.data.reserved / GSD_NAME_SIZE;
+
+        // write the new header out
+        bytes_written
+            = gsd_io_pwrite_retry(handle->fd, &(handle->header), sizeof(struct gsd_header), 0);
+        if (bytes_written != sizeof(struct gsd_header))
+        {
+            return GSD_ERROR_IO;
+        }
+    }
+    else
+    {
+        // write the new name list to the old index location
+        uint64_t offset = handle->header.namelist_location;
+        ssize_t bytes_written = gsd_io_pwrite_retry(handle->fd,
+                                                    handle->file_names.data.data + old_size,
+                                                    handle->file_names.data.reserved - old_size,
+                                                    offset + old_size);
+        if (bytes_written != (handle->file_names.data.reserved - old_size))
+        {
+            return GSD_ERROR_IO;
+        }
+    }
+
+    // sync the updated name list or header
+    retval = fsync(handle->fd);
+    if (retval != 0)
+    {
+        return GSD_ERROR_IO;
+    }
+
+    return GSD_SUCCESS;
+}
+
+/** @internal
     @brief utility function to append a name to the namelist
 
     @param id[out] ID of the new name
     @param handle handle to the open gsd file
     @param name string name
+
+    Append a name to the names in the current frame. gsd_end_frame() will add this list to the
+    file names.
 
     @return
       - GSD_SUCCESS (0) on success. Negative value on failure:
@@ -1090,24 +1205,33 @@ inline static int gsd_append_name(uint16_t* id, struct gsd_handle* handle, const
         return GSD_ERROR_FILE_MUST_BE_WRITABLE;
     }
 
-    if (handle->namelist_num_entries == handle->header.namelist_allocated_entries)
+    if (handle->file_names.n_names + handle->frame_names.n_names == UINT16_MAX)
     {
-        // TODO: expand index
+        // no more names may be added
         return GSD_ERROR_NAMELIST_FULL;
     }
 
-    // add the name to the end of the index
-    strncpy(handle->namelist[handle->namelist_num_entries].name,
-            name,
-            sizeof(struct gsd_namelist_entry) - 1);
-    handle->namelist[handle->namelist_num_entries].name[sizeof(struct gsd_namelist_entry) - 1] = 0;
+    // Provide the ID of the new name
+    *id = (uint16_t)(handle->file_names.n_names + handle->frame_names.n_names);
 
-    // increment the number of names in the list
-    *id = (uint16_t)handle->namelist_num_entries;
-    handle->namelist_num_entries++;
+    if (handle->header.gsd_version < gsd_make_version(2,0))
+    {
+        // v1 files always allocate GSD_NAME_SIZE bytes for each name and put a NULL terminator
+        // at address 63
+        char name_v1[GSD_NAME_SIZE];
+        strncpy(name_v1, name, GSD_NAME_SIZE-1);
+        name_v1[GSD_NAME_SIZE-1] = 0;
+        gsd_byte_buffer_append(&handle->frame_names.data, name_v1, GSD_NAME_SIZE);
+        handle->frame_names.n_names++;
+    }
+    else
+    {
+        gsd_byte_buffer_append(&handle->frame_names.data, name, strlen(name)+1);
+        handle->frame_names.n_names++;
+    }
 
     // update the name/id mapping
-    int retval = gsd_name_id_map_insert(&handle->name_map, handle->namelist[*id].name, *id);
+    int retval = gsd_name_id_map_insert(&handle->name_map, name, *id);
     if (retval != GSD_SUCCESS)
     {
         return retval;
@@ -1156,7 +1280,7 @@ static int gsd_initialize_file(int fd,
     header.index_allocated_entries = GSD_INITIAL_INDEX_SIZE;
     header.namelist_location
         = header.index_location + sizeof(struct gsd_index_entry) * header.index_allocated_entries;
-    header.namelist_allocated_entries = GSD_INITIAL_NAMELIST_SIZE;
+    header.namelist_allocated_entries = GSD_INITIAL_NAME_BUFFER_SIZE / GSD_NAME_SIZE;
     gsd_util_zero_memory(header.reserved, sizeof(header.reserved));
 
     // write the header out
@@ -1178,13 +1302,13 @@ static int gsd_initialize_file(int fd,
     }
 
     // allocate and zero the namelist memory
-    struct gsd_namelist_entry namelist[GSD_INITIAL_NAMELIST_SIZE];
-    gsd_util_zero_memory(namelist, sizeof(namelist));
+    char names[GSD_INITIAL_NAME_BUFFER_SIZE];
+    gsd_util_zero_memory(names, sizeof(char)*GSD_INITIAL_NAME_BUFFER_SIZE);
 
     // write the namelist out
     bytes_written
-        = gsd_io_pwrite_retry(fd, namelist, sizeof(namelist), sizeof(header) + sizeof(index));
-    if (bytes_written != sizeof(namelist))
+        = gsd_io_pwrite_retry(fd, names, sizeof(names), sizeof(header) + sizeof(index));
+    if (bytes_written != sizeof(names))
     {
         return GSD_ERROR_IO;
     }
@@ -1248,65 +1372,77 @@ static int gsd_initialize_handle(struct gsd_handle* handle)
 
     // validate that the namelist block exists inside the file
     if (handle->header.namelist_location
-            + sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries
+        + (GSD_NAME_SIZE * handle->header.namelist_allocated_entries)
         > handle->file_size)
     {
         return GSD_ERROR_FILE_CORRUPT;
     }
 
-    // read the namelist block
-    handle->namelist = calloc(handle->header.namelist_allocated_entries, sizeof(struct gsd_namelist_entry));
-    if (handle->namelist == NULL)
-    {
-        return GSD_ERROR_MEMORY_ALLOCATION_FAILED;
-    }
-
-    bytes_read = gsd_io_pread_retry(handle->fd,
-                                 handle->namelist,
-                                 sizeof(struct gsd_namelist_entry)
-                                     * handle->header.namelist_allocated_entries,
-                                 handle->header.namelist_location);
-
-    if (bytes_read == -1
-        || bytes_read
-               != sizeof(struct gsd_namelist_entry) * handle->header.namelist_allocated_entries)
-    {
-        return GSD_ERROR_IO;
-    }
-
-    // determine the number of namelist entries (marked by an empty string)
-    // base case: the namelist is full
-    handle->namelist_num_entries = handle->header.namelist_allocated_entries;
-
-    // find the first namelist entry that is the empty string
-    size_t i;
-    for (i = 0; i < handle->header.namelist_allocated_entries; i++)
-    {
-        if (handle->namelist[i].name[0] == 0)
-        {
-            handle->namelist_num_entries = i;
-            break;
-        }
-    }
-
-    // At this point, all namelist entries are written to disk
-    handle->namelist_written_entries = handle->namelist_num_entries;
-
-    // add the names to the hash map
+    // allocate the hash map
     int retval = gsd_name_id_map_allocate(&handle->name_map, GSD_NAME_MAP_SIZE);
     if (retval != GSD_SUCCESS)
     {
         return retval;
     }
 
-    for (i = 0; i < handle->namelist_num_entries; i++)
+    // read the namelist block
+    size_t namelist_n_bytes = GSD_NAME_SIZE * handle->header.namelist_allocated_entries;
+    retval = gsd_byte_buffer_allocate(&handle->file_names.data, namelist_n_bytes);
+    if (retval != GSD_SUCCESS)
     {
-        retval = gsd_name_id_map_insert(&handle->name_map, handle->namelist[i].name, (uint16_t)i);
+        return retval;
+    }
+    bytes_read = gsd_io_pread_retry(handle->fd,
+                                    handle->file_names.data.data,
+                                    namelist_n_bytes,
+                                    handle->header.namelist_location);
+
+    if (bytes_read == -1 || bytes_read != namelist_n_bytes)
+    {
+        return GSD_ERROR_IO;
+    }
+
+    // The name buffer must end in a NULL terminator or else the file is corrupt
+    if (handle->file_names.data.data[handle->file_names.data.reserved-1] != 0)
+    {
+        return GSD_ERROR_FILE_CORRUPT;
+    }
+
+    // Add the names to the hash map. Also determine the number of used bytes in the namelist.
+    size_t name_start = 0;
+    handle->file_names.n_names = 0;
+    while (name_start < handle->file_names.data.reserved)
+    {
+        char *name = handle->file_names.data.data + name_start;
+
+        // an empty name notes the end of the list
+        if (name[0] == 0)
+        {
+            break;
+        }
+
+        retval = gsd_name_id_map_insert(&handle->name_map,
+                                        name,
+                                        (uint16_t)handle->file_names.n_names);
         if (retval != GSD_SUCCESS)
         {
             return retval;
         }
+        handle->file_names.n_names++;
+
+        if (handle->header.gsd_version < gsd_make_version(2,0))
+        {
+            // gsd v1 stores names in fixed 64 byte segments
+            name_start += GSD_NAME_SIZE;
+        }
+        else
+        {
+            size_t len = strnlen(name, handle->file_names.data.reserved - name_start);
+            name_start += len + 1;
+        }
     }
+
+    handle->file_names.data.size = name_start;
 
     // read in the file index
     retval = gsd_index_buffer_map(&handle->file_index, handle);
@@ -1325,7 +1461,7 @@ static int gsd_initialize_handle(struct gsd_handle* handle)
         handle->cur_frame = handle->file_index.data[handle->file_index.size - 1].frame + 1;
     }
 
-    // if this is a write mode, allocate the initial frame index
+    // if this is a write mode, allocate the initial frame index and the name buffer
     if (handle->open_flags != GSD_OPEN_READONLY)
     {
         retval = gsd_index_buffer_allocate(&handle->frame_index, GSD_INITIAL_FRAME_INDEX_SIZE);
@@ -1341,6 +1477,13 @@ static int gsd_initialize_handle(struct gsd_handle* handle)
         }
 
         retval = gsd_byte_buffer_allocate(&handle->write_buffer, GSD_WRITE_BUFFER_SIZE);
+        if (retval != GSD_SUCCESS)
+        {
+            return retval;
+        }
+
+        handle->frame_names.n_names = 0;
+        retval = gsd_byte_buffer_allocate(&handle->frame_names.data, GSD_NAME_SIZE);
         if (retval != GSD_SUCCESS)
         {
             return retval;
@@ -1475,14 +1618,28 @@ int gsd_truncate(struct gsd_handle* handle)
         return GSD_ERROR_FILE_MUST_BE_WRITABLE;
     }
 
+    int retval = 0;
+
     // deallocate indices
-    if (handle->namelist != NULL)
+    if (handle->frame_names.data.reserved > 0)
     {
-        free(handle->namelist);
-        handle->namelist = NULL;
+        retval = gsd_byte_buffer_free(&handle->frame_names.data);
+        if (retval != GSD_SUCCESS)
+        {
+            return retval;
+        }
     }
 
-    int retval = gsd_name_id_map_free(&handle->name_map);
+    if (handle->file_names.data.reserved > 0)
+    {
+        retval = gsd_byte_buffer_free(&handle->file_names.data);
+        if (retval != GSD_SUCCESS)
+        {
+            return retval;
+        }
+    }
+
+    retval = gsd_name_id_map_free(&handle->name_map);
     if (retval != GSD_SUCCESS)
     {
         return retval;
@@ -1586,10 +1743,24 @@ int gsd_close(struct gsd_handle* handle)
         return retval;
     }
 
-    if (handle->namelist != NULL)
+    if (handle->frame_names.data.reserved > 0)
     {
-        free(handle->namelist);
-        handle->namelist = NULL;
+        handle->frame_names.n_names = 0;
+        retval = gsd_byte_buffer_free(&handle->frame_names.data);
+        if (retval != GSD_SUCCESS)
+        {
+            return retval;
+        }
+    }
+
+    if (handle->file_names.data.reserved > 0)
+    {
+        handle->file_names.n_names = 0;
+        retval = gsd_byte_buffer_free(&handle->file_names.data);
+        if (retval != GSD_SUCCESS)
+        {
+            return retval;
+        }
     }
 
     // close the file
@@ -1616,36 +1787,16 @@ int gsd_end_frame(struct gsd_handle* handle)
     // increment the frame counter
     handle->cur_frame++;
 
-    // update the namelist on disk
-    uint64_t new_namelist_entries = handle->namelist_num_entries - handle->namelist_written_entries;
-    if (new_namelist_entries)
+    // flush the namelist buffer
+    int retval = gsd_flush_name_buffer(handle);
+    if (retval != GSD_SUCCESS)
     {
-        ssize_t bytes_written
-            = gsd_io_pwrite_retry(handle->fd,
-                            &(handle->namelist[handle->namelist_written_entries]),
-                            sizeof(struct gsd_namelist_entry) * new_namelist_entries,
-                            handle->header.namelist_location
-                                + sizeof(struct gsd_namelist_entry) * handle->namelist_written_entries);
-
-        if (bytes_written != sizeof(struct gsd_namelist_entry) * new_namelist_entries)
-        {
-            return GSD_ERROR_IO;
-        }
-
-
-        handle->namelist_written_entries = handle->namelist_num_entries;
-
-        // ensure that the new namelist is comitted to the disk
-        int retval = fsync(handle->fd);
-        if (retval != 0)
-        {
-            return GSD_ERROR_IO;
-        }
+        return retval;
     }
 
     // flush the write buffer
-    int retval = gsd_flush_write_buffer(handle);
-    if (retval != 0)
+    retval = gsd_flush_write_buffer(handle);
+    if (retval != GSD_SUCCESS)
     {
         return retval;
     }
@@ -2006,39 +2157,62 @@ gsd_find_matching_chunk_name(struct gsd_handle* handle, const char* match, const
     {
         return NULL;
     }
-    if (handle->namelist_num_entries == 0)
+    if (handle->file_names.n_names == 0)
+    {
+        return NULL;
+    }
+
+    // return nothing found if the name buffer is corrupt
+    if (handle->file_names.data.data[handle->file_names.data.reserved-1] != 0)
     {
         return NULL;
     }
 
     // determine search start index
-    size_t start;
+    const char *search_str;
     if (prev == NULL)
     {
-        start = 0;
+        search_str = handle->file_names.data.data;
     }
     else
     {
-        if (prev < handle->namelist[0].name)
+        // return not found if prev is not in range
+        if (prev < handle->file_names.data.data)
+        {
+            return NULL;
+        }
+        if (prev >= (handle->file_names.data.data + handle->file_names.data.reserved))
         {
             return NULL;
         }
 
-        ptrdiff_t d = prev - handle->namelist[0].name;
-        if (d % sizeof(struct gsd_namelist_entry) != 0)
+        if (handle->header.gsd_version < gsd_make_version(2,0))
         {
-            return NULL;
+            search_str = prev + GSD_NAME_SIZE;
         }
-        start = d / sizeof(struct gsd_namelist_entry) + 1;
+        else
+        {
+            search_str = prev + strlen(prev) + 1;
+        }
     }
 
-    size_t match_len = strnlen(match, sizeof(handle->namelist[0].name));
-    size_t i;
-    for (i = start; i < handle->namelist_num_entries; i++)
+    size_t match_len = strlen(match);
+
+    while (search_str < (handle->file_names.data.data + handle->file_names.data.reserved))
     {
-        if (0 == strncmp(match, handle->namelist[i].name, match_len))
+        if (search_str[0] != 0
+            && 0 == strncmp(match, search_str, match_len))
         {
-            return handle->namelist[i].name;
+            return search_str;
+        }
+
+        if (handle->header.gsd_version < gsd_make_version(2,0))
+        {
+            search_str += GSD_NAME_SIZE;
+        }
+        else
+        {
+            search_str += strlen(search_str) + 1;
         }
     }
 
@@ -2053,6 +2227,10 @@ int gsd_upgrade(struct gsd_handle* handle)
         return GSD_ERROR_INVALID_ARGUMENT;
     }
     if (handle->open_flags == GSD_OPEN_READONLY)
+    {
+        return GSD_ERROR_INVALID_ARGUMENT;
+    }
+    if (handle->frame_index.size > 0 || handle->frame_names.n_names > 0)
     {
         return GSD_ERROR_INVALID_ARGUMENT;
     }
@@ -2101,6 +2279,65 @@ int gsd_upgrade(struct gsd_handle* handle)
             retval = fsync(handle->fd);
             if (retval != 0)
             {
+                return GSD_ERROR_IO;
+            }
+        }
+
+        if (handle->file_names.n_names > 0)
+        {
+            // compact the name list without changing its size or position on the disk
+            struct gsd_byte_buffer new_name_buf;
+            gsd_util_zero_memory(&new_name_buf, sizeof(struct gsd_byte_buffer));
+            int retval = gsd_byte_buffer_allocate(&new_name_buf, handle->file_names.data.reserved);
+            if (retval != GSD_SUCCESS)
+            {
+                return retval;
+            }
+
+            const char *name = gsd_find_matching_chunk_name(handle, "", NULL);
+            while (name != NULL)
+            {
+                retval = gsd_byte_buffer_append(&new_name_buf, name, strlen(name)+1);
+                if (retval != GSD_SUCCESS)
+                {
+                    gsd_byte_buffer_free(&new_name_buf);
+                    return retval;
+                }
+                name = gsd_find_matching_chunk_name(handle, "", name);
+            }
+
+            if (new_name_buf.reserved != handle->file_names.data.reserved)
+            {
+                gsd_byte_buffer_free(&new_name_buf);
+                return GSD_ERROR_FILE_CORRUPT;
+            }
+
+            // write the new names out to disk
+            ssize_t bytes_written = gsd_io_pwrite_retry(handle->fd,
+                                                        new_name_buf.data,
+                                                        new_name_buf.reserved,
+                                                        handle->header.namelist_location);
+
+            if (bytes_written == -1 || bytes_written != new_name_buf.reserved)
+            {
+                gsd_byte_buffer_free(&new_name_buf);
+                return GSD_ERROR_IO;
+            }
+
+            // swap in the re-organized name buffer
+            retval = gsd_byte_buffer_free(&handle->file_names.data);
+            if (retval != GSD_SUCCESS)
+            {
+                gsd_byte_buffer_free(&new_name_buf);
+                return retval;
+            }
+            handle->file_names.data = new_name_buf;
+
+            // sync the updated name list
+            retval = fsync(handle->fd);
+            if (retval != 0)
+            {
+                gsd_byte_buffer_free(&new_name_buf);
                 return GSD_ERROR_IO;
             }
         }

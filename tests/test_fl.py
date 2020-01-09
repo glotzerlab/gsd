@@ -384,13 +384,13 @@ def test_namelen(tmp_path, open_mode):
                      application=app_long,
                      schema=schema_long,
                      schema_version=[1, 2]) as f:
-        data_read = f.read_chunk(0, name=chunk_long[0:63])
+        data_read = f.read_chunk(0, name=chunk_long)
         numpy.testing.assert_array_equal(data, data_read)
 
     # test again with pygsd
     with gsd.pygsd.GSDFile(file=open(str(tmp_path / 'test_namelen.gsd'),
                                      mode='rb')) as f:
-        data_read = f.read_chunk(0, name=chunk_long[0:63])
+        data_read = f.read_chunk(0, name=chunk_long)
         numpy.testing.assert_array_equal(data, data_read)
 
 
@@ -475,6 +475,7 @@ def test_find_matching_chunk_names(tmp_path, open_mode):
                      schema='none',
                      schema_version=[1, 2]) as f:
         all_chunks = f.find_matching_chunk_names('')
+        print(all_chunks)
         assert len(all_chunks) == 3
         assert 'log/A' in all_chunks
         assert 'log/chunk2' in all_chunks
@@ -519,13 +520,12 @@ def test_chunk_name_limit(tmp_path, open_mode):
                      application='test_chunk_name_limit',
                      schema='none',
                      schema_version=[1, 2]) as f:
-        for i in range(128):
+        for i in range(65535):
             f.write_chunk(name=str(i), data=numpy.array([i], dtype=numpy.int32))
 
-        # A bug in GSD limits files to 128 chunk names:
-        # see https://github.com/glotzerlab/gsd/issues/43
+        # The GSD specification limits to 65535 names:
         with pytest.raises(Exception):
-            f.write_chunk(name='128', data=numpy.array([i], dtype=numpy.int32))
+            f.write_chunk(name='65536', data=numpy.array([i], dtype=numpy.int32))
 
 
 def test_many_names(tmp_path, open_mode):

@@ -54,9 +54,6 @@ gsd_index_entry = namedtuple('gsd_index_entry',
                              'frame N location M id type flags')
 gsd_index_entry_struct = struct.Struct('QQqIHBB')
 
-gsd_namelist_entry = namedtuple('gsd_namelist_entry', 'name')
-gsd_namelist_entry_struct = struct.Struct('64s')
-
 gsd_type_mapping = {
     1: numpy.dtype('uint8'),
     2: numpy.dtype('uint16'),
@@ -158,19 +155,16 @@ class GSDFile(object):
         self.__namelist = {}
         c = 0
         self.__file.seek(self.__header.namelist_location, 0)
-        for i in range(self.__header.index_allocated_entries):
-            namelist_entry_raw = \
-                self.__file.read(gsd_namelist_entry_struct.size)
-            n = gsd_namelist_entry._make(
-                gsd_namelist_entry_struct.unpack(namelist_entry_raw))
+        namelist_raw = self.__file.read(
+            self.__header.namelist_allocated_entries * 64)
 
-            # 0 first byte signifies end
-            sname = n.name.rstrip(b'\x00').decode('utf-8')
-            if len(sname) == 0:
-                break
+        names = namelist_raw.split(b'\x00')
 
-            self.__namelist[sname] = c
-            c = c + 1
+        for name in names:
+            sname = name.decode('utf-8')
+            if len(sname) != 0:
+                self.__namelist[sname] = c
+                c = c + 1
 
         # read the index block. Since this is a read-only implementation, only
         # read in the used entries

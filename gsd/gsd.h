@@ -104,7 +104,7 @@ enum gsd_error
 
 enum
 {
-    /// Maximum size of a GSD chunk name in memory
+    /// Size of a GSD name in memory
     GSD_NAME_SIZE = 64
 };
 
@@ -135,7 +135,7 @@ struct gsd_header
     /// Location of the name list in the file.
     uint64_t namelist_location;
 
-    /// Number of namelist entries that will fit in the space allocated.
+    /// Number of bytes in the namelist divided by 64
     uint64_t namelist_allocated_entries;
 
     /// Schema version: from gsd_make_version().
@@ -264,6 +264,20 @@ struct gsd_byte_buffer
     size_t reserved;
 };
 
+/** Name buffer
+
+    Holds a list of string names in order separated by NULL terminators. In v1 files, each name is
+    64 bytes. In v2 files, only one NULL terminator is placed between each name.
+*/
+struct gsd_name_buffer
+{
+    /// Data
+    struct gsd_byte_buffer data;
+
+    /// Number of names in the list
+    size_t n_names;
+};
+
 /** File handle
 
     A handle to an open GSD file.
@@ -293,11 +307,11 @@ struct gsd_handle
     /// Buffered write data
     struct gsd_byte_buffer write_buffer;
 
-    /// Pointer to the name list
-    struct gsd_namelist_entry* namelist;
+    /// List of names stored in the file
+    struct gsd_name_buffer file_names;
 
-    /// Number of entries in the name list
-    uint64_t namelist_num_entries;
+    /// List of names added in the current frame
+    struct gsd_name_buffer frame_names;
 
     /// The index of the last frame in the file
     uint64_t cur_frame;
@@ -310,9 +324,6 @@ struct gsd_handle
 
     /// Access the names in the namelist
     struct gsd_name_id_map name_map;
-
-    /// Number of namelist entries written to the file
-    uint64_t namelist_written_entries;
 };
 
 /** Specify a version
@@ -574,6 +585,8 @@ gsd_find_matching_chunk_name(struct gsd_handle* handle, const char* match, const
     @param handle Handle to an open GSD file
 
     @pre *handle* was opened by gsd_open() with a writable mode.
+    @pre There are no pending data to write to the file in gsd_end_frame()
+
     @return
       - GSD_SUCCESS (0) on success. Negative value on failure:
       - GSD_ERROR_IO: IO error (check errno).
