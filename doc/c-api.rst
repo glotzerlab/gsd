@@ -76,11 +76,6 @@ Functions
     :param flags: Either ``GSD_OPEN_READWRITE``, ``GSD_OPEN_READONLY``, or
       ``GSD_OPEN_APPEND``.
 
-    Prefer the modes ``GSD_OPEN_APPEND`` for writing and ``GSD_OPEN_READONLY``
-    for reading. These modes are optimized to only load as much of the index as
-    needed. ``GSD_OPEN_READWRITE`` needs to store the entire index in memory: in
-    files with millions of chunks, this can add up to GiB.
-
     :return:
 
       * GSD_SUCCESS (0) on success. Negative value on failure:
@@ -118,11 +113,8 @@ Functions
     :param handle: GSD file to close.
 
     .. warning::
-        Do not write chunks to the file with :c:func:`gsd_write_chunk()` and
-        then immediately close the file with :c:func:`gsd_close()`. This will
-        result in data loss. Data chunks written by :c:func:`gsd_write_chunk()`
-        are not updated in the index until :c:func:`gsd_end_frame()` is called.
-        This is by design to prevent partial frames in files.
+        Ensure that all :c:func:`gsd_write_chunk()` calls are committed with
+        :c:func:`gsd_end_frame()` before closing the file.
 
     :return:
 
@@ -142,6 +134,7 @@ Functions
       * GSD_ERROR_IO: IO error (check errno).
       * GSD_ERROR_INVALID_ARGUMENT: *handle* is NULL.
       * GSD_ERROR_FILE_MUST_BE_WRITABLE: The file was opened read-only.
+      * GSD_ERROR_MEMORY_ALLOCATION_FAILED: Unable to allocate memory.
 
 .. c:function:: int gsd_write_chunk(struct gsd_handle* handle, \
                                     const char *name, \
@@ -158,12 +151,15 @@ Functions
     gsd_sizeof_type(type)`` bytes.
 
     :param handle: Handle to an open GSD file.
-    :param name: Name of the data chunk (truncated to 63 chars).
+    :param name: Name of the data chunk.
     :param type: type ID that identifies the type of data in *data*.
     :param N: Number of rows in the data.
     :param M: Number of columns in the data.
     :param flags: Unused, set to 0.
     :param data: Data buffer.
+
+    .. note:: If the GSD file is version 1.0, the chunk name is truncated to 63
+              bytes. GSD version 2.0 files support arbitrarily long names.
 
     :return:
 
@@ -254,6 +250,21 @@ Functions
 
     :return: Pointer to a string, ``NULL`` if no more matching chunks are found
       found, or ``NULL`` if ``prev`` is invalid.
+
+.. c:function:: int gsd_upgrade(gsd_handle* handle)
+
+    Upgrade a GSD file to the latest specification.
+
+    :param handle: Handle to an open GSD file.
+
+    :return: 0 on success
+
+      * GSD_SUCCESS (0) on success. Negative value on failure:
+      * GSD_ERROR_IO: IO error (check errno).
+      * GSD_ERROR_INVALID_ARGUMENT: *handle* is NULL, *data* is NULL, or *chunk*
+        is NULL.
+      * GSD_ERROR_FILE_MUST_BE_WRITEABLE: The file was opened in the read only
+        mode.
 
 Constants
 ---------

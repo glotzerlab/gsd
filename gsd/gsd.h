@@ -184,18 +184,6 @@ struct gsd_index_entry
     uint8_t flags;
 };
 
-/** Namelist entry
-
-     An entry in the list of data chunk names
-
-    @warning All members are **read-only** to the caller.
-*/
-struct gsd_namelist_entry
-{
-    /// Entry name
-    char name[GSD_NAME_SIZE];
-};
-
 /** Name/id mapping
 
     A string name paired with an ID. Used for storing sorted name/id mappings in a hash map.
@@ -401,10 +389,6 @@ int gsd_create_and_open(struct gsd_handle* handle,
 
     The file descriptor is closed if there is an error opening the file.
 
-    Prefer the modes GSD_OPEN_APPEND for writing and GSD_OPEN_READONLY for reading. These modes are
-    optimized to only load as much of the index as needed. GSD_OPEN_READWRITE needs to store the
-    entire index in memory: in files with millions of chunks, this can add up to GiB.
-
     @return
       - GSD_SUCCESS (0) on success. Negative value on failure:
       - GSD_ERROR_IO: IO error (check errno).
@@ -444,10 +428,8 @@ int gsd_truncate(struct gsd_handle* handle);
     @post The file is closed.
     @post *handle* is freed and can no longer be used.
 
-    @warning Do not write chunks to the file with gsd_write_chunk() and then immediately close the
-    file with gsd_close(). This will result in data loss. Data chunks written by gsd_write_chunk()
-    are not updated in the index until gsd_end_frame() is called. This is by design to prevent
-    partial frames in files.
+    @warning Ensure that all gsd_write_chunk() calls are committed with gsd_end_frame() before
+    closing the file.
 
     @return
       - GSD_SUCCESS (0) on success. Negative value on failure:
@@ -470,13 +452,14 @@ int gsd_close(struct gsd_handle* handle);
       - GSD_ERROR_IO: IO error (check errno).
       - GSD_ERROR_INVALID_ARGUMENT: *handle* is NULL.
       - GSD_ERROR_FILE_MUST_BE_WRITABLE: The file was opened read-only.
+      - GSD_ERROR_MEMORY_ALLOCATION_FAILED: Unable to allocate memory.
 */
 int gsd_end_frame(struct gsd_handle* handle);
 
 /** Write a data chunk to the current frame
 
     @param handle Handle to an open GSD file.
-    @param name Name of the data chunk (truncated to 63 chars).
+    @param name Name of the data chunk.
     @param type type ID that identifies the type of data in *data*.
     @param N Number of rows in the data.
     @param M Number of columns in the data.
@@ -489,6 +472,9 @@ int gsd_end_frame(struct gsd_handle* handle);
 
     @post The given data chunk is written to the end of the file and its location is updated in the
     in-memory index.
+
+    @note If the GSD file is version 1.0, the chunk name is truncated to 63 bytes. GSD version
+    2.0 files support arbitrarily long names.
 
     @return
       - GSD_SUCCESS (0) on success. Negative value on failure:
@@ -579,8 +565,7 @@ size_t gsd_sizeof_type(enum gsd_type type);
 const char*
 gsd_find_matching_chunk_name(struct gsd_handle* handle, const char* match, const char* prev);
 
-
-/** Upgrade a GSD file to the latest specification
+/** Upgrade a GSD file to the latest specification.
 
     @param handle Handle to an open GSD file
 
@@ -594,7 +579,6 @@ gsd_find_matching_chunk_name(struct gsd_handle* handle, const char* match, const
       - GSD_ERROR_FILE_MUST_BE_WRITABLE: The file was opened in read-only mode.
 */
 int gsd_upgrade(struct gsd_handle* handle);
-
 
 #ifdef __cplusplus
 }

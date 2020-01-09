@@ -146,9 +146,8 @@ def open(name, mode, application, schema, schema_version):
     +------------------+---------------------------------------------+
     | ``'wb+'``        | Open a file for reading and writing.        |
     |                  | Creates the file if needed, or overwrites   |
-    |                  | an existing file. *Inefficient for large    |
-    |                  | files.*                                     |
-    +------------------+---------------------------------------------+
+    |                  | an existing file.                           |
+     +------------------+---------------------------------------------+
     | ``'xb'``         | Create a gsd file exclusively and opens it  |
     |                  | for writing.                                |
     |                  | Raise an :py:exc:`FileExistsError`          |
@@ -158,18 +157,13 @@ def open(name, mode, application, schema, schema_version):
     |                  | for reading and writing.                    |
     |                  | Raise an :py:exc:`FileExistsError`          |
     |                  | exception if it already exists.             |
-    |                  | *Inefficient for large files.*              |
     +------------------+---------------------------------------------+
     | ``'ab'``         | Open an existing file for writing.          |
     |                  | Does *not* create or overwrite existing     |
     |                  | files.                                      |
     +------------------+---------------------------------------------+
 
-    The '+' read/write modes are inefficient at handling large files, as they
-    read the entire file index into memory. Prefer the appropriate read or write
-    only modes.
-
-    When opening a file for reading (``'r' or 'a'`` modes): ``application`` and
+    When opening a file for reading (``'r' modes): ``application`` and
     ``schema_version`` are ignored. :py:func:`open` throws an exception if the
     file's schema does not match ``schema``.
 

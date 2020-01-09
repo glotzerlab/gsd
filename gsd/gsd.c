@@ -713,7 +713,7 @@ static int gsd_index_buffer_free(struct gsd_index_buffer *buf)
     @brief Add a new index entry and provide a pointer to it.
 
     @param buf Buffer to add too.
-    @param entry[out] Pointer to set to the new entry.
+    @param entry [out] Pointer to set to the new entry.
 
     Double the size of the reserved space as needed to hold the new entry. Does not accept mapped
     indices.
@@ -824,6 +824,7 @@ inline static void gsd_heap_swap(struct gsd_index_buffer *buf, size_t a, size_t 
     @brief Shift heap node downward
     @param buf Buffer.
     @param start First index of the valid heap in *buf*.
+    @param end Last index of the valid hep in *buf*.
 */
 inline static void gsd_heap_shift_down(struct gsd_index_buffer *buf, size_t start, size_t end)
 {
@@ -1185,7 +1186,7 @@ static int gsd_flush_name_buffer(struct gsd_handle *handle)
 /** @internal
     @brief utility function to append a name to the namelist
 
-    @param id[out] ID of the new name
+    @param id [out] ID of the new name
     @param handle handle to the open gsd file
     @param name string name
 
