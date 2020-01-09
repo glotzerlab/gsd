@@ -59,7 +59,7 @@ int main(int argc, char **argv) // NOLINT
     auto t2 = chrono::high_resolution_clock::now();
 
     chrono::duration<double> time_span = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
-    double time_per_key = time_span.count() / double(n_keys) / double(n_frames)/2;
+    double time_per_key = time_span.count() / double(n_keys) / double(n_frames/double(2));
 
     const double us = 1e-6;
     std::cout << "Write time: " << time_per_key/us << " microseconds/key." << endl;

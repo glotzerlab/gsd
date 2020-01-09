@@ -611,7 +611,11 @@ static int gsd_index_buffer_map(struct gsd_index_buffer *buf, struct gsd_handle 
     buf->reserved = handle->header.index_allocated_entries;
 #else
     // mmap not supported, read the data from the disk
-    gsd_index_buffer_allocate(buf, handle->header.index_allocated_entries);
+    int retval = gsd_index_buffer_allocate(buf, handle->header.index_allocated_entries);
+    if (retval != GSD_SUCCESS)
+    {
+        return retval;
+    }
 
     ssize_t bytes_read = gsd_io_pread_retry(handle->fd,
                                 buf->data,
@@ -1842,6 +1846,13 @@ int gsd_end_frame(struct gsd_handle* handle)
             return GSD_ERROR_IO;
         }
 
+        #if !GSD_USE_MMAP
+        // add the entries to the file index
+        memcpy(handle->file_index.data + handle->file_index.size,
+               handle->frame_index.data,
+               sizeof(struct gsd_index_entry) * handle->frame_index.size);
+        #endif
+
         // update size of file index
         handle->file_index.size += handle->frame_index.size;
 
@@ -1998,8 +2009,8 @@ gsd_find_chunk(struct gsd_handle* handle, uint64_t frame, const char* name)
     {
         // gsd 2.0 files sort the entire index
         // binary search for the index entry
-        size_t L = 0;
-        size_t R = handle->file_index.size-1;
+        ssize_t L = 0;
+        ssize_t R = handle->file_index.size-1;
         struct gsd_index_entry T;
         T.frame = frame;
         T.id = match_id;
