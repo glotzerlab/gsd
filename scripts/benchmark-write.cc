@@ -3,7 +3,13 @@
 #include <chrono>
 #include <cstdlib>
 #include <vector>
+
+#ifdef _WIN32
+#include <io.h>
+#define fsync _commit
+#else // linux / mac
 #include <unistd.h>
+#endif
 
 #include "gsd.h"
 

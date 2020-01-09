@@ -3,7 +3,6 @@
 #include <chrono>
 #include <cstdlib>
 #include <vector>
-#include <unistd.h>
 
 #include "gsd.h"
 
