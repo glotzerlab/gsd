@@ -612,7 +612,7 @@ static int gsd_index_buffer_map(struct gsd_index_buffer *buf, struct gsd_handle 
     // mmap not supported, read the data from the disk
     gsd_index_buffer_allocate(buf, handle->header.index_allocated_entries);
 
-    bytes_read = gsd_io_pread_retry(handle->fd,
+    ssize_t bytes_read = gsd_io_pread_retry(handle->fd,
                                 buf->data,
                                 sizeof(struct gsd_index_entry)
                                     * handle->header.index_allocated_entries,
