@@ -524,7 +524,8 @@ def test_chunk_name_limit(tmp_path, open_mode):
 
         # The GSD specification limits to 65535 names:
         with pytest.raises(Exception):
-            f.write_chunk(name='65536', data=numpy.array([i], dtype=numpy.int32))
+            f.write_chunk(name='65536', data=numpy.array([i],
+                                                         dtype=numpy.int32))
 
 
 def test_many_names(tmp_path, open_mode):
@@ -602,6 +603,7 @@ def test_gsd_v1_read(open_mode):
         assert f.gsd_version == (1, 0)
 
         check_v1_file_read(f)
+
 
 def test_gsd_v1_upgrade_read(tmp_path, open_mode):
     values = list(range(127))

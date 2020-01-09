@@ -9,11 +9,11 @@
 
 using namespace std;
 
-int main(int argc, char **argv)
+int main(int argc, char **argv) // NOLINT
     {
-    size_t n_keys = 65534;
-    size_t n_frames = 1000;
-    size_t key_size = 1;
+    const size_t n_keys = 65534;
+    const size_t n_frames = 1000;
+    const size_t key_size = 1;
 
     vector<double> data(key_size);
     vector<string> names;
@@ -30,7 +30,7 @@ int main(int argc, char **argv)
     gsd_create_and_open(&handle, "test.gsd", "app", "schema", 0, GSD_OPEN_APPEND, 0);
     for (size_t frame = 0; frame < n_frames/2; frame++)
         {
-        for (auto name : names)
+        for (auto const &name : names)
             {
             gsd_write_chunk(&handle, name.c_str(), GSD_TYPE_DOUBLE, key_size, 1, 0, &data[0]);
             }
@@ -42,7 +42,7 @@ int main(int argc, char **argv)
 
     for (size_t frame = 0; frame < n_frames/2; frame++)
         {
-        for (auto name : names)
+        for (auto const &name : names)
             {
             gsd_write_chunk(&handle, name.c_str(), GSD_TYPE_DOUBLE, key_size, 1, 0, &data[0]);
             }
@@ -53,9 +53,10 @@ int main(int argc, char **argv)
     auto t2 = chrono::high_resolution_clock::now();
 
     chrono::duration<double> time_span = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
-    double time_per_key = time_span.count() / double(n_keys) / double(n_frames/2);
+    double time_per_key = time_span.count() / double(n_keys) / double(n_frames)/2;
 
-    std::cout << "Write time: " << time_per_key/1e-6 << " microseconds/key." << endl;
+    const double us = 1e-6;
+    std::cout << "Write time: " << time_per_key/us << " microseconds/key." << endl;
 
     gsd_close(&handle);
 

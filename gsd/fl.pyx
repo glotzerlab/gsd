@@ -147,7 +147,7 @@ def open(name, mode, application, schema, schema_version):
     | ``'wb+'``        | Open a file for reading and writing.        |
     |                  | Creates the file if needed, or overwrites   |
     |                  | an existing file.                           |
-     +------------------+---------------------------------------------+
+    +------------------+---------------------------------------------+
     | ``'xb'``         | Create a gsd file exclusively and opens it  |
     |                  | for writing.                                |
     |                  | Raise an :py:exc:`FileExistsError`          |

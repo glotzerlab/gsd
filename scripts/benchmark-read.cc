@@ -9,9 +9,10 @@
 
 using namespace std;
 
-int main(int argc, char **argv)
+int main(int argc, char **argv) // NOLINT
     {
-    size_t n_keys = 40000;
+    const size_t n_keys = 40000;
+    const size_t max_frames = 100;
     vector<char> data;
 
     vector<string> names;
@@ -26,9 +27,9 @@ int main(int argc, char **argv)
     gsd_open(&handle, "test.gsd", GSD_OPEN_READONLY);
     size_t n_frames = gsd_get_nframes(&handle);
     size_t n_read = n_frames;
-    if (n_read > 100)
+    if (n_read > max_frames)
     {
-        n_read = 100;
+        n_read = max_frames;
     }
 
     cout << "Reading test.gsd with: " << n_keys << " keys and " << n_frames << " frames." << endl;
@@ -37,11 +38,11 @@ int main(int argc, char **argv)
 
     for (size_t frame = 0; frame < n_read; frame++)
         {
-        for (auto name : names)
+        for (auto const &name : names)
             {
             const gsd_index_entry *e;
             e = gsd_find_chunk(&handle, frame, name.c_str());
-            if (data.size() == 0)
+            if (data.empty())
             {
                 data.resize(e->N * e->M * gsd_sizeof_type((gsd_type)e->type));
             }
@@ -54,7 +55,8 @@ int main(int argc, char **argv)
     chrono::duration<double> time_span = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
     double time_per_key = time_span.count() / double(n_keys) / double(n_read);
 
-    std::cout << "Sequential read time: " << time_per_key/1e-6 << " microseconds/key." << endl;
+    const double us = 1e-6;
+    std::cout << "Sequential read time: " << time_per_key/us << " microseconds/key." << endl;
 
     gsd_close(&handle);
     }
