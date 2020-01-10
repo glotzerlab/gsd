@@ -6,7 +6,9 @@
 #ifdef _WIN32
 
 #define GSD_USE_MMAP 0
-#define _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS 1
+#define open _open
+#define close _close
 #include <io.h>
 
 #else // linux / mac
