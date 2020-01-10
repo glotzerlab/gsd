@@ -510,7 +510,7 @@ cdef class GSDFile:
         data_array = data_array.view()
 
         cdef uint64_t N
-        cdef uint64_t M
+        cdef uint32_t M
 
         if len(data_array.shape) > 2:
             raise ValueError("GSD can only write 1 or 2 dimensional arrays: "

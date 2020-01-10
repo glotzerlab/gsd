@@ -5,8 +5,8 @@
 #include <sys/stat.h>
 #ifdef _WIN32
 
-#pragma warning( push )
-#pragma warning( disable : 4996 )
+#pragma warning(push)
+#pragma warning(disable : 4996)
 
 #define GSD_USE_MMAP 0
 #include <io.h>
@@ -1431,7 +1431,7 @@ static int gsd_initialize_handle(struct gsd_handle* handle)
     // validate that the namelist block exists inside the file
     if (handle->header.namelist_location
             + (GSD_NAME_SIZE * handle->header.namelist_allocated_entries)
-        > handle->file_size)
+        > (uint64_t)handle->file_size)
     {
         return GSD_ERROR_FILE_CORRUPT;
     }
@@ -2446,6 +2446,6 @@ int gsd_upgrade(struct gsd_handle* handle)
 #undef read
 #undef open
 #undef ftruncate
-#pragma warning( pop )
+#pragma warning(pop)
 
 #endif
