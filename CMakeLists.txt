@@ -18,7 +18,7 @@ SET(CMAKE_INSTALL_PREFIX ${PYTHON_SYSTEM_SITE} CACHE PATH "Python site installat
 message(STATUS "Setting installation site dir: ${CMAKE_INSTALL_PREFIX}")
 
 if (WIN32)
-add_defnitions(-D_CRT_SECURE_NO_WARNINGS)
+add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
 endif()
 
 #############################################################################################
