@@ -191,10 +191,10 @@ struct gsd_index_entry
 struct gsd_name_id_pair
 {
     /// Pointer to name (actual name storage is allocated in gsd_handle)
-    char *name;
+    char* name;
 
     /// Next name/id pair with the same hash
-    struct gsd_name_id_pair *next;
+    struct gsd_name_id_pair* next;
 
     /// Entry id
     uint16_t id;
@@ -207,7 +207,7 @@ struct gsd_name_id_pair
 struct gsd_name_id_map
 {
     /// Name/id mappings
-    struct gsd_name_id_pair *v;
+    struct gsd_name_id_pair* v;
 
     /// Number of entries in the mapping
     size_t size;
@@ -243,7 +243,7 @@ struct gsd_index_buffer
 struct gsd_byte_buffer
 {
     /// Data
-    char *data;
+    char* data;
 
     /// Number of bytes in the buffer
     size_t size;

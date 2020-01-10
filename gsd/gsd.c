@@ -58,15 +58,14 @@ enum
 /// Size of write buffer
 enum
 {
-    GSD_WRITE_BUFFER_SIZE = 16*1024*1024
+    GSD_WRITE_BUFFER_SIZE = 16 * 1024 * 1024
 };
 
 /// Size of copy buffer
 enum
 {
-    GSD_COPY_BUFFER_SIZE = 128*1024
+    GSD_COPY_BUFFER_SIZE = 128 * 1024
 };
-
 
 /// Size of hash map
 enum
@@ -260,10 +259,10 @@ static int gsd_name_id_map_free(struct gsd_name_id_map* map)
     {
         free(map->v[i].name);
 
-        struct gsd_name_id_pair *cur = map->v[i].next;
+        struct gsd_name_id_pair* cur = map->v[i].next;
         while (cur != NULL)
         {
-            struct gsd_name_id_pair *prev = cur;
+            struct gsd_name_id_pair* prev = cur;
             cur = cur->next;
             free(prev->name);
             free(prev);
@@ -286,7 +285,7 @@ static int gsd_name_id_map_free(struct gsd_name_id_map* map)
 
     @returns Hashed value of the string.
 */
-inline static unsigned long gsd_hash_str(const unsigned char *str)
+inline static unsigned long gsd_hash_str(const unsigned char* str)
 {
     unsigned long hash = 5381; // NOLINT
     int c;
@@ -308,7 +307,7 @@ inline static unsigned long gsd_hash_str(const unsigned char *str)
 
     @returns GSD_SUCCESS on success, GSD_* error codes on error.
 */
-inline static int gsd_name_id_map_insert(struct gsd_name_id_map* map, const char *str, uint16_t id)
+inline static int gsd_name_id_map_insert(struct gsd_name_id_map* map, const char* str, uint16_t id)
 {
     if (map == NULL || map->v == NULL || map->size == 0)
     {
@@ -320,19 +319,19 @@ inline static int gsd_name_id_map_insert(struct gsd_name_id_map* map, const char
     // base case: no conflict
     if (map->v[hash].name == NULL)
     {
-        map->v[hash].name = calloc(strlen(str)+1, sizeof(char));
+        map->v[hash].name = calloc(strlen(str) + 1, sizeof(char));
         if (map->v[hash].name == NULL)
         {
             return GSD_ERROR_MEMORY_ALLOCATION_FAILED;
         }
-        memcpy(map->v[hash].name, str, strlen(str)+1);
+        memcpy(map->v[hash].name, str, strlen(str) + 1);
         map->v[hash].id = id;
         map->v[hash].next = NULL;
     }
     else
     {
         // go to the end of the conflict list
-        struct gsd_name_id_pair *insert_point = map->v + hash;
+        struct gsd_name_id_pair* insert_point = map->v + hash;
 
         while (insert_point->next != NULL)
         {
@@ -346,12 +345,12 @@ inline static int gsd_name_id_map_insert(struct gsd_name_id_map* map, const char
             return GSD_ERROR_MEMORY_ALLOCATION_FAILED;
         }
 
-        insert_point->next->name = calloc(strlen(str)+1, sizeof(char));
+        insert_point->next->name = calloc(strlen(str) + 1, sizeof(char));
         if (insert_point->next->name == NULL)
         {
             return GSD_ERROR_MEMORY_ALLOCATION_FAILED;
         }
-        memcpy(insert_point->next->name, str, strlen(str)+1);
+        memcpy(insert_point->next->name, str, strlen(str) + 1);
         insert_point->next->id = id;
         insert_point->next->next = NULL;
     }
@@ -367,16 +366,16 @@ inline static int gsd_name_id_map_insert(struct gsd_name_id_map* map, const char
 
     @returns The ID if found, or UINT16_MAX if not found.
 */
-inline static uint16_t gsd_name_id_map_find(struct gsd_name_id_map* map, const char *str)
+inline static uint16_t gsd_name_id_map_find(struct gsd_name_id_map* map, const char* str)
 {
     if (map == NULL || map->v == NULL || map->size == 0)
     {
         return UINT16_MAX;
     }
 
-    size_t hash = gsd_hash_str((const unsigned char *)str) % map->size;
+    size_t hash = gsd_hash_str((const unsigned char*)str) % map->size;
 
-    struct gsd_name_id_pair *cur = map->v + hash;
+    struct gsd_name_id_pair* cur = map->v + hash;
 
     while (cur != NULL)
     {
@@ -453,10 +452,9 @@ inline static int gsd_is_entry_valid(struct gsd_handle* handle, size_t idx)
 
     @returns GSD_SUCCESS on success, GSD_* error codes on error.
 */
-static int gsd_byte_buffer_allocate(struct gsd_byte_buffer *buf, size_t reserve)
+static int gsd_byte_buffer_allocate(struct gsd_byte_buffer* buf, size_t reserve)
 {
-    if (buf == NULL || buf->data || reserve == 0 || buf->reserved != 0
-        || buf->size != 0)
+    if (buf == NULL || buf->data || reserve == 0 || buf->reserved != 0 || buf->size != 0)
     {
         return GSD_ERROR_INVALID_ARGUMENT;
     }
@@ -482,7 +480,7 @@ static int gsd_byte_buffer_allocate(struct gsd_byte_buffer *buf, size_t reserve)
 
     @returns GSD_SUCCESS on success, GSD_* error codes on error.
 */
-static int gsd_byte_buffer_append(struct gsd_byte_buffer *buf, const char *data, size_t size)
+static int gsd_byte_buffer_append(struct gsd_byte_buffer* buf, const char* data, size_t size)
 {
     if (buf == NULL || buf->data == NULL || size == 0 || buf->reserved == 0)
     {
@@ -493,7 +491,7 @@ static int gsd_byte_buffer_append(struct gsd_byte_buffer *buf, const char *data,
     {
         // reallocate by doubling
         size_t new_reserved = buf->reserved * 2;
-        char *old_data = buf->data;
+        char* old_data = buf->data;
         buf->data = realloc(buf->data, sizeof(char) * new_reserved);
         if (buf->data == NULL)
         {
@@ -521,7 +519,7 @@ static int gsd_byte_buffer_append(struct gsd_byte_buffer *buf, const char *data,
 
     @returns GSD_SUCCESS on success, GSD_* error codes on error.
 */
-static int gsd_byte_buffer_free(struct gsd_byte_buffer *buf)
+static int gsd_byte_buffer_free(struct gsd_byte_buffer* buf)
 {
     if (buf == NULL || buf->data == NULL)
     {
@@ -544,7 +542,7 @@ static int gsd_byte_buffer_free(struct gsd_byte_buffer *buf)
 
     @returns GSD_SUCCESS on success, GSD_* error codes on error.
 */
-static int gsd_index_buffer_allocate(struct gsd_index_buffer *buf, size_t reserve)
+static int gsd_index_buffer_allocate(struct gsd_index_buffer* buf, size_t reserve)
 {
     if (buf == NULL || buf->mapped_data || buf->data || reserve == 0 || buf->reserved != 0
         || buf->size != 0)
@@ -579,7 +577,7 @@ static int gsd_index_buffer_allocate(struct gsd_index_buffer *buf, size_t reserv
 
     @returns GSD_SUCCESS on success, GSD_* error codes on error.
 */
-static int gsd_index_buffer_map(struct gsd_index_buffer *buf, struct gsd_handle *handle)
+static int gsd_index_buffer_map(struct gsd_index_buffer* buf, struct gsd_handle* handle)
 {
     if (buf == NULL || buf->mapped_data || buf->data || buf->reserved != 0 || buf->size != 0)
     {
@@ -625,14 +623,13 @@ static int gsd_index_buffer_map(struct gsd_index_buffer *buf, struct gsd_handle 
     }
 
     ssize_t bytes_read = gsd_io_pread_retry(handle->fd,
-                                buf->data,
-                                sizeof(struct gsd_index_entry)
-                                    * handle->header.index_allocated_entries,
-                                handle->header.index_location);
+                                            buf->data,
+                                            sizeof(struct gsd_index_entry)
+                                                * handle->header.index_allocated_entries,
+                                            handle->header.index_location);
 
     if (bytes_read == -1
-        || bytes_read
-            != sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries)
+        || bytes_read != sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries)
     {
         return GSD_ERROR_IO;
     }
@@ -664,8 +661,7 @@ static int gsd_index_buffer_map(struct gsd_index_buffer *buf, struct gsd_handle 
             // file is corrupt if any index entry is invalid or frame does not increase
             // monotonically
             if (buf->data[m].location != 0
-                && (!gsd_is_entry_valid(handle, m)
-                    || buf->data[m].frame < buf->data[L].frame))
+                && (!gsd_is_entry_valid(handle, m) || buf->data[m].frame < buf->data[L].frame))
             {
                 return GSD_ERROR_FILE_CORRUPT;
             }
@@ -694,7 +690,7 @@ static int gsd_index_buffer_map(struct gsd_index_buffer *buf, struct gsd_handle 
 
     @returns GSD_SUCCESS on success, GSD_* error codes on error.
 */
-static int gsd_index_buffer_free(struct gsd_index_buffer *buf)
+static int gsd_index_buffer_free(struct gsd_index_buffer* buf)
 {
     if (buf == NULL || buf->data == NULL)
     {
@@ -732,7 +728,7 @@ static int gsd_index_buffer_free(struct gsd_index_buffer *buf)
 
     @returns GSD_SUCCESS on success, GSD_* error codes on error.
 */
-inline static int gsd_index_buffer_add(struct gsd_index_buffer *buf, struct gsd_index_entry **entry)
+inline static int gsd_index_buffer_add(struct gsd_index_buffer* buf, struct gsd_index_entry** entry)
 {
     if (buf == NULL || buf->mapped_data || entry == NULL || buf->reserved == 0)
     {
@@ -743,8 +739,7 @@ inline static int gsd_index_buffer_add(struct gsd_index_buffer *buf, struct gsd_
     {
         // grow the array
         size_t new_reserved = buf->reserved * 2;
-        buf->data = realloc(buf->data,
-                            sizeof(struct gsd_index_entry) * new_reserved);
+        buf->data = realloc(buf->data, sizeof(struct gsd_index_entry) * new_reserved);
         if (buf->data == NULL)
         {
             return GSD_ERROR_MEMORY_ALLOCATION_FAILED;
@@ -763,10 +758,10 @@ inline static int gsd_index_buffer_add(struct gsd_index_buffer *buf, struct gsd_
     return GSD_SUCCESS;
 }
 
-inline static int gsd_cmp_index_entry(const void *p1, const void *p2)
+inline static int gsd_cmp_index_entry(const void* p1, const void* p2)
 {
-    struct gsd_index_entry *a = (struct gsd_index_entry*)p1;
-    struct gsd_index_entry *b = (struct gsd_index_entry*)p2;
+    struct gsd_index_entry* a = (struct gsd_index_entry*)p1;
+    struct gsd_index_entry* b = (struct gsd_index_entry*)p2;
     int result = 0;
 
     if (a->frame < b->frame)
@@ -800,14 +795,13 @@ inline static int gsd_cmp_index_entry(const void *p1, const void *p2)
     return result;
 }
 
-
 /** @internal
     @brief Compute heap parent node.
     @param i Node index.
 */
 inline static size_t gsd_heap_parent(size_t i)
 {
-    return (i-1)/2;
+    return (i - 1) / 2;
 }
 
 /** @internal
@@ -816,7 +810,7 @@ inline static size_t gsd_heap_parent(size_t i)
 */
 inline static size_t gsd_heap_left_child(size_t i)
 {
-    return 2*i + 1;
+    return 2 * i + 1;
 }
 
 /** @internal
@@ -825,7 +819,7 @@ inline static size_t gsd_heap_left_child(size_t i)
     @param a First index to swap.
     @param b Second index to swap.
 */
-inline static void gsd_heap_swap(struct gsd_index_buffer *buf, size_t a, size_t b)
+inline static void gsd_heap_swap(struct gsd_index_buffer* buf, size_t a, size_t b)
 {
     struct gsd_index_entry tmp = buf->data[a];
     buf->data[a] = buf->data[b];
@@ -838,7 +832,7 @@ inline static void gsd_heap_swap(struct gsd_index_buffer *buf, size_t a, size_t 
     @param start First index of the valid heap in *buf*.
     @param end Last index of the valid hep in *buf*.
 */
-inline static void gsd_heap_shift_down(struct gsd_index_buffer *buf, size_t start, size_t end)
+inline static void gsd_heap_shift_down(struct gsd_index_buffer* buf, size_t start, size_t end)
 {
     size_t root = start;
 
@@ -851,9 +845,9 @@ inline static void gsd_heap_shift_down(struct gsd_index_buffer *buf, size_t star
         {
             swap = child;
         }
-        if (child+1 <= end && gsd_cmp_index_entry(buf->data + swap, buf->data + child + 1) < 0)
+        if (child + 1 <= end && gsd_cmp_index_entry(buf->data + swap, buf->data + child + 1) < 0)
         {
-            swap = child+1;
+            swap = child + 1;
         }
 
         if (swap == root)
@@ -870,9 +864,9 @@ inline static void gsd_heap_shift_down(struct gsd_index_buffer *buf, size_t star
     @brief Convert unordered index buffer to a heap
     @param buf Buffer.
 */
-inline static void gsd_heapify(struct gsd_index_buffer *buf)
+inline static void gsd_heapify(struct gsd_index_buffer* buf)
 {
-    ssize_t start = gsd_heap_parent(buf->size-1);
+    ssize_t start = gsd_heap_parent(buf->size - 1);
 
     while (start >= 0)
     {
@@ -890,7 +884,7 @@ inline static void gsd_heapify(struct gsd_index_buffer *buf)
 
     @returns GSD_SUCCESS on success, GSD_* error codes on error.
 */
-inline static int gsd_index_buffer_sort(struct gsd_index_buffer *buf)
+inline static int gsd_index_buffer_sort(struct gsd_index_buffer* buf)
 {
     if (buf == NULL || buf->mapped_data || buf->reserved == 0)
     {
@@ -953,7 +947,7 @@ static int gsd_expand_file_index(struct gsd_handle* handle, size_t size_required
     }
 
     // allocate the copy buffer
-    char *buf = malloc(GSD_COPY_BUFFER_SIZE);
+    char* buf = malloc(GSD_COPY_BUFFER_SIZE);
 
     // write the current index to the end of the file
     int64_t new_index_location = lseek(handle->fd, 0, SEEK_END);
@@ -1072,7 +1066,7 @@ static int gsd_expand_file_index(struct gsd_handle* handle, size_t size_required
     @param handle Handle to flush the write buffer.
     @returns GSD_SUCCESS on success or GSD_* error codes on error
 */
-static int gsd_flush_write_buffer(struct gsd_handle *handle)
+static int gsd_flush_write_buffer(struct gsd_handle* handle)
 {
     if (handle == NULL)
     {
@@ -1112,7 +1106,7 @@ static int gsd_flush_write_buffer(struct gsd_handle *handle)
     size_t i;
     for (i = 0; i < handle->buffer_index.size; i++)
     {
-        struct gsd_index_entry *new_index;
+        struct gsd_index_entry* new_index;
         int retval = gsd_index_buffer_add(&handle->frame_index, &new_index);
         if (retval != GSD_SUCCESS)
         {
@@ -1139,7 +1133,7 @@ static int gsd_flush_write_buffer(struct gsd_handle *handle)
     @param handle Handle to flush the write buffer.
     @returns GSD_SUCCESS on success or GSD_* error codes on error
 */
-static int gsd_flush_name_buffer(struct gsd_handle *handle)
+static int gsd_flush_name_buffer(struct gsd_handle* handle)
 {
     if (handle == NULL)
     {
@@ -1204,7 +1198,8 @@ static int gsd_flush_name_buffer(struct gsd_handle *handle)
 
         handle->file_size += handle->file_names.data.reserved;
         handle->header.namelist_location = offset;
-        handle->header.namelist_allocated_entries = handle->file_names.data.reserved / GSD_NAME_SIZE;
+        handle->header.namelist_allocated_entries
+            = handle->file_names.data.reserved / GSD_NAME_SIZE;
 
         // write the new header out
         bytes_written
@@ -1270,13 +1265,13 @@ inline static int gsd_append_name(uint16_t* id, struct gsd_handle* handle, const
     // Provide the ID of the new name
     *id = (uint16_t)(handle->file_names.n_names + handle->frame_names.n_names);
 
-    if (handle->header.gsd_version < gsd_make_version(2,0))
+    if (handle->header.gsd_version < gsd_make_version(2, 0))
     {
         // v1 files always allocate GSD_NAME_SIZE bytes for each name and put a NULL terminator
         // at address 63
         char name_v1[GSD_NAME_SIZE];
-        strncpy(name_v1, name, GSD_NAME_SIZE-1);
-        name_v1[GSD_NAME_SIZE-1] = 0;
+        strncpy(name_v1, name, GSD_NAME_SIZE - 1);
+        name_v1[GSD_NAME_SIZE - 1] = 0;
         gsd_byte_buffer_append(&handle->frame_names.data, name_v1, GSD_NAME_SIZE);
         handle->frame_names.n_names++;
 
@@ -1289,7 +1284,7 @@ inline static int gsd_append_name(uint16_t* id, struct gsd_handle* handle, const
     }
     else
     {
-        gsd_byte_buffer_append(&handle->frame_names.data, name, strlen(name)+1);
+        gsd_byte_buffer_append(&handle->frame_names.data, name, strlen(name) + 1);
         handle->frame_names.n_names++;
 
         // update the name/id mapping
@@ -1311,10 +1306,8 @@ inline static int gsd_append_name(uint16_t* id, struct gsd_handle* handle, const
     @param schema Schema name for data to be written in this GSD file (truncated to 63 chars)
     @param schema_version Version of the scheme data to be written (make with gsd_make_version())
 */
-static int gsd_initialize_file(int fd,
-                        const char* application,
-                        const char* schema,
-                        uint32_t schema_version)
+static int
+gsd_initialize_file(int fd, const char* application, const char* schema, uint32_t schema_version)
 {
     // check if the file was created
     if (fd == -1)
@@ -1366,11 +1359,10 @@ static int gsd_initialize_file(int fd,
 
     // allocate and zero the namelist memory
     char names[GSD_INITIAL_NAME_BUFFER_SIZE];
-    gsd_util_zero_memory(names, sizeof(char)*GSD_INITIAL_NAME_BUFFER_SIZE);
+    gsd_util_zero_memory(names, sizeof(char) * GSD_INITIAL_NAME_BUFFER_SIZE);
 
     // write the namelist out
-    bytes_written
-        = gsd_io_pwrite_retry(fd, names, sizeof(names), sizeof(header) + sizeof(index));
+    bytes_written = gsd_io_pwrite_retry(fd, names, sizeof(names), sizeof(header) + sizeof(index));
     if (bytes_written != sizeof(names))
     {
         return GSD_ERROR_IO;
@@ -1403,7 +1395,8 @@ static int gsd_initialize_handle(struct gsd_handle* handle)
     }
 
     // read the header
-    ssize_t bytes_read = gsd_io_pread_retry(handle->fd, &handle->header, sizeof(struct gsd_header), 0);
+    ssize_t bytes_read
+        = gsd_io_pread_retry(handle->fd, &handle->header, sizeof(struct gsd_header), 0);
     if (bytes_read == -1)
     {
         return GSD_ERROR_IO;
@@ -1435,7 +1428,7 @@ static int gsd_initialize_handle(struct gsd_handle* handle)
 
     // validate that the namelist block exists inside the file
     if (handle->header.namelist_location
-        + (GSD_NAME_SIZE * handle->header.namelist_allocated_entries)
+            + (GSD_NAME_SIZE * handle->header.namelist_allocated_entries)
         > handle->file_size)
     {
         return GSD_ERROR_FILE_CORRUPT;
@@ -1466,7 +1459,7 @@ static int gsd_initialize_handle(struct gsd_handle* handle)
     }
 
     // The name buffer must end in a NULL terminator or else the file is corrupt
-    if (handle->file_names.data.data[handle->file_names.data.reserved-1] != 0)
+    if (handle->file_names.data.data[handle->file_names.data.reserved - 1] != 0)
     {
         return GSD_ERROR_FILE_CORRUPT;
     }
@@ -1476,7 +1469,7 @@ static int gsd_initialize_handle(struct gsd_handle* handle)
     handle->file_names.n_names = 0;
     while (name_start < handle->file_names.data.reserved)
     {
-        char *name = handle->file_names.data.data + name_start;
+        char* name = handle->file_names.data.data + name_start;
 
         // an empty name notes the end of the list
         if (name[0] == 0)
@@ -1484,16 +1477,15 @@ static int gsd_initialize_handle(struct gsd_handle* handle)
             break;
         }
 
-        retval = gsd_name_id_map_insert(&handle->name_map,
-                                        name,
-                                        (uint16_t)handle->file_names.n_names);
+        retval
+            = gsd_name_id_map_insert(&handle->name_map, name, (uint16_t)handle->file_names.n_names);
         if (retval != GSD_SUCCESS)
         {
             return retval;
         }
         handle->file_names.n_names++;
 
-        if (handle->header.gsd_version < gsd_make_version(2,0))
+        if (handle->header.gsd_version < gsd_make_version(2, 0))
         {
             // gsd v1 stores names in fixed 64 byte segments
             name_start += GSD_NAME_SIZE;
@@ -1708,7 +1700,6 @@ int gsd_truncate(struct gsd_handle* handle)
         return retval;
     }
 
-
     retval = gsd_index_buffer_free(&handle->file_index);
     if (retval != GSD_SUCCESS)
     {
@@ -1885,23 +1876,20 @@ int gsd_end_frame(struct gsd_handle* handle)
                             + sizeof(struct gsd_index_entry) * handle->file_index.size;
 
         size_t bytes_to_write = sizeof(struct gsd_index_entry) * handle->frame_index.size;
-        ssize_t bytes_written = gsd_io_pwrite_retry(handle->fd,
-                                                handle->frame_index.data,
-                                                bytes_to_write,
-                                                write_pos);
+        ssize_t bytes_written
+            = gsd_io_pwrite_retry(handle->fd, handle->frame_index.data, bytes_to_write, write_pos);
 
-        if (bytes_written == -1
-            || bytes_written != bytes_to_write)
+        if (bytes_written == -1 || bytes_written != bytes_to_write)
         {
             return GSD_ERROR_IO;
         }
 
-        #if !GSD_USE_MMAP
+#if !GSD_USE_MMAP
         // add the entries to the file index
         memcpy(handle->file_index.data + handle->file_index.size,
                handle->frame_index.data,
                sizeof(struct gsd_index_entry) * handle->frame_index.size);
-        #endif
+#endif
 
         // update size of file index
         handle->file_index.size += handle->frame_index.size;
@@ -1967,7 +1955,7 @@ int gsd_write_chunk(struct gsd_handle* handle,
     size_t size = N * M * gsd_sizeof_type(type);
 
     // decide whether to write this chunk to the buffer or straight to disk
-    if (size < handle->write_buffer.reserved/2)
+    if (size < handle->write_buffer.reserved / 2)
     {
         // flush the buffer if this entry won't fit
         if (size > (handle->write_buffer.reserved - handle->write_buffer.size))
@@ -1978,7 +1966,7 @@ int gsd_write_chunk(struct gsd_handle* handle,
         entry.location = handle->write_buffer.size;
 
         // add an entry to the buffer index
-        struct gsd_index_entry *index_entry;
+        struct gsd_index_entry* index_entry;
 
         int retval = gsd_index_buffer_add(&handle->buffer_index, &index_entry);
         if (retval != GSD_SUCCESS)
@@ -1993,7 +1981,7 @@ int gsd_write_chunk(struct gsd_handle* handle,
     else
     {
         // add an entry to the frame index
-        struct gsd_index_entry *index_entry;
+        struct gsd_index_entry* index_entry;
 
         int retval = gsd_index_buffer_add(&handle->frame_index, &index_entry);
         if (retval != GSD_SUCCESS)
@@ -2055,12 +2043,12 @@ gsd_find_chunk(struct gsd_handle* handle, uint64_t frame, const char* name)
         return NULL;
     }
 
-    if (handle->header.gsd_version >= gsd_make_version(2,0))
+    if (handle->header.gsd_version >= gsd_make_version(2, 0))
     {
         // gsd 2.0 files sort the entire index
         // binary search for the index entry
         ssize_t L = 0;
-        ssize_t R = handle->file_index.size-1;
+        ssize_t R = handle->file_index.size - 1;
         struct gsd_index_entry T;
         T.frame = frame;
         T.id = match_id;
@@ -2108,7 +2096,8 @@ gsd_find_chunk(struct gsd_handle* handle, uint64_t frame, const char* name)
         int64_t cur_index;
 
         // search all index entries with the matching frame
-        for (cur_index = L; (cur_index >= 0) && (handle->file_index.data[cur_index].frame == frame); cur_index--)
+        for (cur_index = L; (cur_index >= 0) && (handle->file_index.data[cur_index].frame == frame);
+             cur_index--)
         {
             // if the frame matches, check the id
             if (match_id == handle->file_index.data[cur_index].id)
@@ -2233,13 +2222,13 @@ gsd_find_matching_chunk_name(struct gsd_handle* handle, const char* match, const
     }
 
     // return nothing found if the name buffer is corrupt
-    if (handle->file_names.data.data[handle->file_names.data.reserved-1] != 0)
+    if (handle->file_names.data.data[handle->file_names.data.reserved - 1] != 0)
     {
         return NULL;
     }
 
     // determine search start index
-    const char *search_str;
+    const char* search_str;
     if (prev == NULL)
     {
         search_str = handle->file_names.data.data;
@@ -2256,7 +2245,7 @@ gsd_find_matching_chunk_name(struct gsd_handle* handle, const char* match, const
             return NULL;
         }
 
-        if (handle->header.gsd_version < gsd_make_version(2,0))
+        if (handle->header.gsd_version < gsd_make_version(2, 0))
         {
             search_str = prev + GSD_NAME_SIZE;
         }
@@ -2270,13 +2259,12 @@ gsd_find_matching_chunk_name(struct gsd_handle* handle, const char* match, const
 
     while (search_str < (handle->file_names.data.data + handle->file_names.data.reserved))
     {
-        if (search_str[0] != 0
-            && 0 == strncmp(match, search_str, match_len))
+        if (search_str[0] != 0 && 0 == strncmp(match, search_str, match_len))
         {
             return search_str;
         }
 
-        if (handle->header.gsd_version < gsd_make_version(2,0))
+        if (handle->header.gsd_version < gsd_make_version(2, 0))
         {
             search_str += GSD_NAME_SIZE;
         }
@@ -2305,7 +2293,7 @@ int gsd_upgrade(struct gsd_handle* handle)
         return GSD_ERROR_INVALID_ARGUMENT;
     }
 
-    if (handle->header.gsd_version < gsd_make_version(2,0))
+    if (handle->header.gsd_version < gsd_make_version(2, 0))
     {
         if (handle->file_index.size > 0)
         {
@@ -2317,7 +2305,9 @@ int gsd_upgrade(struct gsd_handle* handle)
             {
                 return retval;
             }
-            memcpy(buf.data, handle->file_index.data, sizeof(struct gsd_index_entry) * handle->file_index.size);
+            memcpy(buf.data,
+                   handle->file_index.data,
+                   sizeof(struct gsd_index_entry) * handle->file_index.size);
             buf.size = handle->file_index.size;
 
             // sort the copy and write it back out to the file
@@ -2364,10 +2354,10 @@ int gsd_upgrade(struct gsd_handle* handle)
                 return retval;
             }
 
-            const char *name = gsd_find_matching_chunk_name(handle, "", NULL);
+            const char* name = gsd_find_matching_chunk_name(handle, "", NULL);
             while (name != NULL)
             {
-                retval = gsd_byte_buffer_append(&new_name_buf, name, strlen(name)+1);
+                retval = gsd_byte_buffer_append(&new_name_buf, name, strlen(name) + 1);
                 if (retval != GSD_SUCCESS)
                 {
                     gsd_byte_buffer_free(&new_name_buf);
@@ -2413,7 +2403,7 @@ int gsd_upgrade(struct gsd_handle* handle)
         }
 
         // label the file as a v2.0 file
-        handle->header.gsd_version = gsd_make_version(2,0);
+        handle->header.gsd_version = gsd_make_version(2, 0);
 
         // write the new header out
         ssize_t bytes_written
