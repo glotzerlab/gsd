@@ -5,10 +5,10 @@
 #include <sys/stat.h>
 #ifdef _WIN32
 
+#pragma warning( push )
+#pragma warning( disable : 4996 )
+
 #define GSD_USE_MMAP 0
-#define _CRT_SECURE_NO_WARNINGS 1
-#define open _open
-#define close _close
 #include <io.h>
 
 #else // linux / mac
@@ -420,7 +420,7 @@ inline static int gsd_is_entry_valid(struct gsd_handle* handle, size_t idx)
 
     // validate that we don't read past the end of the file
     size_t size = entry.N * entry.M * gsd_sizeof_type((enum gsd_type)entry.type);
-    if ((entry.location + size) > handle->file_size)
+    if ((entry.location + size) > (uint64_t)handle->file_size)
     {
         return 0;
     }
@@ -589,7 +589,7 @@ static int gsd_index_buffer_map(struct gsd_index_buffer* buf, struct gsd_handle*
     // validate that the index block exists inside the file
     if (handle->header.index_location
             + sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries
-        > handle->file_size)
+        > (uint64_t)handle->file_size)
     {
         return GSD_ERROR_FILE_CORRUPT;
     }
@@ -2143,7 +2143,7 @@ int gsd_read_chunk(struct gsd_handle* handle, void* data, const struct gsd_index
     }
 
     // validate that we don't read past the end of the file
-    if ((chunk->location + size) > handle->file_size)
+    if ((chunk->location + size) > (uint64_t)handle->file_size)
     {
         return GSD_ERROR_FILE_CORRUPT;
     }
@@ -2446,5 +2446,6 @@ int gsd_upgrade(struct gsd_handle* handle)
 #undef read
 #undef open
 #undef ftruncate
+#pragma warning( pop )
 
 #endif
