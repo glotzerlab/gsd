@@ -61,6 +61,13 @@ enum
     GSD_WRITE_BUFFER_SIZE = 16*1024*1024
 };
 
+/// Size of copy buffer
+enum
+{
+    GSD_COPY_BUFFER_SIZE = 128*1024
+};
+
+
 /// Size of hash map
 enum
 {
@@ -913,10 +920,11 @@ inline static int gsd_index_buffer_sort(struct gsd_index_buffer *buf)
     @brief Utility function to expand the memory space for the index block in the file.
 
     @param handle Handle to the open gsd file.
+    @param size_required The new index must be able to hold at least this many elements.
 
     @returns GSD_SUCCESS on success, GSD_* error codes on error.
 */
-static int gsd_expand_file_index(struct gsd_handle* handle)
+static int gsd_expand_file_index(struct gsd_handle* handle, size_t size_required)
 {
     if (handle->open_flags == GSD_OPEN_READONLY)
     {
@@ -931,56 +939,104 @@ static int gsd_expand_file_index(struct gsd_handle* handle)
     size_t size_old = handle->header.index_allocated_entries;
     size_t size_new = size_old * multiplication_factor;
 
-    // write the current index to the end of the file
-    handle->header.index_location = lseek(handle->fd, 0, SEEK_END);
-    ssize_t bytes_written = gsd_io_pwrite_retry(handle->fd,
-                                                handle->file_index.data,
-                                                sizeof(struct gsd_index_entry) * size_old,
-                                                handle->header.index_location);
-
-    if (bytes_written == -1 || bytes_written != sizeof(struct gsd_index_entry) * size_old)
+    while (size_new <= size_required)
     {
-        return GSD_ERROR_IO;
+        size_new *= multiplication_factor;
     }
 
-    // update the file size
-    handle->file_size = handle->header.index_location + bytes_written;
-
-    // write 0's to the new index entries in the file
-    struct gsd_index_entry *zeros = calloc((size_new - size_old), sizeof(struct gsd_index_entry));
-    if (zeros == NULL)
-    {
-        return GSD_ERROR_MEMORY_ALLOCATION_FAILED;
-    }
-
-    bytes_written = gsd_io_pwrite_retry(handle->fd,
-                                        zeros,
-                                        sizeof(struct gsd_index_entry) * (size_new - size_old),
-                                        handle->file_size);
-
-    free(zeros);
-
-    if (bytes_written == -1
-        || bytes_written != sizeof(struct gsd_index_entry) * (size_new - size_old))
-    {
-        return GSD_ERROR_IO;
-    }
-
-    // update the file size
-    handle->file_size += bytes_written;
-
-    // update the index size in the header
-    handle->header.index_allocated_entries = size_new;
-
-    // sync the expanded index
-    int retval = fsync(handle->fd);
+    // Mac systems deadlock when writing from a mapped region into the tail end of that same region
+    // unmap the index first and copy it over by chunks
+    int retval = gsd_index_buffer_free(&handle->file_index);
     if (retval != 0)
     {
+        return retval;
+    }
+
+    // allocate the copy buffer
+    char *buf = malloc(GSD_COPY_BUFFER_SIZE);
+
+    // write the current index to the end of the file
+    int64_t new_index_location = lseek(handle->fd, 0, SEEK_END);
+    int64_t old_index_location = handle->header.index_location;
+    size_t total_bytes_written = 0;
+    size_t old_index_bytes = size_old * sizeof(struct gsd_index_entry);
+    while (total_bytes_written < old_index_bytes)
+    {
+        size_t bytes_to_copy = GSD_COPY_BUFFER_SIZE;
+        if (old_index_bytes - total_bytes_written < GSD_COPY_BUFFER_SIZE)
+        {
+            bytes_to_copy = old_index_bytes - total_bytes_written;
+        }
+
+        ssize_t bytes_read = gsd_io_pread_retry(handle->fd,
+                                                buf,
+                                                bytes_to_copy,
+                                                old_index_location + total_bytes_written);
+
+        if (bytes_read == -1 || bytes_read != bytes_to_copy)
+        {
+            free(buf);
+            return GSD_ERROR_IO;
+        }
+
+        ssize_t bytes_written = gsd_io_pwrite_retry(handle->fd,
+                                                    buf,
+                                                    bytes_to_copy,
+                                                    new_index_location + total_bytes_written);
+
+        if (bytes_written == -1 || bytes_written != bytes_to_copy)
+        {
+            free(buf);
+            return GSD_ERROR_IO;
+        }
+
+        total_bytes_written += bytes_written;
+    }
+
+    // fill the new index space with 0s
+    gsd_util_zero_memory(buf, GSD_COPY_BUFFER_SIZE);
+
+    size_t new_index_bytes = size_new * sizeof(struct gsd_index_entry);
+    while (total_bytes_written < new_index_bytes)
+    {
+        size_t bytes_to_copy = GSD_COPY_BUFFER_SIZE;
+        if (new_index_bytes - total_bytes_written < GSD_COPY_BUFFER_SIZE)
+        {
+            bytes_to_copy = new_index_bytes - total_bytes_written;
+        }
+
+        ssize_t bytes_written = gsd_io_pwrite_retry(handle->fd,
+                                                    buf,
+                                                    bytes_to_copy,
+                                                    new_index_location + total_bytes_written);
+
+        if (bytes_written == -1 || bytes_written != bytes_to_copy)
+        {
+            free(buf);
+            return GSD_ERROR_IO;
+        }
+
+        total_bytes_written += bytes_written;
+    }
+
+    // sync the expanded index
+    retval = fsync(handle->fd);
+    if (retval != 0)
+    {
+        free(buf);
         return GSD_ERROR_IO;
     }
 
+    // free the copy buffer
+    free(buf);
+
+    // update the header
+    handle->header.index_location = new_index_location;
+    handle->file_size = handle->header.index_location + total_bytes_written;
+    handle->header.index_allocated_entries = size_new;
+
     // write the new header out
-    bytes_written
+    ssize_t bytes_written
         = gsd_io_pwrite_retry(handle->fd, &(handle->header), sizeof(struct gsd_header), 0);
     if (bytes_written != sizeof(struct gsd_header))
     {
@@ -995,12 +1051,6 @@ static int gsd_expand_file_index(struct gsd_handle* handle)
     }
 
     // remap the file index
-    retval = gsd_index_buffer_free(&handle->file_index);
-    if (retval != 0)
-    {
-        return retval;
-    }
-
     retval = gsd_index_buffer_map(&handle->file_index, handle);
     if (retval != 0)
     {
@@ -1818,9 +1868,9 @@ int gsd_end_frame(struct gsd_handle* handle)
     if (handle->frame_index.size > 0)
     {
         // ensure there is enough space in the index
-        while ((handle->file_index.size + handle->frame_index.size) > handle->file_index.reserved)
+        if ((handle->file_index.size + handle->frame_index.size) > handle->file_index.reserved)
         {
-            gsd_expand_file_index(handle);
+            gsd_expand_file_index(handle, handle->file_index.size + handle->frame_index.size);
         }
 
         // sort the index before writing
