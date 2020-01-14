@@ -135,7 +135,7 @@ struct gsd_header
     /// Location of the name list in the file.
     uint64_t namelist_location;
 
-    /// Number of bytes in the namelist divided by 64
+    /// Number of bytes in the namelist divided by GSD_NAME_SIZE.
     uint64_t namelist_allocated_entries;
 
     /// Schema version: from gsd_make_version().
