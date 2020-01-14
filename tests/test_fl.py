@@ -523,7 +523,7 @@ def test_chunk_name_limit(tmp_path, open_mode):
             f.write_chunk(name=str(i), data=numpy.array([i], dtype=numpy.int32))
 
         # The GSD specification limits to 65535 names:
-        with pytest.raises(Exception):
+        with pytest.raises(RuntimeError):
             f.write_chunk(name='65536', data=numpy.array([i],
                                                          dtype=numpy.int32))
 

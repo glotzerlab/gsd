@@ -56,12 +56,11 @@ Non use-cases
 
 These capabilities are use-cases that GSD does **not** support, by design.
 
-#. Modify data in the file: GSD is designed to capture simulation data, that raw
-   data should not be modifiable.
+#. Modify data in the file: GSD is designed to capture simulation data.
 #. Add chunks to frames in the middle of a file: See (1).
 #. Transparent conversion between float and double: Callers must take care of
    this.
-#. Transparent compression - this gets in the way of parallel I/O. Disk space is
+#. Transparent compression: this gets in the way of parallel I/O. Disk space is
    cheap.
 
 Dependencies
@@ -70,14 +69,14 @@ Dependencies
 The file layer is implemented in C (*not C++*) with no dependencies to enable
 trivial installation and incorporation into existing projects. A single header
 and C file completely implement the entire file layer. Python based projects
-that need only read access can use :py:mod:`gsd.pygsd`, a pure python gsd reader
+that need only read access can use :py:mod:`gsd.pygsd`, a pure Python gsd reader
 implementation.
 
-A python interface to the file layer allows reference implementations and
+A Python interface to the file layer allows reference implementations and
 convenience methods for schemas. Most non-technical users of GSD will probably
 use these reference implementations directly in their scripts.
 
-The low level C library is wrapped with cython. A python setup.py file will
+The low level C library is wrapped with cython. A Python setup.py file will
 provide simple installation on as many systems as possible. Cython c++ output is
 checked in to the repository so users do not even need cython as a dependency.
 
