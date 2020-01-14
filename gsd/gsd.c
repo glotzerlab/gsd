@@ -765,10 +765,9 @@ inline static int gsd_index_buffer_add(struct gsd_index_buffer* buf, struct gsd_
     return GSD_SUCCESS;
 }
 
-inline static int gsd_cmp_index_entry(const void* p1, const void* p2)
+inline static int gsd_cmp_index_entry(const struct gsd_index_entry* a,
+                                      const struct gsd_index_entry* b)
 {
-    struct gsd_index_entry* a = (struct gsd_index_entry*)p1;
-    struct gsd_index_entry* b = (struct gsd_index_entry*)p2;
     int result = 0;
 
     if (a->frame < b->frame)
