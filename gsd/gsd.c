@@ -501,7 +501,7 @@ inline static int gsd_byte_buffer_append(struct gsd_byte_buffer* buf, const char
         size_t new_reserved = buf->reserved * 2;
         while (buf->size + size >= new_reserved)
             {
-            new_reserved = buf->reserved * 2;
+            new_reserved = new_reserved * 2;
             }
 
         char* old_data = buf->data;
