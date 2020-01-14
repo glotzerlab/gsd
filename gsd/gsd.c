@@ -75,6 +75,12 @@ enum
     GSD_NAME_MAP_SIZE = 57557
 };
 
+/// Current GSD file specification
+enum
+{
+    GSD_CURRENT_FILE_VERSION = 2
+};
+
 // define windows wrapper functions
 #ifdef _WIN32
 #define lseek _lseeki64
@@ -1332,7 +1338,7 @@ gsd_initialize_file(int fd, const char* application, const char* schema, uint32_
     gsd_util_zero_memory(&header, sizeof(header));
 
     header.magic = GSD_MAGIC_ID;
-    header.gsd_version = gsd_make_version(2, 0);
+    header.gsd_version = gsd_make_version(GSD_CURRENT_FILE_VERSION, 0);
     strncpy(header.application, application, sizeof(header.application) - 1);
     header.application[sizeof(header.application) - 1] = 0;
     strncpy(header.schema, schema, sizeof(header.schema) - 1);
@@ -2409,7 +2415,7 @@ int gsd_upgrade(struct gsd_handle* handle)
         }
 
         // label the file as a v2.0 file
-        handle->header.gsd_version = gsd_make_version(2, 0);
+        handle->header.gsd_version = gsd_make_version(GSD_CURRENT_FILE_VERSION, 0);
 
         // write the new header out
         ssize_t bytes_written
