@@ -104,7 +104,9 @@ enum gsd_error
 
 enum
 {
-    /// Size of a GSD name in memory
+    /** v1 file: Size of a GSD name in memory. v2 file: The name buffer size is a multiple of
+        GSD_NAME_SIZE.
+    */
     GSD_NAME_SIZE = 64
 };
 
