@@ -489,10 +489,15 @@ inline static int gsd_byte_buffer_append(struct gsd_byte_buffer* buf, const char
         return GSD_ERROR_INVALID_ARGUMENT;
     }
 
-    while (buf->size + size > buf->reserved)
+    if (buf->size + size > buf->reserved)
     {
         // reallocate by doubling
         size_t new_reserved = buf->reserved * 2;
+        while (buf->size + size >= new_reserved)
+            {
+            new_reserved = buf->reserved * 2;
+            }
+
         char* old_data = buf->data;
         buf->data = realloc(buf->data, sizeof(char) * new_reserved);
         if (buf->data == NULL)
@@ -502,9 +507,9 @@ inline static int gsd_byte_buffer_append(struct gsd_byte_buffer* buf, const char
             return GSD_ERROR_MEMORY_ALLOCATION_FAILED;
         }
 
-        // zero the new memory
-        gsd_util_zero_memory(buf->data + buf->reserved,
-                             sizeof(char) * (new_reserved - buf->reserved));
+        // zero the new memory, but only the portion after the end of the new section to be appended
+        gsd_util_zero_memory(buf->data + (buf->size + size),
+                             sizeof(char) * (new_reserved - (buf->size + size)));
         buf->reserved = new_reserved;
     }
 
