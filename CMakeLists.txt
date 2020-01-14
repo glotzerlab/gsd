@@ -12,11 +12,6 @@ include(LinterSetup)
 include(PythonSetup)
 include_directories(${PYTHON_INCLUDE_DIR})
 
-#############################################################################################
-# set the default install prefix
-SET(CMAKE_INSTALL_PREFIX ${PYTHON_SYSTEM_SITE} CACHE PATH "Python site installation directory" FORCE)
-message(STATUS "Setting installation site dir: ${CMAKE_INSTALL_PREFIX}")
-
 if (WIN32)
 add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
 endif()
