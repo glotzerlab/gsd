@@ -1026,8 +1026,7 @@ def open(name, mode='rb'):
     +------------------+---------------------------------------------+
     | ``'wb+'``        | Open a file for reading and writing.        |
     |                  | Creates the file if needed, or overwrites   |
-    |                  | an existing file. *Inefficient for large    |
-    |                  | files.*                                     |
+    |                  | an existing file.                           |
     +------------------+---------------------------------------------+
     | ``'xb'``         | Create a gsd file exclusively and opens it  |
     |                  | for writing.                                |
@@ -1038,7 +1037,6 @@ def open(name, mode='rb'):
     |                  | for reading and writing.                    |
     |                  | Raise an :py:exc:`FileExistsError`          |
     |                  | exception if it already exists.             |
-    |                  | *Inefficient for large files.*              |
     +------------------+---------------------------------------------+
     | ``'ab'``         | Open an existing file for writing.          |
     |                  | Does *not* create or overwrite existing     |

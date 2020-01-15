@@ -173,7 +173,7 @@ stages:
     steps:
     - checkout: self
       submodules: true
-    - script: ./run-clang-format.py -r gsd
+    - script: ./run-clang-format.py -r scripts gsd
       displayName: Run clang-format
 
   - job: clang_tidy
@@ -197,7 +197,7 @@ stages:
         cmakeArgs: $(Build.SourcesDirectory)
         workingDirectory: $(Build.BinariesDirectory)
 
-    - script: clang-tidy -p=$(Build.BinariesDirectory) gsd/*.c gsd/*.h --quiet --warnings-as-errors="*"
+    - script: clang-tidy -p=$(Build.BinariesDirectory) gsd/*.c gsd/*.h scripts/*.cc --quiet --warnings-as-errors="*"
       displayName: Run clang-tidy
 
   - job: flake8

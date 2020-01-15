@@ -104,7 +104,9 @@ enum gsd_error
 
 enum
 {
-    /// Maximum size of a GSD chunk name in memory
+    /** v1 file: Size of a GSD name in memory. v2 file: The name buffer size is a multiple of
+        GSD_NAME_SIZE.
+    */
     GSD_NAME_SIZE = 64
 };
 
@@ -135,7 +137,7 @@ struct gsd_header
     /// Location of the name list in the file.
     uint64_t namelist_location;
 
-    /// Number of namelist entries that will fit in the space allocated.
+    /// Number of bytes in the namelist divided by GSD_NAME_SIZE.
     uint64_t namelist_allocated_entries;
 
     /// Schema version: from gsd_make_version().
@@ -184,16 +186,86 @@ struct gsd_index_entry
     uint8_t flags;
 };
 
-/** Namelist entry
+/** Name/id mapping
 
-     An entry in the list of data chunk names
-
-    @warning All members are **read-only** to the caller.
+    A string name paired with an ID. Used for storing sorted name/id mappings in a hash map.
 */
-struct gsd_namelist_entry
+struct gsd_name_id_pair
 {
-    /// Entry name
-    char name[GSD_NAME_SIZE];
+    /// Pointer to name (actual name storage is allocated in gsd_handle)
+    char* name;
+
+    /// Next name/id pair with the same hash
+    struct gsd_name_id_pair* next;
+
+    /// Entry id
+    uint16_t id;
+};
+
+/** Name/id hash map
+
+    A hash map of string names to integer identifiers.
+*/
+struct gsd_name_id_map
+{
+    /// Name/id mappings
+    struct gsd_name_id_pair* v;
+
+    /// Number of entries in the mapping
+    size_t size;
+};
+
+/** Array of index entries
+
+    May point to a mapped location of index entries in the file or an in-memory buffer.
+*/
+struct gsd_index_buffer
+{
+    /// Indices in the buffer
+    struct gsd_index_entry* data;
+
+    /// Number of entries in the buffer
+    size_t size;
+
+    /// Number of entries available in the buffer
+    size_t reserved;
+
+    /// Pointer to mapped data (NULL if not mapped)
+    void* mapped_data;
+
+    /// Number of bytes mapped
+    size_t mapped_len;
+};
+
+/** Byte buffer
+
+    Used to buffer of small data chunks held for a buffered write at the end of a frame. Also
+    used to hold the names.
+*/
+struct gsd_byte_buffer
+{
+    /// Data
+    char* data;
+
+    /// Number of bytes in the buffer
+    size_t size;
+
+    /// Number of bytes available in the buffer
+    size_t reserved;
+};
+
+/** Name buffer
+
+    Holds a list of string names in order separated by NULL terminators. In v1 files, each name is
+    64 bytes. In v2 files, only one NULL terminator is placed between each name.
+*/
+struct gsd_name_buffer
+{
+    /// Data
+    struct gsd_byte_buffer data;
+
+    /// Number of names in the list
+    size_t n_names;
 };
 
 /** File handle
@@ -213,26 +285,23 @@ struct gsd_handle
     /// The file header
     struct gsd_header header;
 
-    /// Pointer to mapped data
-    void* mapped_data;
+    /// Mapped data chunk index
+    struct gsd_index_buffer file_index;
 
-    /// Size of temporary buffer to store index entries to append
-    size_t append_index_size;
+    /// Index entries to append to the current frame
+    struct gsd_index_buffer frame_index;
 
-    /// Pointer to the data chunk index
-    struct gsd_index_entry* index;
+    /// Buffered index entries to append to the current frame
+    struct gsd_index_buffer buffer_index;
 
-    /// Pointer to the name list
-    struct gsd_namelist_entry* namelist;
+    /// Buffered write data
+    struct gsd_byte_buffer write_buffer;
 
-    /// Number of entries in the name list
-    uint64_t namelist_num_entries;
+    /// List of names stored in the file
+    struct gsd_name_buffer file_names;
 
-    /// Number of index entries comitted to the file
-    uint64_t index_written_entries;
-
-    /// Number of entries in the index
-    uint64_t index_num_entries;
+    /// List of names added in the current frame
+    struct gsd_name_buffer frame_names;
 
     /// The index of the last frame in the file
     uint64_t cur_frame;
@@ -243,8 +312,8 @@ struct gsd_handle
     /// Flags passed to gsd_open() when opening this handle
     enum gsd_open_flag open_flags;
 
-    /// Whether the handle requires an fsync call (new data was written)
-    bool needs_sync;
+    /// Access the names in the namelist
+    struct gsd_name_id_map name_map;
 };
 
 /** Specify a version
@@ -322,10 +391,6 @@ int gsd_create_and_open(struct gsd_handle* handle,
 
     The file descriptor is closed if there is an error opening the file.
 
-    Prefer the modes GSD_OPEN_APPEND for writing and GSD_OPEN_READONLY for reading. These modes are
-    optimized to only load as much of the index as needed. GSD_OPEN_READWRITE needs to store the
-    entire index in memory: in files with millions of chunks, this can add up to GiB.
-
     @return
       - GSD_SUCCESS (0) on success. Negative value on failure:
       - GSD_ERROR_IO: IO error (check errno).
@@ -365,10 +430,8 @@ int gsd_truncate(struct gsd_handle* handle);
     @post The file is closed.
     @post *handle* is freed and can no longer be used.
 
-    @warning Do not write chunks to the file with gsd_write_chunk() and then immediately close the
-    file with gsd_close(). This will result in data loss. Data chunks written by gsd_write_chunk()
-    are not updated in the index until gsd_end_frame() is called. This is by design to prevent
-    partial frames in files.
+    @warning Ensure that all gsd_write_chunk() calls are committed with gsd_end_frame() before
+    closing the file.
 
     @return
       - GSD_SUCCESS (0) on success. Negative value on failure:
@@ -391,13 +454,14 @@ int gsd_close(struct gsd_handle* handle);
       - GSD_ERROR_IO: IO error (check errno).
       - GSD_ERROR_INVALID_ARGUMENT: *handle* is NULL.
       - GSD_ERROR_FILE_MUST_BE_WRITABLE: The file was opened read-only.
+      - GSD_ERROR_MEMORY_ALLOCATION_FAILED: Unable to allocate memory.
 */
 int gsd_end_frame(struct gsd_handle* handle);
 
 /** Write a data chunk to the current frame
 
     @param handle Handle to an open GSD file.
-    @param name Name of the data chunk (truncated to 63 chars).
+    @param name Name of the data chunk.
     @param type type ID that identifies the type of data in *data*.
     @param N Number of rows in the data.
     @param M Number of columns in the data.
@@ -410,6 +474,9 @@ int gsd_end_frame(struct gsd_handle* handle);
 
     @post The given data chunk is written to the end of the file and its location is updated in the
     in-memory index.
+
+    @note If the GSD file is version 1.0, the chunk name is truncated to 63 bytes. GSD version
+    2.0 files support arbitrarily long names.
 
     @return
       - GSD_SUCCESS (0) on success. Negative value on failure:
@@ -499,6 +566,21 @@ size_t gsd_sizeof_type(enum gsd_type type);
 */
 const char*
 gsd_find_matching_chunk_name(struct gsd_handle* handle, const char* match, const char* prev);
+
+/** Upgrade a GSD file to the latest specification.
+
+    @param handle Handle to an open GSD file
+
+    @pre *handle* was opened by gsd_open() with a writable mode.
+    @pre There are no pending data to write to the file in gsd_end_frame()
+
+    @return
+      - GSD_SUCCESS (0) on success. Negative value on failure:
+      - GSD_ERROR_IO: IO error (check errno).
+      - GSD_ERROR_INVALID_ARGUMENT: *handle* is NULL
+      - GSD_ERROR_FILE_MUST_BE_WRITABLE: The file was opened in read-only mode.
+*/
+int gsd_upgrade(struct gsd_handle* handle);
 
 #ifdef __cplusplus
 }

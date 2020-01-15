@@ -51,7 +51,7 @@ to end the frame and start the next one.
 .. note:: While supported, implicit conversion to numpy arrays creates a 2nd copy of the data
           in memory and adds conversion overhead.
 
-.. warning:: Make sure to call ``end_frame()`` before closing the file, or the last frame may be lost.
+.. warning:: Make sure to call ``end_frame()`` before closing the file, or the last frame will be lost.
 
 Read data
 ^^^^^^^^^
@@ -124,9 +124,7 @@ Read-only access
     f.write_chunk(name='error', data=numpy.array([1]))
     f.close()
 
-Files opened in read only (``rb``) mode can be read from, but not written to. The read-only
-mode is tuned for high performance reads with minimal memory impact and can easily handle
-files with tens of millions of data chunks.
+Writes fail when a file is opened in a read only mode.
 
 Access file metadata
 ^^^^^^^^^^^^^^^^^^^^
@@ -147,6 +145,8 @@ Access file metadata
     f.nframes
     f.close()
 
+File metadata are available as properties.
+
 Open a file in read/write mode
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -162,9 +162,7 @@ Open a file in read/write mode
     f.nframes
     f.read_chunk(frame=0, name='double')
 
-Files in read/write mode (``'wb+' or 'rb+'``) are inefficient. Only use this mode if you **must** read and
-write to the same file, and only if you are working with relatively small files with fewer than
-a million data chunks. Prefer append mode for writing and read-only mode for reading.
+Open a file in read/write mode to allow both reading and writing.
 
 Write a file in append mode
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -184,10 +182,8 @@ Write a file in append mode
     f.read_chunk(frame=2, name='double')
     f.close()
 
-Append mode is extremely frugal with memory. It only caches data chunks for the frame about to
-be committed and clears the cache on a call to :py:meth:`gsd.fl.GSDFile.end_frame()`. This is
-especially useful on supercomputers where memory per node is limited, but you may want to
-generate gsd files with millions of data chunks.
+Open a file in append mode to write additional chunks to an existing file,
+but prevent reading.
 
 Use as a context manager
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -248,6 +244,6 @@ Truncate
     f.schema, f.schema_version, f.application
 
 Truncating a gsd file removes all data chunks from it, but retains the same schema, schema
-version, and applicaiton name. The file is not closed during this process. This is useful
+version, and application name. The file is not closed during this process. This is useful
 when writing restart files on a Lustre file system when file open operations need to be
 kept to a minimum.

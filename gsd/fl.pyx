@@ -146,8 +146,7 @@ def open(name, mode, application, schema, schema_version):
     +------------------+---------------------------------------------+
     | ``'wb+'``        | Open a file for reading and writing.        |
     |                  | Creates the file if needed, or overwrites   |
-    |                  | an existing file. *Inefficient for large    |
-    |                  | files.*                                     |
+    |                  | an existing file.                           |
     +------------------+---------------------------------------------+
     | ``'xb'``         | Create a gsd file exclusively and opens it  |
     |                  | for writing.                                |
@@ -158,18 +157,13 @@ def open(name, mode, application, schema, schema_version):
     |                  | for reading and writing.                    |
     |                  | Raise an :py:exc:`FileExistsError`          |
     |                  | exception if it already exists.             |
-    |                  | *Inefficient for large files.*              |
     +------------------+---------------------------------------------+
     | ``'ab'``         | Open an existing file for writing.          |
     |                  | Does *not* create or overwrite existing     |
     |                  | files.                                      |
     +------------------+---------------------------------------------+
 
-    The '+' read/write modes are inefficient at handling large files, as they
-    read the entire file index into memory. Prefer the appropriate read or write
-    only modes.
-
-    When opening a file for reading (``'r' or 'a'`` modes): ``application`` and
+    When opening a file for reading (``'r' modes): ``application`` and
     ``schema_version`` are ignored. :py:func:`open` throws an exception if the
     file's schema does not match ``schema``.
 
@@ -301,7 +295,7 @@ cdef class GSDFile:
 
         if overwrite:
             # create a new file or overwrite an existing one
-            logger.info('opening file: ' + name + ' with mode: ' + mode
+            logger.info('overwriting file: ' + name + ' with mode: ' + mode
                         + ', application: ' + application
                         + ', schema: ' + schema
                         + ', and schema_version: ' + str(schema_version))
@@ -516,7 +510,7 @@ cdef class GSDFile:
         data_array = data_array.view()
 
         cdef uint64_t N
-        cdef uint64_t M
+        cdef uint32_t M
 
         if len(data_array.shape) > 2:
             raise ValueError("GSD can only write 1 or 2 dimensional arrays: "
@@ -847,6 +841,24 @@ cdef class GSDFile:
                                                               c_found)
 
         return retval
+
+    def upgrade(self):
+        """ upgrade()
+
+        Upgrade a GSD file to the v2 specification in place. The file must be
+        open in a writable mode.
+
+        """
+
+        if not self.__is_open:
+            raise ValueError("File is not open")
+
+        logger.info('upgrading file: ' + self.name)
+
+        with nogil:
+            retval = libgsd.gsd_upgrade(&self.__handle)
+
+        __raise_on_error(retval, self.name)
 
     def __enter__(self):
         return self

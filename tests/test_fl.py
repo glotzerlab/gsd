@@ -7,6 +7,12 @@ import gsd.pygsd
 import numpy
 import platform
 import pytest
+import random
+import pathlib
+import os
+import shutil
+
+test_path = pathlib.Path(os.path.realpath(__file__)).parent
 
 
 def test_create(tmp_path):
@@ -84,7 +90,7 @@ def test_metadata(tmp_path, open_mode):
         assert f.schema == 'none'
         assert f.schema_version == (1, 2)
         assert f.nframes == 150
-        assert f.gsd_version == (1, 0)
+        assert f.gsd_version == (2, 0)
 
     # test again with pygsd
     with gsd.pygsd.GSDFile(file=open(str(tmp_path / 'test_metadata.gsd'),
@@ -95,7 +101,7 @@ def test_metadata(tmp_path, open_mode):
         assert f.schema == 'none'
         assert f.schema_version == (1, 2)
         assert f.nframes == 150
-        assert f.gsd_version == (1, 0)
+        assert f.gsd_version == (2, 0)
 
 
 def test_append(tmp_path, open_mode):
@@ -378,13 +384,13 @@ def test_namelen(tmp_path, open_mode):
                      application=app_long,
                      schema=schema_long,
                      schema_version=[1, 2]) as f:
-        data_read = f.read_chunk(0, name=chunk_long[0:63])
+        data_read = f.read_chunk(0, name=chunk_long)
         numpy.testing.assert_array_equal(data, data_read)
 
     # test again with pygsd
     with gsd.pygsd.GSDFile(file=open(str(tmp_path / 'test_namelen.gsd'),
                                      mode='rb')) as f:
-        data_read = f.read_chunk(0, name=chunk_long[0:63])
+        data_read = f.read_chunk(0, name=chunk_long)
         numpy.testing.assert_array_equal(data, data_read)
 
 
@@ -513,10 +519,293 @@ def test_chunk_name_limit(tmp_path, open_mode):
                      application='test_chunk_name_limit',
                      schema='none',
                      schema_version=[1, 2]) as f:
-        for i in range(128):
+        for i in range(65535):
             f.write_chunk(name=str(i), data=numpy.array([i], dtype=numpy.int32))
 
-        # A bug in GSD limits files to 128 chunk names:
-        # see https://github.com/glotzerlab/gsd/issues/43
-        with pytest.raises(Exception):
-            f.write_chunk(name='128', data=numpy.array([i], dtype=numpy.int32))
+        # The GSD specification limits to 65535 names:
+        with pytest.raises(RuntimeError):
+            f.write_chunk(name='65536', data=numpy.array([i],
+                                                         dtype=numpy.int32))
+
+
+def test_many_names(tmp_path, open_mode):
+    values = list(range(1000))
+
+    with gsd.fl.open(name=tmp_path / 'test.gsd', mode=open_mode.write,
+                     application='test_many_names',
+                     schema='none',
+                     schema_version=[1, 2]) as f:
+        for frame in range(5):
+            random.shuffle(values)
+            for value in values:
+                f.write_chunk(name=str(value),
+                              data=numpy.array([value * 13], dtype=numpy.int32))
+            f.end_frame()
+
+    with gsd.fl.open(name=tmp_path / 'test.gsd',
+                     mode=open_mode.read,
+                     application='test_many_names',
+                     schema='none',
+                     schema_version=[1, 2]) as f:
+
+        for frame in range(5):
+            random.shuffle(values)
+            for value in values:
+                data = numpy.array([value * 13], dtype=numpy.int32)
+                data_read = f.read_chunk(frame=frame, name=str(value))
+                numpy.testing.assert_array_equal(data, data_read)
+
+    with gsd.pygsd.GSDFile(file=open(str(tmp_path / 'test.gsd'),
+                                     mode='rb')) as f:
+        for frame in range(5):
+            random.shuffle(values)
+            for value in values:
+                data = numpy.array([value * 13], dtype=numpy.int32)
+                data_read = f.read_chunk(frame=frame, name=str(value))
+                numpy.testing.assert_array_equal(data, data_read)
+
+
+def test_gsd_v1_read(open_mode):
+    values = list(range(127))
+    values_str = [str(v) for v in values]
+    values_str.sort()
+
+    # test that we can:
+    # 1) Read chunk values correctly
+    # 2) Iterate through chunk names correctly
+    def check_v1_file_read(f):
+        assert f.gsd_version == (1, 0)
+
+        for frame in range(5):
+            random.shuffle(values)
+            for value in values:
+                data = numpy.array([value * 13], dtype=numpy.int32)
+                data_read = f.read_chunk(frame=frame, name=str(value))
+                numpy.testing.assert_array_equal(data, data_read)
+
+        chunk_names = f.find_matching_chunk_names('')
+        chunk_names.sort()
+        assert chunk_names == values_str
+
+    # test with the C implemantation
+    with gsd.fl.open(name=test_path / 'test_gsd_v1.gsd',
+                     mode=open_mode.read,
+                     application='test_gsd_v1',
+                     schema='none',
+                     schema_version=[1, 2]) as f:
+
+        check_v1_file_read(f)
+
+    # and the pure python implementation
+    with gsd.pygsd.GSDFile(file=open(str(test_path / 'test_gsd_v1.gsd'),
+                                     mode='rb')) as f:
+
+        assert f.gsd_version == (1, 0)
+
+        check_v1_file_read(f)
+
+
+def test_gsd_v1_upgrade_read(tmp_path, open_mode):
+    values = list(range(127))
+    values_str = [str(v) for v in values]
+    values_str.sort()
+
+    # test that we can:
+    # 1) Read chunk values correctly
+    # 2) Iterate through chunk names correctly
+    def check_v1_file_read(f):
+        for frame in range(5):
+            random.shuffle(values)
+            for value in values:
+                data = numpy.array([value * 13], dtype=numpy.int32)
+                data_read = f.read_chunk(frame=frame, name=str(value))
+                numpy.testing.assert_array_equal(data, data_read)
+
+        chunk_names = f.find_matching_chunk_names('')
+        chunk_names.sort()
+        assert chunk_names == values_str
+
+    shutil.copy(test_path / 'test_gsd_v1.gsd', tmp_path / 'test_gsd_v1.gsd')
+
+    with gsd.fl.open(name=tmp_path / 'test_gsd_v1.gsd',
+                     mode='rb+',
+                     application='test_gsd_v1',
+                     schema='none',
+                     schema_version=[1, 2]) as f:
+
+        assert f.gsd_version == (1, 0)
+
+        f.upgrade()
+
+        # check that we can read the file contents after the upgrade in memory
+        check_v1_file_read(f)
+
+    # and the same tests again after closing and opening the file
+    with gsd.fl.open(name=tmp_path / 'test_gsd_v1.gsd',
+                     mode=open_mode.read,
+                     application='test_gsd_v1',
+                     schema='none',
+                     schema_version=[1, 2]) as f:
+
+        assert f.gsd_version == (2, 0)
+
+        check_v1_file_read(f)
+
+    with gsd.pygsd.GSDFile(file=open(str(tmp_path / 'test_gsd_v1.gsd'),
+                                     mode='rb')) as f:
+
+        assert f.gsd_version == (2, 0)
+
+        check_v1_file_read(f)
+
+
+def test_gsd_v1_write(tmp_path, open_mode):
+    values = list(range(256))
+    # include a very long chunk name to check that the name is truncated
+    # properly for the v1 format limitations
+    long_name = 'abcdefg' * 1000
+    values.append(long_name)
+
+    values_str = []
+    for v in values:
+        if type(v) == str and len(v) > 63:
+            # v1 files truncate names to 63 chars
+            v = v[0:63]
+        values_str.append(str(v))
+    values_str.sort()
+
+    shutil.copy(test_path / 'test_gsd_v1.gsd', tmp_path / 'test_gsd_v1.gsd')
+
+    # test that we can:
+    # 1) Read chunk values correctly
+    # 2) Iterate through chunk names correctly
+    def check_v1_file_read(f):
+        assert f.gsd_version == (1, 0)
+
+        chunk_names = f.find_matching_chunk_names('')
+        chunk_names.sort()
+        assert chunk_names == values_str
+
+        frame = 5
+        random.shuffle(values)
+        for value in values:
+            if type(value) == int:
+                data = numpy.array([value * 13], dtype=numpy.int32)
+            else:
+                data = numpy.array([hash(value)], dtype=numpy.int64)
+                # v1 files truncate names to 63 chars
+                if len(value) > 63:
+                    value = value[0:63]
+
+            data_read = f.read_chunk(frame=frame, name=str(value))
+            numpy.testing.assert_array_equal(data, data_read)
+
+    # test that we can write new entries to the file
+    with gsd.fl.open(name=tmp_path / 'test_gsd_v1.gsd',
+                     mode='rb+',
+                     application='test_gsd_v1',
+                     schema='none',
+                     schema_version=[1, 2]) as f:
+
+        assert f.gsd_version == (1, 0)
+
+        for value in values:
+            if type(value) == int:
+                data = numpy.array([value * 13], dtype=numpy.int32)
+            else:
+                data = numpy.array([hash(value)], dtype=numpy.int64)
+            f.write_chunk(name=str(value), data=data)
+        f.end_frame()
+
+        check_v1_file_read(f)
+
+    # test opening again with the C implemantation
+    with gsd.fl.open(name=tmp_path / 'test_gsd_v1.gsd',
+                     mode=open_mode.read,
+                     application='test_gsd_v1',
+                     schema='none',
+                     schema_version=[1, 2]) as f:
+
+        check_v1_file_read(f)
+
+    # and the pure python implementation
+    with gsd.pygsd.GSDFile(file=open(str(tmp_path / 'test_gsd_v1.gsd'),
+                                     mode='rb')) as f:
+
+        assert f.gsd_version == (1, 0)
+
+        check_v1_file_read(f)
+
+
+def test_gsd_v1_upgrade_write(tmp_path, open_mode):
+    values = list(range(256))
+    # include a very long chunk name to check that the name can be written
+    # after the upgrade
+    long_name = 'abcdefg' * 1000
+    values.append(long_name)
+
+    values_str = [str(v) for v in values]
+    values_str.sort()
+
+    shutil.copy(test_path / 'test_gsd_v1.gsd', tmp_path / 'test_gsd_v1.gsd')
+
+    # test that we can:
+    # 1) Read chunk values correctly
+    # 2) Iterate through chunk names correctly
+    def check_v1_file_read(f):
+        chunk_names = f.find_matching_chunk_names('')
+        chunk_names.sort()
+        assert chunk_names == values_str
+
+        frame = 5
+        random.shuffle(values)
+        for value in values:
+            if type(value) == int:
+                data = numpy.array([value * 13], dtype=numpy.int32)
+            else:
+                data = numpy.array([hash(value)], dtype=numpy.int64)
+
+            data_read = f.read_chunk(frame=frame, name=str(value))
+            numpy.testing.assert_array_equal(data, data_read)
+
+    # test that we can write new entries to the file
+    with gsd.fl.open(name=tmp_path / 'test_gsd_v1.gsd',
+                     mode='rb+',
+                     application='test_gsd_v1',
+                     schema='none',
+                     schema_version=[1, 2]) as f:
+
+        assert f.gsd_version == (1, 0)
+
+        f.upgrade()
+
+        assert f.gsd_version == (2, 0)
+
+        for value in values:
+            if type(value) == int:
+                data = numpy.array([value * 13], dtype=numpy.int32)
+            else:
+                data = numpy.array([hash(value)], dtype=numpy.int64)
+            f.write_chunk(name=str(value), data=data)
+        f.end_frame()
+
+        check_v1_file_read(f)
+
+    # test opening again with the C implemantation
+    with gsd.fl.open(name=tmp_path / 'test_gsd_v1.gsd',
+                     mode=open_mode.read,
+                     application='test_gsd_v1',
+                     schema='none',
+                     schema_version=[1, 2]) as f:
+
+        assert f.gsd_version == (2, 0)
+
+        check_v1_file_read(f)
+
+    # and the pure python implementation
+    with gsd.pygsd.GSDFile(file=open(str(tmp_path / 'test_gsd_v1.gsd'),
+                                     mode='rb')) as f:
+
+        assert f.gsd_version == (2, 0)
+
+        check_v1_file_read(f)

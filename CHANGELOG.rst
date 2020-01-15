@@ -10,10 +10,24 @@ v2.x
 v2.0.0 (not yet released)
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+*Note*
+
+* This release introduces a new file storage format.
+* GSD >= 2.0 can read files written by previous versions.
+* Files created or upgraded by GSD >= 2.0 can not be opened by GSD < 2.0.
+
 *Added*
+
+* The ``upgrade`` method converts a GSD 1.0 file to a GSD 2.0 file in place.
+* Support arbitrarily long chunk names (only in GSD 2.0 files).
 
 *Changed*
 
+* Improve read latency when accessing files with thousands of chunk names in
+  a frame (only for GSD 2.0 files).
+* Buffer small writes to improve write performance.
+* Improve performance and reduce memory usage in read/write modes ('rb+', 'wb+'
+  and ('xb+').
 * **C API**: functions return error codes from the ``gsd_error`` enum. v2.x
   integer error codes differ from v1.x, use the enum to check:
   ``if (retval == GSD_ERROR_IO)``.
@@ -22,6 +36,8 @@ v2.0.0 (not yet released)
 *Removed*
 
 *Fixed*
+
+* Allow more than 127 data chunk names in a single GSD file.
 
 v1.x
 ----
@@ -57,8 +73,10 @@ v1.9.0 (2019-09-18)
 * ``HOOMD`` schema 1.4: Add user defined logged data.
 * ``HOOMD`` schema 1.4: Add ``type_shapes`` specification.
 * pytest >= 3.9.0 is required to run unit tests.
-* ``gsd.fl.open`` and ``gsd.hoomd.open`` accept objects implementing ``os.PathLike``.
-* Report an error when attempting to write a chunk that fails to allocate a name.
+* ``gsd.fl.open`` and ``gsd.hoomd.open`` accept objects implementing
+  ``os.PathLike``.
+* Report an error when attempting to write a chunk that fails to allocate a
+  name.
 * Reduce virtual memory usage in ``rb`` and ``wb`` open modes.
 * Additional checks for corrupt GSD files on open.
 * Synchronize after expanding file index.
@@ -66,14 +84,15 @@ v1.9.0 (2019-09-18)
 v1.8.1 (2019-08-19)
 ^^^^^^^^^^^^^^^^^^^
 
-* Correctly raise ``IndexError`` when attempting to read frames before the first frame.
+* Correctly raise ``IndexError`` when attempting to read frames before the first
+  frame.
 * Raise ``RuntimeError`` when importing ``gsd`` in unsupported Python versions.
 
 v1.8.0 (2019-08-05)
 ^^^^^^^^^^^^^^^^^^^
 
-* Slicing a HOOMDTrajectory object returns a view that can be used to directly select frames from a subset
-  or sliced again.
+* Slicing a HOOMDTrajectory object returns a view that can be used to directly
+  select frames from a subset or sliced again.
 * raise ``IndexError`` when attempting to read frames before the first frame.
 * Dropped support for Python 2.
 
@@ -97,7 +116,8 @@ v1.6.1 (2019-03-05)
 v1.6.0 (2018-12-20)
 ^^^^^^^^^^^^^^^^^^^
 
-* The length of sliced HOOMDTrajectory objects can be determined with the built-in ``len()`` function.
+* The length of sliced HOOMDTrajectory objects can be determined with the
+  built-in ``len()`` function.
 
 v1.5.5 (2018-11-28)
 ^^^^^^^^^^^^^^^^^^^
@@ -107,13 +127,15 @@ v1.5.5 (2018-11-28)
 v1.5.4 (2018-10-04)
 ^^^^^^^^^^^^^^^^^^^
 
-* Add ``pyproject.toml`` file that defines ``numpy`` as a proper build dependency (requires pip >= 10)
+* Add ``pyproject.toml`` file that defines ``numpy`` as a proper build
+  dependency (requires pip >= 10)
 * Reorganize documentation
 
 v1.5.3 (2018-05-22)
 ^^^^^^^^^^^^^^^^^^^
 
-* Revert ``setup.py`` changes in v1.5.2 - these do not work in most circumstances.
+* Revert ``setup.py`` changes in v1.5.2 - these do not work in most
+  circumstances.
 * Include ``sys/stat.h`` on all architectures.
 
 v1.5.2 (2018-04-04)
@@ -136,7 +158,8 @@ v1.5.0 (2018-01-18)
 v1.4.0 (2017-12-04)
 ^^^^^^^^^^^^^^^^^^^
 
-* Support reading and writing chunks with 0 length. No schema changes are necessary to support this.
+* Support reading and writing chunks with 0 length. No schema changes are
+  necessary to support this.
 
 v1.3.0 (2017-11-17)
 ^^^^^^^^^^^^^^^^^^^

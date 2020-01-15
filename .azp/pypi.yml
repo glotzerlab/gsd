@@ -89,7 +89,7 @@ stages:
     - script: pip3 --disable-pip-version-check install gsd --no-index -f dist --progress-bar=off --user
       displayName: Install wheel (old numpy)
 
-    - script: pytest
+    - script: pytest --log-level=DEBUG
       displayName: Test wheel (old numpy)
       workingDirectory: tests
 
@@ -99,7 +99,7 @@ stages:
     - script: pip3 --disable-pip-version-check install gsd --no-index -f dist --progress-bar=off --user
       displayName: Install wheel (latest numpy)
 
-    - script: pytest
+    - script: pytest --log-level=DEBUG
       displayName: Test wheel (latest numpy)
       workingDirectory: tests
 
