@@ -56,7 +56,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'GSD'
-copyright (c) 2016-2020 The Regents of the University of Michigan'
+copyright = '2016-2020 The Regents of the University of Michigan'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
