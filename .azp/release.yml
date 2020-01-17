@@ -34,7 +34,7 @@ jobs:
     displayName: Copy source
   - script: rm -rf $(Pipeline.Workspace)/$(name)-$(tag)/.git
     displayName: Remove .git
-  - script: tar -cvzf $(Build.ArtifactStagingDirectory)/$(name)-$(tag).tar.gz $(Pipeline.Workspace)/$(name)-$(tag)/
+  - script: tar -cvzf $(Build.ArtifactStagingDirectory)/$(name)-$(tag).tar.gz -C $(Pipeline.Workspace) $(name)-$(tag)
     displayName: Tar source
   - task: GitHubRelease@0
     displayName: Create GitHub release
