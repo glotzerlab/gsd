@@ -9,7 +9,6 @@ GSD schema ``hoomd``. It is a simple, but high performance and memory
 efficient, reader and writer for the schema. See :ref:`hoomd-examples`
 for full examples.
 
-* :py:func:`create` - Create a hoomd schema GSD file (deprecated).
 * :py:func:`open` - Open a hoomd schema GSD file.
 * :py:class:`HOOMDTrajectory` - Read and write hoomd schema GSD files.
 * :py:class:`Snapshot` - Store the state of a single frame.
@@ -964,40 +963,6 @@ class HOOMDTrajectory(object):
         self.file.close()
 
 
-def create(name, snapshot=None):
-    """ Create a hoomd gsd file from the given snapshot.
-
-    Args:
-        name (str): File name.
-        snapshot (:py:class:`Snapshot`): Snapshot to write to frame 0. No frame
-          is written if snapshot is ``None``.
-
-    .. deprecated:: 1.2
-
-        As of version 1.2, you can create and open hoomd GSD files in the same
-        call to :py:func:`open`. :py:func:`create` is kept for backwards
-        compatibility.
-
-    .. danger::
-        The file is overwritten if it already exists.
-    """
-    if fl is None:
-        raise RuntimeError("file layer module is not available")
-    if gsd is None:
-        raise RuntimeError("gsd module is not available")
-
-    logger.info('creating hoomd gsd file: ' + name)
-
-    gsd.fl.create(name=str(name),
-                  application='gsd.hoomd ' + gsd.__version__,
-                  schema='hoomd',
-                  schema_version=[1, 4])
-    with gsd.fl.GSDFile(name, 'wb') as f:
-        traj = HOOMDTrajectory(f)
-        if snapshot is not None:
-            traj.append(snapshot)
-
-
 def open(name, mode='rb'):
     """ Open a hoomd schema GSD file.
 
@@ -1042,8 +1007,6 @@ def open(name, mode='rb'):
     |                  | Does *not* create or overwrite existing     |
     |                  | files.                                      |
     +------------------+---------------------------------------------+
-
-    .. versionadded:: 1.2
 
     """
     if fl is None:
