@@ -562,6 +562,12 @@ HOOMD only stores state in GSD files when requested explicitly by the user. Only
 state data chunks will be present in any GSD file and not all state chunks are valid. Thus, state data chunks do not
 have default values. If a chunk is not present in the file, that state does not have a well-defined value.
 
+.. note::
+
+    HOOMD-blue versions 3.0 and newer write state data in an application defined
+    format in ``log/*``, **not** in ``state/*``. See the HOOMD-blue
+    documentation for details on the data chunks it reads and writes.
+
 ========================================================== ====== ========= ================
 Name                                                       Type   Size      Units
 ========================================================== ====== ========= ================
