@@ -37,9 +37,10 @@ v2.0.0 (not yet released)
 
 *Removed*
 
-* ``gsd.fl.create`` - use ``gsd.fl.open``
-* ``gsd.hoomd.create`` - use ``gsd.hoomd.open``
-* ``GSDFile`` v1.0 compatibility mode - use ``gsd.fl.open``
+* ``gsd.fl.create`` - use ``gsd.fl.open``.
+* ``gsd.hoomd.create`` - use ``gsd.hoomd.open``.
+* ``GSDFile`` v1.0 compatibility mode - use ``gsd.fl.open``.
+* ``hoomdxml2gsd.py``.
 
 *Fixed*
 
