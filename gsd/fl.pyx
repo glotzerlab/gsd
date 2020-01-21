@@ -192,7 +192,7 @@ def open(name, mode, application=None, schema=None, schema_version=None):
                                                dtype=numpy.float32))
                 f.end_frame()
 
-            f = gsd.fl.GSDFile(name='file.gsd', mode='rb')
+            f = gsd.fl.open(name='file.gsd', mode='rb')
             if f.chunk_exists(frame=0, name='chunk1'):
                 data = f.read_chunk(frame=0, name='chunk1')
             data
@@ -260,7 +260,7 @@ cdef class GSDFile:
             c_flags = libgsd.GSD_OPEN_APPEND
         else:
             raise ValueError("mode must be 'wb', 'wb+', 'rb', 'rb+', "
-                                "'xb', 'xb+', or 'ab'")
+                             "'xb', 'xb+', or 'ab'")
 
         self.name = name
         self.mode = mode
@@ -322,7 +322,7 @@ cdef class GSDFile:
                 schema_truncated = schema_truncated[0:63]
             if self.schema != schema_truncated:
                 raise RuntimeError('file ' + name + ' has incorrect schema: '
-                                    + self.schema)
+                                   + self.schema)
 
         self.__is_open = True
 
