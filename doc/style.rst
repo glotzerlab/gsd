@@ -12,7 +12,7 @@ can automatically validate and format files.
 Python
 ------
 
-Python code in HOOMD should follow `PEP8
+Python code in GSD should follow `PEP8
 <https://www.python.org/dev/peps/pep-0008>`_ with the following choices:
 
 * 80 character line widths.
