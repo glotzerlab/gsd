@@ -642,6 +642,9 @@ class HOOMDTrajectory(object):
     """
 
     def __init__(self, file):
+        if file.mode == 'ab':
+            raise ValueError('Append mode not yet supported')
+
         self.file = file
         self._initial_frame = None
 

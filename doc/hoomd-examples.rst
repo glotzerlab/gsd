@@ -61,7 +61,7 @@ methods.
           append mode.
 
 .. tip:: When using :py:meth:`gsd.hoomd.HOOMDTrajectory.extend`, pass in a generator or
-         generator expression to avoid storing the entire trajectory in RAM before
+         generator expression to avoid storing the entire trajectory in memory before
          writing it out.
 
 Randomly index frames

@@ -52,8 +52,8 @@ dimensional numpy array of a simple numeric type (or a data type that will autom
 convert when passed to ``numpy.array(data)``. Call :py:meth:`gsd.fl.GSDFile.end_frame()`
 to end the frame and start the next one.
 
-.. note:: While supported, implicit conversion to numpy arrays creates a 2nd copy of the data
-          in memory and adds conversion overhead.
+.. note:: While supported, implicit conversion to numpy arrays creates a copy
+          of the data in memory and adds conversion overhead.
 
 .. warning:: Make sure to call ``end_frame()`` before closing the file, or the last frame will be lost.
 

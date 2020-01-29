@@ -13,8 +13,8 @@ v2.0.0 (not yet released)
 *Note*
 
 * This release introduces a new file storage format.
-* GSD >= 2.0 can read files written by previous versions.
-* Files created or upgraded by GSD >= 2.0 can not be opened by GSD < 2.0.
+* GSD >= 2.0 can read and write to files created by GSD 1.x.
+* Files created or upgraded by GSD >= 2.0 can not be opened by GSD < 1.x.
 
 *Added*
 
