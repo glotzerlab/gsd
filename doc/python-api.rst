@@ -37,4 +37,4 @@ to control the verbosity and output destination::
 .. seealso::
 
     Module :py:mod:`logging`
-        Documenation of the :py:mod:`logging` standard module.
+        Documentation of the :py:mod:`logging` standard module.

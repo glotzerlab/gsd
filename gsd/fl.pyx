@@ -9,7 +9,6 @@ read, and write ``gsd`` files. The module is implemented in C and is optimized.
 See :ref:`fl-examples` for detailed example code.
 
 * :py:class:`GSDFile` - Class interface to read and write gsd files.
-* :py:func:`create` - Create a gsd file (deprecated).
 * :py:func:`open` - Open a gsd file.
 
 """
@@ -118,7 +117,7 @@ cdef void * __get_ptr_float64(data):
     return <void*>&data_array_float64[0, 0]
 
 
-def open(name, mode, application, schema, schema_version):
+def open(name, mode, application=None, schema=None, schema_version=None):
     """ open(name, mode, application, schema, schema_version)
 
     :py:func:`open` opens a GSD file and returns a :py:class:`GSDFile` instance.
@@ -163,14 +162,14 @@ def open(name, mode, application, schema, schema_version):
     |                  | files.                                      |
     +------------------+---------------------------------------------+
 
-    When opening a file for reading (``'r' modes): ``application`` and
-    ``schema_version`` are ignored. :py:func:`open` throws an exception if the
+    When opening a file for reading (``'r' and 'a' modes): ``application`` and
+    ``schema_version`` are ignored and may be ``None``. When ``schema`` is not
+    ``None``, :py:func:`open` throws an exception if the
     file's schema does not match ``schema``.
 
     When opening a file for writing (``'w' or 'x'`` modes): The given
-    ``application``, ``schema``, and ``schema_version`` are saved in the file.
-
-    .. versionadded:: 1.2
+    ``application``, ``schema``, and ``schema_version`` are saved in the file
+    and must not be None.
 
     Example:
 
@@ -193,7 +192,7 @@ def open(name, mode, application, schema, schema_version):
                                                dtype=numpy.float32))
                 f.end_frame()
 
-            f = gsd.fl.GSDFile(name='file.gsd', mode='rb')
+            f = gsd.fl.open(name='file.gsd', mode='rb')
             if f.chunk_exists(frame=0, name='chunk1'):
                 data = f.read_chunk(frame=0, name='chunk1')
             data
@@ -203,19 +202,13 @@ def open(name, mode, application, schema, schema_version):
 
 
 cdef class GSDFile:
-    """ GSDFile(name, mode, application, schema, schema_version)
+    """ GSDFile
 
     GSD file access interface.
 
     GSDFile implements an object oriented class interface to the GSD file
     layer. Use :py:func:`open` to open a GSD file and obtain a GSDFile instance.
     :py:class:`GSDFile` can be used as a context manager.
-
-    .. versionchanged:: 1.2
-
-        For new code, use :py:func:`open` instead of constructing GSDFile
-        directly. GSDFile.__init__ is backwards compatible with the old open
-        syntax used in GSD versions 1.0.x and 1.1.x.
 
     Attributes:
 
@@ -238,51 +231,36 @@ cdef class GSDFile:
     def __init__(self,
                  name,
                  mode,
-                 application=None,
-                 schema=None,
-                 schema_version=None):
+                 application,
+                 schema,
+                 schema_version):
         cdef libgsd.gsd_open_flag c_flags
         cdef int exclusive_create = 0
         cdef int overwrite = 0
 
-        new_api = (application is not None
-                   and schema is not None
-                   and schema_version is not None)
-
-        if new_api:
-            if mode == 'wb':
-                c_flags = libgsd.GSD_OPEN_APPEND
-                overwrite = 1
-            elif mode == 'wb+':
-                c_flags = libgsd.GSD_OPEN_READWRITE
-                overwrite = 1
-            elif mode == 'rb':
-                c_flags = libgsd.GSD_OPEN_READONLY
-            elif mode == 'rb+':
-                c_flags = libgsd.GSD_OPEN_READWRITE
-            elif mode == 'xb':
-                c_flags = libgsd.GSD_OPEN_APPEND
-                overwrite = 1
-                exclusive_create = 1
-            elif mode == 'xb+':
-                c_flags = libgsd.GSD_OPEN_READWRITE
-                overwrite = 1
-                exclusive_create = 1
-            elif mode == 'ab':
-                c_flags = libgsd.GSD_OPEN_APPEND
-            else:
-                raise ValueError("mode must be 'wb', 'wb+', 'rb', 'rb+', "
-                                 "'xb', 'xb+', or 'ab'")
+        if mode == 'wb':
+            c_flags = libgsd.GSD_OPEN_APPEND
+            overwrite = 1
+        elif mode == 'wb+':
+            c_flags = libgsd.GSD_OPEN_READWRITE
+            overwrite = 1
+        elif mode == 'rb':
+            c_flags = libgsd.GSD_OPEN_READONLY
+        elif mode == 'rb+':
+            c_flags = libgsd.GSD_OPEN_READWRITE
+        elif mode == 'xb':
+            c_flags = libgsd.GSD_OPEN_APPEND
+            overwrite = 1
+            exclusive_create = 1
+        elif mode == 'xb+':
+            c_flags = libgsd.GSD_OPEN_READWRITE
+            overwrite = 1
+            exclusive_create = 1
+        elif mode == 'ab':
+            c_flags = libgsd.GSD_OPEN_APPEND
         else:
-            # backwards compatible old API
-            if mode == 'wb':
-                c_flags = libgsd.GSD_OPEN_READWRITE
-            elif mode == 'rb':
-                c_flags = libgsd.GSD_OPEN_READONLY
-            elif mode == 'ab':
-                c_flags = libgsd.GSD_OPEN_APPEND
-            else:
-                raise ValueError("mode must be 'rb', 'wb', or 'ab'")
+            raise ValueError("mode must be 'wb', 'wb+', 'rb', 'rb+', "
+                             "'xb', 'xb+', or 'ab'")
 
         self.name = name
         self.mode = mode
@@ -294,6 +272,13 @@ cdef class GSDFile:
         cdef str schema_truncated
 
         if overwrite:
+            if application is None:
+                raise ValueError("Provide application when creating a file")
+            if schema is None:
+                raise ValueError("Provide schema when creating a file")
+            if schema_version is None:
+                raise ValueError("Provide schema_version when creating a file")
+
             # create a new file or overwrite an existing one
             logger.info('overwriting file: ' + name + ' with mode: ' + mode
                         + ', application: ' + application
@@ -331,7 +316,7 @@ cdef class GSDFile:
         __raise_on_error(retval, name)
 
         # validate schema
-        if new_api:
+        if schema is not None:
             schema_truncated = schema
             if len(schema_truncated) > 64:
                 schema_truncated = schema_truncated[0:63]
@@ -424,7 +409,7 @@ cdef class GSDFile:
         .. danger::
             Call :py:meth:`end_frame()` to complete the current frame
             **before** closing the file. If you fail to call
-            :py:meth:`end_frame()`, the last frame may not be written
+            :py:meth:`end_frame()`, the last frame will not be written
             to disk.
 
         Example:
@@ -913,44 +898,3 @@ cdef class GSDFile:
             logger.info('closing file: ' + self.name)
             libgsd.gsd_close(&self.__handle)
             self.__is_open = False
-
-
-def create(name, application, schema, schema_version):
-    """ create(name, application, schema, schema_version)
-
-    Create an empty GSD file on the filesystem.
-
-    .. deprecated:: 1.2
-
-        As of version 1.2, you can create and open GSD files in the same call to
-        :py:func:`open`. :py:func:`create` is kept for backwards compatibility.
-
-    Args:
-        name (str): File name to open.
-        application (str): Name of the application creating the file.
-        schema (str): Name of the data schema.
-        schema_version (``list[int]``): Schema version number [major, minor].
-
-    Example:
-
-        Create a gsd file:
-
-        .. ipython:: python
-
-            gsd.fl.create(name="file.gsd",
-                          application="My application",
-                          schema="My Schema",
-                          schema_version=[1,0])
-
-    .. danger::
-        The file is overwritten if it already exists.
-    """
-
-    _c_schema_version = libgsd.gsd_make_version(schema_version[0],
-                                                schema_version[1])
-    retval = libgsd.gsd_create(str(name).encode('utf-8'),
-                               application.encode('utf-8'),
-                               schema.encode('utf-8'),
-                               _c_schema_version)
-
-    __raise_on_error(retval, name)

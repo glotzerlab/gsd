@@ -41,8 +41,6 @@ API to specify the initial condition for a HOOMD-blue simulation or analyze traj
     python-api
     c-api
     specification
-    scripts
-    benchmark
 
 .. toctree::
     :maxdepth: 1

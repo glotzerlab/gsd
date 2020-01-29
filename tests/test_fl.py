@@ -16,10 +16,11 @@ test_path = pathlib.Path(os.path.realpath(__file__)).parent
 
 
 def test_create(tmp_path):
-    gsd.fl.create(name=tmp_path / "test_create.gsd",
-                  application="test_create",
-                  schema="none",
-                  schema_version=[1, 2])
+    gsd.fl.open(mode='xb',
+                name=tmp_path / "test_create.gsd",
+                application="test_create",
+                schema="none",
+                schema_version=[1, 2])
 
 
 @pytest.mark.parametrize('typ', [numpy.uint8, numpy.uint16, numpy.uint32,
@@ -30,9 +31,10 @@ def test_dtype(tmp_path, typ):
     data1d = numpy.array([1, 2, 3, 4, 5, 10012], dtype=typ)
     data2d = numpy.array([[10, 20], [30, 40], [50, 80]], dtype=typ)
 
-    gsd.fl.create(name=tmp_path / "test_dtype.gsd",
-                  application="test_dtype", schema="none",
-                  schema_version=[1, 2])
+    gsd.fl.open(mode='xb',
+                name=tmp_path / "test_dtype.gsd",
+                application="test_dtype", schema="none",
+                schema_version=[1, 2])
 
     with gsd.fl.open(name=tmp_path / "test_dtype.gsd", mode='wb',
                      application="test_dtype",

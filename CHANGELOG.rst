@@ -23,17 +23,24 @@ v2.0.0 (not yet released)
 
 *Changed*
 
+* ``gsd.fl.open`` accepts ``None`` for ``application``, ``schema``, and
+  ``schema_version`` when opening files for reading.
 * Improve read latency when accessing files with thousands of chunk names in
   a frame (only for GSD 2.0 files).
 * Buffer small writes to improve write performance.
 * Improve performance and reduce memory usage in read/write modes ('rb+', 'wb+'
   and ('xb+').
 * **C API**: functions return error codes from the ``gsd_error`` enum. v2.x
-  integer error codes differ from v1.x, use the enum to check:
+  integer error codes differ from v1.x, use the enum to check. For example:
   ``if (retval == GSD_ERROR_IO)``.
 * Python, Cython, and C code must follow strict style guidelines.
 
 *Removed*
+
+* ``gsd.fl.create`` - use ``gsd.fl.open``.
+* ``gsd.hoomd.create`` - use ``gsd.hoomd.open``.
+* ``GSDFile`` v1.0 compatibility mode - use ``gsd.fl.open``.
+* ``hoomdxml2gsd.py``.
 
 *Fixed*
 
