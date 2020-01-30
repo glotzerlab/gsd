@@ -215,3 +215,21 @@ stages:
 
     - script: flake8
       displayName: Run flake8
+
+  - job: yapf
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    container:
+      image: $(image_root)-clang9_py38
+      options: -u 0
+
+    workspace:
+      clean: all
+
+    steps:
+    - checkout: self
+      submodules: true
+
+    - script: yapf -d -r .
+      displayName: Run yapf

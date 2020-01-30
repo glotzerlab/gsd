@@ -24,10 +24,11 @@ Tools
 
 * Linter: `flake8 <http://flake8.pycqa.org/en/latest/>`_ with
   `pep8-naming <https://pypi.org/project/pep8-naming/>`_
-* Autoformatter: `autopep8 <https://pypi.org/project/autopep8/>`_
-* Run: ``flake8`` to see a list of violations.
-* See ``setup.cfg`` for the **flake8** configuration (also used by
-  **autopep8**).
+* Run: ``flake8`` to see a list of linter violations.
+* Autoformatter: `yapf <https://github.com/google/yapf>`_
+* Run: ``yapf -d -r .`` to see needed style changes.
+* Run: ``yapf -i file.py`` to apply style changes to a whole file, or use
+  your IDE to apply **yapf** to a selection.
 
 Documentation
 ^^^^^^^^^^^^^
@@ -56,13 +57,10 @@ Tools
 ^^^^^
 
 * Autoformatter: `clang-format <https://clang.llvm.org/docs/ClangFormat.html>`_.
-* Run: ``./run-clang-format.py -r gsd`` to see needed changes.
-* Run: ``clang-format -i gsd/gsd.c`` to apply the changes.
-* Style configuration: See ``.clang-format``.
-
-.. note::
-
-    We plan to provide change the style once **clang-format** 10 is available.
+* Run: ``./run-clang-format.py -r .`` to see needed changes.
+* Run: ``clang-format -i file.c`` to apply the changes.
+* Linter: `clang-tidy <https://clang.llvm.org/extra/clang-tidy/>`_
+* Compile **gsd** with **CMake** to see **clang-tidy** output.
 
 Documentation
 ^^^^^^^^^^^^^
@@ -74,12 +72,18 @@ documentation comment blocks start with ``/**`` and single line ones start with
 
 See ``gsd.h`` for an example.
 
+Restructured Text/Markdown files
+--------------------------------
+
+* 80 character line width.
+* Use spaces to indent.
+* Indentation levels are set by the respective formats.
+
 Other file types
 ----------------
 
-Use your best judgment and follow existing patterns when styling CMake,
-restructured text, markdown, and other files. The following general guidelines
-apply:
+Use your best judgment and follow existing patterns when styling CMake and other
+files types. The following general guidelines apply:
 
 * 100 character line width.
 * 4 spaces per indent level.
