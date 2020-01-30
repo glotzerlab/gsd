@@ -43,11 +43,12 @@ __version__ = "2.0.0"
 
 logger = logging.getLogger('gsd.pygsd')
 
-gsd_header = namedtuple('gsd_header',
-                        'magic index_location index_allocated_entries '
-                        'namelist_location namelist_allocated_entries '
-                        'schema_version gsd_version application '
-                        'schema reserved')
+gsd_header = namedtuple(
+    'gsd_header',
+    'magic index_location index_allocated_entries '
+    'namelist_location namelist_allocated_entries '
+    'schema_version gsd_version application '
+    'schema reserved')
 gsd_header_struct = struct.Struct('QQQQQII64s64s80s')
 
 gsd_index_entry = namedtuple('gsd_index_entry',
@@ -64,8 +65,7 @@ gsd_type_mapping = {
     7: numpy.dtype('int32'),
     8: numpy.dtype('int64'),
     9: numpy.dtype('float32'),
-    10: numpy.dtype('float64'),
-    }
+    10: numpy.dtype('float64'), }
 
 
 class GSDFile(object):
@@ -117,7 +117,6 @@ class GSDFile(object):
           **(read only)**.
         nframes (int): Number of frames **(read only)**.
     """
-
     def __init__(self, file):
         self.__file = file
 
@@ -155,8 +154,8 @@ class GSDFile(object):
         self.__namelist = {}
         c = 0
         self.__file.seek(self.__header.namelist_location, 0)
-        namelist_raw = self.__file.read(
-            self.__header.namelist_allocated_entries * 64)
+        namelist_raw = self.__file.read(self.__header.namelist_allocated_entries
+                                        * 64)
 
         names = namelist_raw.split(b'\x00')
 
@@ -354,13 +353,13 @@ class GSDFile(object):
             raise KeyError("frame " + str(frame) + " / chunk " + name
                            + " not found in: " + str(self.__file))
 
-        logger.debug('read chunk: ' + str(self.__file)
-                     + ' - ' + str(frame) + ' - ' + name)
+        logger.debug('read chunk: ' + str(self.__file) + ' - ' + str(frame)
+                     + ' - ' + name)
 
         size = chunk.N * chunk.M * gsd_type_mapping[chunk.type].itemsize
         if size == 0 or chunk.location == 0:
-            raise RuntimeError("Corrupt chunk: " + str(frame) + " / "
-                               + name + " in file" + str(self.__file))
+            raise RuntimeError("Corrupt chunk: " + str(frame) + " / " + name
+                               + " in file" + str(self.__file))
 
         self.__file.seek(chunk.location, 0)
         data_raw = self.__file.read(size)

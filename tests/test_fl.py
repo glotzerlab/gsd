@@ -23,20 +23,30 @@ def test_create(tmp_path):
                 schema_version=[1, 2])
 
 
-@pytest.mark.parametrize('typ', [numpy.uint8, numpy.uint16, numpy.uint32,
-                                 numpy.uint64, numpy.int8, numpy.int16,
-                                 numpy.int32, numpy.int64, numpy.float32,
-                                 numpy.float64])
+@pytest.mark.parametrize('typ',
+                         [
+                             numpy.uint8,
+                             numpy.uint16,
+                             numpy.uint32,
+                             numpy.uint64,
+                             numpy.int8,
+                             numpy.int16,
+                             numpy.int32,
+                             numpy.int64,
+                             numpy.float32,
+                             numpy.float64])
 def test_dtype(tmp_path, typ):
     data1d = numpy.array([1, 2, 3, 4, 5, 10012], dtype=typ)
     data2d = numpy.array([[10, 20], [30, 40], [50, 80]], dtype=typ)
 
     gsd.fl.open(mode='xb',
                 name=tmp_path / "test_dtype.gsd",
-                application="test_dtype", schema="none",
+                application="test_dtype",
+                schema="none",
                 schema_version=[1, 2])
 
-    with gsd.fl.open(name=tmp_path / "test_dtype.gsd", mode='wb',
+    with gsd.fl.open(name=tmp_path / "test_dtype.gsd",
+                     mode='wb',
                      application="test_dtype",
                      schema="none",
                      schema_version=[1, 2]) as f:
@@ -44,7 +54,8 @@ def test_dtype(tmp_path, typ):
         f.write_chunk(name='data2d', data=data2d)
         f.end_frame()
 
-    with gsd.fl.open(name=tmp_path / "test_dtype.gsd", mode='rb',
+    with gsd.fl.open(name=tmp_path / "test_dtype.gsd",
+                     mode='rb',
                      application="test_dtype",
                      schema="none",
                      schema_version=[1, 2]) as f:
@@ -57,8 +68,8 @@ def test_dtype(tmp_path, typ):
         numpy.testing.assert_array_equal(data2d, read_data2d)
 
     # test again with pygsd
-    with gsd.pygsd.GSDFile(file=open(str(tmp_path / "test_dtype.gsd"),
-                                     mode='rb')) as f:
+    with gsd.pygsd.GSDFile(
+            file=open(str(tmp_path / "test_dtype.gsd"), mode='rb')) as f:
         read_data1d = f.read_chunk(frame=0, name='data1d')
         read_data2d = f.read_chunk(frame=0, name='data2d')
 
@@ -95,8 +106,8 @@ def test_metadata(tmp_path, open_mode):
         assert f.gsd_version == (2, 0)
 
     # test again with pygsd
-    with gsd.pygsd.GSDFile(file=open(str(tmp_path / 'test_metadata.gsd'),
-                                     mode='rb')) as f:
+    with gsd.pygsd.GSDFile(
+            file=open(str(tmp_path / 'test_metadata.gsd'), mode='rb')) as f:
         assert f.name == str(tmp_path / 'test_metadata.gsd')
         assert f.mode == 'rb'
         assert f.application == 'test_metadata'
@@ -143,8 +154,9 @@ def test_append(tmp_path, open_mode):
             assert data10[0] == i * 10
 
     # test again with pygsd
-    with gsd.pygsd.GSDFile(file=open(str(tmp_path / 'test_append.gsd'),
-                                     mode=open_mode.read)) as f:
+    with gsd.pygsd.GSDFile(
+            file=open(str(tmp_path
+                          / 'test_append.gsd'), mode=open_mode.read)) as f:
         assert f.nframes == nframes
         for i in range(nframes):
             data1 = f.read_chunk(frame=i, name='data1')
@@ -200,8 +212,8 @@ def test_chunk_exists(tmp_path, open_mode):
             read_data = f.read_chunk(frame=1, name='test')
 
     # test again with pygsd
-    with gsd.pygsd.GSDFile(file=open(str(tmp_path / 'test_chunk_exists.gsd'),
-                                     mode='rb')) as f:
+    with gsd.pygsd.GSDFile(
+            file=open(str(tmp_path / 'test_chunk_exists.gsd'), mode='rb')) as f:
         assert f.chunk_exists(frame=0, name='chunk1')
         read_data = f.read_chunk(frame=0, name='chunk1')
         assert f.chunk_exists(frame=1, name='abcdefg')
@@ -227,13 +239,14 @@ def test_chunk_exists(tmp_path, open_mode):
             read_data = f.read_chunk(frame=0, name='abcdefg')
         assert not f.chunk_exists(frame=1, name='test')
         with pytest.raises(Exception):
-            read_data = f.read_chunk(frame=1, name='test') # noqa
+            read_data = f.read_chunk(frame=1, name='test')  # noqa
 
 
 def test_readonly_errors(tmp_path, open_mode):
     data = numpy.array([1, 2, 3, 4, 5, 10012], dtype=numpy.int64)
     with gsd.fl.open(name=tmp_path / 'test_readonly_errors.gsd',
-                     mode=open_mode.write, application='test_readonly_errors',
+                     mode=open_mode.write,
+                     application='test_readonly_errors',
                      schema='none',
                      schema_version=[1, 2]) as f:
         for i in range(10):
@@ -253,8 +266,9 @@ def test_readonly_errors(tmp_path, open_mode):
             f.write_chunk(name='chunk1', data=data)
 
     # test again with pygsd
-    with gsd.pygsd.GSDFile(file=open(str(tmp_path / 'test_readonly_errors.gsd'),
-                                     mode='rb')) as f:
+    with gsd.pygsd.GSDFile(
+            file=open(str(tmp_path
+                          / 'test_readonly_errors.gsd'), mode='rb')) as f:
         with pytest.raises(Exception):
             f.end_frame()
 
@@ -330,9 +344,10 @@ def test_dtype_errors(tmp_path, open_mode):
 
 
 def test_truncate(tmp_path):
-    data = numpy.ascontiguousarray(
-        numpy.random.random(size=(1000, 3)), dtype=numpy.float32)
-    with gsd.fl.open(name=tmp_path / 'test_truncate.gsd', mode='wb',
+    data = numpy.ascontiguousarray(numpy.random.random(size=(1000, 3)),
+                                   dtype=numpy.float32)
+    with gsd.fl.open(name=tmp_path / 'test_truncate.gsd',
+                     mode='wb',
                      application='test_truncate',
                      schema='none',
                      schema_version=[1, 2]) as f:
@@ -352,7 +367,8 @@ def test_truncate(tmp_path):
         f.write_chunk(name='data', data=data)
         f.end_frame()
 
-    with gsd.fl.open(name=tmp_path / 'test_truncate.gsd', mode='rb',
+    with gsd.fl.open(name=tmp_path / 'test_truncate.gsd',
+                     mode='rb',
                      application='test_truncate',
                      schema='none',
                      schema_version=[1, 2]) as f:
@@ -390,8 +406,8 @@ def test_namelen(tmp_path, open_mode):
         numpy.testing.assert_array_equal(data, data_read)
 
     # test again with pygsd
-    with gsd.pygsd.GSDFile(file=open(str(tmp_path / 'test_namelen.gsd'),
-                                     mode='rb')) as f:
+    with gsd.pygsd.GSDFile(
+            file=open(str(tmp_path / 'test_namelen.gsd'), mode='rb')) as f:
         data_read = f.read_chunk(0, name=chunk_long)
         numpy.testing.assert_array_equal(data, data_read)
 
@@ -399,14 +415,16 @@ def test_namelen(tmp_path, open_mode):
 def test_open(tmp_path):
     data = numpy.array([1, 2, 3, 4, 5, 10012], dtype=numpy.int64)
 
-    with gsd.fl.open(name=tmp_path / 'test.gsd', mode='xb',
+    with gsd.fl.open(name=tmp_path / 'test.gsd',
+                     mode='xb',
                      application='test_open',
                      schema='none',
                      schema_version=[1, 2]) as f:
         f.write_chunk(name='chunk1', data=data)
         f.end_frame()
 
-    with gsd.fl.open(name=tmp_path / 'test_2.gsd', mode='xb+',
+    with gsd.fl.open(name=tmp_path / 'test_2.gsd',
+                     mode='xb+',
                      application='test_open',
                      schema='none',
                      schema_version=[1, 2]) as f:
@@ -414,14 +432,16 @@ def test_open(tmp_path):
         f.end_frame()
         f.read_chunk(0, name='chunk1')
 
-    with gsd.fl.open(name=tmp_path / 'test.gsd', mode='wb',
+    with gsd.fl.open(name=tmp_path / 'test.gsd',
+                     mode='wb',
                      application='test_open',
                      schema='none',
                      schema_version=[1, 2]) as f:
         f.write_chunk(name='chunk1', data=data)
         f.end_frame()
 
-    with gsd.fl.open(name=tmp_path / 'test.gsd', mode='wb+',
+    with gsd.fl.open(name=tmp_path / 'test.gsd',
+                     mode='wb+',
                      application='test_open',
                      schema='none',
                      schema_version=[1, 2]) as f:
@@ -495,8 +515,8 @@ def test_find_matching_chunk_names(tmp_path, open_mode):
         assert len(other_chunks) == 0
 
     # test again with pygsd
-    with gsd.pygsd.GSDFile(file=open(str(tmp_path / "test.gsd"),
-                                     mode='rb')) as f:
+    with gsd.pygsd.GSDFile(file=open(str(tmp_path
+                                         / "test.gsd"), mode='rb')) as f:
         all_chunks = f.find_matching_chunk_names('')
         assert len(all_chunks) == 3
         assert 'log/A' in all_chunks
@@ -517,7 +537,8 @@ def test_find_matching_chunk_names(tmp_path, open_mode):
 
 
 def test_chunk_name_limit(tmp_path, open_mode):
-    with gsd.fl.open(name=tmp_path / 'test.gsd', mode=open_mode.write,
+    with gsd.fl.open(name=tmp_path / 'test.gsd',
+                     mode=open_mode.write,
                      application='test_chunk_name_limit',
                      schema='none',
                      schema_version=[1, 2]) as f:
@@ -526,14 +547,15 @@ def test_chunk_name_limit(tmp_path, open_mode):
 
         # The GSD specification limits to 65535 names:
         with pytest.raises(RuntimeError):
-            f.write_chunk(name='65536', data=numpy.array([i],
-                                                         dtype=numpy.int32))
+            f.write_chunk(name='65536',
+                          data=numpy.array([i], dtype=numpy.int32))
 
 
 def test_many_names(tmp_path, open_mode):
     values = list(range(1000))
 
-    with gsd.fl.open(name=tmp_path / 'test.gsd', mode=open_mode.write,
+    with gsd.fl.open(name=tmp_path / 'test.gsd',
+                     mode=open_mode.write,
                      application='test_many_names',
                      schema='none',
                      schema_version=[1, 2]) as f:
@@ -557,8 +579,8 @@ def test_many_names(tmp_path, open_mode):
                 data_read = f.read_chunk(frame=frame, name=str(value))
                 numpy.testing.assert_array_equal(data, data_read)
 
-    with gsd.pygsd.GSDFile(file=open(str(tmp_path / 'test.gsd'),
-                                     mode='rb')) as f:
+    with gsd.pygsd.GSDFile(file=open(str(tmp_path
+                                         / 'test.gsd'), mode='rb')) as f:
         for frame in range(5):
             random.shuffle(values)
             for value in values:
@@ -599,8 +621,8 @@ def test_gsd_v1_read(open_mode):
         check_v1_file_read(f)
 
     # and the pure python implementation
-    with gsd.pygsd.GSDFile(file=open(str(test_path / 'test_gsd_v1.gsd'),
-                                     mode='rb')) as f:
+    with gsd.pygsd.GSDFile(
+            file=open(str(test_path / 'test_gsd_v1.gsd'), mode='rb')) as f:
 
         assert f.gsd_version == (1, 0)
 
@@ -653,8 +675,8 @@ def test_gsd_v1_upgrade_read(tmp_path, open_mode):
 
         check_v1_file_read(f)
 
-    with gsd.pygsd.GSDFile(file=open(str(tmp_path / 'test_gsd_v1.gsd'),
-                                     mode='rb')) as f:
+    with gsd.pygsd.GSDFile(
+            file=open(str(tmp_path / 'test_gsd_v1.gsd'), mode='rb')) as f:
 
         assert f.gsd_version == (2, 0)
 
@@ -731,8 +753,8 @@ def test_gsd_v1_write(tmp_path, open_mode):
         check_v1_file_read(f)
 
     # and the pure python implementation
-    with gsd.pygsd.GSDFile(file=open(str(tmp_path / 'test_gsd_v1.gsd'),
-                                     mode='rb')) as f:
+    with gsd.pygsd.GSDFile(
+            file=open(str(tmp_path / 'test_gsd_v1.gsd'), mode='rb')) as f:
 
         assert f.gsd_version == (1, 0)
 
@@ -805,8 +827,8 @@ def test_gsd_v1_upgrade_write(tmp_path, open_mode):
         check_v1_file_read(f)
 
     # and the pure python implementation
-    with gsd.pygsd.GSDFile(file=open(str(tmp_path / 'test_gsd_v1.gsd'),
-                                     mode='rb')) as f:
+    with gsd.pygsd.GSDFile(
+            file=open(str(tmp_path / 'test_gsd_v1.gsd'), mode='rb')) as f:
 
         assert f.gsd_version == (2, 0)
 

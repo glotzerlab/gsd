@@ -136,11 +136,11 @@ class ParticleData(object):
     _default_value['charge'] = numpy.float32(0)
     _default_value['diameter'] = numpy.float32(1.0)
     _default_value['body'] = numpy.int32(-1)
-    _default_value['moment_inertia'] = numpy.array(
-        [0, 0, 0], dtype=numpy.float32)
+    _default_value['moment_inertia'] = numpy.array([0, 0, 0],
+                                                   dtype=numpy.float32)
     _default_value['position'] = numpy.array([0, 0, 0], dtype=numpy.float32)
-    _default_value['orientation'] = numpy.array(
-        [1, 0, 0, 0], dtype=numpy.float32)
+    _default_value['orientation'] = numpy.array([1, 0, 0, 0],
+                                                dtype=numpy.float32)
     _default_value['velocity'] = numpy.array([0, 0, 0], dtype=numpy.float32)
     _default_value['angmom'] = numpy.array([0, 0, 0, 0], dtype=numpy.float32)
     _default_value['image'] = numpy.array([0, 0, 0], dtype=numpy.int32)
@@ -191,8 +191,7 @@ class ParticleData(object):
                                                   dtype=numpy.uint32)
             self.typeid = self.typeid.reshape([self.N])
         if self.mass is not None:
-            self.mass = numpy.ascontiguousarray(self.mass,
-                                                dtype=numpy.float32)
+            self.mass = numpy.ascontiguousarray(self.mass, dtype=numpy.float32)
             self.mass = self.mass.reshape([self.N])
         if self.charge is not None:
             self.charge = numpy.ascontiguousarray(self.charge,
@@ -203,8 +202,7 @@ class ParticleData(object):
                                                     dtype=numpy.float32)
             self.diameter = self.diameter.reshape([self.N])
         if self.body is not None:
-            self.body = numpy.ascontiguousarray(self.body,
-                                                dtype=numpy.int32)
+            self.body = numpy.ascontiguousarray(self.body, dtype=numpy.int32)
             self.body = self.body.reshape([self.N])
         if self.moment_inertia is not None:
             self.moment_inertia = numpy.ascontiguousarray(self.moment_inertia,
@@ -219,8 +217,7 @@ class ParticleData(object):
                                                   dtype=numpy.float32)
             self.angmom = self.angmom.reshape([self.N, 4])
         if self.image is not None:
-            self.image = numpy.ascontiguousarray(self.image,
-                                                 dtype=numpy.int32)
+            self.image = numpy.ascontiguousarray(self.image, dtype=numpy.int32)
             self.image = self.image.reshape([self.N, 3])
 
 
@@ -267,7 +264,6 @@ class BondData(object):
           :chunk:`angles/group`, :chunk:`dihedrals/group`,
           :chunk:`impropers/group`, :chunk:`pairs/group`).
     """
-
     def __init__(self, M):
         self.M = M
         self.N = 0
@@ -302,8 +298,7 @@ class BondData(object):
                                                   dtype=numpy.uint32)
             self.typeid = self.typeid.reshape([self.N])
         if self.group is not None:
-            self.group = numpy.ascontiguousarray(self.group,
-                                                 dtype=numpy.int32)
+            self.group = numpy.ascontiguousarray(self.group, dtype=numpy.int32)
             self.group = self.group.reshape([self.N, self.M])
 
 
@@ -329,7 +324,6 @@ class ConstraintData(object):
           Nx2 array defining tags in the particle constraints
           (:chunk:`constraints/group`).
     """
-
     def __init__(self):
         self.M = 2
         self.N = 0
@@ -363,8 +357,7 @@ class ConstraintData(object):
                                                  dtype=numpy.float32)
             self.value = self.value.reshape([self.N])
         if self.group is not None:
-            self.group = numpy.ascontiguousarray(self.group,
-                                                 dtype=numpy.int32)
+            self.group = numpy.ascontiguousarray(self.group, dtype=numpy.int32)
             self.group = self.group.reshape([self.N, self.M])
 
 
@@ -388,7 +381,6 @@ class Snapshot(object):
     prefix. For example, :chunk:`state/hpmc/sphere/radius` is stored in the
     dictionary entry ``state['hpmc/sphere/radius']``.
     """
-
     def __init__(self):
         self.configuration = ConfigurationData()
         self.particles = ParticleData()
@@ -401,25 +393,26 @@ class Snapshot(object):
         self.state = {}
         self.log = {}
 
-        self._valid_state = ['hpmc/integrate/d',
-                             'hpmc/integrate/a',
-                             'hpmc/sphere/radius',
-                             'hpmc/sphere/orientable',
-                             'hpmc/ellipsoid/a',
-                             'hpmc/ellipsoid/b',
-                             'hpmc/ellipsoid/c',
-                             'hpmc/convex_polyhedron/N',
-                             'hpmc/convex_polyhedron/vertices',
-                             'hpmc/convex_spheropolyhedron/N',
-                             'hpmc/convex_spheropolyhedron/vertices',
-                             'hpmc/convex_spheropolyhedron/sweep_radius',
-                             'hpmc/convex_polygon/N',
-                             'hpmc/convex_polygon/vertices',
-                             'hpmc/convex_spheropolygon/N',
-                             'hpmc/convex_spheropolygon/vertices',
-                             'hpmc/convex_spheropolygon/sweep_radius',
-                             'hpmc/simple_polygon/N',
-                             'hpmc/simple_polygon/vertices']
+        self._valid_state = [
+            'hpmc/integrate/d',
+            'hpmc/integrate/a',
+            'hpmc/sphere/radius',
+            'hpmc/sphere/orientable',
+            'hpmc/ellipsoid/a',
+            'hpmc/ellipsoid/b',
+            'hpmc/ellipsoid/c',
+            'hpmc/convex_polyhedron/N',
+            'hpmc/convex_polyhedron/vertices',
+            'hpmc/convex_spheropolyhedron/N',
+            'hpmc/convex_spheropolyhedron/vertices',
+            'hpmc/convex_spheropolyhedron/sweep_radius',
+            'hpmc/convex_polygon/N',
+            'hpmc/convex_polygon/vertices',
+            'hpmc/convex_spheropolygon/N',
+            'hpmc/convex_spheropolygon/vertices',
+            'hpmc/convex_spheropolygon/sweep_radius',
+            'hpmc/simple_polygon/N',
+            'hpmc/simple_polygon/vertices']
 
     def validate(self):
         """ Validate all contained snapshot data.
@@ -590,7 +583,6 @@ class Snapshot(object):
 
 class _HOOMDTrajectoryIterable(object):
     """Iterable over a HOOMDTrajectory object."""
-
     def __init__(self, trajectory, indices):
         self._trajectory = trajectory
         self._indices = indices
@@ -599,7 +591,7 @@ class _HOOMDTrajectoryIterable(object):
     def __next__(self):
         return self._trajectory[next(self._indices_iterator)]
 
-    next = __next__     # Python 2.7 compatibility
+    next = __next__  # Python 2.7 compatibility
 
     def __iter__(self):
         return type(self)(self._trajectory, self._indices)
@@ -614,7 +606,6 @@ class _HOOMDTrajectoryView(object):
     Enables the slicing and iteration over a subset of a trajectory
     instance.
     """
-
     def __init__(self, trajectory, indices):
         self._trajectory = trajectory
         self._indices = indices
@@ -640,7 +631,6 @@ class HOOMDTrajectory(object):
 
     Open hoomd GSD files with :py:func:`open`.
     """
-
     def __init__(self, file):
         if file.mode == 'ab':
             raise ValueError('Append mode not yet supported')
@@ -654,16 +644,12 @@ class HOOMDTrajectory(object):
             raise RuntimeError('GSD file is not a hoomd schema file: '
                                + str(self.file))
         valid = False
-        if (self.file.schema_version < (2, 0)
-                and self.file.schema_version >= (1, 0)):
-            valid = True
-        if self.file.schema_version != (0, 1):
+        version = self.file.schema_version
+        if (version < (2, 0) and version >= (1, 0)):
             valid = True
         if not valid:
             raise RuntimeError('Incompatible hoomd schema version '
-                               + str(self.file.schema_version)
-                               + ' in: '
-                               + str(self.file))
+                               + str(version) + ' in: ' + str(self.file))
 
         logger.info('found ' + str(len(self)) + ' frames')
 
@@ -696,8 +682,15 @@ class HOOMDTrajectory(object):
         if self._initial_frame is None and len(self) > 0:
             self.read_frame(0)
 
-        for path in ['configuration', 'particles', 'bonds', 'angles',
-                     'dihedrals', 'impropers', 'constraints', 'pairs']:
+        for path in [
+                'configuration',
+                'particles',
+                'bonds',
+                'angles',
+                'dihedrals',
+                'impropers',
+                'constraints',
+                'pairs']:
             container = getattr(snapshot, path)
             for name in container._default_value:
                 if self._should_write(path, name, snapshot):
@@ -712,8 +705,8 @@ class HOOMDTrajectory(object):
                         data = numpy.array([data], dtype=numpy.uint8)
                     if name in ('types', 'type_shapes'):
                         if name == 'type_shapes':
-                            data = [json.dumps(shape_dict)
-                                    for shape_dict in data]
+                            data = [
+                                json.dumps(shape_dict) for shape_dict in data]
                         wid = max(len(w) for w in data) + 1
                         b = numpy.array(data, dtype=numpy.dtype((bytes, wid)))
                         data = b.view(dtype=numpy.int8).reshape(len(b), wid)
@@ -759,13 +752,13 @@ class HOOMDTrajectory(object):
             initial_container = getattr(self._initial_frame, path)
             initial_data = getattr(initial_container, name)
             if numpy.array_equal(initial_data, data):
-                logger.debug('skipping data chunk, matches frame 0: '
-                             + path + '/' + name)
+                logger.debug('skipping data chunk, matches frame 0: ' + path
+                             + '/' + name)
                 return False
 
         if numpy.array_equiv(data, container._default_value[name]):
-            logger.debug('skipping data chunk, default value: '
-                         + path + '/' + name)
+            logger.debug('skipping data chunk, default value: ' + path + '/'
+                         + name)
             return False
 
         return True
@@ -840,8 +833,14 @@ class HOOMDTrajectory(object):
                     snap.configuration._default_value['box']
 
         # then read all groups that have N, types, etc...
-        for path in ['particles', 'bonds', 'angles', 'dihedrals',
-                     'impropers', 'constraints', 'pairs']:
+        for path in [
+                'particles',
+                'bonds',
+                'angles',
+                'dihedrals',
+                'impropers',
+                'constraints',
+                'pairs']:
             container = getattr(snap, path)
             if self._initial_frame is not None:
                 initial_frame_container = getattr(self._initial_frame, path)

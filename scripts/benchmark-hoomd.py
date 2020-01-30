@@ -25,7 +25,7 @@ def write_frame(file, frame, position, orientation):
 
 
 def read_frame(file, frame, position, orientation):
-    snap = file[frame] # noqa
+    snap = file[frame]  # noqa
 
 
 def write_file(file, nframes, N, position, orientation):
@@ -77,6 +77,7 @@ def compute_nframes(N, size):
 def compute_actual_size(N, nframes):
     bytes_per_frame = (3 + 4) * 4 * N
     return nframes * bytes_per_frame
+
 
 # Run all benchmarks with the given options
 
@@ -132,8 +133,12 @@ def run_benchmarks(N, size):
         # Read the file sequentially and measure the time taken
         print("Sequential read file:", file=sys.stderr, flush=True)
         start = time.time()
-        read_sequential_file(hf, nframes, nframes_read,
-                             N, position, orientation)
+        read_sequential_file(hf,
+                             nframes,
+                             nframes_read,
+                             N,
+                             position,
+                             orientation)
         end = time.time()
 
         timings['seq_read'] = bmark_read_size / 1024**2 / (end - start)
@@ -162,35 +167,38 @@ def run_sweep(size, size_str):
         result = run_benchmarks(32 * 32, size)
 
         print("{0:<7} {1:<6} {2:<9.4g} {3:<12.4g} "
-              "{4:<11.4g} {5:<13.4g} {6:<11.3g}"
-              .format(size_str, "32^2",
-                      result['open_time'] * 1000,
-                      result['write'],
-                      result['seq_read'],
-                      result['random_read'],
-                      result['random_read_time']))
+              "{4:<11.4g} {5:<13.4g} {6:<11.3g}".format(
+                  size_str,
+                  "32^2",
+                  result['open_time'] * 1000,
+                  result['write'],
+                  result['seq_read'],
+                  result['random_read'],
+                  result['random_read_time']))
         sys.stdout.flush()
 
     result = run_benchmarks(128 * 128, size)
 
-    print("{0:<7} {1:<6} {2:<9.4g} {3:<12.4g} {4:<11.4g} {5:<13.4g} {6:<11.3g}"
-          .format(size_str, "128^2",
-                  result['open_time'] * 1000,
-                  result['write'],
-                  result['seq_read'],
-                  result['random_read'],
-                  result['random_read_time']))
+    print("{0:<7} {1:<6} {2:<9.4g} {3:<12.4g} {4:<11.4g} {5:<13.4g} {6:<11.3g}".
+          format(size_str,
+                 "128^2",
+                 result['open_time'] * 1000,
+                 result['write'],
+                 result['seq_read'],
+                 result['random_read'],
+                 result['random_read_time']))
     sys.stdout.flush()
 
     result = run_benchmarks(1024 * 1024, size)
 
-    print("{0:<7} {1:<6} {2:<9.4g} {3:<12.4g} {4:<11.4g} {5:<13.4g} {6:<11.3g}"
-          .format(size_str, "1024^2",
-                  result['open_time'] * 1000,
-                  result['write'],
-                  result['seq_read'],
-                  result['random_read'],
-                  result['random_read_time']))
+    print("{0:<7} {1:<6} {2:<9.4g} {3:<12.4g} {4:<11.4g} {5:<13.4g} {6:<11.3g}".
+          format(size_str,
+                 "1024^2",
+                 result['open_time'] * 1000,
+                 result['write'],
+                 result['seq_read'],
+                 result['random_read'],
+                 result['random_read_time']))
     sys.stdout.flush()
 
 
