@@ -88,3 +88,10 @@ files types. The following general guidelines apply:
 * 100 character line width.
 * 4 spaces per indent level.
 * 4 space indent.
+
+Editor configuration
+--------------------
+
+`Visual Studio Code <https://code.visualstudio.com/>`_ users: Open the provided
+workspace file (``gsd.code-workspace``) which provides configuration settings
+for these style guidelines.
