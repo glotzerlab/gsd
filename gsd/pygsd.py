@@ -197,8 +197,7 @@ class GSDFile(object):
         if entry.type not in gsd_type_mapping:
             return False
 
-        size = entry.N * entry.M * gsd_type_mapping[entry.type].itemsize
-        if size == 0:
+        if entry.M == 0:
             return False
 
         if entry.frame >= self.__header.index_allocated_entries:
@@ -357,9 +356,12 @@ class GSDFile(object):
                      + ' - ' + name)
 
         size = chunk.N * chunk.M * gsd_type_mapping[chunk.type].itemsize
-        if size == 0 or chunk.location == 0:
+        if chunk.location == 0:
             raise RuntimeError("Corrupt chunk: " + str(frame) + " / " + name
                                + " in file" + str(self.__file))
+
+        if (size == 0):
+            return numpy.array([], dtype=gsd_type_mapping[chunk.type])
 
         self.__file.seek(chunk.location, 0)
         data_raw = self.__file.read(size)

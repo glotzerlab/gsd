@@ -69,52 +69,82 @@ cdef __raise_on_error(retval, extra):
 cdef void * __get_ptr_uint8(data):
     cdef numpy.ndarray[uint8_t, ndim=2, mode="c"] data_array_uint8
     data_array_uint8 = data
-    return <void*>&data_array_uint8[0, 0]
+    if (data.size == 0):
+        return NULL
+    else:
+        return <void*>&data_array_uint8[0, 0]
 
 cdef void * __get_ptr_uint16(data):
     cdef numpy.ndarray[uint16_t, ndim=2, mode="c"] data_array_uint16
     data_array_uint16 = data
-    return <void*>&data_array_uint16[0, 0]
+    if (data.size == 0):
+        return NULL
+    else:
+        return <void*>&data_array_uint16[0, 0]
 
 cdef void * __get_ptr_uint32(data):
     cdef numpy.ndarray[uint32_t, ndim=2, mode="c"] data_array_uint32
     data_array_uint32 = data
-    return <void*>&data_array_uint32[0, 0]
+    if (data.size == 0):
+        return NULL
+    else:
+        return <void*>&data_array_uint32[0, 0]
 
 cdef void * __get_ptr_uint64(data):
     cdef numpy.ndarray[uint64_t, ndim=2, mode="c"] data_array_uint64
     data_array_uint64 = data
-    return <void*>&data_array_uint64[0, 0]
+    if (data.size == 0):
+        return NULL
+    else:
+        return <void*>&data_array_uint64[0, 0]
 
 cdef void * __get_ptr_int8(data):
     cdef numpy.ndarray[int8_t, ndim=2, mode="c"] data_array_int8
     data_array_int8 = data
-    return <void*>&data_array_int8[0, 0]
+    if (data.size == 0):
+        return NULL
+    else:
+        return <void*>&data_array_int8[0, 0]
 
 cdef void * __get_ptr_int16(data):
     cdef numpy.ndarray[int16_t, ndim=2, mode="c"] data_array_int16
     data_array_int16 = data
-    return <void*>&data_array_int16[0, 0]
+    if (data.size == 0):
+        return NULL
+    else:
+        return <void*>&data_array_int16[0, 0]
 
 cdef void * __get_ptr_int32(data):
     cdef numpy.ndarray[int32_t, ndim=2, mode="c"] data_array_int32
     data_array_int32 = data
-    return <void*>&data_array_int32[0, 0]
+    if (data.size == 0):
+        return NULL
+    else:
+        return <void*>&data_array_int32[0, 0]
 
 cdef void * __get_ptr_int64(data):
     cdef numpy.ndarray[int64_t, ndim=2, mode="c"] data_array_int64
     data_array_int64 = data
-    return <void*>&data_array_int64[0, 0]
+    if (data.size == 0):
+        return NULL
+    else:
+        return <void*>&data_array_int64[0, 0]
 
 cdef void * __get_ptr_float32(data):
     cdef numpy.ndarray[float, ndim=2, mode="c"] data_array_float32
     data_array_float32 = data
-    return <void*>&data_array_float32[0, 0]
+    if (data.size == 0):
+        return NULL
+    else:
+        return <void*>&data_array_float32[0, 0]
 
 cdef void * __get_ptr_float64(data):
     cdef numpy.ndarray[double, ndim=2, mode="c"] data_array_float64
     data_array_float64 = data
-    return <void*>&data_array_float64[0, 0]
+    if (data.size == 0):
+        return NULL
+    else:
+        return <void*>&data_array_float64[0, 0]
 
 
 def open(name, mode, application=None, schema=None, schema_version=None):

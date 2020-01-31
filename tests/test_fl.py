@@ -38,6 +38,7 @@ def test_create(tmp_path):
 def test_dtype(tmp_path, typ):
     data1d = numpy.array([1, 2, 3, 4, 5, 10012], dtype=typ)
     data2d = numpy.array([[10, 20], [30, 40], [50, 80]], dtype=typ)
+    data_zero = numpy.array([], dtype=typ)
 
     gsd.fl.open(mode='xb',
                 name=tmp_path / "test_dtype.gsd",
@@ -52,6 +53,7 @@ def test_dtype(tmp_path, typ):
                      schema_version=[1, 2]) as f:
         f.write_chunk(name='data1d', data=data1d)
         f.write_chunk(name='data2d', data=data2d)
+        f.write_chunk(name='data_zero', data=data_zero)
         f.end_frame()
 
     with gsd.fl.open(name=tmp_path / "test_dtype.gsd",
@@ -61,11 +63,14 @@ def test_dtype(tmp_path, typ):
                      schema_version=[1, 2]) as f:
         read_data1d = f.read_chunk(frame=0, name='data1d')
         read_data2d = f.read_chunk(frame=0, name='data2d')
+        read_data_zero = f.read_chunk(frame=0, name='data_zero')
 
         assert data1d.dtype == read_data1d.dtype
         numpy.testing.assert_array_equal(data1d, read_data1d)
         assert data2d.dtype == read_data2d.dtype
         numpy.testing.assert_array_equal(data2d, read_data2d)
+        assert data_zero.dtype == read_data_zero.dtype
+        assert data_zero.shape == (0,)
 
     # test again with pygsd
     with gsd.pygsd.GSDFile(
@@ -833,3 +838,35 @@ def test_gsd_v1_upgrade_write(tmp_path, open_mode):
         assert f.gsd_version == (2, 0)
 
         check_v1_file_read(f)
+
+
+def test_zero_size(tmp_path, open_mode):
+    data = numpy.array([], dtype=numpy.float32)
+
+    with gsd.fl.open(name=tmp_path / 'test_zero.gsd',
+                     mode=open_mode.write,
+                     application='test_zero',
+                     schema='none',
+                     schema_version=[1, 2]) as f:
+
+        f.write_chunk(name='data', data=data)
+        f.end_frame()
+
+    with gsd.fl.open(name=tmp_path / 'test_zero.gsd',
+                     mode=open_mode.read,
+                     application='test_zero',
+                     schema='none',
+                     schema_version=[1, 2]) as f:
+        assert f.nframes == 1
+        data_read = f.read_chunk(frame=0, name='data')
+        assert data_read.shape == (0,)
+        assert data_read.dtype == numpy.float32
+
+    # test again with pygsd
+    with gsd.pygsd.GSDFile(
+            file=open(str(tmp_path
+                          / 'test_zero.gsd'), mode=open_mode.read)) as f:
+        assert f.nframes == 1
+        data_read = f.read_chunk(frame=0, name='data')
+        assert data_read.shape == (0,)
+        assert data_read.dtype == numpy.float32
