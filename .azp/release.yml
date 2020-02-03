@@ -42,6 +42,7 @@ jobs:
     inputs:
       gitHubConnection: release
       repositoryName: $(Build.Repository.Name)
+      title: $(tag)
       action: 'create'
       assets: $(Build.ArtifactStagingDirectory)/*.tar.gz
       releaseNotesFile: $(Pipeline.Workspace)/changelog.md
