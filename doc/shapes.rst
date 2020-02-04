@@ -137,3 +137,26 @@ Example::
         "vertices": [[0.5, 0.5, 0.5], [0.5, -0.5, -0.5], [-0.5, 0.5, -0.5], [-0.5, -0.5, 0.5]],
         "indices": [[0, 1, 2], [0, 3, 1], [0, 2, 3], [1, 3, 2]]
     }
+
+Sphere unions
+-------------
+
+Type: ``SphereUnion``
+
+A collection of spheres, defined by their radii and positions.
+
+=============== =============== ===== ==== ======= ======
+Key             Description     Type  Size Default Units
+=============== =============== ===== ==== ======= ======
+radii           Sphere radii    float Nx1          length
+centers         Sphere centers  float Nx3          length
+=============== =============== ===== ==== ======= ======
+
+Example::
+
+    {
+        "type": "SphereUnion",
+        "centers": [[0, 0, 1.0], [0, 1.0, 0], [1.0, 0, 0]]
+        "radii": [0.5, 0.5, 0.5]
+    }
+
