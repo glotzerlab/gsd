@@ -143,20 +143,20 @@ Sphere unions
 
 Type: ``SphereUnion``
 
-A collection of spheres, defined by their radii and positions.
+A collection of spheres, defined by their diameters and positions.
 
-=============== =============== ===== ==== ======= ======
-Key             Description     Type  Size Default Units
-=============== =============== ===== ==== ======= ======
-radii           Sphere radii    float Nx1          length
-centers         Sphere centers  float Nx3          length
-=============== =============== ===== ==== ======= ======
+=============== ================ ===== ==== ======= ======
+Key             Description      Type  Size Default Units
+=============== ================ ===== ==== ======= ======
+diameters       Sphere diameters float Nx1          length
+centers         Sphere centers   float Nx3          length
+=============== ================ ===== ==== ======= ======
 
 Example::
 
     {
         "type": "SphereUnion",
-        "centers": [[0, 0, 1.0], [0, 1.0, 0], [1.0, 0, 0]]
-        "radii": [0.5, 0.5, 0.5]
+        "centers": [[0, 0, 1.0], [0, 1.0, 0], [1.0, 0, 0]],
+        "diameters": [0.5, 0.5, 0.5]
     }
 
