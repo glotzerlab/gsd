@@ -138,12 +138,12 @@ Example::
         "indices": [[0, 1, 2], [0, 3, 1], [0, 2, 3], [1, 3, 2]]
     }
 
-Sphere unions
+Sphere Unions
 -------------
 
 Type: ``SphereUnion``
 
-A collection of spheres, defined by their diameters and positions.
+A collection of spheres, defined by their diameters and centers.
 
 =============== ================ ===== ==== ======= ======
 Key             Description      Type  Size Default Units
