@@ -8,4 +8,5 @@ python:
 conda:
     environment: doc/environment.yml
 formats: all
-image: stable
+build:
+  image: stable
