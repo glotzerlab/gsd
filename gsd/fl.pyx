@@ -148,7 +148,7 @@ cdef void * __get_ptr_float64(data):
 
 
 def open(name, mode, application=None, schema=None, schema_version=None):
-    """ open(name, mode, application, schema, schema_version)
+    """ open(name, mode, application=None, schema=None, schema_version=None)
 
     :py:func:`open` opens a GSD file and returns a :py:class:`GSDFile` instance.
     The return value of :py:func:`open` can be used as a context manager.
