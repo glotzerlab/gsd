@@ -7,12 +7,19 @@ Change Log
 v2.x
 ----
 
+v2.1.1 (2020-04-20)
+^^^^^^^^^^^^^^^^^^^
+
+*Fixed*
+
+* List defaults in `gsd.fl.open` documentation.
+
 v2.1.0 (2020-02-27)
 ^^^^^^^^^^^^^^^^^^^
 
 *Added*
 
-* Shape specification for sphere unions
+* Shape specification for sphere unions.
 
 v2.0.0 (2020-02-03)
 ^^^^^^^^^^^^^^^^^^^
