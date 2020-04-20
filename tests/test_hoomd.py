@@ -124,8 +124,8 @@ def test_defaults(tmp_path, open_mode):
         assert s.dihedrals.N == 5
         assert s.dihedrals.types == []
         numpy.testing.assert_array_equal(
-            s.dihedrals.typeid,
-            numpy.array([0, 0, 0, 0, 0], dtype=numpy.uint32))
+            s.dihedrals.typeid, numpy.array([0, 0, 0, 0, 0],
+                                            dtype=numpy.uint32))
         numpy.testing.assert_array_equal(
             s.dihedrals.group,
             numpy.array([[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0],
@@ -167,10 +167,20 @@ def test_fallback(tmp_path, open_mode):
     snap0.configuration.box = [4, 5, 6, 1.0, 0.5, 0.25]
     snap0.particles.N = 2
     snap0.particles.types = ['A', 'B', 'C']
-    snap0.particles.type_shapes = [{
-        "type": "Sphere", "diameter": 2.0}, {
-            "type": "Sphere", "diameter": 3.0}, {
-                "type": "Sphere", "diameter": 4.0}]
+    snap0.particles.type_shapes = [
+        {
+            "type": "Sphere",
+            "diameter": 2.0
+        },
+        {
+            "type": "Sphere",
+            "diameter": 3.0
+        },
+        {
+            "type": "Sphere",
+            "diameter": 4.0
+        },
+    ]
     snap0.particles.typeid = [1, 2]
     snap0.particles.mass = [2, 3]
     snap0.particles.diameter = [3, 4]
@@ -431,8 +441,8 @@ def test_fallback(tmp_path, open_mode):
         assert s.dihedrals.N == 5
         assert s.dihedrals.types == snap0.dihedrals.types
         numpy.testing.assert_array_equal(
-            s.dihedrals.typeid,
-            numpy.array([0, 0, 0, 0, 0], dtype=numpy.uint32))
+            s.dihedrals.typeid, numpy.array([0, 0, 0, 0, 0],
+                                            dtype=numpy.uint32))
         numpy.testing.assert_array_equal(
             s.dihedrals.group,
             numpy.array([[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0],

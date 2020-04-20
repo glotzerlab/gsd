@@ -79,7 +79,7 @@ class ConfigurationData(object):
 
         if self.box is not None:
             self.box = numpy.ascontiguousarray(self.box, dtype=numpy.float32)
-            self.box = self.box.reshape([6, ])
+            self.box = self.box.reshape([6])
 
 
 class ParticleData(object):
@@ -264,6 +264,7 @@ class BondData(object):
           :chunk:`angles/group`, :chunk:`dihedrals/group`,
           :chunk:`impropers/group`, :chunk:`pairs/group`).
     """
+
     def __init__(self, M):
         self.M = M
         self.N = 0
@@ -324,6 +325,7 @@ class ConstraintData(object):
           Nx2 array defining tags in the particle constraints
           (:chunk:`constraints/group`).
     """
+
     def __init__(self):
         self.M = 2
         self.N = 0
@@ -381,6 +383,7 @@ class Snapshot(object):
     prefix. For example, :chunk:`state/hpmc/sphere/radius` is stored in the
     dictionary entry ``state['hpmc/sphere/radius']``.
     """
+
     def __init__(self):
         self.configuration = ConfigurationData()
         self.particles = ParticleData()
@@ -412,7 +415,8 @@ class Snapshot(object):
             'hpmc/convex_spheropolygon/vertices',
             'hpmc/convex_spheropolygon/sweep_radius',
             'hpmc/simple_polygon/N',
-            'hpmc/simple_polygon/vertices']
+            'hpmc/simple_polygon/vertices',
+        ]
 
     def validate(self):
         """ Validate all contained snapshot data.
@@ -583,6 +587,7 @@ class Snapshot(object):
 
 class _HOOMDTrajectoryIterable(object):
     """Iterable over a HOOMDTrajectory object."""
+
     def __init__(self, trajectory, indices):
         self._trajectory = trajectory
         self._indices = indices
@@ -606,6 +611,7 @@ class _HOOMDTrajectoryView(object):
     Enables the slicing and iteration over a subset of a trajectory
     instance.
     """
+
     def __init__(self, trajectory, indices):
         self._trajectory = trajectory
         self._indices = indices
@@ -631,6 +637,7 @@ class HOOMDTrajectory(object):
 
     Open hoomd GSD files with :py:func:`open`.
     """
+
     def __init__(self, file):
         if file.mode == 'ab':
             raise ValueError('Append mode not yet supported')
@@ -690,7 +697,8 @@ class HOOMDTrajectory(object):
                 'dihedrals',
                 'impropers',
                 'constraints',
-                'pairs']:
+                'pairs',
+        ]:
             container = getattr(snapshot, path)
             for name in container._default_value:
                 if self._should_write(path, name, snapshot):
@@ -706,7 +714,8 @@ class HOOMDTrajectory(object):
                     if name in ('types', 'type_shapes'):
                         if name == 'type_shapes':
                             data = [
-                                json.dumps(shape_dict) for shape_dict in data]
+                                json.dumps(shape_dict) for shape_dict in data
+                            ]
                         wid = max(len(w) for w in data) + 1
                         b = numpy.array(data, dtype=numpy.dtype((bytes, wid)))
                         data = b.view(dtype=numpy.int8).reshape(len(b), wid)
@@ -840,7 +849,8 @@ class HOOMDTrajectory(object):
                 'dihedrals',
                 'impropers',
                 'constraints',
-                'pairs']:
+                'pairs',
+        ]:
             container = getattr(snap, path)
             if self._initial_frame is not None:
                 initial_frame_container = getattr(self._initial_frame, path)

@@ -48,7 +48,8 @@ gsd_header = namedtuple(
     'magic index_location index_allocated_entries '
     'namelist_location namelist_allocated_entries '
     'schema_version gsd_version application '
-    'schema reserved')
+    'schema reserved',
+)
 gsd_header_struct = struct.Struct('QQQQQII64s64s80s')
 
 gsd_index_entry = namedtuple('gsd_index_entry',
@@ -65,7 +66,8 @@ gsd_type_mapping = {
     7: numpy.dtype('int32'),
     8: numpy.dtype('int64'),
     9: numpy.dtype('float32'),
-    10: numpy.dtype('float64'), }
+    10: numpy.dtype('float64'),
+}
 
 
 class GSDFile(object):
@@ -117,6 +119,7 @@ class GSDFile(object):
           **(read only)**.
         nframes (int): Number of frames **(read only)**.
     """
+
     def __init__(self, file):
         self.__file = file
 

@@ -23,18 +23,18 @@ def test_create(tmp_path):
                 schema_version=[1, 2])
 
 
-@pytest.mark.parametrize('typ',
-                         [
-                             numpy.uint8,
-                             numpy.uint16,
-                             numpy.uint32,
-                             numpy.uint64,
-                             numpy.int8,
-                             numpy.int16,
-                             numpy.int32,
-                             numpy.int64,
-                             numpy.float32,
-                             numpy.float64])
+@pytest.mark.parametrize('typ', [
+    numpy.uint8,
+    numpy.uint16,
+    numpy.uint32,
+    numpy.uint64,
+    numpy.int8,
+    numpy.int16,
+    numpy.int32,
+    numpy.int64,
+    numpy.float32,
+    numpy.float64,
+])
 def test_dtype(tmp_path, typ):
     data1d = numpy.array([1, 2, 3, 4, 5, 10012], dtype=typ)
     data2d = numpy.array([[10, 20], [30, 40], [50, 80]], dtype=typ)
@@ -70,7 +70,7 @@ def test_dtype(tmp_path, typ):
         assert data2d.dtype == read_data2d.dtype
         numpy.testing.assert_array_equal(data2d, read_data2d)
         assert data_zero.dtype == read_data_zero.dtype
-        assert data_zero.shape == (0, )
+        assert data_zero.shape == (0,)
 
     # test again with pygsd
     with gsd.pygsd.GSDFile(
@@ -859,7 +859,7 @@ def test_zero_size(tmp_path, open_mode):
                      schema_version=[1, 2]) as f:
         assert f.nframes == 1
         data_read = f.read_chunk(frame=0, name='data')
-        assert data_read.shape == (0, )
+        assert data_read.shape == (0,)
         assert data_read.dtype == numpy.float32
 
     # test again with pygsd
@@ -868,5 +868,5 @@ def test_zero_size(tmp_path, open_mode):
                           / 'test_zero.gsd'), mode=open_mode.read)) as f:
         assert f.nframes == 1
         data_read = f.read_chunk(frame=0, name='data')
-        assert data_read.shape == (0, )
+        assert data_read.shape == (0,)
         assert data_read.dtype == numpy.float32
