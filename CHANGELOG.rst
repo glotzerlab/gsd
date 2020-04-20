@@ -12,7 +12,7 @@ v2.1.1 (2020-04-20)
 
 *Fixed*
 
-* List defaults in `gsd.fl.open` documentation.
+* List defaults in ``gsd.fl.open`` documentation.
 
 v2.1.0 (2020-02-27)
 ^^^^^^^^^^^^^^^^^^^
