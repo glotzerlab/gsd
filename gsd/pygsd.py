@@ -2,7 +2,7 @@
 # This file is part of the General Simulation Data (GSD) project, released under
 # the BSD 2-Clause License.
 
-""" GSD reader written in pure python
+"""GSD reader written in pure python.
 
 :file:`pygsd.py` is a pure python implementation of a GSD reader. If your
 analysis tool is written in python and you want to embed a GSD reader without
@@ -71,13 +71,11 @@ gsd_type_mapping = {
 
 
 class GSDFile(object):
-    """ GSDFile(file)
+    """GSD file access interface.
 
-    GSD file access interface. Implemented in pure python and accepts any python
-    file-like object.
+    Implemented in pure python and accepts any python file-like object.
 
     Args:
-
         file: File-like object to read.
 
     GSDFile implements an object oriented class interface to the GSD file
@@ -87,7 +85,6 @@ class GSDFile(object):
     and the two classes can be used interchangeably.
 
     Examples:
-
         Open a file in **read-only** mode::
 
             f = GSDFile(open('file.gsd', mode='rb'))
@@ -105,19 +102,6 @@ class GSDFile(object):
 
             with GSDFile(open('file.gsd', mode='rb')) as f:
                 data = f.read_chunk(frame=0, name='chunk')
-
-    Attributes:
-
-        file: File-like object opened **(read only)**.
-        name (str): file.name **(read only)**.
-        mode (str): Mode of the open file **(read only)**.
-        gsd_version (tuple[int]): GSD file layer version number [major, minor]
-          **(read only)**.
-        application (str): Name of the generating application **(read only)**.
-        schema (str): Name of the data schema **(read only)**.
-        schema_version (tuple[int]): Schema version number [major, minor]
-          **(read only)**.
-        nframes (int): Number of frames **(read only)**.
     """
 
     def __init__(self, file):
@@ -195,8 +179,7 @@ class GSDFile(object):
         self.__is_open = True
 
     def __is_entry_valid(self, entry):
-        """ Return True if an entry is valid
-        """
+        """Return True if an entry is valid."""
         if entry.type not in gsd_type_mapping:
             return False
 
@@ -215,9 +198,7 @@ class GSDFile(object):
         return True
 
     def close(self):
-        """ close()
-
-        Close the file.
+        """Close the file.
 
         Once closed, any other operation on the file object will result in a
         `ValueError`. :py:meth:`close()` may be called more than once.
@@ -233,12 +214,15 @@ class GSDFile(object):
             self.__file.close()
 
     def truncate(self):
+        """Not implemented."""
         raise NotImplementedError
 
     def end_frame(self):
+        """Not implemented."""
         raise NotImplementedError
 
     def write_chunk(self, name, data):
+        """Not implemented."""
         raise NotImplementedError
 
     def _find_chunk(self, frame, name):
@@ -274,9 +258,7 @@ class GSDFile(object):
         return None
 
     def chunk_exists(self, frame, name):
-        """ chunk_exists(frame, name)
-
-        Test if a chunk exists.
+        """Test if a chunk exists.
 
         Args:
             frame (int): Index of the frame to check
@@ -295,7 +277,6 @@ class GSDFile(object):
                     else:
                         return None
         """
-
         if not self.__is_open:
             raise ValueError("File is not open")
 
@@ -303,9 +284,7 @@ class GSDFile(object):
         return chunk is not None
 
     def read_chunk(self, frame, name):
-        """ read_chunk(frame, name)
-
-        Read a data chunk from the file and return it as a numpy array.
+        """Read a data chunk from the file and return it as a numpy array.
 
         Args:
             frame (int): Index of the frame to read
@@ -318,7 +297,6 @@ class GSDFile(object):
               Nx1, return a 1D array.
 
         Examples:
-
             Read a 1D array::
 
                 with GSDFile(name=filename, mode='rb') as f:
@@ -345,7 +323,6 @@ class GSDFile(object):
             :py:meth:`read_chunk()` on the same chunk repeatedly. Cache the
             arrays instead.
         """
-
         if not self.__is_open:
             raise ValueError("File is not open")
 
@@ -381,9 +358,7 @@ class GSDFile(object):
             return data_npy.reshape([chunk.N, chunk.M])
 
     def find_matching_chunk_names(self, match):
-        """ find_matching_chunk_names(match)
-
-        Find all the chunk names in the file that start with the string *match*.
+        """Find chunk names in the file that start with the string *match*.
 
         Args:
             match (str): Start of the chunk name to match
@@ -399,49 +374,61 @@ class GSDFile(object):
         return result
 
     def __getstate__(self):
+        """Implement the pickle protocol."""
         return dict(name=self.name)
 
     def __setstate__(self, state):
+        """Implement the pickle protocol."""
         self.__init__(open(state['name'], 'rb'))
 
     def __enter__(self):
+        """Implement the context manager protocol."""
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
+        """Implement the context manager protocol."""
         self.close()
 
     @property
     def name(self):
+        """(str): file.name."""
         return self.__file.name
 
     @property
     def file(self):
+        """File-like object opened."""
         return self.__file
 
     @property
     def mode(self):
+        """(str): Mode of the open file."""
         return 'rb'
 
     @property
     def gsd_version(self):
+        """(Tuple[int]): GSD file layer version number ``(major, minor)``."""
         v = self.__header.gsd_version
         return (v >> 16, v & 0xffff)
 
     @property
     def schema_version(self):
+        """(Tuple[int]): Schema version number ``(major, minor)``."""
         v = self.__header.schema_version
         return (v >> 16, v & 0xffff)
 
     @property
     def schema(self):
+        """(str): Name of the data schema."""
         return self.__header.schema.rstrip(b'\x00').decode('utf-8')
 
     @property
     def application(self):
+        """(str): Name of the generating application."""
         return self.__header.application.rstrip(b'\x00').decode('utf-8')
 
     @property
     def nframes(self):
+        """(int): Number of frames in the file."""
         if not self.__is_open:
             raise ValueError("File is not open")
 

@@ -2,6 +2,8 @@
 # This file is part of the General Simulation Data (GSD) project, released under
 # the BSD 2-Clause License.
 
+"""Test the gsd.fl API with large files."""
+
 import gsd.hoomd
 import numpy
 import pytest
@@ -10,6 +12,7 @@ import gc
 
 @pytest.mark.parametrize("N", [2**27, 2**28, 2**29 + 1])
 def test_large_n(tmp_path, N):
+    """Test data chunks and files larger than 2 GB."""
     gc.collect()
 
     data = numpy.linspace(0, N, num=N, endpoint=False, dtype=numpy.uint32)

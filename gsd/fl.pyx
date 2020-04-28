@@ -2,7 +2,7 @@
 # This file is part of the General Simulation Data (GSD) project, released under
 # the BSD 2-Clause License.
 
-""" GSD file layer API.
+"""GSD file layer API.
 
 Low level access to gsd files. :py:mod:`gsd.fl` allows direct access to create,
 read, and write ``gsd`` files. The module is implemented in C and is optimized.
@@ -30,11 +30,11 @@ logger = logging.getLogger('gsd.fl')
 # Helper functions #
 
 cdef __format_errno(fname):
-    """ Return a tuple for constructing an IOError """
+    """Return a tuple for constructing an IOError."""
     return (errno, os.strerror(errno), fname)
 
 cdef __raise_on_error(retval, extra):
-    """ Raise the appropriate error type.
+    """Raise the appropriate error type.
 
     Args:
         retval: Return value from a gsd C API call
@@ -148,7 +148,7 @@ cdef void * __get_ptr_float64(data):
 
 
 def open(name, mode, application=None, schema=None, schema_version=None):
-    """ open(name, mode, application=None, schema=None, schema_version=None)
+    """open(name, mode, application=None, schema=None, schema_version=None)
 
     :py:func:`open` opens a GSD file and returns a :py:class:`GSDFile` instance.
     The return value of :py:func:`open` can be used as a context manager.
@@ -232,7 +232,7 @@ def open(name, mode, application=None, schema=None, schema_version=None):
 
 
 cdef class GSDFile:
-    """ GSDFile
+    """GSDFile
 
     GSD file access interface.
 
@@ -357,7 +357,7 @@ cdef class GSDFile:
         self.__is_open = True
 
     def close(self):
-        """ close()
+        """close()
 
         Close the file.
 
@@ -392,7 +392,7 @@ cdef class GSDFile:
             __raise_on_error(retval, self.name)
 
     def truncate(self):
-        """ truncate()
+        """truncate()
 
         Truncate all data from the file. After truncation, the file has no
         frames and no data chunks. The application, schema, and schema version
@@ -430,7 +430,7 @@ cdef class GSDFile:
         __raise_on_error(retval, self.name)
 
     def end_frame(self):
-        """ end_frame()
+        """end_frame()
 
         Complete writing the current frame. After calling :py:meth:`end_frame()`
         future calls to :py:meth:`write_chunk()` will write to the **next**
@@ -475,7 +475,7 @@ cdef class GSDFile:
         __raise_on_error(retval, self.name)
 
     def write_chunk(self, name, data):
-        """ write_chunk(name, data)
+        """write_chunk(name, data)
 
         Write a data chunk to the file. After writing all chunks in the
         current frame, call :py:meth:`end_frame()`.
@@ -589,7 +589,7 @@ cdef class GSDFile:
         __raise_on_error(retval, self.name)
 
     def chunk_exists(self, frame, name):
-        """ chunk_exists(frame, name)
+        """chunk_exists(frame, name)
 
         Test if a chunk exists.
 
@@ -646,7 +646,7 @@ cdef class GSDFile:
         return index_entry != NULL
 
     def read_chunk(self, frame, name):
-        """ read_chunk(frame, name)
+        """read_chunk(frame, name)
 
         Read a data chunk from the file and return it as a numpy array.
 
@@ -791,7 +791,7 @@ cdef class GSDFile:
             return data_array
 
     def find_matching_chunk_names(self, match):
-        """ find_matching_chunk_names(match)
+        """find_matching_chunk_names(match)
 
         Find all the chunk names in the file that start with the string *match*.
 
@@ -858,7 +858,7 @@ cdef class GSDFile:
         return retval
 
     def upgrade(self):
-        """ upgrade()
+        """upgrade()
 
         Upgrade a GSD file to the v2 specification in place. The file must be
         open in a writable mode.
