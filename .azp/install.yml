@@ -1,5 +1,5 @@
 variables:
-  image_root: glotzerlab/ci:2020.01
+  image_root: glotzerlab/ci:2020.04
   python: python3
   pytest_options:
 
@@ -73,6 +73,8 @@ stages:
 
     strategy:
       matrix:
+        gcc10_py38:
+          unused: ""
         gcc9_py38:
           unused: ""
         gcc7_py37:
