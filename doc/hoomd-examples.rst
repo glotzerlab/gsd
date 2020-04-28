@@ -33,7 +33,7 @@ Create a hoomd gsd file
 
 .. ipython:: python
 
-    gsd.hoomd.open(name='test.gsd', mode='wb')
+    gsd.hoomd.open(name='file.gsd', mode='wb')
 
 Append frames to a gsd file
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
