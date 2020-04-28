@@ -155,10 +155,15 @@ def open(name, mode, application=None, schema=None, schema_version=None):
 
     Args:
         name (str): File name to open.
+
         mode (str): File access mode.
+
         application (str): Name of the application creating the file.
+
         schema (str): Name of the data schema.
-        schema_version (``list[int]``): Schema version number [major, minor].
+
+        schema_version (``Tuple[int, int]``): Schema version number
+            (major, minor).
 
     Valid values for mode:
 
@@ -242,15 +247,20 @@ cdef class GSDFile:
 
     Attributes:
 
-        name (str): Name of the open file **(read only)**.
-        mode (str): Mode of the open file **(read only)**.
-        gsd_version (tuple[int]): GSD file layer version number [major, minor]
-          **(read only)**.
-        application (str): Name of the generating application **(read only)**.
-        schema (str): Name of the data schema **(read only)**.
-        schema_version (tuple[int]): Schema version number [major, minor]
-          **(read only)**.
-        nframes (int): Number of frames **(read only)**.
+        name (str): Name of the open file.
+
+        mode (str): Mode of the open file.
+
+        gsd_version (``Tuple[int, int]``): GSD file layer version number
+            (major, minor).
+
+        application (str): Name of the generating application.
+
+        schema (str): Name of the data schema.
+
+        schema_version (``Tuple[int, int]``): Schema version number (major, minor).
+
+        nframes (int): Number of frames.
     """
 
     cdef libgsd.gsd_handle __handle

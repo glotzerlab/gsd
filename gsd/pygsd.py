@@ -401,34 +401,34 @@ class GSDFile(object):
 
     @property
     def mode(self):
-        """(str): Mode of the open file."""
+        """str: Mode of the open file."""
         return 'rb'
 
     @property
     def gsd_version(self):
-        """(Tuple[int]): GSD file layer version number ``(major, minor)``."""
+        """``Tuple[int, int]``: GSD file layer version number (major, minor)."""
         v = self.__header.gsd_version
         return (v >> 16, v & 0xffff)
 
     @property
     def schema_version(self):
-        """(Tuple[int]): Schema version number ``(major, minor)``."""
+        """``Tuple[int, int]``: Schema version number (major, minor)."""
         v = self.__header.schema_version
         return (v >> 16, v & 0xffff)
 
     @property
     def schema(self):
-        """(str): Name of the data schema."""
+        """str: Name of the data schema."""
         return self.__header.schema.rstrip(b'\x00').decode('utf-8')
 
     @property
     def application(self):
-        """(str): Name of the generating application."""
+        """str: Name of the generating application."""
         return self.__header.application.rstrip(b'\x00').decode('utf-8')
 
     @property
     def nframes(self):
-        """(int): Number of frames in the file."""
+        """int: Number of frames in the file."""
         if not self.__is_open:
             raise ValueError("File is not open")
 
