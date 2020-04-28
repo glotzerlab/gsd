@@ -258,7 +258,8 @@ cdef class GSDFile:
 
         schema (str): Name of the data schema.
 
-        schema_version (``Tuple[int, int]``): Schema version number (major, minor).
+        schema_version (``Tuple[int, int]``): Schema version number
+            (major, minor).
 
         nframes (int): Number of frames.
     """

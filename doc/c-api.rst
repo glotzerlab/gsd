@@ -465,3 +465,7 @@ Data structures
 .. c:type:: int64_t
 
     64-bit signed integer (defined by C compiler).
+
+.. c:type:: size_t
+
+    unsigned integer (defined by C compiler).
