@@ -7,14 +7,14 @@
 File layer
 ----------
 
-The file layer python module :py:mod:`gsd.fl` allows direct low level access to read and write
-**GSD** files of any schema. The **HOOMD** reader (:py:mod:`gsd.hoomd`) provides higher level access to
-**HOOMD** schema files, see :ref:`hoomd-examples`.
+The file layer python module `gsd.fl` allows direct low level access to read and
+write **GSD** files of any schema. The **HOOMD** reader (`gsd.hoomd`) provides
+higher level access to **HOOMD** schema files, see :ref:`hoomd-examples`.
 
 View the page source to find unformatted example code.
 
 Open a gsd file
-^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^
 
 .. ipython:: python
 
@@ -23,9 +23,27 @@ Open a gsd file
                     application="My application",
                     schema="My Schema",
                     schema_version=[1,0])
+
+Use `gsd.fl.open` to open a gsd file.
+
+.. note::
+
+    When creating a new file, you must specify the application name, schema
+    name, and schema version.
+
+.. warning::
+
+    Opening a gsd file with a 'w' or 'x' mode overwrites any existing file with
+    the given name.
+
+Close a gsd file
+^^^^^^^^^^^^^^^^
+
+.. ipython:: python
+
     f.close()
 
-.. warning:: Opening a gsd file with a 'w' or 'x' mode overwrites any existing file with the given name.
+Call the `close <gsd.fl.GSDFile.close>` method to close the file.
 
 Write data
 ^^^^^^^^^^
@@ -45,81 +63,69 @@ Write data
     f.end_frame()
     f.close()
 
-Call :py:func:`gsd.fl.open` to access gsd files on disk.
 Add any number of named data chunks to each frame in the file with
-:py:meth:`gsd.fl.GSDFile.write_chunk()`. The data must be a 1 or 2
-dimensional numpy array of a simple numeric type (or a data type that will automatically
-convert when passed to ``numpy.array(data)``. Call :py:meth:`gsd.fl.GSDFile.end_frame()`
-to end the frame and start the next one.
+`write_chunk <gsd.fl.GSDFile.write_chunk>`. The data must be a 1 or 2
+dimensional numpy array of a simple numeric type (or a data type that will
+automatically convert when passed to ``numpy.array(data)``. Call
+`end_frame <gsd.fl.GSDFile.end_frame>` to end the frame and start the next one.
 
-.. note:: While supported, implicit conversion to numpy arrays creates a copy
-          of the data in memory and adds conversion overhead.
+.. note::
 
-.. warning:: Make sure to call ``end_frame()`` before closing the file, or the last frame will be lost.
+    While supported, implicit conversion to numpy arrays creates a copy of the
+    data in memory and adds conversion overhead.
+
+.. warning::
+
+    Call `end_frame <gsd.fl.GSDFile.end_frame>` to write the last frame before
+    closing the file.
 
 Read data
 ^^^^^^^^^
 
 .. ipython:: python
 
-    f = gsd.fl.open(name="file.gsd",
-                    mode='rb',
-                    application="My application",
-                    schema="My Schema",
-                    schema_version=[1,0])
+    f = gsd.fl.open(name="file.gsd", mode='rb')
     f.read_chunk(frame=0, name='chunk1')
     f.read_chunk(frame=1, name='chunk2')
     f.close()
 
-:py:meth:`gsd.fl.GSDFile.read_chunk` reads the named chunk at the given frame index in the file
-and returns it as a numpy array.
+`read_chunk <gsd.fl.GSDFile.read_chunk>` reads the named chunk at the given
+frame index in the file and returns it as a numpy array.
 
 Test if a chunk exists
 ^^^^^^^^^^^^^^^^^^^^^^
 
 .. ipython:: python
 
-    f = gsd.fl.open(name="file.gsd",
-                    mode='rb',
-                    application="My application",
-                    schema="My Schema",
-                    schema_version=[1,0])
+    f = gsd.fl.open(name="file.gsd", mode='rb')
     f.chunk_exists(frame=0, name='chunk1')
     f.chunk_exists(frame=1, name='chunk2')
     f.chunk_exists(frame=2, name='chunk1')
     f.close()
 
-:py:meth:`gsd.fl.GSDFile.chunk_exists` tests to see if a chunk by the given name exists in the file
-at the given frame.
+`chunk_exists <gsd.fl.GSDFile.chunk_exists>` tests to see if a chunk by the
+given name exists in the file at the given frame.
 
 Discover chunk names
 ^^^^^^^^^^^^^^^^^^^^
 
 .. ipython:: python
 
-    f = gsd.fl.open(name="file.gsd",
-                    mode='rb',
-                    application="My application",
-                    schema="My Schema",
-                    schema_version=[1,0])
+    f = gsd.fl.open(name="file.gsd", mode='rb')
     f.find_matching_chunk_names('')
     f.find_matching_chunk_names('chunk')
     f.find_matching_chunk_names('chunk1')
     f.find_matching_chunk_names('other')
 
-:py:meth:`gsd.fl.GSDFile.find_matching_chunk_names` finds all chunk names present in a GSD file that start with the
-given string.
+`find_matching_chunk_names <gsd.fl.GSDFile.find_matching_chunk_names>` finds all
+chunk names present in a GSD file that start with the given string.
 
 Read-only access
 ^^^^^^^^^^^^^^^^
 
 .. ipython:: python
 
-    f = gsd.fl.open(name="file.gsd",
-                    mode='rb',
-                    application="My application",
-                    schema="My Schema",
-                    schema_version=[1,0])
+    f = gsd.fl.open(name="file.gsd", mode='rb')
     if f.chunk_exists(frame=0, name='chunk1'):
         data = f.read_chunk(frame=0, name='chunk1')
     data
@@ -135,11 +141,7 @@ Access file metadata
 
 .. ipython:: python
 
-    f = gsd.fl.open(name="file.gsd",
-                    mode='rb',
-                    application="My application",
-                    schema="My Schema",
-                    schema_version=[1,0])
+    f = gsd.fl.open(name="file.gsd", mode='rb')
     f.name
     f.mode
     f.gsd_version
@@ -149,7 +151,7 @@ Access file metadata
     f.nframes
     f.close()
 
-File metadata are available as properties.
+Read file metadata from properties of the file object.
 
 Open a file in read/write mode
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -173,11 +175,7 @@ Write a file in append mode
 
 .. ipython:: python
 
-    f = gsd.fl.open(name="file.gsd",
-                    mode='ab',
-                    application="My application",
-                    schema="My Schema",
-                    schema_version=[1,0])
+    f = gsd.fl.open(name="file.gsd", mode='ab')
     f.write_chunk(name='int', data=numpy.array([10,20], dtype=numpy.int16));
     f.end_frame()
     f.nframes
@@ -194,16 +192,12 @@ Use as a context manager
 
 .. ipython:: python
 
-    with gsd.fl.open(name="file.gsd",
-                    mode='rb',
-                    application="My application",
-                    schema="My Schema",
-                    schema_version=[1,0]) as f:
+    with gsd.fl.open(name="file.gsd", mode='rb') as f:
         data = f.read_chunk(frame=0, name='double');
     data
 
-:py:class:`gsd.fl.GSDFile` works as a context manager for guaranteed file closure and cleanup
-when exceptions occur.
+Use `gsd.fl.GSDFile` as a context manager for guaranteed file closure and
+cleanup when exceptions occur.
 
 Store string chunks
 ^^^^^^^^^^^^^^^^^^^
@@ -228,26 +222,23 @@ Store string chunks
     r[0].decode('UTF-8')
     f.close()
 
-To store a string in a gsd file, convert it to a numpy array of bytes and store that data in
-the file. Decode the byte sequence to get back a string.
+To store a string in a gsd file, convert it to a numpy array of bytes and store
+that data in the file. Decode the byte sequence to get back a string.
 
 Truncate
 ^^^^^^^^
 
 .. ipython:: python
 
-    f = gsd.fl.open(name="file.gsd",
-                    mode='ab',
-                    application="My application",
-                    schema="My Schema",
-                    schema_version=[1,0])
+    f = gsd.fl.open(name="file.gsd", mode='ab')
     f.nframes
     f.schema, f.schema_version, f.application
     f.truncate()
     f.nframes
     f.schema, f.schema_version, f.application
+    f.close()
 
-Truncating a gsd file removes all data chunks from it, but retains the same schema, schema
-version, and application name. The file is not closed during this process. This is useful
-when writing restart files on a Lustre file system when file open operations need to be
-kept to a minimum.
+Truncating a gsd file removes all data chunks from it, but retains the same
+schema, schema version, and application name. The file is not closed during this
+process. This is useful when writing restart files on a Lustre file system when
+file open operations need to be kept to a minimum.

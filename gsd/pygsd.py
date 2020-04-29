@@ -291,10 +291,7 @@ class GSDFile(object):
             name (str): Name of the chunk
 
         Returns:
-            ``numpy.ndarray[type, ndim=?, mode='c']``: Data read from file.
-              ``type`` is determined by the chunk metadata. If the data is
-              NxM in the file and M > 1, return a 2D array. If the data is
-              Nx1, return a 1D array.
+            `numpy.ndarray`: Data read from file.
 
         Examples:
             Read a 1D array::
@@ -406,13 +403,17 @@ class GSDFile(object):
 
     @property
     def gsd_version(self):
-        """``Tuple[int, int]``: GSD file layer version number (major, minor)."""
+        """`typing.Tuple` [int, int]: GSD file layer version number.
+
+        The tuple is in the order (major, minor)."""
         v = self.__header.gsd_version
         return (v >> 16, v & 0xffff)
 
     @property
     def schema_version(self):
-        """``Tuple[int, int]``: Schema version number (major, minor)."""
+        """`typing.Tuple` [int, int]: Schema version number.
+
+        The tuple is in the order (major, minor)."""
         v = self.__header.schema_version
         return (v >> 16, v & 0xffff)
 

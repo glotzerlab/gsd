@@ -9,13 +9,13 @@ GSD schema ``hoomd``. It is a simple, but high performance and memory
 efficient, reader and writer for the schema. See :ref:`hoomd-examples`
 for full examples.
 
-* :py:func:`open` - Open a hoomd schema GSD file.
-* :py:class:`HOOMDTrajectory` - Read and write hoomd schema GSD files.
-* :py:class:`Snapshot` - Store the state of a single frame.
+* `open` - Open a hoomd schema GSD file.
+* `HOOMDTrajectory` - Read and write hoomd schema GSD files.
+* `Snapshot` - Store the state of a single frame.
 
-    * :py:class:`ConfigurationData` - Store configuration data in a snapshot.
-    * :py:class:`ParticleData` - Store particle data in a snapshot.
-    * :py:class:`BondData` - Store topology data in a snapshot.
+    * `ConfigurationData` - Store configuration data in a snapshot.
+    * `ParticleData` - Store particle data in a snapshot.
+    * `BondData` - Store topology data in a snapshot.
 """
 
 import numpy
@@ -39,8 +39,7 @@ logger = logging.getLogger('gsd.hoomd')
 class ConfigurationData(object):
     """Store configuration data.
 
-    Users should not need to instantiate this class. Use the ``configuration``
-    attribute of a :py:class:`Snapshot`.
+    Use the `Snapshot.configuration` attribute of a to access the configuration.
 
     Attributes:
         step (int): Time step of this frame (:chunk:`configuration/step`).
@@ -48,7 +47,7 @@ class ConfigurationData(object):
         dimensions (int): Number of dimensions
             (:chunk:`configuration/dimensions`).
 
-        box (`numpy.ndarray` or `array_like` [float, ndim=1, mode='c']):
+        box ((6, 1) `numpy.ndarray` of ``numpy.float32``):
             Box dimensions (:chunk:`configuration/box`)
             [lx, ly, lz, xy, xz, yz].
     """
@@ -66,15 +65,14 @@ class ConfigurationData(object):
     def validate(self):
         """Validate all attributes.
 
-        First, convert every array attribute to a numpy array of the
-        proper type. Then validate that all attributes have the correct
-        dimensions.
+        Convert every array attribute to a `numpy.ndarray` of the proper
+        type and check that all attributes have the correct dimensions.
 
         Ignore any attributes that are ``None``.
 
         Warning:
-            Array attributes that are not contiguous numpy arrays will
-            be replaced with contiguous numpy arrays of the appropriate type.
+            Array attributes that are not contiguous numpy arrays will be
+            replaced with contiguous numpy arrays of the appropriate type.
         """
         logger.debug('Validating ConfigurationData')
 
@@ -86,64 +84,53 @@ class ConfigurationData(object):
 class ParticleData(object):
     """Store particle data chunks.
 
-    Users should not need to instantiate this class. Use the ``particles``
-    attribute of a :py:class:`Snapshot`.
+    Use the `Snapshot.particles` attribute of a to access the particles.
 
-    Instances resulting from file read operations will always store per particle
-    quantities in numpy arrays of the defined types. User created snapshots can
-    provide input data as python lists, tuples, numpy arrays of different types,
-    etc... Such input elements will be converted to the appropriate array type
-    by :py:meth:`validate()` which is called when writing a frame.
+    Instances resulting from file read operations will always store array
+    quantities in `numpy.ndarray` objects of the defined types. User created
+    snapshots may provide input data that can be converted to a `numpy.ndarray`.
 
     Attributes:
         N (int): Number of particles in the snapshot (:chunk:`particles/N`).
 
-        types (list[str]):
+        types (`typing.List` [str]):
             Names of the particle types (:chunk:`particles/types`).
 
-        position (`numpy.ndarray` or `array_like` [float, ndim=2, mode='c']):
-            Nx3 array defining particle position(:chunk:`particles/position`).
+        position ((*N*, 3) `numpy.ndarray` of ``numpy.float32``):
+            Particle position (:chunk:`particles/position`).
 
-        orientation (`numpy.ndarray` or `array_like` [float, ndim=2, mode='c']):
-            Nx4 array defining particle position
-            (:chunk:`particles/orientation`).
+        orientation ((*N*, 4) `numpy.ndarray` of ``numpy.float32``):
+            Particle orientation. (:chunk:`particles/orientation`).
 
-        typeid (`numpy.ndarray` or `array_like` [uint32, ndim=1, mode='c']):
-            N length array defining particle type ids
-            (:chunk:`particles/typeid`).
+        typeid ((*N*, ) `numpy.ndarray` of ``numpy.uint32``):
+            Particle type id (:chunk:`particles/typeid`).
 
-        mass (`numpy.ndarray` or `array_like` [float, ndim=1, mode='c']):
-            N length array defining particle masses (:chunk:`particles/mass`).
+        mass ((*N*, ) `numpy.ndarray` of ``numpy.float32``):
+            Particle mass (:chunk:`particles/mass`).
 
-        charge (`numpy.ndarray` or `array_like` [float, ndim=1, mode='c']):
-            N length array defining particle charges
-            (:chunk:`particles/charge`).
+        charge ((*N*, ) `numpy.ndarray` of ``numpy.float32``):
+            Particle charge (:chunk:`particles/charge`).
 
-        diameter (`numpy.ndarray` or `array_like` [float, ndim=1, mode='c']):
-            N length array defining particle diameters
-            (:chunk:`particles/diameter`).
+        diameter ((*N*, ) `numpy.ndarray` of ``numpy.float32``):
+            Particle diameter (:chunk:`particles/diameter`).
 
-        body (`numpy.ndarray` or `array_like` [int32, ndim=1, mode='c']):
-            N length array defining particle bodies (:chunk:`particles/body`).
+        body ((*N*, ) `numpy.ndarray` of ``numpy.int32``):
+            Particle body (:chunk:`particles/body`).
 
-        moment_inertia (`numpy.ndarray` or `array_like`
-            [float, ndim=2, mode='c']):
-            Nx3 array defining particle moments of inertia
-            (:chunk:`particles/moment_inertia`).
+        moment_inertia ((*N*, 3) `numpy.ndarray` of ``numpy.float32``):
+            Particle moment of inertia (:chunk:`particles/moment_inertia`).
 
-        velocity (`numpy.ndarray` or `array_like` [float, ndim=2, mode='c']):
-            Nx3 array defining particle velocities
-            (:chunk:`particles/velocity`).
+        velocity ((*N*, 3) `numpy.ndarray` of ``numpy.float32``):
+            Particle velocity (:chunk:`particles/velocity`).
 
-        angmom (`numpy.ndarray` or `array_like` [float, ndim=2, mode='c']):
-            Nx4 array defining particle angular momenta
-            (:chunk:`particles/angmom`).
+        angmom ((*N*, 4) `numpy.ndarray` of ``numpy.float32``):
+            Particle angular momentum (:chunk:`particles/angmom`).
 
-        image (`numpy.ndarray` or `array_like` [int32, ndim=2, mode='c']):
-            Nx3 array defining particle images (:chunk:`particles/image`).
+        image ((*N*, 3) `numpy.ndarray` of ``numpy.int32``):
+            Particle image (:chunk:`particles/image`).
 
-        type_shapes (list[dict]): Shape specifications for visualizing particle
-            types (:chunk:`particles/type_shapes`).
+        type_shapes (`typing.List` [`typing.Dict`]): Shape specifications for
+            visualizing particle types (:chunk:`particles/type_shapes`).
     """
 
     _default_value = OrderedDict()
@@ -183,15 +170,14 @@ class ParticleData(object):
     def validate(self):
         """Validate all attributes.
 
-        First, convert every per particle attribute to a numpy array of the
-        proper type. Then validate that all attributes have the correct
-        dimensions.
+        Convert every array attribute to a `numpy.ndarray` of the proper
+        type and check that all attributes have the correct dimensions.
 
         Ignore any attributes that are ``None``.
 
         Warning:
-            Per particle attributes that are not contiguous numpy arrays will
-            be replaced with contiguous numpy arrays of the appropriate type.
+            Array attributes that are not contiguous numpy arrays will be
+            replaced with contiguous numpy arrays of the appropriate type.
         """
         logger.debug('Validating ParticleData')
 
@@ -241,19 +227,17 @@ class ParticleData(object):
 class BondData(object):
     """Store bond data chunks.
 
-    Users should not need to instantiate this class. Use the ``bonds``,
-    ``angles``, ``dihedrals``, or ``impropers`` attribute of a
-    :py:class:`Snapshot`.
+    Use the `Snapshot.bonds`, `Snapshot.angles`, `Snapshot.dihedrals`,
+    `Snapshot.impropers`, and `Snapshot.pairs` attributes to access the bonds.
 
-    Instances resulting from file read operations will always store per bond
-    quantities in numpy arrays of the defined types. User created snapshots can
-    provide input data as python lists, tuples, numpy arrays of different types,
-    etc... Such input elements will be converted to the appropriate array type
-    by :py:meth:`validate()` which is called when writing a frame.
+    Instances resulting from file read operations will always store array
+    quantities in `numpy.ndarray` objects of the defined types. User created
+    snapshots may provide input data that can be converted to a `numpy.ndarray`.
 
     Note:
-        *M* varies depending on the type of bond. The same python class
-        represents all types of bonds.
+
+        *M* varies depending on the type of bond. `BondData` represents all
+        types of bonds.
 
         ======== ===
         Type     *M*
@@ -262,22 +246,26 @@ class BondData(object):
         Angle     3
         Dihedral  4
         Improper  4
+        Pair      2
         ======== ===
 
     Attributes:
         N (int): Number of particles in the snapshot
           (:chunk:`bonds/N`, :chunk:`angles/N`, :chunk:`dihedrals/N`,
           :chunk:`impropers/N`, :chunk:`pairs/N`).
-        types (list[str]): Names of the particle types
+
+        types (`typing.List` [str]): Names of the particle types
           (:chunk:`bonds/types`, :chunk:`angles/types`,
           :chunk:`dihedrals/types`, :chunk:`impropers/types`,
           :chunk:`pairs/types`).
-        typeid (`numpy.ndarray` or `array_like` [uint32, ndim=1, mode='c']):
-          N length array defining bond type ids (:chunk:`bonds/typeid`,
+
+        typeid ((*N*, 3) `numpy.ndarray` of ``numpy.uint32``):
+          Bond type id (:chunk:`bonds/typeid`,
           :chunk:`angles/typeid`, :chunk:`dihedrals/typeid`,
           :chunk:`impropers/typeid`, :chunk:`pairs/types`).
-        group (`numpy.ndarray` or `array_like` [uint32, ndim=2, mode='c']):
-          NxM array defining tags in the particle bonds (:chunk:`bonds/group`,
+
+        group ((*N*, *M*) `numpy.ndarray` of ``numpy.uint32``):
+          Tags of the particles in the bond (:chunk:`bonds/group`,
           :chunk:`angles/group`, :chunk:`dihedrals/group`,
           :chunk:`impropers/group`, :chunk:`pairs/group`).
     """
@@ -298,15 +286,14 @@ class BondData(object):
     def validate(self):
         """Validate all attributes.
 
-        First, convert every per bond attribute to a numpy array of the
-        proper type. Then validate that all attributes have the correct
-        dimensions.
+        Convert every array attribute to a `numpy.ndarray` of the proper
+        type and check that all attributes have the correct dimensions.
 
         Ignore any attributes that are ``None``.
 
         Warning:
-            Per bond attributes that are not contiguous numpy arrays will
-            be replaced with contiguous numpy arrays of the appropriate type.
+            Array attributes that are not contiguous numpy arrays will be
+            replaced with contiguous numpy arrays of the appropriate type.
         """
         logger.debug('Validating BondData')
 
@@ -322,25 +309,20 @@ class BondData(object):
 class ConstraintData(object):
     """Store constraint data chunks.
 
-    Users should not need to instantiate this class. Use the ``constraints``,
-    attribute of a :py:class:`Snapshot`.
+    Use the `Snapshot.constraints` attribute to access the constraints.
 
-    Instances resulting from file read operations will always store per
-    constraint quantities in numpy arrays of the defined types. User created
-    snapshots can provide input data as python lists, tuples, numpy arrays of
-    different types, etc... Such input elements will be converted to the
-    appropriate array type by :py:meth:`validate()` which is called when writing
-    a frame.
+    Instances resulting from file read operations will always store array
+    quantities in `numpy.ndarray` objects of the defined types. User created
+    snapshots may provide input data that can be converted to a `numpy.ndarray`.
 
     Attributes:
         N (int): Number of particles in the snapshot (:chunk:`constraints/N`).
 
-        value (`numpy.ndarray` or `array_like` [float32, ndim=1, mode='c']):
-            N length array defining constraint lengths
-            (:chunk:`constraints/value`).
+        value ((*N*, ) `numpy.ndarray` of ``numpy.float32``):
+            Constraint length (:chunk:`constraints/value`).
 
-        group (`numpy.ndarray` or `array_like` [int32, ndim=2, mode='c']):
-            Nx2 array defining tags in the particle constraints
+        group ((*N*, *2*) `numpy.ndarray` of ``numpy.uint32``):
+            Tags of the particles in the constraint
             (:chunk:`constraints/group`).
     """
 
@@ -359,15 +341,14 @@ class ConstraintData(object):
     def validate(self):
         """Validate all attributes.
 
-        First, convert every per constraint attribute to a numpy array of the
-        proper type. Then validate that all attributes have the correct
-        dimensions.
+        Convert every array attribute to a `numpy.ndarray` of the proper
+        type and check that all attributes have the correct dimensions.
 
         Ignore any attributes that are ``None``.
 
         Warning:
-            Per bond attributes that are not contiguous numpy arrays will
-            be replaced with contiguous numpy arrays of the appropriate type.
+            Array attributes that are not contiguous numpy arrays will be
+            replaced with contiguous numpy arrays of the appropriate type.
         """
         logger.debug('Validating ConstraintData')
 
@@ -381,32 +362,29 @@ class ConstraintData(object):
 
 
 class Snapshot(object):
-    """Top level snapshot container.
+    """Snapshot of a system state.
 
     Attributes:
-        configuration (:py:class:`ConfigurationData`): Configuration data.
+        configuration (`ConfigurationData`): Configuration data.
 
-        particles (:py:class:`ParticleData`): Particle data snapshot.
+        particles (`ParticleData`): Particles.
 
-        bonds (:py:class:`BondData`): Bond data snapshot.
+        bonds (`BondData`): Bonds.
 
-        angles (:py:class:`BondData`): Angle data snapshot.
+        angles (`BondData`): Angles.
 
-        dihedrals (:py:class:`BondData`): Dihedral data snapshot.
+        dihedrals (`BondData`): Dihedrals.
 
-        impropers (:py:class:`BondData`): Improper data snapshot.
+        impropers (`BondData`): Impropers.
 
-        pairs (:py:class:`BondData`): Special pair interactions snapshot
+        pairs (`BondData`): Special pair.
 
-        state (dict): Dictionary containing state data
+        constraints (`ConstraintData`): Distance constraints.
 
-        log (dict): Dictionary containing logged data (values must be
-            `numpy.ndarray` or `array_like`)
+        state (typing.Dict): State data.
 
-    See the HOOMD schema specification for details on entries in the state
-    dictionary. Entries in this dict are the chunk name without the state
-    prefix. For example, :chunk:`state/hpmc/sphere/radius` is stored in the
-    dictionary entry ``state['hpmc/sphere/radius']``.
+        log (typing.Dict): Logged data (values must be `numpy.ndarray` or
+            `array_like`)
     """
 
     def __init__(self):
@@ -656,9 +634,9 @@ class HOOMDTrajectory(object):
     """Read and write hoomd gsd files.
 
     Args:
-        file (:py:class:`gsd.fl.GSDFile`): File to access.
+        file (`gsd.fl.GSDFile`): File to access.
 
-    Open hoomd GSD files with :py:func:`open`.
+    Open hoomd GSD files with `open`.
     """
 
     def __init__(self, file):
@@ -693,13 +671,12 @@ class HOOMDTrajectory(object):
         Args:
             snapshot (:py:class:`Snapshot`): Snapshot to append.
 
-        Write the given snapshot to the file at the current frame and
-        increase the frame counter. Do not attempt to write any fields
-        that are ``None``. For all non-``None`` fields, scan them
-        and see if they match the initial frame or the default value.
-        If the given data differs, write it out to the frame. If it is
-        the same, do not write it out as it can be instantiated either
-        from the value at the initial frame or the default value.
+        Write the given snapshot to the file at the current frame and increase
+        the frame counter. Do not write any fields that are ``None``. For all
+        non-``None`` fields, scan them and see if they match the initial frame
+        or the default value. If the given data differs, write it out to the
+        frame. If it is the same, do not write it out as it can be instantiated
+        either from the value at the initial frame or the default value.
         """
         logger.debug('Appending snapshot to hoomd trajectory: '
                      + str(self.file))
@@ -759,6 +736,11 @@ class HOOMDTrajectory(object):
         self.file.truncate()
         self._initial_frame = None
 
+    def close(self):
+        """Close the file."""
+        self.file.close()
+        del self._initial_frame
+
     def _should_write(self, path, name, snapshot):
         """Test if we should write a given data chunk.
 
@@ -796,9 +778,10 @@ class HOOMDTrajectory(object):
         """Append each item of the iterable to the file.
 
         Args:
+
             iterable: An iterable object the provides :py:class:`Snapshot`
-              instances. This could be another HOOMDTrajectory, a generator
-              that modifies snapshots, or a simple list of snapshots.
+                instances. This could be another HOOMDTrajectory, a generator
+                that modifies snapshots, or a simple list of snapshots.
         """
         for item in iterable:
             self.append(item)
@@ -810,12 +793,12 @@ class HOOMDTrajectory(object):
             idx (int): Frame index to read.
 
         Returns:
-            :py:class:`Snapshot` with the frame data
+            `Snapshot` with the frame data
 
-        Replace any data chunks not present in the given frame with either
-        data from frame 0, or initialize from default values if not in
-        frame 0. Cache frame 0 data to avoid file read overhead. Return
-        any default data as non-writable numpy arrays.
+        Replace any data chunks not present in the given frame with either data
+        from frame 0, or initialize from default values if not in frame 0. Cache
+        frame 0 data to avoid file read overhead. Return any default data as
+        non-writable numpy arrays.
         """
         if idx >= len(self):
             raise IndexError
@@ -965,12 +948,12 @@ class HOOMDTrajectory(object):
         """Index trajectory frames.
 
         The index can be a positive integer, negative integer, or slice and is
-        interpreted the same as :py:class:`list` indexing.
+        interpreted the same as `list` indexing.
 
         Warning:
-            As you loop over frames, each frame is read from the file when
-            it is reached in the iteration. Multiple passes may lead to
-            multiple disk reads if the file does not fit in cache.
+            As you loop over frames, each frame is read from the file when it is
+            reached in the iteration. Multiple passes may lead to multiple disk
+            reads if the file does not fit in cache.
         """
         if isinstance(key, slice):
             return _HOOMDTrajectoryView(self, range(*key.indices(len(self))))
@@ -999,15 +982,15 @@ class HOOMDTrajectory(object):
 def open(name, mode='rb'):
     """Open a hoomd schema GSD file.
 
-    The return value of :py:func:`open` can be used as a context manager.
+    The return value of `open` can be used as a context manager.
 
     Args:
         name (str): File name to open.
         mode (str): File open mode.
 
     Returns:
-        An :py:class:`HOOMDTrajectory` instance that accesses the file *name*
-        with the given mode.
+        An `HOOMDTrajectory` instance that accesses the file *name* with the
+        given mode.
 
     Valid values for mode:
 
@@ -1017,7 +1000,7 @@ def open(name, mode='rb'):
     | ``'rb'``         | Open an existing file for reading.          |
     +------------------+---------------------------------------------+
     | ``'rb+'``        | Open an existing file for reading and       |
-    |                  | writing. *Inefficient for large files.*     |
+    |                  | writing.                                    |
     +------------------+---------------------------------------------+
     | ``'wb'``         | Open a file for writing. Creates the file   |
     |                  | if needed, or overwrites an existing file.  |

@@ -162,7 +162,7 @@ def open(name, mode, application=None, schema=None, schema_version=None):
 
         schema (str): Name of the data schema.
 
-        schema_version (``Tuple[int, int]``): Schema version number
+        schema_version (`typing.Tuple` [int, int]): Schema version number
             (major, minor).
 
     Valid values for mode:
@@ -173,7 +173,7 @@ def open(name, mode, application=None, schema=None, schema_version=None):
     | ``'rb'``         | Open an existing file for reading.          |
     +------------------+---------------------------------------------+
     | ``'rb+'``        | Open an existing file for reading and       |
-    |                  | writing. *Inefficient for large files.*     |
+    |                  | writing.                                    |
     +------------------+---------------------------------------------+
     | ``'wb'``         | Open a file for writing. Creates the file   |
     |                  | if needed, or overwrites an existing file.  |
@@ -231,6 +231,7 @@ def open(name, mode, application=None, schema=None, schema_version=None):
             if f.chunk_exists(frame=0, name='chunk1'):
                 data = f.read_chunk(frame=0, name='chunk1')
             data
+            f.close()
     """
 
     return GSDFile(str(name), mode, application, schema, schema_version)
@@ -251,14 +252,14 @@ cdef class GSDFile:
 
         mode (str): Mode of the open file.
 
-        gsd_version (``Tuple[int, int]``): GSD file layer version number
+        gsd_version (`typing.Tuple` [int, int]): GSD file layer version number
             (major, minor).
 
         application (str): Name of the generating application.
 
         schema (str): Name of the data schema.
 
-        schema_version (``Tuple[int, int]``): Schema version number
+        schema_version (`typing.Tuple` [int, int]): Schema version number
             (major, minor).
 
         nframes (int): Number of frames.
@@ -429,6 +430,7 @@ cdef class GSDFile:
                 f.truncate()
                 f.nframes
                 f.schema, f.schema_version, f.application
+                f.close()
         """
 
         if not self.__is_open:
@@ -472,6 +474,7 @@ cdef class GSDFile:
                                                dtype=numpy.float32))
                 f.end_frame()
                 f.nframes
+                f.close()
 
         """
 
@@ -640,6 +643,7 @@ cdef class GSDFile:
                 f.chunk_exists(frame=0, name='chunk2')
                 f.chunk_exists(frame=0, name='chunk3')
                 f.chunk_exists(frame=10, name='chunk1')
+                f.close()
         """
 
         cdef const libgsd.gsd_index_entry* index_entry
@@ -705,6 +709,7 @@ cdef class GSDFile:
                 f.read_chunk(frame=1, name='chunk1')
                 @okexcept
                 f.read_chunk(frame=2, name='chunk1')
+                f.close()
         """
 
         if not self.__is_open:
@@ -810,7 +815,7 @@ cdef class GSDFile:
             match (str): Start of the chunk name to match
 
         Returns:
-            list[str]: Matching chunk names
+            typing.List[str]: Matching chunk names
 
         Example:
             .. ipython:: python
@@ -841,6 +846,7 @@ cdef class GSDFile:
                 f.find_matching_chunk_names('data')
                 f.find_matching_chunk_names('input')
                 f.find_matching_chunk_names('other')
+                f.close()
         """
 
         if not self.__is_open:

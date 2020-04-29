@@ -7,17 +7,18 @@
 Shape Visualization
 ===================
 
-The chunk :chunk:`particles/type_shapes` stores information about shapes corresponding to particle types.
-Shape definitions are stored for each type as a UTF-8 encoded JSON string containing key-value pairs.
-The class of a shape is defined by the ``type`` key.
-All other keys define properties of that shape.
+The chunk :chunk:`particles/type_shapes` stores information about shapes
+corresponding to particle types. Shape definitions are stored for each type as a
+UTF-8 encoded JSON string containing key-value pairs. The class of a shape is
+defined by the ``type`` key. All other keys define properties of that shape.
 Keys without a default value are required for a valid shape specification.
 
 Empty (Undefined) Shape
 -----------------------
 
-An empty dictionary can be used for undefined shapes.
-A visualization application may choose how to interpret this, e.g. by drawing nothing or drawing spheres.
+An empty dictionary can be used for undefined shapes. A visualization
+application may choose how to interpret this, e.g. by drawing nothing or drawing
+spheres.
 
 Example::
 
@@ -28,7 +29,8 @@ Spheres
 
 Type: ``Sphere``
 
-Spheres' dimensionality (2D circles or 3D spheres) can be inferred from the system box dimensionality.
+Spheres' dimensionality (2D circles or 3D spheres) can be inferred from the
+system box dimensionality.
 
 =============== =============== ====== ==== ======= ======
 Key             Description     Type   Size Default Units
@@ -48,7 +50,8 @@ Ellipsoids
 
 Type: ``Ellipsoid``
 
-The ellipsoid class has principal axes a, b, c corresponding to its radii in the x, y, and z directions.
+The ellipsoid class has principal axes a, b, c corresponding to its radii in the
+x, y, and z directions.
 
 =============== ===================== ====== ==== ======= ======
 Key             Description           Type   Size Default Units
@@ -73,7 +76,8 @@ Polygons
 Type: ``Polygon``
 
 A simple polygon with its vertices specified in a counterclockwise order.
-Spheropolygons can be represented using this shape type, through the ``rounding_radius`` key.
+Spheropolygons can be represented using this shape type, through the
+``rounding_radius`` key.
 
 =============== =============== ===== ==== ======= ======
 Key             Description     Type  Size Default Units
@@ -96,7 +100,8 @@ Convex Polyhedra
 Type: ``ConvexPolyhedron``
 
 A convex polyhedron with vertices specifying the convex hull of the shape.
-Spheropolyhedra can be represented using this shape type, through the ``rounding_radius`` key.
+Spheropolyhedra can be represented using this shape type, through the
+``rounding_radius`` key.
 
 =============== =============== ===== ==== ======= ======
 Key             Description     Type  Size Default Units
@@ -118,9 +123,9 @@ General 3D Meshes
 
 Type: ``Mesh``
 
-A list of lists of indices are used to specify faces.
-Faces must contain 3 or more vertex indices. The vertex indices must be zero-based.
-Faces must be defined with a counterclockwise winding order (to produce an "outward" normal).
+A list of lists of indices are used to specify faces. Faces must contain 3 or
+more vertex indices. The vertex indices must be zero-based. Faces must be
+defined with a counterclockwise winding order (to produce an "outward" normal).
 
 =============== ================ ====== ==== ======= ======
 Key             Description      Type   Size Default Units

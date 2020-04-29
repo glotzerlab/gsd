@@ -15,14 +15,21 @@ Python
 Python code in GSD should follow `PEP8
 <https://www.python.org/dev/peps/pep-0008>`_ with the formatting performed by
 `yapf <https://github.com/google/yapf>`_ (configuration in ``setup.cfg``).
+Code should pass all **flake8** tests and formatted by **yapf**.
 
 Tools
 ^^^^^
 
-* Linter: `flake8 <http://flake8.pycqa.org/en/latest/>`_ with
-  `pep8-naming <https://pypi.org/project/pep8-naming/>`_
+* Linter: `flake8 <http://flake8.pycqa.org/en/latest/>`_
+
+  * With these plugins:
+
+    * `pep8-naming <https://github.com/PyCQA/pep8-naming>`_
+    * `flake8-docstrings <https://gitlab.com/pycqa/flake8-docstrings>`_
+    * `flake8-rst-docstrings <https://github.com/peterjc/flake8-rst-docstrings>`_
 
   * Run: ``flake8`` to see a list of linter violations.
+
 
 * Autoformatter: `yapf <https://github.com/google/yapf>`_
 
@@ -34,17 +41,22 @@ Documentation
 ^^^^^^^^^^^^^
 
 Python code should be documented with docstrings and added to the Sphinx
-documentation index in ``doc/``. Docstrings should follow Google style
+documentation index in ``doc/``. Docstrings should follow `Google style
+<https://www.sphinx-doc.org/en/master/usage/extensions/example_google.html#example-google>`_
 formatting for use in `Napoleon
 <https://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html>`_.
 
 C
 ---
 
-* 100 character line width.
-* Indent only with spaces.
-* 4 spaces per indent level.
-* Style is set by clang-format >= 10 (configuration in ``.clang-format``)
+* Style is set by clang-format >= 10
+
+  * Whitesmith's indentation style.
+  * 100 character line width.
+  * Indent only with spaces.
+  * 4 spaces per indent level.
+  * See :file:`.clang-format` for the full **clang-format** configuration.
+
 * Naming conventions:
 
   * Functions: lowercase with words separated by underscores
@@ -64,7 +76,7 @@ Tools
 
 * Linter: `clang-tidy <https://clang.llvm.org/extra/clang-tidy/>`_
 
-  * Compile **gsd** with **CMake** to see **clang-tidy** output.
+  * Compile **GSD** with **CMake** to see **clang-tidy** output.
 
 Documentation
 ^^^^^^^^^^^^^
@@ -74,7 +86,7 @@ document for compatibility with Doxygen and most source code editors. Multi-line
 documentation comment blocks start with ``/**`` and single line ones start with
 ``///``.
 
-See ``gsd.h`` for an example.
+See :file:`gsd.h` for an example.
 
 Restructured Text/Markdown files
 --------------------------------
