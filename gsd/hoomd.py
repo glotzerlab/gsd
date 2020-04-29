@@ -778,7 +778,6 @@ class HOOMDTrajectory(object):
         """Append each item of the iterable to the file.
 
         Args:
-
             iterable: An iterable object the provides :py:class:`Snapshot`
                 instances. This could be another HOOMDTrajectory, a generator
                 that modifies snapshots, or a simple list of snapshots.

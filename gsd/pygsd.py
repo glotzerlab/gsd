@@ -405,7 +405,8 @@ class GSDFile(object):
     def gsd_version(self):
         """`typing.Tuple` [int, int]: GSD file layer version number.
 
-        The tuple is in the order (major, minor)."""
+        The tuple is in the order (major, minor).
+        """
         v = self.__header.gsd_version
         return (v >> 16, v & 0xffff)
 
@@ -413,7 +414,8 @@ class GSDFile(object):
     def schema_version(self):
         """`typing.Tuple` [int, int]: Schema version number.
 
-        The tuple is in the order (major, minor)."""
+        The tuple is in the order (major, minor).
+        """
         v = self.__header.schema_version
         return (v >> 16, v & 0xffff)
 
