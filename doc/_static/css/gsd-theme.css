@@ -27,22 +27,26 @@
 
 /* format inline code */
 .rst-content tt.literal, .rst-content tt.literal, .rst-content code.literal {
-    color: #24292e;
-    background-color: #f6f8fa;
+    color: #282828;
+    background-color: #f8f8f8;
     border: none;
     font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
     font-size: 85%;
 }
 
 /* format code blocks */
+.rst-content pre.literal-block, .rst-content div[class^='highlight'] {
+    border: none;
+}
+
 .highlight {
-    background-color: #f6f8fa;
+    background: #f8f8f8;
 }
 
 .rst-content pre.literal-block, .rst-content div[class^='highlight'] pre, .rst-content .linenodiv pre {
-    color: #24292e;
+    color: #282828;
     border: none;
     font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
     font-size: 85%;
-    line-height: 1.4;
+    line-height: 1.3;
 }
