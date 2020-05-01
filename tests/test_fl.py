@@ -2,6 +2,8 @@
 # This file is part of the General Simulation Data (GSD) project, released under
 # the BSD 2-Clause License.
 
+"""Test gsd.fl."""
+
 import gsd.fl
 import gsd.pygsd
 import numpy
@@ -16,6 +18,7 @@ test_path = pathlib.Path(os.path.realpath(__file__)).parent
 
 
 def test_create(tmp_path):
+    """Test creation of GSD files."""
     gsd.fl.open(mode='xb',
                 name=tmp_path / "test_create.gsd",
                 application="test_create",
@@ -36,6 +39,7 @@ def test_create(tmp_path):
     numpy.float64,
 ])
 def test_dtype(tmp_path, typ):
+    """Test all supported data types."""
     data1d = numpy.array([1, 2, 3, 4, 5, 10012], dtype=typ)
     data2d = numpy.array([[10, 20], [30, 40], [50, 80]], dtype=typ)
     data_zero = numpy.array([], dtype=typ)
@@ -85,6 +89,7 @@ def test_dtype(tmp_path, typ):
 
 
 def test_metadata(tmp_path, open_mode):
+    """Test file metadata."""
     data = numpy.array([1, 2, 3, 4, 5, 10012], dtype=numpy.int64)
 
     with gsd.fl.open(name=tmp_path / 'test_metadata.gsd',
@@ -123,6 +128,7 @@ def test_metadata(tmp_path, open_mode):
 
 
 def test_append(tmp_path, open_mode):
+    """Test that data chunks can be appended to existing files."""
     with gsd.fl.open(name=tmp_path / 'test_append.gsd',
                      mode=open_mode.write,
                      application='test_append',
@@ -171,6 +177,7 @@ def test_append(tmp_path, open_mode):
 
 
 def test_chunk_exists(tmp_path, open_mode):
+    """Test the chunk_exists API."""
     data = numpy.array([1, 2, 3, 4, 5, 10012], dtype=numpy.int64)
     with gsd.fl.open(name=tmp_path / 'test_chunk_exists.gsd',
                      mode=open_mode.write,
@@ -248,6 +255,7 @@ def test_chunk_exists(tmp_path, open_mode):
 
 
 def test_readonly_errors(tmp_path, open_mode):
+    """Test that read only files provide the appropriate errors."""
     data = numpy.array([1, 2, 3, 4, 5, 10012], dtype=numpy.int64)
     with gsd.fl.open(name=tmp_path / 'test_readonly_errors.gsd',
                      mode=open_mode.write,
@@ -282,6 +290,7 @@ def test_readonly_errors(tmp_path, open_mode):
 
 
 def test_fileio_errors(tmp_path, open_mode):
+    """Test that OS file I/O errors pass through."""
     # These test cause python to crash on windows....
     if platform.system() != "Windows":
         with pytest.raises(Exception):
@@ -303,6 +312,7 @@ def test_fileio_errors(tmp_path, open_mode):
 
 
 def test_dtype_errors(tmp_path, open_mode):
+    """Test that unsupported data types result in errors."""
     with pytest.raises(Exception):
         data = numpy.array([1, 2, 3, 4, 5, 10012], dtype=numpy.bool_)
 
@@ -349,6 +359,7 @@ def test_dtype_errors(tmp_path, open_mode):
 
 
 def test_truncate(tmp_path):
+    """Test that the truncate method functions."""
     data = numpy.ascontiguousarray(numpy.random.random(size=(1000, 3)),
                                    dtype=numpy.float32)
     with gsd.fl.open(name=tmp_path / 'test_truncate.gsd',
@@ -386,6 +397,7 @@ def test_truncate(tmp_path):
 
 
 def test_namelen(tmp_path, open_mode):
+    """Test that long names are truncated as documented."""
     app_long = 'abcdefga' * 100
     schema_long = 'ijklmnop' * 100
     chunk_long = '12345678' * 100
@@ -418,6 +430,7 @@ def test_namelen(tmp_path, open_mode):
 
 
 def test_open(tmp_path):
+    """Test the open() API."""
     data = numpy.array([1, 2, 3, 4, 5, 10012], dtype=numpy.int64)
 
     with gsd.fl.open(name=tmp_path / 'test.gsd',
@@ -483,6 +496,7 @@ def test_open(tmp_path):
 
 
 def test_find_matching_chunk_names(tmp_path, open_mode):
+    """Test the find_matching_chunk_names API."""
     data = numpy.array([1, 2, 3, 4, 5], dtype=numpy.float32)
 
     with gsd.fl.open(name=tmp_path / 'test.gsd',
@@ -542,6 +556,7 @@ def test_find_matching_chunk_names(tmp_path, open_mode):
 
 
 def test_chunk_name_limit(tmp_path, open_mode):
+    """Test that providing more than the maximum allowed chunk names errors."""
     with gsd.fl.open(name=tmp_path / 'test.gsd',
                      mode=open_mode.write,
                      application='test_chunk_name_limit',
@@ -557,6 +572,7 @@ def test_chunk_name_limit(tmp_path, open_mode):
 
 
 def test_many_names(tmp_path, open_mode):
+    """Test that many chunk names can be written to a file."""
     values = list(range(1000))
 
     with gsd.fl.open(name=tmp_path / 'test.gsd',
@@ -595,6 +611,7 @@ def test_many_names(tmp_path, open_mode):
 
 
 def test_gsd_v1_read(open_mode):
+    """Test that the GSD v2 API can read v1 files."""
     values = list(range(127))
     values_str = [str(v) for v in values]
     values_str.sort()
@@ -635,6 +652,7 @@ def test_gsd_v1_read(open_mode):
 
 
 def test_gsd_v1_upgrade_read(tmp_path, open_mode):
+    """Test that v1 files can be upgraded to v2."""
     values = list(range(127))
     values_str = [str(v) for v in values]
     values_str.sort()
@@ -689,6 +707,7 @@ def test_gsd_v1_upgrade_read(tmp_path, open_mode):
 
 
 def test_gsd_v1_write(tmp_path, open_mode):
+    """Test that v2 can write to v1 files."""
     values = list(range(256))
     # include a very long chunk name to check that the name is truncated
     # properly for the v1 format limitations
@@ -767,6 +786,7 @@ def test_gsd_v1_write(tmp_path, open_mode):
 
 
 def test_gsd_v1_upgrade_write(tmp_path, open_mode):
+    """Test that upgraded files can be written to after upgraded."""
     values = list(range(256))
     # include a very long chunk name to check that the name can be written
     # after the upgrade
@@ -841,6 +861,7 @@ def test_gsd_v1_upgrade_write(tmp_path, open_mode):
 
 
 def test_zero_size(tmp_path, open_mode):
+    """Test that zero-size data chunks are allowed."""
     data = numpy.array([], dtype=numpy.float32)
 
     with gsd.fl.open(name=tmp_path / 'test_zero.gsd',

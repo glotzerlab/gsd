@@ -1,5 +1,5 @@
 variables:
-  image_root: glotzerlab/ci:2020.01
+  image_root: glotzerlab/ci:2020.04
   python: python3
   pytest_options:
 
@@ -14,7 +14,11 @@ stages:
     strategy:
       # the matrix job name sets the name of the docker image
       matrix:
+        gcc10_py38:
+          unused: ""
         gcc9_py38:
+          unused: ""
+        clang10_py38:
           unused: ""
         clang9_py38:
           unused: ""
@@ -165,7 +169,7 @@ stages:
       vmImage: 'ubuntu-16.04'
 
     container:
-      image: $(image_root)-clang9_py38
+      image: $(image_root)-clang10_py38
       options: -u 0
 
     workspace:
@@ -183,7 +187,7 @@ stages:
       vmImage: 'ubuntu-16.04'
 
     container:
-      image: $(image_root)-clang9_py38
+      image: $(image_root)-clang10_py38
       options: -u 0
 
     workspace:
@@ -206,7 +210,7 @@ stages:
       vmImage: 'ubuntu-16.04'
 
     container:
-      image: $(image_root)-clang9_py38
+      image: $(image_root)-clang10_py38
       options: -u 0
 
     workspace:
@@ -224,7 +228,7 @@ stages:
       vmImage: 'ubuntu-16.04'
 
     container:
-      image: $(image_root)-clang9_py38
+      image: $(image_root)-clang10_py38
       options: -u 0
 
     workspace:

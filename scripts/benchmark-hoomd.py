@@ -1,3 +1,5 @@
+"""Benchmark GSD HOOMD file read/write."""
+
 import time
 import gsd.fl
 import gsd.pygsd
@@ -14,6 +16,7 @@ from subprocess import call, PIPE
 
 
 def write_frame(file, frame, position, orientation):
+    """Write a frame to the file."""
     snap = gsd.hoomd.Snapshot()
     snap.particles.N = position.shape[0]
     snap.configuration.step = frame * 10
@@ -25,10 +28,12 @@ def write_frame(file, frame, position, orientation):
 
 
 def read_frame(file, frame, position, orientation):
+    """Read a frame from the file."""
     snap = file[frame]  # noqa
 
 
 def write_file(file, nframes, N, position, orientation):
+    """Write a whole file."""
     steps = compute_actual_size(N, nframes) / (250 * 1024**2)
     step = int(nframes / steps)
     if step == 0:
@@ -42,6 +47,7 @@ def write_file(file, nframes, N, position, orientation):
 
 
 def read_sequential_file(file, nframes, nframes_read, N, position, orientation):
+    """Read the file sequentially."""
     steps = compute_actual_size(N, nframes) / (250 * 1024**2)
     step = int(nframes / steps)
     if step == 0:
@@ -55,6 +61,7 @@ def read_sequential_file(file, nframes, nframes_read, N, position, orientation):
 
 
 def read_random_file(file, nframes, nframes_read, N, position, orientation):
+    """Read the file in random order."""
     steps = compute_actual_size(N, nframes) / (250 * 1024**2)
     step = int(nframes / steps)
     if step == 0:
@@ -70,11 +77,13 @@ def read_random_file(file, nframes, nframes_read, N, position, orientation):
 
 
 def compute_nframes(N, size):
+    """Compute the number of frames to write to the file."""
     bytes_per_frame = (3 + 4) * 4 * N
     return int(math.ceil(size / bytes_per_frame))
 
 
 def compute_actual_size(N, nframes):
+    """Compute the actual size of the file."""
     bytes_per_frame = (3 + 4) * 4 * N
     return nframes * bytes_per_frame
 
@@ -83,6 +92,7 @@ def compute_actual_size(N, nframes):
 
 
 def run_benchmarks(N, size):
+    """Run all the benchmarks."""
     bmark_read_size = 0.25 * 1024**3
 
     timings = {}
@@ -157,7 +167,7 @@ def run_benchmarks(N, size):
 
 
 def run_sweep(size, size_str):
-
+    """Run a single sweep of benchmarks."""
     # if size < 10*1024**3:
     if True:
         result = run_benchmarks(32 * 32, size)

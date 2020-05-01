@@ -7,6 +7,14 @@ Change Log
 v2.x
 ----
 
+v2.1.2 (not yet released)
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Fixed*
+
+* Adding missing ``close`` method to ``HOOMDTrajectory``.
+* Documentation improvements.
+
 v2.1.1 (2020-04-20)
 ^^^^^^^^^^^^^^^^^^^
 

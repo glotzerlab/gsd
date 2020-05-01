@@ -5,12 +5,14 @@
 HOOMD Schema
 ============
 
-HOOMD-blue supports a wide variety of per particle attributes and properties. Particles, bonds, and types can be
-dynamically added and removed during simulation runs. The ``hoomd`` schema can handle all of these situations
-in a reasonably space efficient and high performance manner. It is also backwards compatible with previous versions
-of itself, as we only add new additional data chunks in new versions and do not change the interpretation
-of the existing data chunks. Any newer reader will initialize new data chunks with default values when they are
-not present in an older version file.
+HOOMD-blue supports a wide variety of per particle attributes and properties.
+Particles, bonds, and types can be dynamically added and removed during
+simulation runs. The ``hoomd`` schema can handle all of these situations in a
+reasonably space efficient and high performance manner. It is also backwards
+compatible with previous versions of itself, as we only add new additional data
+chunks in new versions and do not change the interpretation of the existing data
+chunks. Any newer reader will initialize new data chunks with default values
+when they are not present in an older version file.
 
 :Schema name: ``hoomd``
 :Schema version: 1.4
@@ -20,12 +22,10 @@ Use-cases
 
 The GSD schema ``hoomd`` provides:
 
-#. Every frame of GSD output is viable for restart from ``init.read_gsd``
-#. No need for a separate topology file - everything is in one ``.gsd`` file.
+#. Every frame of GSD output is viable to restart a simulation
 #. Support varying numbers of particles, bonds, etc...
 #. Support varying attributes (type, mass, etc...)
-#. Support orientation, angular momentum, and other fields that DCD cannot.
-#. Simple interface for dump - limited number of options that produce valid files
+#. Support orientation, angular momentum, and other fields.
 #. Binary format on disk
 #. High performance file read and write
 #. Support logging computed quantities
@@ -33,21 +33,24 @@ The GSD schema ``hoomd`` provides:
 Data chunks
 -----------
 
-Each frame the ``hoomd`` schema may contain one or more data chunks. The layout and names of the chunks
-closely match that of the binary snapshot API in HOOMD-blue itself (at least at the time of inception).
-Data chunks are organized in categories. These categories have no meaning in the ``hoomd`` schema
-specification, and are simply an organizational tool. Some file writers may implement options that act on
-categories (i.e. write **attributes** out to every frame, or just frame 0).
+Each frame the ``hoomd`` schema may contain one or more data chunks. The layout
+and names of the chunksmatch that of the binary snapshot API in HOOMD-blue
+itself. Data chunks are organized in categories. These categories have no
+meaning in the ``hoomd`` schema specification, and are simply an organizational
+tool. Some file writers may implement options that act on categories (i.e. write
+**attributes** out to every frame, or just frame 0).
 
-Values are well defined for all fields at all frames. When a data chunk is present in frame *i*, it defines
-the values for the frame. When it is not present, the data chunk of the same name at frame 0
-defines the values for frame *i* (when *N* is equal between the frames). If the data chunk is not present in
-frame 0, or *N* differs between frames, values are assumed default. Default values allow files sizes to
-remain small. For example, a simulation with point particles where orientation is always (1,0,0,0) would
-not write any orientation chunk to the file.
+Values are well defined for all fields at all frames. When a data chunk is
+present in frame *i*, it defines the values for the frame. When it is not
+present, the data chunk of the same name at frame 0 defines the values for frame
+*i* (when *N* is equal between the frames). If the data chunk is not present in
+frame 0, or *N* differs between frames, values are default. Default values allow
+files sizes to remain small. For example, a simulation with point particles
+where orientation is always (1,0,0,0) would not write any orientation chunk to
+the file.
 
-*N* may be zero. When *N* is zero, an index entry may be written for a data chunk with no actual data
-written to the file for that chunk.
+*N* may be zero. When *N* is zero, an index entry may be written for a data
+chunk with no actual data written to the file for that chunk.
 
 ================================= ========= ====== ==== ======= ================
 Name                              Category  Type   Size Default Units
@@ -131,8 +134,9 @@ Configuration
     :Default: [1,1,1,0,0,0]
     :Units: *varies*
 
-    Simulation box. Each array element defines a different box property. See the hoomd documentation for
-    a full description on how these box parameters map to a triclinic geometry.
+    Simulation box. Each array element defines a different box property. See the
+    hoomd documentation for a full description on how these box parameters map
+    to a triclinic geometry.
 
     * ``box[0:3]``: :math:`(l_x, l_y, l_z)` the box length in each direction, in length units
     * ``box[3:]``: :math:`(xy, xz, yz)` the tilt factors, unitless values
@@ -141,8 +145,9 @@ Configuration
 Particle data
 -------------
 
-Within a single frame, the number of particles *N* and *NT* are fixed for all chunks. *N* and *NT* may vary from
-one frame to the next. All values are stored in hoomd native units.
+Within a single frame, the number of particles *N* and *NT* are fixed for all
+chunks. *N* and *NT* may vary from one frame to the next. All values are stored
+in hoomd native units.
 
 Attributes
 ^^^^^^^^^^
@@ -163,9 +168,10 @@ Attributes
     :Default: ['A']
     :Units: UTF-8
 
-    Implicitly define *NT*, the number of particle types, for all data chunks ``particles/*``.
-    *M* must be large enough to accommodate each type name as a null terminated UTF-8
-    character string. Row *i* of the 2D matrix is the type name for particle type *i*.
+    Implicitly define *NT*, the number of particle types, for all data chunks
+    ``particles/*``. *M* must be large enough to accommodate each type name as a
+    null terminated UTF-8 character string. Row *i* of the 2D matrix is the type
+    name for particle type *i*.
 
 .. chunk:: particles/typeid
 
@@ -174,8 +180,9 @@ Attributes
     :Default: 0
     :Units: number
 
-    Store the type id of each particle. All id's must be less than *NT*. A particle with
-    type *id* has a type name matching the corresponding row in :chunk:`particles/types`.
+    Store the type id of each particle. All id's must be less than *NT*. A
+    particle with type *id* has a type name matching the corresponding row in
+    :chunk:`particles/types`.
 
 .. chunk:: particles/type_shapes
 
@@ -224,8 +231,9 @@ Attributes
     :Default: -1
     :Units: number
 
-    Store the composite body associated with each particle. The value -1 indicates no body. The body field may be left
-    out of input files, as hoomd will create the needed constituent particles.
+    Store the composite body associated with each particle. The value -1
+    indicates no body. The body field may be left out of input files, as hoomd
+    will create the needed constituent particles.
 
 .. chunk:: particles/moment_inertia
 
@@ -234,8 +242,9 @@ Attributes
     :Default: 0,0,0
     :Units: mass * length^2
 
-    Store the moment_inertia of each particle :math:`(I_{xx}, I_{yy}, I_{zz})`. This inertia tensor
-    is diagonal in the body frame of the particle. The default value is for point particles.
+    Store the moment_inertia of each particle :math:`(I_{xx}, I_{yy}, I_{zz})`.
+    This inertia tensor is diagonal in the body frame of the particle. The
+    default value is for point particles.
 
 Properties
 ^^^^^^^^^^
@@ -249,10 +258,10 @@ Properties
 
     Store the position of each particle (*x*, *y*, *z*).
 
-    All particles in the simulation are referenced by a tag. The position data chunk (and all other
-    per particle data chunks) list particles in tag order. The first particle listed has tag 0,
-    the second has tag 1, ..., and the last has tag N-1 where N is the number of particles in the
-    simulation.
+    All particles in the simulation are referenced by a tag. The position data
+    chunk (and all other per particle data chunks) list particles in tag order.
+    The first particle listed has tag 0, the second has tag 1, ..., and the last
+    has tag N-1 where N is the number of particles in the simulation.
 
     All particles must be inside the box:
 
@@ -270,8 +279,8 @@ Properties
 
     Store the orientation of each particle. In scalar + vector notation, this is
     :math:`(r, a_x, a_y, a_z)`,
-    where the quaternion is :math:`q = r + a_xi + a_yj + a_zk`. A unit quaternion
-    has the property: :math:`\sqrt{r^2 + a_x^2 + a_y^2 + a_z^2} = 1`.
+    where the quaternion is :math:`q = r + a_xi + a_yj + a_zk`. A unit
+    quaternion has the property: :math:`\sqrt{r^2 + a_x^2 + a_y^2 + a_z^2} = 1`.
 
 Momenta
 ^^^^^^^^
@@ -292,8 +301,8 @@ Momenta
     :Default: 0,0,0,0
     :Units: quaternion
 
-    Store the angular momentum of each particle as a quaternion. See the HOOMD documentation for information on how to
-    convert to a vector representation.
+    Store the angular momentum of each particle as a quaternion. See the HOOMD
+    documentation for information on how to convert to a vector representation.
 
 .. chunk:: particles/image
 
@@ -302,12 +311,12 @@ Momenta
     :Default: 0,0,0
     :Units: number
 
-    Store the number of times each particle has wrapped around the box :math:`(i_x, i_y, i_z)`.
-    In constant volume simulations, the unwrapped position in the particle's full trajectory
-    is
+    Store the number of times each particle has wrapped around the box
+    :math:`(i_x, i_y, i_z)`. In constant volume simulations, the unwrapped
+    position in the particle's full trajectory is
 
     * :math:`x_u = x + i_x \cdot l_x + xy \cdot i_y \cdot l_y + xz \cdot i_z \cdot l_z`
-    * :math:`y_u = y + i_y \cdot l_y + yz \cdot i_z * l_z`
+    * :math:`y_u = y + i_y \cdot l_y + yz \cdot i_z \cdot l_z`
     * :math:`z_u = z + i_z \cdot l_z`
 
 Topology
@@ -329,10 +338,10 @@ Topology
     :Default: *empty*
     :Units: UTF-8
 
-    Implicitly define *NT*, the number of bond types, for all data chunks ``bonds/*``.
-    *M* must be large enough to accommodate each type name as a null terminated UTF-8
-    character string. Row *i* of the 2D matrix is the type name for bond type *i*.
-    By default, there are 0 bond types.
+    Implicitly define *NT*, the number of bond types, for all data chunks
+    ``bonds/*``. *M* must be large enough to accommodate each type name as a
+    null terminated UTF-8 character string. Row *i* of the 2D matrix is the type
+    name for bond type *i*. By default, there are 0 bond types.
 
 .. chunk:: bonds/typeid
 
@@ -342,7 +351,8 @@ Topology
     :Units: number
 
     Store the type id of each bond. All id's must be less than *NT*. A bond with
-    type *id* has a type name matching the corresponding row in :chunk:`bonds/types`.
+    type *id* has a type name matching the corresponding row in
+    :chunk:`bonds/types`.
 
 .. chunk:: bonds/group
 
@@ -369,10 +379,10 @@ Topology
     :Default: *empty*
     :Units: UTF-8
 
-    Implicitly define *NT*, the number of angle types, for all data chunks ``angles/*``.
-    *M* must be large enough to accommodate each type name as a null terminated UTF-8
-    character string. Row *i* of the 2D matrix is the type name for angle type *i*.
-    By default, there are 0 angle types.
+    Implicitly define *NT*, the number of angle types, for all data chunks
+    ``angles/*``. *M* must be large enough to accommodate each type name as a
+    null terminated UTF-8 character string. Row *i* of the 2D matrix is the type
+    name for angle type *i*. By default, there are 0 angle types.
 
 .. chunk:: angles/typeid
 
@@ -381,8 +391,9 @@ Topology
     :Default: 0
     :Units: number
 
-    Store the type id of each angle. All id's must be less than *NT*. A angle with
-    type *id* has a type name matching the corresponding row in :chunk:`angles/types`.
+    Store the type id of each angle. All id's must be less than *NT*. A angle
+    with type *id* has a type name matching the corresponding row in
+    :chunk:`angles/types`.
 
 .. chunk:: angles/group
 
@@ -409,10 +420,10 @@ Topology
     :Default: *empty*
     :Units: UTF-8
 
-    Implicitly define *NT*, the number of dihedral types, for all data chunks ``dihedrals/*``.
-    *M* must be large enough to accommodate each type name as a null terminated UTF-8
-    character string. Row *i* of the 2D matrix is the type name for dihedral type *i*.
-    By default, there are 0 dihedral types.
+    Implicitly define *NT*, the number of dihedral types, for all data chunks
+    ``dihedrals/*``. *M* must be large enough to accommodate each type name as a
+    null terminated UTF-8 character string. Row *i* of the 2D matrix is the type
+    name for dihedral type *i*. By default, there are 0 dihedral types.
 
 .. chunk:: dihedrals/typeid
 
@@ -421,8 +432,9 @@ Topology
     :Default: 0
     :Units: number
 
-    Store the type id of each dihedral. All id's must be less than *NT*. A dihedral with
-    type *id* has a type name matching the corresponding row in :chunk:`dihedrals/types`.
+    Store the type id of each dihedral. All id's must be less than *NT*. A
+    dihedral with type *id* has a type name matching the corresponding row in
+    :chunk:`dihedrals/types`.
 
 .. chunk:: dihedrals/group
 
@@ -449,10 +461,10 @@ Topology
     :Default: *empty*
     :Units: UTF-8
 
-    Implicitly define *NT*, the number of improper types, for all data chunks ``impropers/*``.
-    *M* must be large enough to accommodate each type name as a null terminated UTF-8
-    character string. Row *i* of the 2D matrix is the type name for improper type *i*.
-    By default, there are 0 improper types.
+    Implicitly define *NT*, the number of improper types, for all data chunks
+    ``impropers/*``. *M* must be large enough to accommodate each type name as a
+    null terminated UTF-8 character string. Row *i* of the 2D matrix is the type
+    name for improper type *i*. By default, there are 0 improper types.
 
 .. chunk:: impropers/typeid
 
@@ -461,8 +473,9 @@ Topology
     :Default: 0
     :Units: number
 
-    Store the type id of each improper. All id's must be less than *NT*. A improper with
-    type *id* has a type name matching the corresponding row in :chunk:`impropers/types`.
+    Store the type id of each improper. All id's must be less than *NT*. A
+    improper with type *id* has a type name matching the corresponding row in
+    :chunk:`impropers/types`.
 
 .. chunk:: impropers/group
 
@@ -480,7 +493,8 @@ Topology
     :Default: 0
     :Units: number
 
-    Define *N*, the number of constraints, for all data chunks ``constraints/*``.
+    Define *N*, the number of constraints, for all data chunks
+    ``constraints/*``.
 
 .. chunk:: constraints/value
 
@@ -489,8 +503,8 @@ Topology
     :Default: 0
     :Units: length
 
-    Store the distance of each constraint. Each constraint defines a fixed distance
-    between two particles.
+    Store the distance of each constraint. Each constraint defines a fixed
+    distance between two particles.
 
 .. chunk:: constraints/group
 
@@ -508,7 +522,8 @@ Topology
     :Default: 0
     :Units: number
 
-    Define *N*, the number of special pair interactions, for all data chunks ``pairs/*``.
+    Define *N*, the number of special pair interactions, for all data chunks
+    ``pairs/*``.
 
     .. versionadded:: 1.1
 
@@ -519,10 +534,10 @@ Topology
     :Default: *empty*
     :Units: UTF-8
 
-    Implicitly define *NT*, the number of special pair types, for all data chunks ``pairs/*``.
-    *M* must be large enough to accommodate each type name as a null terminated UTF-8
-    character string. Row *i* of the 2D matrix is the type name for particle type *i*.
-    By default, there are 0 special pair types.
+    Implicitly define *NT*, the number of special pair types, for all data
+    chunks ``pairs/*``. *M* must be large enough to accommodate each type name
+    as a null terminated UTF-8 character string. Row *i* of the 2D matrix is the
+    type name for particle type *i*. By default, there are 0 special pair types.
 
     .. versionadded:: 1.1
 
@@ -533,8 +548,9 @@ Topology
     :Default: 0
     :Units: number
 
-    Store the type id of each special pair interaction. All id's must be less than *NT*. A pair with
-    type *id* has a type name matching the corresponding row in :chunk:`pairs/types`.
+    Store the type id of each special pair interaction. All id's must be less
+    than *NT*. A pair with type *id* has a type name matching the corresponding
+    row in :chunk:`pairs/types`.
 
     .. versionadded:: 1.1
 
@@ -549,18 +565,86 @@ Topology
 
     .. versionadded:: 1.1
 
+Logged data
+------------
+
+Users may store logged data in ``log/*`` data chunks. Logged data encompasses
+values computed at simulation time that are too expensive or cumbersome to
+re-compute in post processing. This specification does not define specific chunk
+names or define logged data. Users may select any valid name for logged data
+chunks as appropriate for their workflow.
+
+For any named logged data chunks present in any frame frame the file: If a chunk
+is not present in a given frame i != 0, the implementation should provide the
+quantity as read from frame 0 for that frame. GSD files that include a logged
+data chunk only in some frames i != 0 and not in frame 0 are invalid.
+
+By convention, per-particle and per-bond logged data should have a chunk name
+starting with ``log/particles/`` and ``log/bonds``, respectively. Scalar,
+vector, and string values may be stored under a different prefix starting with
+``log/``. This specification may recognize additional conventions in later
+versions without invalidating existing files.
+
+========================================================== ====== ========= ================
+Name                                                       Type   Size      Units
+========================================================== ====== ========= ================
+:chunk:`log/particles/user_defined`                        n/a    NxM       user-defined
+:chunk:`log/bonds/user_defined`                            n/a    NxM       user-defined
+:chunk:`log/user_defined`                                  n/a    NxM       user-defined
+========================================================== ====== ========= ================
+
+.. chunk:: log/particles/user_defined
+
+    :Type: user-defined
+    :Size: NxM
+    :Units: user-defined
+
+    This chunk is a place holder for any number of user defined per-particle
+    quantities. *N* is the number of particles in this frame. *M*, the data
+    type, the units, and the chunk name (after the prefix ``log/particles/``)
+    are user-defined.
+
+    .. versionadded:: 1.4
+
+.. chunk:: log/bonds/user_defined
+
+    :Type: user-defined
+    :Size: NxM
+    :Units: user-defined
+
+    This chunk is a place holder for any number of user defined per-bond
+    quantities. *N* is the number of bonds in this frame. *M*, the data type,
+    the units, and the chunk name (after the prefix ``log/bonds/``) are
+    user-defined.
+
+    .. versionadded:: 1.4
+
+.. chunk:: log/user_defined
+
+    :Type: user-defined
+    :Size: NxM
+    :Units: user-defined
+
+    This chunk is a place holder for any number of user defined quantities. *N*,
+    *M*, the data type, the units, and the chunk name (after the prefix
+    ``log/``) are user-defined.
+
+    .. versionadded:: 1.4
 
 State data
 ------------
 
-HOOMD stores auxiliary state information in ``state/*`` data chunks. Auxiliary state encompasses internal state
-to any integrator, updater, or other class that is not part of the particle system state but is also not a fixed
-parameter. For example, the internal degrees of freedom in integrator. Auxiliary state is useful when restarting
-simulations.
+HOOMD stores auxiliary state information in ``state/*`` data chunks. Auxiliary
+state encompasses internal state to any integrator, updater, or other class that
+is not part of the particle system state but is also not a fixed parameter. For
+example, the internal degrees of freedom in integrator. Auxiliary state is
+useful when restarting simulations.
 
-HOOMD only stores state in GSD files when requested explicitly by the user. Only a few of the documented
-state data chunks will be present in any GSD file and not all state chunks are valid. Thus, state data chunks do not
-have default values. If a chunk is not present in the file, that state does not have a well-defined value.
+HOOMD only stores state in GSD files when requested explicitly by the user. Only
+a few of the documented state data chunks will be present in any GSD file and
+not all state chunks are valid. Thus, state data chunks do not have default
+values. If a chunk is not present in the file, that state does not have a
+well-defined value.
 
 .. note::
 
@@ -684,8 +768,9 @@ HPMC integrator state
     :Size: sum(N)x3
     :Units: length
 
-    Position of the vertices in the shape for all types. The shape for type 0 is the first N[0] vertices,
-    the shape for type 1 is the next N[1] vertices, and so on...
+    Position of the vertices in the shape for all types. The shape for type 0 is
+    the first N[0] vertices, the shape for type 1 is the next N[1] vertices, and
+    so on...
 
     .. versionadded:: 1.2
 
@@ -705,8 +790,9 @@ HPMC integrator state
     :Size: sum(N)x3
     :Units: length
 
-    Position of the vertices in the shape for all types. The shape for type 0 is the first N[0] vertices,
-    the shape for type 1 is the next N[1] vertices, and so on...
+    Position of the vertices in the shape for all types. The shape for type 0 is
+    the first N[0] vertices, the shape for type 1 is the next N[1] vertices, and
+    so on...
 
     .. versionadded:: 1.2
 
@@ -736,8 +822,9 @@ HPMC integrator state
     :Size: sum(N)x2
     :Units: length
 
-    Position of the vertices in the shape for all types. The shape for type 0 is the first N[0] vertices,
-    the shape for type 1 is the next N[1] vertices, and so on...
+    Position of the vertices in the shape for all types. The shape for type 0 is
+    the first N[0] vertices, the shape for type 1 is the next N[1] vertices, and
+    so on...
 
     .. versionadded:: 1.2
 
@@ -757,8 +844,9 @@ HPMC integrator state
     :Size: sum(N)x2
     :Units: length
 
-    Position of the vertices in the shape for all types. The shape for type 0 is the first N[0] vertices,
-    the shape for type 1 is the next N[1] vertices, and so on...
+    Position of the vertices in the shape for all types. The shape for type 0 is
+    the first N[0] vertices, the shape for type 1 is the next N[1] vertices, and
+    so on...
 
     .. versionadded:: 1.2
 
@@ -788,65 +876,8 @@ HPMC integrator state
     :Size: sum(N)x2
     :Units: length
 
-    Position of the vertices in the shape for all types. The shape for type 0 is the first N[0] vertices,
-    the shape for type 1 is the next N[1] vertices, and so on...
+    Position of the vertices in the shape for all types. The shape for type 0 is
+    the first N[0] vertices, the shape for type 1 is the next N[1] vertices, and
+    so on...
 
     .. versionadded:: 1.2
-
-Logged data
-------------
-
-Users may store logged data in ``log/*`` data chunks. Logged data encompasses values computed at simulation time that
-are too expensive or cumbersome to re-compute in post processing. This specification does not define specific chunk
-names or define logged data. Users may select any valid name for logged data chunks as appropriate for their workflow.
-
-For any named logged data chunks present in any frame frame the file: If a chunk is not present in a given frame i != 0,
-the implementation should provide the quantity as read from frame 0 for that frame. GSD files that include a logged
-data chunk only in some frames i != 0 and not in frame 0 are invalid.
-
-By convention, per-particle and per-bond logged data should have a chunk name starting with ``log/particles/`` and
-``log/bonds``, respectively. Scalar, vector, and string values may be stored under a different prefix starting with
-``log/``. This specification may recognize additional conventions in later versions without invalidating existing files.
-
-========================================================== ====== ========= ================
-Name                                                       Type   Size      Units
-========================================================== ====== ========= ================
-:chunk:`log/particles/user_defined`                        n/a    NxM       user-defined
-:chunk:`log/bonds/user_defined`                            n/a    NxM       user-defined
-:chunk:`log/user_defined`                                  n/a    NxM       user-defined
-========================================================== ====== ========= ================
-
-.. chunk:: log/particles/user_defined
-
-    :Type: user-defined
-    :Size: NxM
-    :Units: user-defined
-
-    This chunk is a place holder for any number of user defined per-particle quantities. *N* is the number of particles
-    in this frame. *M*, the data type, the units, and the chunk name (after the prefix ``log/particles/``) are
-    user-defined.
-
-    .. versionadded:: 1.4
-
-.. chunk:: log/bonds/user_defined
-
-    :Type: user-defined
-    :Size: NxM
-    :Units: user-defined
-
-    This chunk is a place holder for any number of user defined per-bond quantities. *N* is the number of bonds
-    in this frame. *M*, the data type, the units, and the chunk name (after the prefix ``log/bonds/``) are
-    user-defined.
-
-    .. versionadded:: 1.4
-
-.. chunk:: log/user_defined
-
-    :Type: user-defined
-    :Size: NxM
-    :Units: user-defined
-
-    This chunk is a place holder for any number of user defined quantities. *N*, *M*, the data type, the
-    units, and the chunk name (after the prefix ``log/``) are user-defined.
-
-    .. versionadded:: 1.4

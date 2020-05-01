@@ -7,7 +7,7 @@
 HOOMD
 -----
 
-:py:mod:`gsd.hoomd` provides high-level access to **HOOMD** schema **GSD** files.
+`gsd.hoomd` provides high-level access to **HOOMD** schema **GSD** files.
 
 View the page source to find unformatted example code.
 
@@ -23,19 +23,23 @@ Define a snapshot
     s.particles.position = [[0,0,0],[1,1,1], [-1,-1,-1], [1,-1,-1]]
     s.configuration.box = [3, 3, 3, 0, 0, 0]
 
-:py:mod:`gsd.hoomd` represents the state of a single frame with an instance of the class
-:py:class:`gsd.hoomd.Snapshot`. Instantiate this class to create a system configuration. All fields default to ``None``
-and are only written into the file if not ``None`` and do not match the data in the first frame, or defaults specified
-in the schema.
+`gsd.hoomd` represents the state of a single frame with an instance of
+the class `gsd.hoomd.Snapshot`. Instantiate this class to create a
+system configuration. All fields default to `None` and are only written into
+the file if not `None` and do not match the data in the first frame or
+defaults specified in the schema.
 
 Create a hoomd gsd file
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 .. ipython:: python
 
-    gsd.hoomd.open(name='test.gsd', mode='wb')
+    f = gsd.hoomd.open(name='file.gsd', mode='wb')
+    @suppress
+    f.close()
 
-Append frames to a gsd file
+
+Write frames to a gsd file
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. ipython:: python
@@ -47,57 +51,63 @@ Append frames to a gsd file
         s.particles.position = numpy.random.random(size=(4+i,3))
         return s
 
-    t = gsd.hoomd.open(name='test.gsd', mode='wb')
-    t.extend( (create_frame(i) for i in range(10)) )
-    t.append( create_frame(10) )
-    len(t)
+    f = gsd.hoomd.open(name='test.gsd', mode='wb')
+    f.extend( (create_frame(i) for i in range(10)) )
+    f.append( create_frame(10) )
+    len(f)
+    @suppress
+    f.close()
 
-Use :py:func:`gsd.hoomd.open` to open a **GSD** file with the high level interface
-:py:class:`gsd.hoomd.HOOMDTrajectory`. It behaves like a python :py:class:`list`, with
-:py:meth:`gsd.hoomd.HOOMDTrajectory.append` and :py:meth:`gsd.hoomd.HOOMDTrajectory.extend`
-methods.
+Use `gsd.hoomd.open` to open a **GSD** file with the high level interface
+`gsd.hoomd.HOOMDTrajectory`. It behaves like a `list`, with
+`append <gsd.hoomd.HOOMDTrajectory.append>` and
+`extend <gsd.hoomd.HOOMDTrajectory.extend>` methods.
 
-.. note:: :py:class:`gsd.hoomd.HOOMDTrajectory` currently doesn't support files opened in
+.. note:: `gsd.hoomd.HOOMDTrajectory` currently does not support files opened in
           append mode.
 
-.. tip:: When using :py:meth:`gsd.hoomd.HOOMDTrajectory.extend`, pass in a generator or
-         generator expression to avoid storing the entire trajectory in memory before
-         writing it out.
+.. tip:: When using `extend <gsd.hoomd.HOOMDTrajectory.extend>`, pass in a
+         generator or generator expression to avoid storing the entire
+         trajectory in memory before writing it out.
 
 Randomly index frames
 ^^^^^^^^^^^^^^^^^^^^^
 
 .. ipython:: python
 
-    t = gsd.hoomd.open(name='test.gsd', mode='rb')
-    snap = t[5]
+    f = gsd.hoomd.open(name='test.gsd', mode='rb')
+    snap = f[5]
     snap.configuration.step
     snap.particles.N
     snap.particles.position
+    @suppress
+    f.close()
 
-:py:class:`gsd.hoomd.HOOMDTrajectory` supports random indexing of frames in the file. Indexing
-into a trajectory returns a :py:class:`gsd.hoomd.Snapshot`.
+`gsd.hoomd.HOOMDTrajectory` supports random indexing of frames in the file.
+Indexing into a trajectory returns a `gsd.hoomd.Snapshot`.
 
 Slicing and selection
 ^^^^^^^^^^^^^^^^^^^^^
 
-Use the slicing operator to select individual frames or a subset of a trajectory.
+Use the slicing operator to select individual frames or a subset of a
+trajectory.
 
 .. ipython:: python
 
-    t = gsd.hoomd.open(name='test.gsd', mode='rb')
+    f = gsd.hoomd.open(name='test.gsd', mode='rb')
 
-    for s in t[5:-2]:
+    for s in f[5:-2]:
         print(s.configuration.step, end=' ')
 
-    every_2nd_frame = t[::2]  # create a view of a trajectory subset
+    every_2nd_frame = f[::2]  # create a view of a trajectory subset
     for s in every_2nd_frame[:4]:
         print(s.configuration.step, end=' ')
+    @suppress
+    f.close()
 
 Slicing a trajectory creates a trajectory view, which can then be queried for
-length or sliced again.
-Selecting individual frames from a view works exactly like selecting individual
-frames from the original trajectory object.
+length or sliced again. Selecting individual frames from a view works exactly
+like selecting individual frames from the original trajectory object.
 
 Pure python reader
 ^^^^^^^^^^^^^^^^^^
@@ -107,18 +117,69 @@ Pure python reader
     f = gsd.pygsd.GSDFile(open('test.gsd', 'rb'))
     t = gsd.hoomd.HOOMDTrajectory(f);
     t[3].particles.position
+    @suppress
+    f.close()
 
-You can use **GSD** without needing to compile C code to read **GSD** files using :py:class:`gsd.pygsd.GSDFile` in
-combination with :py:class:`gsd.hoomd.HOOMDTrajectory`. It only supports the ``rb`` mode and does not read files as
-fast as the C implementation. It takes in a python file-like object, so it can be used with in-memory IO classes, and
-grid file classes that access data over the internet.
+You can use **GSD** without needing to compile C code to read **GSD** files
+using `gsd.pygsd.GSDFile` in combination with `gsd.hoomd.HOOMDTrajectory`. It
+only supports the ``rb`` mode and does not read files as fast as the C
+implementation. It takes in a python file-like object, so it can be used with
+in-memory IO classes, and grid file classes that access data over the internet.
+
+.. warning::
+
+    `gsd.pygsd` is **slow**. Use `gsd.hoomd.open` whenever possible.
+
+Access logged data
+^^^^^^^^^^^^^^^^^^
+
+.. ipython:: python
+
+    with gsd.hoomd.open(name='example.gsd', mode='wb') as f:
+        s = gsd.hoomd.Snapshot()
+        s.particles.N = 4
+        s.log['particles/net_force'] = numpy.array([[-1,2,-3],
+                                        [0,2,-4],
+                                        [-3,2,1],
+                                        [1,2,3]], dtype=numpy.float32)
+        s.log['value/potential_energy'] = [1.5]
+        f.append(s)
+
+Logged data is stored in the ``log`` dictionary as numpy arrays. Place data into
+this dictionary directly without the 'log/' prefix and gsd will include it in
+the output. Store per-particle quantities with the prefix ``particles/``. Choose
+another prefix for other quantities.
+
+.. ipython:: python
+
+    f = gsd.hoomd.open(name='example.gsd', mode='rb')
+    s = f[0]
+    s.log['particles/net_force']
+    s.log['value/potential_energy']
+    @suppress
+    f.close()
+
+Read logged data from the ``log`` dictionary.
+
+.. note::
+
+    Logged data must be a convertible to a numpy array of a supported type.
+
+    .. ipython:: python
+        :okexcept:
+
+        with gsd.hoomd.open(name='example.gsd', mode='wb') as f:
+            s = gsd.hoomd.Snapshot()
+            s.particles.N = 4
+            s.log['invalid'] = dict(a=1, b=5)
+            f.append(s)
 
 Access state data
 ^^^^^^^^^^^^^^^^^
 
 .. ipython:: python
 
-    with gsd.hoomd.open(name='test2.gsd', mode='wb') as t:
+    with gsd.hoomd.open(name='test2.gsd', mode='wb') as f:
         s = gsd.hoomd.Snapshot()
         s.particles.types = ['A', 'B']
         s.state['hpmc/convex_polygon/N'] = [3, 4]
@@ -129,78 +190,41 @@ Access state data
                                                    [2, -2],
                                                    [2, 2],
                                                    [-2, 2]]
-        t.append(s)
+        f.append(s)
 
-State data is stored in the ``state`` dictionary as numpy arrays. Place data into this dictionary directly
-without the 'state/' prefix and gsd will include it in the output. Shape vertices are stored in a packed
-format. In this example, type 'A' has 3 vertices (the first 3 in the list) and type 'B' has 4 (the next 4).
+State data is stored in the ``state`` dictionary as numpy arrays. Place data
+into this dictionary directly without the 'state/' prefix and gsd will include
+it in the output. Shape vertices are stored in a packed format. In this example,
+type 'A' has 3 vertices (the first 3 in the list) and type 'B' has 4 (the next
+4).
 
 .. ipython:: python
 
-    with gsd.hoomd.open(name='test2.gsd', mode='rb') as t:
-        s = t[0]
+    with gsd.hoomd.open(name='test2.gsd', mode='rb') as f:
+        s = f[0]
         print(s.state['hpmc/convex_polygon/N'])
         print(s.state['hpmc/convex_polygon/vertices'])
 
 Access read state data in the same way.
 
-Access logged data
-^^^^^^^^^^^^^^^^^^
+Use multiprocessing
+^^^^^^^^^^^^^^^^^^^
 
 .. ipython:: python
 
-    with gsd.hoomd.open(name='example.gsd', mode='wb') as t:
-        s = gsd.hoomd.Snapshot()
-        s.particles.N = 4
-        s.log['particles/net_force'] = numpy.array([[-1,2,-3],
-                                        [0,2,-4],
-                                        [-3,2,1],
-                                        [1,2,3]], dtype=numpy.float32)
-        s.log['value/potential_energy'] = [1.5]
-        t.append(s)
-
-Logged data is stored in the ``log`` dictionary as numpy arrays. Place data into this dictionary directly
-without the 'log/' prefix and gsd will include it in the output. Store per-particle quantities with the prefix
-``particles/``. Choose another prefix for other quantities.
-
-.. ipython:: python
-
-    t = gsd.hoomd.open(name='example.gsd', mode='rb')
-    s = t[0]
-    s.log['particles/net_force']
-    s.log['value/potential_energy']
-
-Read logged data from the ``log`` dictionary.
-
-Logged data must be a convertible to a numpy array of a supported type:
-
-.. ipython:: python
-    :okexcept:
-
-    with gsd.hoomd.open(name='example.gsd', mode='wb') as t:
-        s = gsd.hoomd.Snapshot()
-        s.particles.N = 4
-        s.log['invalid'] = dict(a=1, b=5)
-        t.append(s)
-
-Use multiprocessing with HOOMDTrajectory
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. ipython:: python
-
-   import multiprocessing as mp
+   import multiprocessing
 
    def cnt_part(args):
       t, frame = args
       return len(t[frame].particles.position)
 
    with gsd.hoomd.open(name='test.gsd', mode='rb') as t:
-      with mp.Pool(processes=mp.cpu_count()) as pool:
+      with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
          result = pool.map(cnt_part, [(t, frame) for frame in range(len(t))])
 
-:py:class:`gsd.hoomd.HOOMDTrajectory` and both :py:class:`gsd.fl.GSDFile` and
-:py:class:`gsd.pygsd.GSDFile` can be pickled when in read mode to allow for
+    result
+
+`gsd.hoomd.HOOMDTrajectory` can be pickled when in read mode to allow for
 multiprocessing through pythons native multiprocessing library. Here
 ``cnt_part`` finds the number of particles in each frame and appends it to a
-list.  This code would result in a list of all particle numbers throughout the
-trajectory file.
+list.

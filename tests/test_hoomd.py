@@ -2,6 +2,8 @@
 # This file is part of the General Simulation Data (GSD) project, released under
 # the BSD 2-Clause License.
 
+"""Test the gsd.hoomd API."""
+
 import gsd.fl
 import gsd.hoomd
 import numpy
@@ -10,12 +12,14 @@ import pytest
 
 
 def test_create(tmp_path):
+    """Test that gsd files can be created."""
     with gsd.hoomd.open(name=tmp_path / "test_create.gsd", mode='wb') as hf:
         assert hf.file.schema == 'hoomd'
         assert hf.file.schema_version >= (1, 0)
 
 
 def test_append(tmp_path, open_mode):
+    """Test that gsd files can be appended to."""
     snap = gsd.hoomd.Snapshot()
     snap.particles.N = 10
 
@@ -31,12 +35,14 @@ def test_append(tmp_path, open_mode):
 
 
 def create_frame(i):
+    """Helper function to create snapshot objects."""
     snap = gsd.hoomd.Snapshot()
     snap.configuration.step = i + 1
     return snap
 
 
 def test_extend(tmp_path, open_mode):
+    """Test that the extend method works."""
     snap = gsd.hoomd.Snapshot()
     snap.particles.N = 10
 
@@ -50,6 +56,7 @@ def test_extend(tmp_path, open_mode):
 
 
 def test_defaults(tmp_path, open_mode):
+    """Test that the property defaults are properly set."""
     snap = gsd.hoomd.Snapshot()
     snap.particles.N = 2
     snap.bonds.N = 3
@@ -161,6 +168,7 @@ def test_defaults(tmp_path, open_mode):
 
 
 def test_fallback(tmp_path, open_mode):
+    """Test that properties fall back to defaults when the N changes."""
     snap0 = gsd.hoomd.Snapshot()
     snap0.configuration.step = 10000
     snap0.configuration.dimensions = 2
@@ -479,6 +487,7 @@ def test_fallback(tmp_path, open_mode):
 
 
 def test_fallback2(tmp_path, open_mode):
+    """Test additional fallback behaviors."""
     snap0 = gsd.hoomd.Snapshot()
     snap0.configuration.step = 1
     snap0.configuration.dimensions = 3
@@ -503,6 +512,7 @@ def test_fallback2(tmp_path, open_mode):
 
 
 def test_iteration(tmp_path, open_mode):
+    """Test the iteration protocols for hoomd trajectories."""
     with gsd.hoomd.open(name=tmp_path / "test_iteration.gsd",
                         mode=open_mode.write) as hf:
         hf.extend((create_frame(i) for i in range(20)))
@@ -544,6 +554,7 @@ def test_iteration(tmp_path, open_mode):
 
 
 def test_slicing_and_iteration(tmp_path, open_mode):
+    """Test that hoomd trajectories can be sliced."""
     with gsd.hoomd.open(name=tmp_path / "test_slicing.gsd",
                         mode=open_mode.write) as hf:
         hf.extend((create_frame(i) for i in range(20)))
@@ -586,6 +597,7 @@ def test_slicing_and_iteration(tmp_path, open_mode):
 
 
 def test_view_slicing_and_iteration(tmp_path, open_mode):
+    """Test that trajectories can be sliced."""
     with gsd.hoomd.open(name=tmp_path / "test_slicing.gsd",
                         mode=open_mode.write) as hf:
         hf.extend((create_frame(i) for i in range(40)))
@@ -634,6 +646,7 @@ def test_view_slicing_and_iteration(tmp_path, open_mode):
 
 
 def test_truncate(tmp_path):
+    """Test the truncate API."""
     with gsd.hoomd.open(name=tmp_path / "test_iteration.gsd", mode='wb') as hf:
         hf.extend((create_frame(i) for i in range(20)))
 
@@ -647,6 +660,7 @@ def test_truncate(tmp_path):
 
 
 def test_state(tmp_path, open_mode):
+    """Test the state chunks."""
     snap0 = gsd.hoomd.Snapshot()
 
     snap0.state['hpmc/sphere/radius'] = [2.0]
@@ -683,6 +697,7 @@ def test_state(tmp_path, open_mode):
 
 
 def test_log(tmp_path, open_mode):
+    """Test the log chunks."""
     snap0 = gsd.hoomd.Snapshot()
 
     snap0.log['particles/net_force'] = [[1, 2, 3], [4, 5, 6]]
@@ -729,6 +744,7 @@ def test_log(tmp_path, open_mode):
 
 
 def test_pickle(tmp_path, open_mode):
+    """Test that hoomd trajectory objects can be pickled."""
     with gsd.hoomd.open(name=tmp_path / "test_pickling.gsd",
                         mode=open_mode.write) as traj:
         traj.extend((create_frame(i) for i in range(20)))

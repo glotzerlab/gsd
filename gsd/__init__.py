@@ -2,7 +2,7 @@
 # This file is part of the General Simulation Data (GSD) project, released under
 # the BSD 2-Clause License.
 
-""" The GSD main module
+"""The GSD main module.
 
 The main package :py:mod:`gsd` is the root package. It holds submodules
 and does not import them. Users import the modules they need into their python

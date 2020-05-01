@@ -2,7 +2,7 @@
 # This file is part of the General Simulation Data (GSD) project, released under
 # the BSD 2-Clause License.
 
-""" GSD file layer API.
+"""GSD file layer API.
 
 Low level access to gsd files. :py:mod:`gsd.fl` allows direct access to create,
 read, and write ``gsd`` files. The module is implemented in C and is optimized.
@@ -30,11 +30,11 @@ logger = logging.getLogger('gsd.fl')
 # Helper functions #
 
 cdef __format_errno(fname):
-    """ Return a tuple for constructing an IOError """
+    """Return a tuple for constructing an IOError."""
     return (errno, os.strerror(errno), fname)
 
 cdef __raise_on_error(retval, extra):
-    """ Raise the appropriate error type.
+    """Raise the appropriate error type.
 
     Args:
         retval: Return value from a gsd C API call
@@ -148,17 +148,22 @@ cdef void * __get_ptr_float64(data):
 
 
 def open(name, mode, application=None, schema=None, schema_version=None):
-    """ open(name, mode, application=None, schema=None, schema_version=None)
+    """open(name, mode, application=None, schema=None, schema_version=None)
 
     :py:func:`open` opens a GSD file and returns a :py:class:`GSDFile` instance.
     The return value of :py:func:`open` can be used as a context manager.
 
     Args:
         name (str): File name to open.
+
         mode (str): File access mode.
+
         application (str): Name of the application creating the file.
+
         schema (str): Name of the data schema.
-        schema_version (``list[int]``): Schema version number [major, minor].
+
+        schema_version (`typing.Tuple` [int, int]): Schema version number
+            (major, minor).
 
     Valid values for mode:
 
@@ -168,7 +173,7 @@ def open(name, mode, application=None, schema=None, schema_version=None):
     | ``'rb'``         | Open an existing file for reading.          |
     +------------------+---------------------------------------------+
     | ``'rb+'``        | Open an existing file for reading and       |
-    |                  | writing. *Inefficient for large files.*     |
+    |                  | writing.                                    |
     +------------------+---------------------------------------------+
     | ``'wb'``         | Open a file for writing. Creates the file   |
     |                  | if needed, or overwrites an existing file.  |
@@ -226,13 +231,14 @@ def open(name, mode, application=None, schema=None, schema_version=None):
             if f.chunk_exists(frame=0, name='chunk1'):
                 data = f.read_chunk(frame=0, name='chunk1')
             data
+            f.close()
     """
 
     return GSDFile(str(name), mode, application, schema, schema_version)
 
 
 cdef class GSDFile:
-    """ GSDFile
+    """GSDFile
 
     GSD file access interface.
 
@@ -242,15 +248,21 @@ cdef class GSDFile:
 
     Attributes:
 
-        name (str): Name of the open file **(read only)**.
-        mode (str): Mode of the open file **(read only)**.
-        gsd_version (tuple[int]): GSD file layer version number [major, minor]
-          **(read only)**.
-        application (str): Name of the generating application **(read only)**.
-        schema (str): Name of the data schema **(read only)**.
-        schema_version (tuple[int]): Schema version number [major, minor]
-          **(read only)**.
-        nframes (int): Number of frames **(read only)**.
+        name (str): Name of the open file.
+
+        mode (str): Mode of the open file.
+
+        gsd_version (`typing.Tuple` [int, int]): GSD file layer version number
+            (major, minor).
+
+        application (str): Name of the generating application.
+
+        schema (str): Name of the data schema.
+
+        schema_version (`typing.Tuple` [int, int]): Schema version number
+            (major, minor).
+
+        nframes (int): Number of frames.
     """
 
     cdef libgsd.gsd_handle __handle
@@ -357,7 +369,7 @@ cdef class GSDFile:
         self.__is_open = True
 
     def close(self):
-        """ close()
+        """close()
 
         Close the file.
 
@@ -392,7 +404,7 @@ cdef class GSDFile:
             __raise_on_error(retval, self.name)
 
     def truncate(self):
-        """ truncate()
+        """truncate()
 
         Truncate all data from the file. After truncation, the file has no
         frames and no data chunks. The application, schema, and schema version
@@ -418,6 +430,7 @@ cdef class GSDFile:
                 f.truncate()
                 f.nframes
                 f.schema, f.schema_version, f.application
+                f.close()
         """
 
         if not self.__is_open:
@@ -430,7 +443,7 @@ cdef class GSDFile:
         __raise_on_error(retval, self.name)
 
     def end_frame(self):
-        """ end_frame()
+        """end_frame()
 
         Complete writing the current frame. After calling :py:meth:`end_frame()`
         future calls to :py:meth:`write_chunk()` will write to the **next**
@@ -461,6 +474,7 @@ cdef class GSDFile:
                                                dtype=numpy.float32))
                 f.end_frame()
                 f.nframes
+                f.close()
 
         """
 
@@ -475,7 +489,7 @@ cdef class GSDFile:
         __raise_on_error(retval, self.name)
 
     def write_chunk(self, name, data):
-        """ write_chunk(name, data)
+        """write_chunk(name, data)
 
         Write a data chunk to the file. After writing all chunks in the
         current frame, call :py:meth:`end_frame()`.
@@ -589,7 +603,7 @@ cdef class GSDFile:
         __raise_on_error(retval, self.name)
 
     def chunk_exists(self, frame, name):
-        """ chunk_exists(frame, name)
+        """chunk_exists(frame, name)
 
         Test if a chunk exists.
 
@@ -629,6 +643,7 @@ cdef class GSDFile:
                 f.chunk_exists(frame=0, name='chunk2')
                 f.chunk_exists(frame=0, name='chunk3')
                 f.chunk_exists(frame=10, name='chunk1')
+                f.close()
         """
 
         cdef const libgsd.gsd_index_entry* index_entry
@@ -646,7 +661,7 @@ cdef class GSDFile:
         return index_entry != NULL
 
     def read_chunk(self, frame, name):
-        """ read_chunk(frame, name)
+        """read_chunk(frame, name)
 
         Read a data chunk from the file and return it as a numpy array.
 
@@ -694,6 +709,7 @@ cdef class GSDFile:
                 f.read_chunk(frame=1, name='chunk1')
                 @okexcept
                 f.read_chunk(frame=2, name='chunk1')
+                f.close()
         """
 
         if not self.__is_open:
@@ -791,7 +807,7 @@ cdef class GSDFile:
             return data_array
 
     def find_matching_chunk_names(self, match):
-        """ find_matching_chunk_names(match)
+        """find_matching_chunk_names(match)
 
         Find all the chunk names in the file that start with the string *match*.
 
@@ -799,7 +815,7 @@ cdef class GSDFile:
             match (str): Start of the chunk name to match
 
         Returns:
-            list[str]: Matching chunk names
+            typing.List[str]: Matching chunk names
 
         Example:
             .. ipython:: python
@@ -830,6 +846,7 @@ cdef class GSDFile:
                 f.find_matching_chunk_names('data')
                 f.find_matching_chunk_names('input')
                 f.find_matching_chunk_names('other')
+                f.close()
         """
 
         if not self.__is_open:
@@ -858,7 +875,7 @@ cdef class GSDFile:
         return retval
 
     def upgrade(self):
-        """ upgrade()
+        """upgrade()
 
         Upgrade a GSD file to the v2 specification in place. The file must be
         open in a writable mode.

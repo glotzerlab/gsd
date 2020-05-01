@@ -7,27 +7,27 @@
 #include "gsd.h"
 
 int main(int argc, char** argv) // NOLINT
-{
+    {
     const size_t n_keys = 40000;
     const size_t max_frames = 100;
     std::vector<char> data;
 
     std::vector<std::string> names;
     for (size_t i = 0; i < n_keys; i++)
-    {
+        {
         std::ostringstream s;
         s << "log/hpmc/integrate/Sphere/quantity/" << i;
         names.push_back(s.str());
-    }
+        }
 
     gsd_handle handle;
     gsd_open(&handle, "test.gsd", GSD_OPEN_READONLY);
     size_t n_frames = gsd_get_nframes(&handle);
     size_t n_read = n_frames;
     if (n_read > max_frames)
-    {
+        {
         n_read = max_frames;
-    }
+        }
 
     std::cout << "Reading test.gsd with: " << n_keys << " keys and " << n_frames << " frames."
               << std::endl;
@@ -35,18 +35,18 @@ int main(int argc, char** argv) // NOLINT
     auto t1 = std::chrono::high_resolution_clock::now();
 
     for (size_t frame = 0; frame < n_read; frame++)
-    {
-        for (auto const& name : names)
         {
+        for (auto const& name : names)
+            {
             const gsd_index_entry* e;
             e = gsd_find_chunk(&handle, frame, name.c_str());
             if (data.empty())
-            {
+                {
                 data.resize(e->N * e->M * gsd_sizeof_type((gsd_type)e->type));
-            }
+                }
             gsd_read_chunk(&handle, &data[0], e);
+            }
         }
-    }
 
     auto t2 = std::chrono::high_resolution_clock::now();
 
@@ -58,4 +58,4 @@ int main(int argc, char** argv) // NOLINT
     std::cout << "Sequential read time: " << time_per_key / us << " microseconds/key." << std::endl;
 
     gsd_close(&handle);
-}
+    }
