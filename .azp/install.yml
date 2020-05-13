@@ -1,5 +1,5 @@
 variables:
-  image_root: glotzerlab/ci:2020.04
+  image_root: glotzerlab/ci:2020.05
   python: python3
   pytest_options:
 
@@ -16,6 +16,7 @@ stages:
       python: $(Build.BinariesDirectory)\venv\Scripts\python
 
     strategy:
+      maxParallel: 3
       matrix:
         vs2017_py37_x64:
           win_image: vs2017-win2016
@@ -72,6 +73,7 @@ stages:
     displayName: Linux (pip)
 
     strategy:
+      maxParallel: 3
       matrix:
         gcc10_py38:
           unused: ""
@@ -83,7 +85,7 @@ stages:
           unused: ""
 
     pool:
-      vmImage: 'ubuntu-16.04'
+      vmImage: 'ubuntu-latest'
 
     container:
       image: $(image_root)-$(System.JobName)

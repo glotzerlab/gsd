@@ -1,5 +1,5 @@
 variables:
-  image_root: glotzerlab/ci:2020.04
+  image_root: glotzerlab/ci:2020.05
   python: python3
   pytest_options:
 
@@ -12,6 +12,7 @@ stages:
   - job: linux_cpu
     displayName: Linux
     strategy:
+      maxParallel: 3
       # the matrix job name sets the name of the docker image
       matrix:
         gcc10_py38:
@@ -46,7 +47,7 @@ stages:
           unused: ""
 
     pool:
-      vmImage: 'ubuntu-16.04'
+      vmImage: 'ubuntu-latest'
 
     container:
       image: $(image_root)-$(System.JobName)
@@ -82,6 +83,7 @@ stages:
     displayName: Win (CMake)
 
     strategy:
+      maxParallel: 3
       matrix:
         vs2017_py37_x64:
           win_image: vs2017-win2016
@@ -145,7 +147,7 @@ stages:
   - job: sphinx_doc
     displayName: Sphinx
     pool:
-      vmImage: 'ubuntu-16.04'
+      vmImage: 'ubuntu-latest'
 
     container:
       image: $(image_root)-gcc7_py37
@@ -166,7 +168,7 @@ stages:
   - job: clang_format
     displayName: clang-format
     pool:
-      vmImage: 'ubuntu-16.04'
+      vmImage: 'ubuntu-latest'
 
     container:
       image: $(image_root)-clang10_py38
@@ -184,7 +186,7 @@ stages:
   - job: clang_tidy
     displayName: clang-tidy
     pool:
-      vmImage: 'ubuntu-16.04'
+      vmImage: 'ubuntu-latest'
 
     container:
       image: $(image_root)-clang10_py38
@@ -207,7 +209,7 @@ stages:
 
   - job: flake8
     pool:
-      vmImage: 'ubuntu-16.04'
+      vmImage: 'ubuntu-latest'
 
     container:
       image: $(image_root)-clang10_py38
@@ -225,7 +227,7 @@ stages:
 
   - job: yapf
     pool:
-      vmImage: 'ubuntu-16.04'
+      vmImage: 'ubuntu-latest'
 
     container:
       image: $(image_root)-clang10_py38

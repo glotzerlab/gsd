@@ -18,7 +18,7 @@ stages:
     displayName: Linux
 
     pool:
-      vmImage: 'ubuntu-16.04'
+      vmImage: 'ubuntu-latest'
 
     container:
       image: quay.io/pypa/manylinux1_x86_64
@@ -54,7 +54,7 @@ stages:
         cp38:
           PYBIN: /opt/python/cp38-cp38/bin
     pool:
-      vmImage: 'ubuntu-16.04'
+      vmImage: 'ubuntu-latest'
 
     container:
       image: quay.io/pypa/manylinux1_x86_64
