@@ -3,6 +3,12 @@ variables:
   python: python3
   pytest_options:
 
+trigger:
+  batch: true
+  branches:
+    include:
+    - '*'
+
 stages:
 - stage: pip_install
   displayName: Pip install

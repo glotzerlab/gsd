@@ -3,6 +3,7 @@ variables:
   name: gsd
 
 trigger:
+  batch: true
   branches:
     include:
     - '*'
