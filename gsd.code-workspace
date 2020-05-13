@@ -5,37 +5,8 @@
 		}
 	],
 	"settings": {
-		"files.insertFinalNewline": true,
-		"files.trimTrailingWhitespace": true,
-		"editor.autoIndent": "keep",
-		"editor.rulers": [100],
-		"[restructuredtext]": { "editor.rulers": [80]},
-		"[python]": { "editor.rulers": [80]},
-		"[cython]": { "editor.rulers": [80]},
-        "[markdown]": { "editor.rulers": [80]},
-		"python.linting.flake8Enabled": true,
-		"python.linting.pycodestyleEnabled": false,
-		"python.linting.pylintEnabled": false,
-		"python.formatting.provider": "yapf",
-		"cSpell.allowCompoundWords": true,
-		"files.exclude": {
-			".pytest_cache": true,
-			"build": true,
-			"devdoc": true,
-			"dist": true,
-			"doc/_build": true
-		},
+			"files.associations": {
+					"**/.azp/**/*.yml": "azure-pipelines"
+			},
 	},
-	"extensions": {
-		"recommendations": [
-			"ms-vscode.cpptools",
-			"twxs.cmake",
-			"ms-vscode.cmake-tools",
-			"streetsidesoftware.code-spell-checker",
-			"lak132.indent-to-bracket",
-			"guyskk.language-cython",
-			"ms-python.python",
-			"i80and.snooty"
-			]
-	}
 }

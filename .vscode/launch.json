@@ -5,11 +5,19 @@
             "name": "(gdb) pytest",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${config:python.pythonPath}",
-            "args": ["-m", "pytest"],
+            "program": "${config:python.interpreterPath}",
+            "args": [
+                "-m",
+                "pytest"
+            ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/tests",
-            "environment": [{"name": "PYTHONPATH", "value": "${workspaceFolder}/build"}],
+            "environment": [
+                {
+                    "name": "PYTHONPATH",
+                    "value": "${workspaceFolder}/build"
+                }
+            ],
             "externalConsole": false,
             "MIMode": "gdb",
             "setupCommands": [
@@ -20,7 +28,6 @@
                 }
             ]
         },
-
         {
             "name": "(gdb) benchmark-write",
             "type": "cppdbg",
