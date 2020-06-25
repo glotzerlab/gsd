@@ -640,6 +640,8 @@ class HOOMDTrajectory(object):
     """
 
     def __init__(self, file):
+        if not isinstance(file, fl.GSDFile):
+            raise ValueError("file must be an instance of gsd.fl.GSDFile")
         if file.mode == 'ab':
             raise ValueError('Append mode not yet supported')
 
@@ -978,13 +980,42 @@ class HOOMDTrajectory(object):
         self.file.close()
 
 
+def open_handle(name, mode='rb', schema_version=(1, 4)):
+    """Create HOOMD-specific :class:`~gsd.fl.GSDFile` instance from a filename.
+
+    This convenience function handles the nonobvious arguments to
+    :func:`gsd.fl.open` such as specifying the schema and schema version.
+
+    Args:
+        name (str): File name to open.
+        mode (str): File open mode (see :func:`~.open` for valid modes).
+        schema_version (`typing.Tuple` [int, int]): Schema version number
+            (major, minor).
+
+    Returns:
+        :class:`~gsd.fl.GSDFile`:
+            A GSD file handle that accesses the file *name* with the given
+            *mode*.
+    """
+    if fl is None:
+        raise RuntimeError("file layer module is not available")
+    if gsd is None:
+        raise RuntimeError("gsd module is not available")
+
+    return fl.open(name=str(name),
+                   mode=mode,
+                   application='gsd.hoomd ' + gsd.__version__,
+                   schema='hoomd',
+                   schema_version=schema_version)
+
+
 def open(name, mode='rb'):
     """Open a hoomd schema GSD file.
 
     The return value of `open` can be used as a context manager.
 
     Args:
-        name (str): File name to open.
+        name (str): File name to open, or an instance of :class:`gsd.fl.GSDFile`.
         mode (str): File open mode.
 
     Returns:
@@ -1024,14 +1055,5 @@ def open(name, mode='rb'):
     +------------------+---------------------------------------------+
 
     """
-    if fl is None:
-        raise RuntimeError("file layer module is not available")
-    if gsd is None:
-        raise RuntimeError("gsd module is not available")
-
-    gsdfileobj = fl.open(name=str(name),
-                         mode=mode,
-                         application='gsd.hoomd ' + gsd.__version__,
-                         schema='hoomd',
-                         schema_version=[1, 4])
+    gsdfileobj = open_handle(name) if isinstance(name, str) else name
     return HOOMDTrajectory(gsdfileobj)
