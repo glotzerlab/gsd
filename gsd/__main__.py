@@ -30,7 +30,7 @@ def main_read(args):
     additional_attributes = "\n"
 
     if args.schema == 'hoomd':
-        handle = open_handle(args.file)
+        handle = open_handle(args.file, mode=args.mode)
         traj = hoomd_open(handle)
         local_ns = {
             'handle': handle,
@@ -78,6 +78,12 @@ def main():
         default='hoomd',
         choices=['hoomd'],
         help="The file schema.")
+    parser_read.add_argument(
+        '-m', '--mode',
+        type=str,
+        default='rb',
+        choices=['rb', 'rb+', 'wb', 'wb+', 'xb', 'xb+', 'ab'],
+        help="The file mode.")
     parser_read.set_defaults(func=main_read)
 
     # This is a hack, as argparse itself does not
