@@ -6,7 +6,7 @@ import argparse
 import code
 
 from .version import __version__
-from .hoomd import open as hoomd_open, _hoomd_fl_open
+from .hoomd import open as hoomd_open, open_handle
 
 
 def _print_err(msg=None, *args):
@@ -16,7 +16,7 @@ def _print_err(msg=None, *args):
 SHELL_BANNER = """Python {python_version}
 gsd {gsd_version}
 
-File:{fn}
+File: {fn}
 {additional_attributes}
 The GSD file handle is available via the "handle" variable.
 For supported schema, you may access the trajectory using the "traj" variable.
@@ -30,7 +30,7 @@ def main_read(args):
     additional_attributes = "\n"
 
     if args.schema == 'hoomd':
-        handle = _hoomd_fl_open(args.file)
+        handle = open_handle(args.file)
         traj = hoomd_open(handle)
         local_ns = {
             'handle': handle,
@@ -39,7 +39,7 @@ def main_read(args):
             'gsd.hoomd': sys.modules['gsd.hoomd'],
             'gsd.fl': sys.modules['gsd.fl'],
         }
-        additional_attributes = "Number of frames={}\n".format(len(traj))
+        additional_attributes = "Number of frames: {}\n".format(len(traj))
     else:
         raise ValueError("Unsupported schema.")
 
@@ -54,12 +54,16 @@ def main_read(args):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="The gsd package encodes canonical readers and writers for"
-                    "the gsd file format.")
+        description="The gsd package encodes canonical readers and writers "
+                    "for the gsd file format.")
     parser.add_argument(
         '--version',
         action='store_true',
         help="Display the version number and exit.")
+    parser.add_argument(
+        '--debug',
+        action='store_true',
+        help="Show traceback on error for debugging.")
     subparsers = parser.add_subparsers()
 
     parser_read = subparsers.add_parser('read')
@@ -68,10 +72,6 @@ def main():
         type=str,
         nargs='?',
         help="GSD file to read.")
-    parser_read.add_argument(
-        '-c', '--command',
-        type=str,
-        help="Execute Python program passed as string.")
     parser_read.add_argument(
         '-s', '--schema',
         type=str,
