@@ -42,9 +42,7 @@ def main_read(args):
             'handle': handle,
             'traj': traj,
         })
-        attributes.update({
-            "Number of frames": len(traj)
-        })
+        attributes.update({"Number of frames": len(traj)})
     else:
         if args.mode not in ['rb', 'rb+', 'ab']:
             raise ValueError("Unsupported schema for creating a file.")
@@ -53,45 +51,42 @@ def main_read(args):
             'handle': handle,
         })
 
-    extras = "\n".join("{}: {}".format(key, val) for key, val in attributes.items())
+    extras = "\n".join(
+        "{}: {}".format(key, val) for key, val in attributes.items())
 
-    code.interact(
-        local=local_ns,
-        banner=SHELL_BANNER.format(
-            python_version=sys.version,
-            gsd_version=__version__,
-            fn=args.file,
-            extras=extras + "\n"))
+    code.interact(local=local_ns,
+                  banner=SHELL_BANNER.format(python_version=sys.version,
+                                             gsd_version=__version__,
+                                             fn=args.file,
+                                             extras=extras + "\n"))
 
 
 def main():
     parser = argparse.ArgumentParser(
         description="The gsd package encodes canonical readers and writers "
-                    "for the gsd file format.")
-    parser.add_argument(
-        '--version',
-        action='store_true',
-        help="Display the version number and exit.")
-    parser.add_argument(
-        '--debug',
-        action='store_true',
-        help="Show traceback on error for debugging.")
+        "for the gsd file format.")
+    parser.add_argument('--version',
+                        action='store_true',
+                        help="Display the version number and exit.")
+    parser.add_argument('--debug',
+                        action='store_true',
+                        help="Show traceback on error for debugging.")
     subparsers = parser.add_subparsers()
 
     parser_read = subparsers.add_parser('read')
+    parser_read.add_argument('file',
+                             type=str,
+                             nargs='?',
+                             help="GSD file to read.")
+    parser_read.add_argument('-s',
+                             '--schema',
+                             type=str,
+                             default='hoomd',
+                             choices=['hoomd', 'none'],
+                             help="The file schema.")
     parser_read.add_argument(
-        'file',
-        type=str,
-        nargs='?',
-        help="GSD file to read.")
-    parser_read.add_argument(
-        '-s', '--schema',
-        type=str,
-        default='hoomd',
-        choices=['hoomd', 'none'],
-        help="The file schema.")
-    parser_read.add_argument(
-        '-m', '--mode',
+        '-m',
+        '--mode',
         type=str,
         default='rb',
         choices=['rb', 'rb+', 'wb', 'wb+', 'xb', 'xb+', 'ab'],
