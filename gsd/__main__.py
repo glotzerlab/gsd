@@ -7,6 +7,7 @@ import code
 
 from .version import __version__
 from .hoomd import open as hoomd_open
+from . import fl
 
 
 def _print_err(msg=None, *args):
@@ -17,7 +18,7 @@ SHELL_BANNER = """Python {python_version}
 gsd {gsd_version}
 
 File: {fn}
-{additional_attributes}
+{extras}
 The GSD file handle is available via the "handle" variable.
 For supported schema, you may access the trajectory using the "traj" variable.
 Type "help(handle)" or "help(traj)" for more information.
@@ -27,21 +28,32 @@ Schema-specific modules (e.g. gsd.hoomd) are loaded if available."""
 
 def main_read(args):
     # Default to a new line for well-formatted printing.
-    additional_attributes = "\n"
+    local_ns = {
+        'gsd': sys.modules['gsd'],
+        'gsd.hoomd': sys.modules['gsd.hoomd'],
+        'gsd.fl': sys.modules['gsd.fl'],
+    }
+    attributes = {}
 
     if args.schema == 'hoomd':
         traj = hoomd_open(args.file, mode=args.mode)
         handle = traj.file
-        local_ns = {
+        local_ns.update({
             'handle': handle,
             'traj': traj,
-            'gsd': sys.modules['gsd'],
-            'gsd.hoomd': sys.modules['gsd.hoomd'],
-            'gsd.fl': sys.modules['gsd.fl'],
-        }
-        additional_attributes = "Number of frames: {}\n".format(len(traj))
+        })
+        attributes.update({
+            "Number of frames": len(traj)
+        })
     else:
-        raise ValueError("Unsupported schema.")
+        if args.mode not in ['rb', 'rb+', 'ab']:
+            raise ValueError("Unsupported schema for creating a file.")
+        handle = fl.open(args.file, args.mode)
+        local_ns.update({
+            'handle': handle,
+        })
+
+    extras = "\n".join("{}: {}".format(key, val) for key, val in attributes.items())
 
     code.interact(
         local=local_ns,
@@ -49,7 +61,7 @@ def main_read(args):
             python_version=sys.version,
             gsd_version=__version__,
             fn=args.file,
-            additional_attributes=additional_attributes))
+            extras=extras + "\n"))
 
 
 def main():
@@ -76,7 +88,7 @@ def main():
         '-s', '--schema',
         type=str,
         default='hoomd',
-        choices=['hoomd'],
+        choices=['hoomd', 'none'],
         help="The file schema.")
     parser_read.add_argument(
         '-m', '--mode',
