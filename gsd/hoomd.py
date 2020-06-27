@@ -640,8 +640,6 @@ class HOOMDTrajectory(object):
     """
 
     def __init__(self, file):
-        if not isinstance(file, fl.GSDFile):
-            raise ValueError("file must be an instance of gsd.fl.GSDFile")
         if file.mode == 'ab':
             raise ValueError('Append mode not yet supported')
 
