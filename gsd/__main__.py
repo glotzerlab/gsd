@@ -1,6 +1,16 @@
 # Copyright (c) 2020 The Regents of the University of Michigan
 # All rights reserved.
 # This software is licensed under the BSD 3-Clause License.
+
+"""The GSD command line interface.
+
+To simplify ad hoc usage of :py:mod:`gsd`, this module provides a command line
+interface for interacting with GSD files. The primary entry point is a single
+command for starting a Python interpreter with a GSD file pre-loaded::
+
+    $ gsd read trajectory.gsd
+"""
+
 import sys
 import argparse
 import code
@@ -27,6 +37,7 @@ Schema-specific modules (e.g. gsd.hoomd) are loaded if available."""
 
 
 def main_read(args):
+    """Main function to launch a Python interpreter with an open GSD file."""
     # Default to a new line for well-formatted printing.
     local_ns = {
         'gsd': sys.modules['gsd'],
@@ -62,6 +73,14 @@ def main_read(args):
 
 
 def main():
+    """Entry point to the GSD command-line interface.
+
+    This function handles parsing command-line arguments and launching the
+    appropriate subcommand based on the first argument to ``gsd`` on the
+    command line. At present the following commands are supported:
+
+        * read
+    """
     parser = argparse.ArgumentParser(
         description="The gsd package encodes canonical readers and writers "
         "for the gsd file format.")

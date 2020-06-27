@@ -18,7 +18,7 @@ Attributes:
 """
 
 import sys
-from .version import __version__
+from .version import __version__  # noqa: F401
 
 if sys.version_info < (3, 5) or sys.version_info >= (4, 0):
     raise RuntimeError("Python ~= 3.5 is required")

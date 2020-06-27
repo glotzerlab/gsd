@@ -663,6 +663,7 @@ class HOOMDTrajectory(object):
 
     @property
     def file(self):
+        """:class:`gsd.fl.GSDFile`: The underlying file handle."""
         return self._file
 
     def __len__(self):
