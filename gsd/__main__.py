@@ -6,7 +6,7 @@ import argparse
 import code
 
 from .version import __version__
-from .hoomd import open as hoomd_open, open_handle
+from .hoomd import open as hoomd_open
 
 
 def _print_err(msg=None, *args):
@@ -30,8 +30,8 @@ def main_read(args):
     additional_attributes = "\n"
 
     if args.schema == 'hoomd':
-        handle = open_handle(args.file, mode=args.mode)
-        traj = hoomd_open(handle)
+        traj = hoomd_open(args.file, mode=args.mode)
+        handle = traj.file
         local_ns = {
             'handle': handle,
             'traj': traj,
