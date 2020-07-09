@@ -236,6 +236,6 @@ The GSD library provides a command line interface for reading files with
 first-class support for reading HOOMD GSD files. The CLI opens a Python
 interpreter with a file opened in a specified mode.
 
-.. code-block:: console
+.. ipython::
 
-   gsd read -s hoomd 'test.gsd'
+   In [1]: !python -m gsd read -h
