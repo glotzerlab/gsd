@@ -228,3 +228,14 @@ Use multiprocessing
 multiprocessing through pythons native multiprocessing library. Here
 ``cnt_part`` finds the number of particles in each frame and appends it to a
 list.
+
+Using the command line
+^^^^^^^^^^^^^^^^^^^^^^
+
+The GSD library provides a command line interface for reading files with
+first-class support for reading HOOMD GSD files. The CLI opens a Python
+interpreter with a file opened in a specified mode.
+
+.. code-block:: console
+
+   gsd read -s hoomd 'test.gsd'
