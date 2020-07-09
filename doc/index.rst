@@ -40,6 +40,7 @@ API to specify the initial condition for a HOOMD-blue simulation or analyze traj
 
     python-api
     c-api
+    cli
     specification
 
 .. toctree::

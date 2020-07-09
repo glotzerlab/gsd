@@ -9,6 +9,20 @@ interface for interacting with GSD files. The primary entry point is a single
 command for starting a Python interpreter with a GSD file pre-loaded::
 
     $ gsd read trajectory.gsd
+
+The following options are available for the ``read`` subcommand:
+
+.. program:: read
+
+.. option:: -s schema, --schema schema
+
+    The schema of the GSD file. Supported values for ``schema`` are "hoomd" and
+    "none".
+
+.. option:: -m mode, --mode mode
+
+    The mode in which to open the file. Valid modes are identical to
+    :func:`gsd.fl.open`.
 """
 
 import sys
