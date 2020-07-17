@@ -7,8 +7,5 @@ gsd command line interface
 
 **GSD** provides a command line interface for rapid inspection of files from the command line.
 
-Package contents
-----------------
-
 .. automodule:: gsd.__main__
     :synopsis: GSD CLI.
