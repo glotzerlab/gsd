@@ -21,7 +21,7 @@ The following options are available for the ``read`` subcommand:
 
 .. option:: -m mode, --mode mode
 
-    The mode in which to open the file. Valid modes are identical to
+    The mode in which to open the file. Valid modes are identical to those accepted by
     :func:`gsd.fl.open`.
 """
 
