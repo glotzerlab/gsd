@@ -643,7 +643,7 @@ class HOOMDTrajectory(object):
         if file.mode == 'ab':
             raise ValueError('Append mode not yet supported')
 
-        self.file = file
+        self._file = file
         self._initial_frame = None
 
         logger.info('opening HOOMDTrajectory: ' + str(self.file))
@@ -660,6 +660,11 @@ class HOOMDTrajectory(object):
                                + str(version) + ' in: ' + str(self.file))
 
         logger.info('found ' + str(len(self)) + ' frames')
+
+    @property
+    def file(self):
+        """:class:`gsd.fl.GSDFile`: The underlying file handle."""
+        return self._file
 
     def __len__(self):
         """The number of frames in the trajectory."""
@@ -1034,4 +1039,5 @@ def open(name, mode='rb'):
                          application='gsd.hoomd ' + gsd.__version__,
                          schema='hoomd',
                          schema_version=[1, 4])
+
     return HOOMDTrajectory(gsdfileobj)

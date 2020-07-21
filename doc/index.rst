@@ -39,6 +39,7 @@ API to specify the initial condition for a HOOMD-blue simulation or analyze traj
     :caption: Reference
 
     python-api
+    cli
     c-api
     specification
 

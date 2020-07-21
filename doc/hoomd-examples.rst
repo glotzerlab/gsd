@@ -228,3 +228,30 @@ Use multiprocessing
 multiprocessing through pythons native multiprocessing library. Here
 ``cnt_part`` finds the number of particles in each frame and appends it to a
 list.
+
+Using the command line
+^^^^^^^^^^^^^^^^^^^^^^
+
+The GSD library provides a command line interface for reading files with
+first-class support for reading HOOMD GSD files. The CLI opens a Python
+interpreter with a file opened in a specified mode.
+
+.. code-block:: console
+
+   $ gsd read -s hoomd 'test.gsd'
+   ...
+   File: test.gsd
+   Number of frames: 11
+
+   The GSD file handle is available via the "handle" variable.
+   For supported schema, you may access the trajectory using the "traj" variable.
+   Type "help(handle)" or "help(traj)" for more information.
+   The gsd and gsd.fl packages are always loaded.
+   Schema-specific modules (e.g. gsd.hoomd) are loaded if available.
+
+   >>> len(traj)
+   11
+   >>> traj[0].particles.position.shape == (4, 3)
+   True
+   >>> handle.read_chunk(0, 'particles/N')
+   array([4], dtype=uint32)
