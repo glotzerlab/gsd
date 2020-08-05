@@ -7,6 +7,13 @@ Change Log
 v2.x
 ----
 
+v2.2.0 (2020-08-05)
+^^^^^^^^^^^^^^^^^^^
+
+*Added*
+
+* Command line convenience interface for opening a GSD file.
+
 v2.1.2 (2020-06-26)
 ^^^^^^^^^^^^^^^^^^^
 
