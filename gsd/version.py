@@ -8,7 +8,7 @@ This file is kept separate from __init__.py so that it can be imported and used
 in other modules within the package.
 """
 
-__version__ = "2.1.2"
+__version__ = "2.2.0"
 
 __all__ = [
     '__version__',
