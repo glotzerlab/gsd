@@ -1,11 +1,19 @@
 trigger:
-  batch: true
-  branches:
-    include:
-    - '*'
   tags:
     include:
     - 'v*'
+
+pr:
+  - maint
+  - master
+
+schedules:
+- cron: "0 2 * * *"
+  displayName: Daily 10PM build
+  # 2am UTC is 10PM eastern time
+  branches:
+    include:
+    - "*"
 
 stages:
 - stage: build_sdist
@@ -54,6 +62,8 @@ stages:
           PYBIN: /opt/python/cp37-cp37m/bin
         cp38:
           PYBIN: /opt/python/cp38-cp38/bin
+        cp39:
+          PYBIN: /opt/python/cp39-cp39/bin
     pool:
       vmImage: 'ubuntu-latest'
 
