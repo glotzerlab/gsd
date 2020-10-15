@@ -58,12 +58,16 @@ stages:
       matrix:
         cp36:
           PYBIN: /opt/python/cp36-cp36m/bin
-        cp37:
+          numpy_version: 1.9.3
+       cp37:
           PYBIN: /opt/python/cp37-cp37m/bin
+          numpy_version: 1.9.3
         cp38:
           PYBIN: /opt/python/cp38-cp38/bin
+          numpy_version: 1.9.3
         cp39:
           PYBIN: /opt/python/cp39-cp39/bin
+          numpy_version: 1.19.2
     pool:
       vmImage: 'ubuntu-latest'
 
@@ -79,9 +83,9 @@ stages:
       displayName: Pip install prereqs
 
     - script: >
-          curl -sSLO https://github.com/numpy/numpy/archive/v1.9.3.tar.gz &&
-          tar -xzf v1.9.3.tar.gz &&
-          cd numpy-1.9.3 &&
+          curl -sSLO https://github.com/numpy/numpy/archive/v${NUMPY_VERSION}.tar.gz &&
+          tar -xzf v${NUMPY_VERSION}.tar.gz &&
+          cd numpy-${NUMPY_VERSION} &&
           rm -f numpy/random/mtrand/mtrand.c &&
           rm -f PKG-INFO &&
           pip3 --disable-pip-version-check install . --no-deps --ignore-installed -v --progress-bar=off --user -q
