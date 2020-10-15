@@ -77,7 +77,7 @@ Install Prerequisites
 
 **gsd** requires:
 
-* **C compiler** (tested with gcc 4.8-9.0, clang 4-9, vs2017-2019)
+* **C compiler** (tested with gcc 4.8-10.0, clang 4-11, vs2017-2019)
 * **Python** >= 3.5
 * **numpy** >= 1.9.3
 * **Cython** >= 0.22
