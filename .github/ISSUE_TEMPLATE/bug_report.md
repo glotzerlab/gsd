@@ -51,4 +51,4 @@ Versions:
 
 ## Developer
 
-<!-- Who should fix this bug? -->
+<!-- Who should implement the fix? We would welcome your contribution! -->

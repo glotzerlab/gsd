@@ -11,7 +11,7 @@
 <!--- Why is this change required? What problem does it solve? -->
 
 <!-- Replace ??? with the issue number that this pull request resolves. -->
-Resolves: #???
+Resolves #???
 
 ## How Has This Been Tested?
 
@@ -31,4 +31,4 @@ Resolves: #???
 
 - [ ] I have reviewed the [**Contributor Guidelines**](https://github.com/glotzerlab/gsd/blob/master/CONTRIBUTING.md).
 - [ ] I agree with the terms of the [**GSD Contributor Agreement**](https://github.com/glotzerlab/gsd/blob/master/ContributorAgreement.md).
-- [ ] My name is on the [list of contributors](https://github.com/glotzerlab/gsd/blob/master/doc/credits.rst).
+- [ ] My name is on the list of contributors (`doc/credits.rst`) in the pull request source branch.

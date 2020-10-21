@@ -22,4 +22,4 @@ assignees: ''
 
 ## Developer
 
-<!-- Who should implement this feature? -->
+<!-- Who should implement the new functionality? We would welcome your contribution! -->
