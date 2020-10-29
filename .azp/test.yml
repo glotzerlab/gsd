@@ -74,6 +74,8 @@ stages:
 
   - job: mac
     displayName: Mac
+    variables:
+      CFLAGS: -Wno-error
 
     strategy:
       matrix:
@@ -82,7 +84,6 @@ stages:
 
         mac10_15:
           mac_image: macOS-10.15
-          CFLAGS: -Wno-error
 
     pool:
       vmImage: '$(mac_image)'
