@@ -104,9 +104,9 @@ stages:
     - script: pip3 --disable-pip-version-check install gsd --no-index -f dist --progress-bar=off --user
       displayName: Install wheel (old numpy)
 
-    - script: pytest --log-level=DEBUG
+    - script: pytest gsd --log-level=DEBUG
       displayName: Test wheel (old numpy)
-      workingDirectory: tests
+      workingDirectory: $(Pipeline.Workspace)
 
     - script: pip3 --disable-pip-version-check install numpy --upgrade --progress-bar=off --user
       displayName: Upgrade numpy
@@ -114,9 +114,9 @@ stages:
     - script: pip3 --disable-pip-version-check install gsd --no-index -f dist --progress-bar=off --user
       displayName: Install wheel (latest numpy)
 
-    - script: pytest --log-level=DEBUG
+    - script: pytest gsd --log-level=DEBUG
       displayName: Test wheel (latest numpy)
-      workingDirectory: tests
+      workingDirectory: $(Pipeline.Workspace)
 
     - script: twine upload --disable-progress-bar dist/*
       displayName: Upload wheel

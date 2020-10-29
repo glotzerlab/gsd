@@ -1,12 +1,6 @@
 steps:
-- script: $(python) -m pytest -o junit_suite_name="${AGENT_JOBNAME}" --junit-xml=$(Common.TestResultsDirectory)/test.xml $(pytest_options) --log-level=DEBUG
+- script: $(python) -m pytest gsd $(pytest_options) --log-level=DEBUG
   displayName: Unit test
-  workingDirectory: tests
+  workingDirectory: $(Pipeline.Workspace)
   env:
     PYTHONPATH: $(Build.BinariesDirectory)
-
-- task: PublishTestResults@2
-  condition: always()
-  inputs:
-    testResultsFormat: 'JUnit'
-    testResultsFiles: '$(Common.TestResultsDirectory)/test.xml'
