@@ -49,6 +49,7 @@ setup(name='gsd',
       python_requires='~=3.5',
       ext_modules=extensions,
       packages=['gsd'],
+      package_data={'gsd': ['test/*.gsd']},
       entry_points={
           'console_scripts': [
               'gsd = gsd.__main__:main',

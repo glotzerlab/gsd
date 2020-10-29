@@ -2,7 +2,9 @@ global-include *.pyx
 global-include *.pxd
 global-include *.c
 global-include *.h
+global-include *.ini
 include README.md
 include ChangeLog.md
 include LICENSE
 include pyproject.toml
+include gsd/test/*.gsd

@@ -40,6 +40,8 @@ stages:
       displayName: Pip install prereqs
     - script: python3 setup.py sdist
       displayName: Build sdist
+    - script: tar -ztvf dist/*.tar.gz
+      displayName: Inspect sdist tarball
     - script: twine upload --disable-progress-bar dist/*
       displayName: Upload sdist
       env:
