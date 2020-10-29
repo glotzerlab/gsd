@@ -48,7 +48,7 @@ setup(name='gsd',
       install_requires=['cython', 'numpy>=1.9.3,<2'],
       python_requires='~=3.5',
       ext_modules=extensions,
-      packages=['gsd'],
+      packages=['gsd', 'gsd.test'],
       package_data={'gsd': ['test/*.gsd']},
       entry_points={
           'console_scripts': [
