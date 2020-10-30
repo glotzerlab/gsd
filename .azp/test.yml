@@ -74,8 +74,6 @@ stages:
 
   - job: mac
     displayName: Mac
-    variables:
-      CFLAGS: -Wno-error
 
     strategy:
       matrix:

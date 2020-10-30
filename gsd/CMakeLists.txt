@@ -18,6 +18,7 @@ if (CLANG_TIDY_EXE)
 endif()
 
 add_library(fl SHARED fl.c gsd.c)
+set_property(TARGET fl PROPERTY C_STANDARD 90)
 
 set_target_properties(fl PROPERTIES PREFIX "" OUTPUT_NAME "fl" MACOSX_RPATH "On")
 if(APPLE)
@@ -53,5 +54,3 @@ endforeach()
 add_custom_target(copy_gsd ALL DEPENDS ${files})
 
 add_subdirectory(test)
-
-message(STATUS "CFLAGS ${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_RELEASE}")
