@@ -9,6 +9,7 @@ extensions = cythonize(
         'gsd.fl',
         sources=['gsd/fl.pyx', 'gsd/gsd.c'],
         include_dirs=[numpy.get_include()],
+        define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")]
         )],
     compiler_directives={'language_level': 3})
 
@@ -48,7 +49,8 @@ setup(name='gsd',
       install_requires=['cython', 'numpy>=1.9.3,<2'],
       python_requires='~=3.5',
       ext_modules=extensions,
-      packages=['gsd'],
+      packages=['gsd', 'gsd.test'],
+      package_data={'gsd': ['test/*.gsd']},
       entry_points={
           'console_scripts': [
               'gsd = gsd.__main__:main',

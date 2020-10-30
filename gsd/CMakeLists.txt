@@ -8,7 +8,7 @@ add_custom_command (
     COMMENT    "Cythonizing fl.pyx"
 )
 
-set_source_files_properties(fl.c PROPERTIES COMPILE_DEFINITIONS NO_IMPORT_ARRAY)
+set_source_files_properties(gsd.c PROPERTIES COMPILE_DEFINITIONS NO_IMPORT_ARRAY)
 
 add_library(gsd_objects OBJECT gsd.c)
 set_target_properties(gsd_objects PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
@@ -18,6 +18,7 @@ if (CLANG_TIDY_EXE)
 endif()
 
 add_library(fl SHARED fl.c gsd.c)
+target_compile_definitions(fl PRIVATE NPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION)
 
 set_target_properties(fl PROPERTIES PREFIX "" OUTPUT_NAME "fl" MACOSX_RPATH "On")
 if(APPLE)
@@ -51,3 +52,5 @@ foreach(file ${files})
 endforeach()
 
 add_custom_target(copy_gsd ALL DEPENDS ${files})
+
+add_subdirectory(test)

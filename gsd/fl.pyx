@@ -23,7 +23,6 @@ from libc.errno cimport errno
 cimport gsd.libgsd as libgsd
 cimport numpy
 
-
 logger = logging.getLogger('gsd.fl')
 
 ####################

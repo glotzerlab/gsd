@@ -141,13 +141,11 @@ Add the build directory path to your ``PYTHONPATH`` to test **gsd** or build doc
 Run tests
 ^^^^^^^^^
 
-Run ``pytest`` in the source directory to execute all unit tests. This requires that the
-compiled python module is on the python path.
+Use pytest to execute all unit tests:
 
 .. code-block:: bash
 
-   $ cd /path/to/gsd
-   $ pytest
+   $ pytest --pyargs gsd
 
 Build user documentation
 ^^^^^^^^^^^^^^^^^^^^^^^^
