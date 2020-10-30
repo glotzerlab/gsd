@@ -7,13 +7,21 @@ Change Log
 v2.x
 ----
 
-v2.3.0 (not yet released)
-^^^^^^^^^^^^^^^^^^^^^^^^^
+v2.3.0 (2020-10-30)
+^^^^^^^^^^^^^^^^^^^
 
 *Added*
 
 * Support clang 11.
 * Support python 3.9.
+
+*Changed*
+
+* Install unit tests with the python package.
+
+*Fixed*
+
+* Compile error on macOS 10.15.
 
 v2.2.0 (2020-08-05)
 ^^^^^^^^^^^^^^^^^^^
