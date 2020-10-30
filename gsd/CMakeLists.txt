@@ -53,3 +53,5 @@ endforeach()
 add_custom_target(copy_gsd ALL DEPENDS ${files})
 
 add_subdirectory(test)
+
+message(STATUS "CFLAGS ${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_RELEASE}")
