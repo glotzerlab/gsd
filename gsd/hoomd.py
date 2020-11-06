@@ -45,7 +45,10 @@ class ConfigurationData(object):
         step (int): Time step of this frame (:chunk:`configuration/step`).
 
         dimensions (int): Number of dimensions
-            (:chunk:`configuration/dimensions`).
+            (:chunk:`configuration/dimensions`). When not set explicitly,
+            dimensions will default to different values based on the value of
+            :math:`L_z` in `box`. When :math:`L_z = 0` dimensions will default
+            to 2, otherwise 3. User set values always take precedence.
 
         box ((6, 1) `numpy.ndarray` of ``numpy.float32``):
             Box dimensions (:chunk:`configuration/box`)
