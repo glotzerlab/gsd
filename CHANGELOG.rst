@@ -7,6 +7,11 @@ Change Log
 v2.x
 ----
 
+*Changed*
+
+* Make ``gsd.hoomd.ConfigurationData`` have smart ``dimensions`` default
+  based on box's :math:`L_z` value.
+
 v2.3.0 (2020-10-30)
 ^^^^^^^^^^^^^^^^^^^
 
