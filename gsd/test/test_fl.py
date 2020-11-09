@@ -610,7 +610,7 @@ def test_many_names(tmp_path, open_mode):
                 numpy.testing.assert_array_equal(data, data_read)
 
 
-def test_gsd_v1_read(open_mode):
+def test_gsd_v1_read():
     """Test that the GSD v2 API can read v1 files."""
     values = list(range(127))
     values_str = [str(v) for v in values]
@@ -635,7 +635,7 @@ def test_gsd_v1_read(open_mode):
 
     # test with the C implemantation
     with gsd.fl.open(name=test_path / 'test_gsd_v1.gsd',
-                     mode=open_mode.read,
+                     mode='rb',
                      application='test_gsd_v1',
                      schema='none',
                      schema_version=[1, 2]) as f:
