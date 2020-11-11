@@ -50,9 +50,7 @@ class ConfigurationData(object):
             :math:`L_z` in `box`. When :math:`L_z = 0` dimensions will default
             to 2, otherwise 3. User set values always take precedence.
 
-        box ((6, 1) `numpy.ndarray` of ``numpy.float32``):
-            Box dimensions (:chunk:`configuration/box`)
-            [lx, ly, lz, xy, xz, yz].
+
     """
 
     _default_value = OrderedDict()
@@ -67,6 +65,11 @@ class ConfigurationData(object):
 
     @property
     def box(self):
+        """((6, 1) `numpy.ndarray` of ``numpy.float32``): Box dimensions \
+        (:chunk:`configuration/box`).
+
+        [lx, ly, lz, xy, xz, yz].
+        """
         return self._box
 
     @box.setter
