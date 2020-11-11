@@ -173,12 +173,16 @@ stages:
 
     container:
       image: ubuntu:20.04
-      options: --user root
+      options:  "--name ci-container -v /usr/bin/docker:/tmp/docker:ro"
 
     steps:
-    - script: id
-    - script: apt-get update
+    # workaround documented here: https://github.com/Microsoft/azure-pipelines-agent/issues/2043#issuecomment-687983301
+    - script: |
+        /tmp/docker exec -t -u 0 ci-container \
+        sh -c "apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confold" -y install sudo"
+      displayName: 'Install sudo in container'
     - script: apt-get install python3 python3-numpy python3-cython python3-pytest
+      displayName: Install dependencies
     - template: templates/build.yml
     - template: templates/unit_test.yml
 
