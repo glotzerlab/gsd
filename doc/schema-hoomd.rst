@@ -127,7 +127,7 @@ Configuration
 
     Number of dimensions in the simulation. Must be 2 or 3.
 
-    Note:
+    .. note::
         When using `gsd.hoomd.Snapshot`, the object will try to intelligently default to a
         dimension. If setting the box to a box where :math:`L_z = 0`, ``dimensions`` will default to
         2 otherwise 3. Explicit setting of this value by users always takes precedence.
