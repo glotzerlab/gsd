@@ -7,10 +7,18 @@ Change Log
 v2.x
 ----
 
+v2.4.0 (2020-11-11)
+^^^^^^^^^^^^^^^^^^^
+
 *Changed*
 
-* Make ``gsd.hoomd.ConfigurationData`` have smart ``dimensions`` default
-  based on box's :math:`L_z` value.
+* Set ``gsd.hoomd.ConfigurationData.dimensions`` default based on ``box``'s
+  :math:`L_z` value.
+
+*Fixed*
+
+* Failure in ``test_fl.py`` when run by a user when GSD was installed by root.
+
 
 v2.3.0 (2020-10-30)
 ^^^^^^^^^^^^^^^^^^^
