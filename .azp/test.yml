@@ -173,10 +173,11 @@ stages:
 
     container:
       image: ubuntu:20.04
+      options: -u 0
 
     steps:
-    - script: sudo apt-get update
-    - script: sudo apt-get install python3 python3-numpy python3-cython python3-pytest
+    - script: apt-get update
+    - script: apt-get install python3 python3-numpy python3-cython python3-pytest
     - template: templates/build.yml
     - template: templates/unit_test.yml
 
