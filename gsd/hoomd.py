@@ -45,11 +45,12 @@ class ConfigurationData(object):
         step (int): Time step of this frame (:chunk:`configuration/step`).
 
         dimensions (int): Number of dimensions
-            (:chunk:`configuration/dimensions`).
+            (:chunk:`configuration/dimensions`). When not set explicitly,
+            dimensions will default to different values based on the value of
+            :math:`L_z` in `box`. When :math:`L_z = 0` dimensions will default
+            to 2, otherwise 3. User set values always take precedence.
 
-        box ((6, 1) `numpy.ndarray` of ``numpy.float32``):
-            Box dimensions (:chunk:`configuration/box`)
-            [lx, ly, lz, xy, xz, yz].
+
     """
 
     _default_value = OrderedDict()
@@ -60,7 +61,27 @@ class ConfigurationData(object):
     def __init__(self):
         self.step = None
         self.dimensions = None
-        self.box = None
+        self._box = None
+
+    @property
+    def box(self):
+        """((6, 1) `numpy.ndarray` of ``numpy.float32``): Box dimensions \
+        (:chunk:`configuration/box`).
+
+        [lx, ly, lz, xy, xz, yz].
+        """
+        return self._box
+
+    @box.setter
+    def box(self, box):
+        self._box = box
+        try:
+            Lz = box[2]
+        except TypeError:
+            return
+        else:
+            if self.dimensions is None:
+                self.dimensions = 2 if Lz == 0 else 3
 
     def validate(self):
         """Validate all attributes.
