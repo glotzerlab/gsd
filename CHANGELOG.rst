@@ -17,7 +17,7 @@ v2.4.0 (2020-11-11)
 
 *Fixed*
 
-* Failure in ``test_fl.py`` when run by a user when GSD was installed by root.
+* Failure in ``test_fl.py`` when run by a user and GSD was installed by root.
 
 
 v2.3.0 (2020-10-30)
