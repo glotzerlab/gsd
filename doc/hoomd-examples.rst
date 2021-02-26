@@ -210,7 +210,7 @@ Access read state data in the same way.
 Use multiprocessing
 ^^^^^^^^^^^^^^^^^^^
 
-.. ipython:: python
+.. code:: python
 
    import multiprocessing
 
