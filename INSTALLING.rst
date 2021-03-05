@@ -1,20 +1,28 @@
 Installation
 ============
 
-**gsd** binaries are available in the `glotzerlab-software <https://glotzerlab-software.readthedocs.io>`_
-`Docker <https://hub.docker.com/>`_/`Singularity <https://www.sylabs.io/>`_ images and in packages on
-`conda-forge <https://conda-forge.org/>`_ and `PyPI <https://pypi.org/>`_. You can also compile **gsd** from source,
-embed ``gsd.c`` in your code, or read gsd files with a pure Python reader ``pygsd.py``.
+**gsd** binaries are available in the glotzerlab-software_ Docker_/Singularity_ images and in
+packages on conda-forge_ and PyPI_. You can also compile **gsd** from source, embed ``gsd.c`` in
+your code, or read gsd files with a pure Python reader ``pygsd.py``.
+
+.. _glotzerlab-software: https://glotzerlab-software.readthedocs.io
+.. _Docker: https://hub.docker.com/
+.. _Singularity: https://www.sylabs.io/
+.. _conda-forge: https://conda-forge.org/
+.. _PyPI: https://pypi.org/
 
 Binaries
 --------
 
-Anaconda package
-^^^^^^^^^^^^^^^^
+Conda package
+^^^^^^^^^^^^^
 
-**gsd** is available on `conda-forge <https://conda-forge.org/>`_. To install, first download and install
-`miniconda <http://conda.pydata.org/miniconda.html>`_.
-Then add the **conda-forge** channel and install **gsd**:
+**gsd** is available on conda-forge_ on the *linux-64*, *linux-aarch64*, *linux-ppc64le*, *osx-64*,
+*osx-arm64* and *win-64* platforms. To install, download and install miniforge_ or miniconda_ Then
+install **gsd** from the conda-forge_ channel:
+
+.. _miniforge: https://github.com/conda-forge/miniforge
+.. _miniconda: http://conda.pydata.org/miniconda.html
 
 .. code-block:: bash
 
@@ -23,8 +31,7 @@ Then add the **conda-forge** channel and install **gsd**:
 Singularity / Docker images
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-See the `glotzerlab-software documentation <https://glotzerlab-software.readthedocs.io/>`_ for container usage
-information and cluster specific instructions.
+See the glotzerlab-software_ documentation for instructions to install and use the containers.
 
 PyPI
 ^^^^
@@ -33,8 +40,17 @@ Use **pip** to install **gsd**:
 
 .. code-block:: bash
 
-   $ pip install gsd
+   $ python3 -m pip install gsd
 
+.. note::
+
+    On some platforms, such as macOS with Apple silicon, **pip**'s default options may fail to
+    install **gsd** or its dependencies. You can force **pip** to build these packages one at a time
+    from source::
+
+        $ python3 -m pip install cython
+        $ python3 -m pip install --no-binary :all: --no-use-pep517 numpy
+        $ python3 -m pip install --no-binary :all: --no-use-pep517 gsd
 
 Compile from source
 -------------------
@@ -61,7 +77,7 @@ When using a shared Python installation, create a `virtual environment
 <https://docs.python.org/3/library/venv.html>`_ where you can install
 **gsd**::
 
-    $ python3 -m venv /path/to/environment --system-site-packages
+    $ python3 -m venv /path/to/environment
 
 Activate the environment before configuring and before executing
 **gsd** scripts::

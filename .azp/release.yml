@@ -1,23 +1,25 @@
 variables:
-  image_root: glotzerlab/ci:2020.10
+  image_root: glotzerlab/ci:2021.03
   name: gsd
 
+# Trigger on PRs to test that PRs do not break the tarball build. PR builds skip the upload step.
+pr:
+  - maint
+  - master
+
+# Trigger on new tags to build and upload release tarballs.
 trigger:
   tags:
     include:
     - 'v*'
 
-pr:
-  - maint
-  - master
-
+# Also trigger periodic builds on active branches.
 schedules:
-- cron: "0 2 * * *"
-  displayName: Daily 10PM build
-  # 2am UTC is 10PM eastern time
-  branches:
-    include:
-    - "*"
+  - cron: "0 3-21/6 * * *"
+    displayName: Periodic build
+    branches:
+      include:
+      - "*"
 
 jobs:
 - job: release
