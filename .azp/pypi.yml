@@ -9,14 +9,6 @@ trigger:
     include:
     - 'v*'
 
-# Also trigger periodic builds on active branches.
-schedules:
-  - cron: "0 3-21/6 * * *"
-    displayName: Periodic build
-    branches:
-      include:
-      - "*"
-
 stages:
 - stage: build_sdist
   displayName: Build sdist
