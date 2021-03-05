@@ -113,7 +113,7 @@ stages:
       options: -u 0
 
     steps:
-    - script: sudo $(python) -m pip install --no-build-isolation --no-use-pep517 .
+    - script: sudo /opt/venv/bin/python3 -m pip install --no-build-isolation --no-use-pep517 .
       displayName: Pip install gsd
     - template: templates/unit_test.yml
 
