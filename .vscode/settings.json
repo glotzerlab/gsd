@@ -186,7 +186,11 @@
         "xrand",
         "yapf",
         "yrand",
-        "zrand"
+        "zrand",
+        "aarch",
+        "miniconda",
+        "mkdir",
+        "pyargs"
     ],
     "C_Cpp.default.configurationProvider": "vector-of-bool.cmake-tools",
 }
