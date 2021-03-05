@@ -18,8 +18,8 @@ Conda package
 ^^^^^^^^^^^^^
 
 **gsd** is available on conda-forge_ on the *linux-64*, *linux-aarch64*, *linux-ppc64le*, *osx-64*,
-and *win-64* platforms. To install, download and install miniforge_ or miniconda_ Then install
-**gsd** from the conda-forge_ channel:
+*osx-arm64* and *win-64* platforms. To install, download and install miniforge_ or miniconda_ Then
+install **gsd** from the conda-forge_ channel:
 
 .. _miniforge: https://github.com/conda-forge/miniforge
 .. _miniconda: http://conda.pydata.org/miniconda.html
@@ -93,8 +93,8 @@ Install Prerequisites
 
 **gsd** requires:
 
-* **C compiler** (tested with gcc 4.8-10.0, clang 4-11, vs2017-2019)
-* **Python** >= 3.5
+* **C compiler** (tested with gcc 7-10, clang 6-11, vs2017-2019)
+* **Python** >= 3.6
 * **numpy** >= 1.9.3
 * **Cython** >= 0.22
 

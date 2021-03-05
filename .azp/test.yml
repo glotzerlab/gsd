@@ -1,18 +1,21 @@
 variables:
-  image_root: glotzerlab/ci:2020.10
+  image_root: glotzerlab/ci:2021.03
   python: python3
   pytest_options:
 
-trigger: none
-
+# Trigger on PRs into stable branches.
 pr:
   - maint
   - master
 
+# Do not trigger on every push. This runs every commit twice for PRs with branches on the main
+# repository.
+trigger: none
+
+# Instead, trigger periodic builds on active branches.
 schedules:
-- cron: "0 2 * * *"
-  displayName: Daily 10PM build
-  # 2am UTC is 10PM eastern time
+- cron: "0 3-21/6 * * *"
+  displayName: Periodic build
   branches:
     include:
     - "*"
@@ -46,17 +49,7 @@ stages:
           unused: ""
         gcc7_py37:
           unused: ""
-        gcc6_py37:
-          unused: ""
-        gcc5_py37:
-          unused: ""
-        gcc48_py37:
-          unused: ""
         clang6_py37:
-          unused: ""
-        clang5_py37:
-          unused: ""
-        clang4_py37:
           unused: ""
         gcc7_py36:
           unused: ""
@@ -179,13 +172,13 @@ stages:
     - script: |
         /tmp/docker exec -t -u 0 ci-container \
         sh -c "apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confold" -y install \
-         sudo \
-         python3-numpy \
-         cython3 \
-         python3-pytest \
-         build-essential \
-         ninja-build \
-         cmake"
+          sudo \
+          python3-numpy \
+          cython3 \
+          python3-pytest \
+          build-essential \
+          ninja-build \
+          cmake"
       displayName: 'Install dependencies'
     - template: templates/build.yml
     - template: templates/unit_test.yml

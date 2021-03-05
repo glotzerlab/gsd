@@ -1,21 +1,24 @@
 variables:
-  image_root: glotzerlab/ci:2020.10
+  image_root: glotzerlab/ci:2021.03
   python: python3
   pytest_options:
 
-trigger: none
-
+# Trigger on PRs into stable branches.
 pr:
   - maint
   - master
 
+# Do not trigger on every push. This runs every commit twice for PRs with branches on the main
+# repository.
+trigger: none
+
+# Instead, trigger periodic builds on active branches.
 schedules:
-- cron: "0 2 * * *"
-  displayName: Daily 10PM build
-  # 2am UTC is 10PM eastern time
-  branches:
-    include:
-    - "*"
+  - cron: "0 3-21/6 * * *"
+    displayName: Periodic build
+    branches:
+      include:
+      - "*"
 
 stages:
 - stage: pip_install
@@ -110,7 +113,7 @@ stages:
       options: -u 0
 
     steps:
-    - script: $(python) -m pip install --user --no-build-isolation --no-use-pep517 .
+    - script: sudo /opt/venv/bin/python3 -m pip install --no-build-isolation --no-use-pep517 .
       displayName: Pip install gsd
     - template: templates/unit_test.yml
 

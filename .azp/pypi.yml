@@ -1,19 +1,13 @@
-trigger:
-  tags:
-    include:
-    - 'v*'
-
+# Trigger on PRs into stable branches.
 pr:
   - maint
   - master
 
-schedules:
-- cron: "0 2 * * *"
-  displayName: Daily 10PM build
-  # 2am UTC is 10PM eastern time
-  branches:
+# Trigger on new tags to build and upload release tarballs.
+trigger:
+  tags:
     include:
-    - "*"
+    - 'v*'
 
 stages:
 - stage: build_sdist
