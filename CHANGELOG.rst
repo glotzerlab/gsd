@@ -7,6 +7,17 @@ Change Log
 v2.x
 ----
 
+v2.4.1 (2021-03-11)
+^^^^^^^^^^^^^^^^^^^
+
+*Added*
+
+* Support macos-arm64.
+
+*Changed*
+
+* Stop testing with clang 4-5, gcc 4.8-6.
+
 v2.4.0 (2020-11-11)
 ^^^^^^^^^^^^^^^^^^^
 
