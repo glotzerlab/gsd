@@ -63,6 +63,9 @@ jobs:
         with:
           python-version: '3.9'
 
+      - name: Install numpy
+        run: python3 -m pip --disable-pip-version-check install numpy cython --upgrade --progress-bar=off
+
       - name: Build sdist
         run: python setup.py sdist
 
