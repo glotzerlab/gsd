@@ -20,11 +20,16 @@ jobs:
       - name: Build wheels
         uses: joerick/cibuildwheel@v1.10.0
         env:
+          CIBW_PROJECT_REQUIRES_PYTHON: ">=3.6"
+
+          # build only on 64-bit architectures
           CIBW_ARCHS_MACOS: "x86_64 arm64"
           CIBW_ARCHS_LINUX: "auto64"
+
+          # test the wheels
           CIBW_TEST_COMMAND: pytest --pyargs {package} --log-level=DEBUG
           CIBW_TEST_SKIP: "*-macosx_arm64"
-          CIBW_PROJECT_REQUIRES_PYTHON: ">=3.6"
+          CIBW_TEST_REQUIRES: pytest
 
       - uses: actions/upload-artifact@v2
         with:
