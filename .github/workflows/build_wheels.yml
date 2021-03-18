@@ -1,10 +1,24 @@
-name: Build Wheels
+name: PyPI
 
-on: [push, pull_request]
+on:
+  # Trigger on pull requests.
+  pull_request:
+
+  # Trigger on pushes to the mainline branches and version tags. This prevents building commits
+  # twice when the pull request source branch is in the same repository.
+  push:
+    branches:
+      - "maint"
+      - "master"
+    tags:
+      - "v*"
+
+  # Trigger on request.
+  workflow_dispatch:
 
 jobs:
   build_wheels:
-    name: ${{ matrix.os }}
+    name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -20,16 +34,16 @@ jobs:
       - name: Build wheels
         uses: joerick/cibuildwheel@v1.10.0
         env:
-          # Build for cpython >= 3.6
+          # Build for cpython >= 3.6.
           CIBW_PROJECT_REQUIRES_PYTHON: ">=3.6"
           CIBW_SKIP: pp*
 
-          # build only on 64-bit architectures
+          # Build only on 64-bit architectures.
           CIBW_ARCHS_MACOS: x86_64 arm64
           CIBW_ARCHS_LINUX: auto64
           CIBW_ARCHS_WINDOWS: auto64
 
-          # test the wheels
+          # Test the wheels.
           CIBW_TEST_COMMAND: pytest --pyargs {package} -v --log-level=DEBUG
           CIBW_TEST_SKIP: "*-macosx_arm64"
           CIBW_TEST_REQUIRES: pytest
@@ -37,3 +51,38 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           path: ./wheelhouse/*.whl
+
+  build_sdist:
+    name: Build source distribution
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-python@v2
+        name: Install Python
+        with:
+          python-version: '3.9'
+
+      - name: Build sdist
+        run: python setup.py sdist
+
+      - uses: actions/upload-artifact@v2
+        with:
+          path: dist/*.tar.gz
+
+  upload_pypi:
+    name: Upload to PyPI
+    needs: [build_wheels, build_sdist]
+    runs-on: ubuntu-latest
+    # upload to PyPI on every tag starting with 'v'
+    if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: artifact
+          path: dist
+
+      - uses: pypa/gh-action-pypi-publish@master
+        with:
+          user: __token__
+          password: ${{ secrets.pypi_password }}
