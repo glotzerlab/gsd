@@ -24,6 +24,7 @@ jobs:
           CIBW_ARCHS_LINUX: "auto64"
           CIBW_TEST_COMMAND: pytest --pyargs {package} --log-level=DEBUG
           CIBW_TEST_SKIP: "*-macosx_arm64"
+          CIBW_PROJECT_REQUIRES_PYTHON: ">=3.6"
 
       - uses: actions/upload-artifact@v2
         with:
