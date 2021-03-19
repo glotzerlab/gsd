@@ -47,7 +47,7 @@ jobs:
           CIBW_ARCHS_WINDOWS: auto64
 
           # Test the wheels.
-          CIBW_TEST_COMMAND: pytest --pyargs {package} -v --log-level=DEBUG
+          CIBW_TEST_COMMAND: pytest --pyargs gsd -v --log-level=DEBUG
           CIBW_TEST_SKIP: "*-macosx_arm64"
           CIBW_TEST_REQUIRES: pytest
 
