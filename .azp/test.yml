@@ -1,7 +1,7 @@
 variables:
   image_root: glotzerlab/ci:2021.03
   python: python3
-  pytest_options: --validate
+  pytest_options: -p gsd.pytest_plugin_validate --validate
 
 # Trigger on PRs into stable branches.
 pr:

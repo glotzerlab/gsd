@@ -45,7 +45,13 @@ MACRO(copy_file file)
     )
 ENDMACRO(copy_file)
 
-set(files __init__.py __main__.py hoomd.py pygsd.py version.py)
+set(files __init__.py
+          __main__.py
+          hoomd.py
+          pygsd.py
+          version.py
+          conftest.py
+          pytest_plugin_validate.py)
 
 foreach(file ${files})
     copy_file(${file})

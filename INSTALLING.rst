@@ -161,13 +161,13 @@ Use pytest to execute unit tests:
 
 .. code-block:: bash
 
-   $ pytest --pyargs gsd
+   $ python3 -m pytest --pyargs gsd
 
 Add the ``--validate`` option to include longer-running validation tests:
 
 .. code-block:: bash
 
-   $ pytest --pyargs gsd --validate
+   $ python3 -m pytest --pyargs gsd -p gsd.pytest_plugin_validate --validate
 
 Build user documentation
 ^^^^^^^^^^^^^^^^^^^^^^^^

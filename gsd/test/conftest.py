@@ -16,33 +16,3 @@ def open_mode_name(mode):
 def open_mode(request):
     """Pytest fixture parameterized over multiple file open modes."""
     return request.param
-
-def pytest_addoption(parser):
-    """Add GSD specific options to the pytest command line.
-
-    * validate - run validation tests
-    """
-    parser.addoption(
-        "--validate",
-        action="store_true",
-        default=False,
-        help="Enable long running validation tests.",
-    )
-
-
-@pytest.fixture(autouse=True)
-def skip_validate(request):
-    """Skip validation tests by default.
-
-    Pass the command line option --validate to enable these tests.
-    """
-    if request.node.get_closest_marker('validate'):
-        if not request.config.getoption("validate"):
-            pytest.skip('Validation tests not requested.')
-
-
-def pytest_configure(config):
-    """Define the ``validate`` marker."""
-    config.addinivalue_line(
-        "markers",
-        "validate: Tests that perform long-running validations.")
