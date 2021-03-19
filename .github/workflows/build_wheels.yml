@@ -83,14 +83,12 @@ jobs:
 
     steps:
       - name: Download artifacts
-        id: download
         uses: actions/download-artifact@v2.0.8
         with:
           name: artifact
           path: dist
 
       - name: Upload
-        id: upload
         uses: pypa/gh-action-pypi-publish@master
         with:
           user: __token__
@@ -102,6 +100,5 @@ jobs:
         uses: act10ns/slack@v1.2.2
         with:
           status: ${{ job.status }}
-          steps: ${{ toJson(steps) }}
           channel: '#dev-gsd-notifications'
         if: always()
