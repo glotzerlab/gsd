@@ -1,7 +1,7 @@
 variables:
   image_root: glotzerlab/ci:2021.03
   python: python3
-  pytest_options:
+  pytest_options: --validate
 
 # Trigger on PRs into stable branches.
 pr:
@@ -134,7 +134,7 @@ stages:
           CMAKE_GENERATOR: Visual Studio 16 2019
           CMAKE_GENERATOR_PLATFORM: Win32
           architecture: 'x86'
-          pytest_options: --ignore-glob="*_largefile.py"
+          pytest_options:
 
     pool:
       vmImage: '$(win_image)'
