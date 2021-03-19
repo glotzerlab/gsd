@@ -47,7 +47,7 @@ jobs:
           CIBW_ARCHS_WINDOWS: auto64
 
           # Test the wheels.
-          CIBW_TEST_COMMAND: pytest --pyargs {package} -v --log-level=DEBUG --ignore-glob="*_largefile.py"
+          CIBW_TEST_COMMAND: pytest --pyargs {package} -v --log-level=DEBUG
           CIBW_TEST_SKIP: "*-macosx_arm64"
           CIBW_TEST_REQUIRES: pytest
 
@@ -82,19 +82,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/download-artifact@v2
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
         with:
           name: artifact
           path: dist
 
-      - uses: pypa/gh-action-pypi-publish@master
+      - name: Upload
+        uses: pypa/gh-action-pypi-publish@master
         with:
           user: __token__
           password: ${{ secrets.pypi_password }}
         # upload to PyPI on every tag starting with 'v'
         if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v')
 
-      - uses: act10ns/slack@v1.2.2
+      - name: Notify
+        uses: act10ns/slack@v1.2.2
         with:
           status: ${{ job.status }}
           steps: ${{ toJson(steps) }}
