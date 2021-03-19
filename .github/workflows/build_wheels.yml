@@ -98,7 +98,7 @@ jobs:
         # upload to PyPI on every tag starting with 'v'
         if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v')
 
-      - name: Notify
+      - name: Slack notification
         uses: act10ns/slack@v1.2.2
         with:
           status: ${{ job.status }}
