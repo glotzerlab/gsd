@@ -16,6 +16,9 @@ on:
   # Trigger on request.
   workflow_dispatch:
 
+env:
+  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
 jobs:
   build_wheels:
     name: Build wheels on ${{ matrix.os }}
@@ -44,7 +47,7 @@ jobs:
           CIBW_ARCHS_WINDOWS: auto64
 
           # Test the wheels.
-          CIBW_TEST_COMMAND: pytest --pyargs {package} -v --log-level=DEBUG
+          CIBW_TEST_COMMAND: pytest --pyargs {package} -v --log-level=DEBUG --ignore-glob="*_largefile.py"
           CIBW_TEST_SKIP: "*-macosx_arm64"
           CIBW_TEST_REQUIRES: pytest
 
@@ -77,8 +80,7 @@ jobs:
     name: Upload to PyPI
     needs: [build_wheels, build_sdist]
     runs-on: ubuntu-latest
-    # upload to PyPI on every tag starting with 'v'
-    if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v')
+
     steps:
       - uses: actions/download-artifact@v2
         with:
@@ -89,3 +91,12 @@ jobs:
         with:
           user: __token__
           password: ${{ secrets.pypi_password }}
+        # upload to PyPI on every tag starting with 'v'
+        if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v')
+
+      - uses: act10ns/slack@v1.2.2
+        with:
+          status: ${{ job.status }}
+          steps: ${{ toJson(steps) }}
+          channel: '#dev-gsd-notifications'
+        if: always()
