@@ -10,7 +10,6 @@ import pytest
 import gc
 
 
-@pytest.mark.skip()
 @pytest.mark.parametrize("N", [2**27, 2**28, 2**29 + 1])
 def test_large_n(tmp_path, N):
     """Test data chunks and files larger than 2 GB."""
