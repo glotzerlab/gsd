@@ -47,7 +47,7 @@ setup(name='gsd',
           ],
 
       install_requires=['numpy>=1.9.3,<2'],
-      python_requires='~=3.5',
+      python_requires='~=3.6',
       ext_modules=extensions,
       packages=['gsd', 'gsd.test'],
       package_data={'gsd': ['test/*.gsd']},

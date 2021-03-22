@@ -157,11 +157,17 @@ Add the build directory path to your ``PYTHONPATH`` to test **gsd** or build doc
 Run tests
 ^^^^^^^^^
 
-Use pytest to execute all unit tests:
+Use pytest to execute unit tests:
 
 .. code-block:: bash
 
-   $ pytest --pyargs gsd
+   $ python3 -m pytest --pyargs gsd
+
+Add the ``--validate`` option to include longer-running validation tests:
+
+.. code-block:: bash
+
+   $ python3 -m pytest --pyargs gsd -p gsd.pytest_plugin_validate --validate
 
 Build user documentation
 ^^^^^^^^^^^^^^^^^^^^^^^^
