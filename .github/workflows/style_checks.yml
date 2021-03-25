@@ -19,7 +19,7 @@ jobs:
     name: Run ${{ matrix.name }}
     runs-on: ubuntu-latest
     container:
-      image: glotzerlab/ci:2021.03-clang11_py39
+      image: glotzerlab/ci:2021.03-clang10_py38
       options: -u 0
     strategy:
       matrix:
