@@ -1,9 +1,5 @@
 name: Style checks
 
-env:
-  image_prefix: glotzerlab/ci:2021.03
-  pytest_options: -p gsd.pytest_plugin_validate --validate
-
 on:
   # Trigger on pull requests.
   pull_request:
@@ -23,7 +19,7 @@ jobs:
     name: Run ${{ matrix.name }}
     runs-on: ubuntu-latest
     container:
-      image: ${{ env.image_prefix }}-clang10_py38
+      image: glotzerlab/ci:2021.03-clang10_py38
       options: -u 0
     strategy:
       matrix:
