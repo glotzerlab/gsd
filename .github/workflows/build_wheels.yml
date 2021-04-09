@@ -78,7 +78,6 @@ jobs:
     runs-on: ubuntu-latest
 
     # upload to PyPI on every tag starting with 'v'
-    if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v')
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v2.0.8
@@ -86,15 +85,25 @@ jobs:
           name: artifact
           path: dist
 
-      - name: Upload
+      - name: Upload to TestPyPI
+        if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
         uses: pypa/gh-action-pypi-publish@v1.4.2
         with:
           user: __token__
-          password: ${{ secrets.PYPI_PASSWORD }}
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          repository_url: https://test.pypi.org/legacy/
+          skip_existing: true
+
+      - name: Upload to PyPI
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: pypa/gh-action-pypi-publish@v1.4.2
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_API_TOKEN }}
 
       - name: Slack notification
+        if: startsWith(github.ref, 'refs/tags/v') && always()
         uses: act10ns/slack@v1.2.2
         with:
           status: ${{ job.status }}
           channel: '#dev-gsd-notifications'
-        if: always()
