@@ -41,7 +41,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2.3.4
       - name: Configure
-        run: mkdir -p build && cmake -B build -GNinja
+        run: mkdir -p build && cmake -B build -GNinja .
       - name: Build
         run: cmake --build build --config Release
       - name: Run tets
@@ -59,12 +59,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2.3.4
+      - name: Take ownership of conda installation
+        run: sudo chown -R ${USER} ${CONDA}
       - name: Create conda environment
         run: ${CONDA}/bin/conda env create --quiet --prefix=${{ runner.temp }}/conda --file .github/environment.yml
       - name: Add conda to PATH
         run: echo "${{ runner.temp }}/conda/bin" >> $GITHUB_PATH
       - name: Configure
-        run: mkdir -p build && cmake -B build -GNinja
+        run: mkdir -p build && cmake -B build -GNinja .
       - name: Build
         run: cmake --build build --config Release
       - name: Run tets
