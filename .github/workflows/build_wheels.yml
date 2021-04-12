@@ -81,7 +81,7 @@ jobs:
     if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v')
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v2.0.8
+        uses: actions/download-artifact@v2.0.9
         with:
           name: artifact
           path: dist
