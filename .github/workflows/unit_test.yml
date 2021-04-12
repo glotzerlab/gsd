@@ -60,16 +60,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2.3.4
-      - name: Take ownership of conda installation
-        run: sudo chown -R ${USER} ${CONDA}
-      - name: Create conda environment
-        run: ${CONDA}/bin/conda env create --quiet --prefix=${{ github.workspace }}/conda --file .github/environment.yml
-      - name: Add conda to PATH
-        run: echo "${{ github.workspace }}/conda/bin" >> $GITHUB_PATH
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+      - name: Install prereqs
+        run: python3 -m pip install cython numpy pytest
       - name: Configure
-        run: mkdir -p build && cd build && cmake ../ -GNinja
+        run: mkdir -p build && cd build && cmake ../
       - name: Build
-        run: ninja
+        run: make -j4
         working-directory: build
       - name: Run tets
         run: python3 -m pytest --pyargs gsd ${pytest_options} -v --log-level=DEBUG
