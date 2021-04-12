@@ -18,7 +18,7 @@ env:
   pytest_options: -p gsd.pytest_plugin_validate --validate
 
 jobs:
-  unit_test:
+  unit_test_linux:
     name: Unit test on ${{ matrix.image }}
     runs-on: ubuntu-latest
     container:
@@ -41,7 +41,30 @@ jobs:
     steps:
       - uses: actions/checkout@v2.3.4
       - name: Configure
-        run: cmake -B build -GNinja
+        run: mkdir -p build && cmake -B build -GNinja
+      - name: Build
+        run: cmake --build build --config Release
+      - name: Run tets
+        run: python3 -m pytest --pyargs gsd ${pytest_options} -v --log-level=DEBUG
+        working-directory: ${{ runner.temp }}
+        env:
+          PYTHONPATH: ${{ github.workspace }}/build
+
+  unit_test_mac:
+    name: Unit test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-10.15]
+
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - name: Create conda environment
+        run: ${CONDA}/bin/conda env create --quiet --prefix=${{ runner.temp }}/conda --file .github/environment.yml
+      - name: Add conda to PATH
+        run: echo "${{ runner.temp }}/conda/bin" >> $GITHUB_PATH
+      - name: Configure
+        run: mkdir -p build && cmake -B build -GNinja
       - name: Build
         run: cmake --build build --config Release
       - name: Run tets

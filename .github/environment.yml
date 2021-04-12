@@ -1,0 +1,9 @@
+name: gsd-dev
+channels:
+  - conda-forge
+dependencies:
+  - cmake=3.19.6
+  - ninja=1.10.2
+  - python=3.9.2
+  - pytest=6.2.2
+  - numpy=1.20.1
