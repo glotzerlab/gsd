@@ -36,3 +36,5 @@ jobs:
         run: cmake --build build --config Release
       - name: Run tets
         run: python3 -m pytest --pyargs gsd ${pytest_options} -v --log-level=DEBUG
+        env:
+          PYTHONPATH: build
