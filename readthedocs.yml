@@ -1,12 +1,18 @@
 version: 2
 
+sphinx:
+  fail_on_warning: true
+
 python:
-  version: 3.7
+  version: 3.9
   install:
     - method: setuptools
       path: .
+
 conda:
     environment: doc/environment.yml
+
 formats: all
+
 build:
   image: stable
