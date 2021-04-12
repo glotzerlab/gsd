@@ -63,9 +63,9 @@ jobs:
       - name: Take ownership of conda installation
         run: sudo chown -R ${USER} ${CONDA}
       - name: Create conda environment
-        run: ${CONDA}/bin/conda env create --quiet --prefix=${{ runner.temp }}/conda --file .github/environment.yml
+        run: ${CONDA}/bin/conda env create --quiet --prefix=${{ github.workspace }}/conda --file .github/environment.yml
       - name: Add conda to PATH
-        run: echo "${{ runner.temp }}/conda/bin" >> $GITHUB_PATH
+        run: echo "${{ github.workspace }}/conda/bin" >> $GITHUB_PATH
       - name: Configure
         run: mkdir -p build && cd build && cmake ../ -GNinja
       - name: Build
