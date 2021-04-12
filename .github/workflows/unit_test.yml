@@ -34,7 +34,11 @@ jobs:
         run: cmake -B build -GNinja
       - name: Build
         run: cmake --build build --config Release
+      - name: Test path
+        run: python3 -c "import sys; print(sys.path)"
+        env:
+          PYTHONPATH: ${{ github.workspace }}/build
       - name: Run tets
         run: python3 -m pytest --pyargs gsd ${pytest_options} -v --log-level=DEBUG
         env:
-          PYTHONPATH: ${{ github.workspace}}/build
+          PYTHONPATH: ${{ github.workspace }}/build
