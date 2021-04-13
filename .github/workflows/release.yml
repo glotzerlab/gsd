@@ -36,7 +36,7 @@ jobs:
       - name: Determine tag
         run: echo "last_tag=$(git describe --abbrev=0)" >> $GITHUB_ENV
       - name: Write version change log
-        run: .github/workflows/make-changelog-md.sh  $(tag) > ${{ runner.temp }}/changelog.md && cat ${{ runner.temp }}/changelog.md
+        run: .github/workflows/make-changelog-md.sh  ${last_tag} > ${{ runner.temp }}/changelog.md && cat ${{ runner.temp }}/changelog.md
       - name: Copy source
         run: cp -R ${{ github.workspace }} ${{ runner.temp }}/${name}-${last_tag}
       - name: Remove .git
