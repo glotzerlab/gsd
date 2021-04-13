@@ -46,8 +46,7 @@ jobs:
       - name: Copy source
         run: cp -R code ${name}-${description}
       - name: Remove .git
-        run: rm -rf .git && ls -la
-        working-directory: ${name}-${description}
+        run: rm -rf ${name}-${description}/.git && ls -la ${name}-${description}
       - name: Tar source
         run: tar -cvzf ${name}-${description}.tar.gz ${name}-${description}
       - uses: actions/upload-artifact@v2.2.3
