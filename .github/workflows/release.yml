@@ -40,13 +40,8 @@ jobs:
       - name: Determine full description
         run: echo "description=$(git describe)" >> $GITHUB_ENV
         working-directory: code
-      - run: pwd
-        working-directory: code
-      - run: pwd
-      - run: set
-      - run: echo ${{ github.workspace }} && ls -lR ${{ github.workspace }}
       - name: Write version change log
-        run: .github/workflows/make-changelog-md.sh  ${last_tag} > ${{ github.workspace }}/changelog.md && cat ${{ github.workspace }}/changelog.md
+        run: .github/workflows/make-changelog-md.sh  ${last_tag} | tee ${GITHUB_WORKSPACE}/changelog.md
         working-directory: code
       - name: Copy source
         run: cp -R code ${name}-${description}
