@@ -9,7 +9,7 @@ updates:
       separator: "-"
 
   - package-ecosystem: "pip"
-    directory: ".github"
+    directory: ".github/latest"
     target-branch: maint
     schedule:
       interval: "monthly"
