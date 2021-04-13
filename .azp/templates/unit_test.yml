@@ -1,6 +1,0 @@
-steps:
-- script: $(python) -m pytest --pyargs gsd $(pytest_options) -v --log-level=DEBUG
-  displayName: Unit test
-  workingDirectory: $(Pipeline.Workspace)
-  env:
-    PYTHONPATH: $(Build.BinariesDirectory)
