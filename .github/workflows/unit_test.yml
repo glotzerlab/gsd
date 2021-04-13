@@ -67,7 +67,6 @@ jobs:
         run: cmake -S . -B build
       - name: Build
         run: cmake --build build -j 4
-        working-directory: build
       - name: Run tets
         run: python3 -m pytest --pyargs gsd ${pytest_options} -v --log-level=DEBUG
         working-directory: ${{ runner.temp }}
