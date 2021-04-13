@@ -4,6 +4,14 @@ updates:
     directory: "/"
     target-branch: maint
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+    pull-request-branch-name:
+      separator: "-"
+
+  - package-ecosystem: "pip"
+    directory: ".github"
+    target-branch: maint
+    schedule:
+      interval: "monthly"
     pull-request-branch-name:
       separator: "-"

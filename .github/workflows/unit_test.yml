@@ -52,20 +52,21 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}/build
 
   unit_test_mac:
-    name: Unit test on ${{ matrix.os }}
+    name: Unit test on ${{ matrix.os }} (${{ matrix.dependencies }} dependencies)
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [macos-10.15]
+        dependencies: [oldest, latest]
 
     steps:
       - uses: actions/checkout@v2.3.4
       - name: Install prereqs
-        run: python3 -m pip install cython numpy pytest
+        run: python3 -m pip -r .github/${{ matrix.dependencies }}/requirements-test.txt
       - name: Configure
-        run: mkdir -p build && cd build && cmake ../
+        run: cmake -S . -B build
       - name: Build
-        run: make -j4
+        run: cmake --build build -j 4
         working-directory: build
       - name: Run tets
         run: python3 -m pytest --pyargs gsd ${pytest_options} -v --log-level=DEBUG
