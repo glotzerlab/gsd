@@ -65,7 +65,7 @@ jobs:
       - name: Configure
         run: cmake -S . -B build
       - name: Build
-        run: cmake --build build -j 4 --target Release
+        run: cmake --build build -j 4 --config Release
       - if: runner.os == 'Windows'
         name: Copy pyd files
         run: cp .\gsd\Release\*.pyd gsd\
