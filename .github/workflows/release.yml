@@ -35,6 +35,8 @@ jobs:
           submodule: true
       - name: Determine tag
         run: echo "last_tag=$(git describe --abbrev=0)" >> $GITHUB_ENV
+      - name: Make destination directory
+        run: mkdir -p ${{ runner.temp }}
       - name: Write version change log
         run: .github/workflows/make-changelog-md.sh  ${last_tag} > ${{ runner.temp }}/changelog.md && cat ${{ runner.temp }}/changelog.md
       - name: Copy source
