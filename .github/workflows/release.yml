@@ -32,22 +32,26 @@ jobs:
       - uses: actions/checkout@v2.3.4
         with:
           fetch-depth: 0
-          submodule: true
+          submodules: true
+          path: code
       - name: Determine tag
         run: echo "last_tag=$(git describe --abbrev=0)" >> $GITHUB_ENV
-      - name: Make destination directory
-        run: mkdir -p ${{ runner.temp }}
+        working-directory: code
+      - name: Determine full description
+        run: echo "description=$(git describe)" >> $GITHUB_ENV
+        working-directory: code
       - name: Write version change log
-        run: .github/workflows/make-changelog-md.sh  ${last_tag} > ${{ runner.temp }}/changelog.md && cat ${{ runner.temp }}/changelog.md
+        run: .github/workflows/make-changelog-md.sh  ${last_tag} > ${{ github.workspace }}/changelog.md && cat ${{ github.workspace }}/changelog.md
+        working-directory: code
       - name: Copy source
-        run: cp -R ${{ github.workspace }} ${{ runner.temp }}/${name}-${last_tag}
+        run: cp -R code ${name}-${description}
       - name: Remove .git
         run: rm -rf .git && ls -la
-        working-directory: ${{ runner.temp }}/${name}-${last_tag}
+        working-directory: ${name}-${description}
       - name: Tar source
-        run: tar -cvzf ${{ runner.temp }}/${name}-${last_tag}.tar.gz -C ${{ runner.temp }} ${name}-${last_tag}
+        run: tar -cvzf ${name}-${description}.tar.gz ${name}-${description}
       - uses: actions/upload-artifact@v2.2.3
         with:
           path: |
-            ${{ runner.temp }}/${name}-${last_tag}.tar.gz
-            ${{ runner.temp }}/changelog.md
+            ${name}-${description}.tar.gz
+            changelog.md
