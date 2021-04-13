@@ -18,6 +18,7 @@ on:
 
 env:
   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+  name: gsd
 
 jobs:
   release:
@@ -34,7 +35,17 @@ jobs:
           submodule: true
       - name: Determine tag
         run: echo "last_tag=$(git describe --abbrev=0)" >> $GITHUB_ENV
-      - run: echo ${last_tag}
+      - name: Write version change log
+        run: .github/workflows/make-changelog-md.sh  $(tag) > ${{ runner.temp }}/changelog.md && cat ${{ runner.temp }}/changelog.md
+      - name: Copy source
+        run: cp -R ${{ github.workspace }} ${{ runner.temp }}/${name}-${last_tag}
+      - name: Remove .git
+        run: rm -rf .git && ls -la
+        working-directory: ${{ runner.temp }}/${name}-${last_tag}
+      - name: Tar source
+        run: tar -cvzf ${{ runner.temp }}/${name}-${last_tag}.tar.gz -C ${{ runner.temp }} ${name}-${last_tag}
       - uses: actions/upload-artifact@v2.2.3
         with:
-          path: ./wheelhouse/*.whl
+          path: |
+            ${{ runner.temp }}/${name}-${last_tag}.tar.gz
+            ${{ runner.temp }}/changelog.md
