@@ -52,17 +52,16 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}/build
 
   unit_test_mac:
-    name: Unit test on ${{ matrix.os }} (${{ matrix.dependencies }} dependencies)
+    name: Unit test on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [macos-10.15]
-        dependencies: [oldest, latest]
 
     steps:
       - uses: actions/checkout@v2.3.4
       - name: Install prereqs
-        run: python3 -m pip install -r .github/${{ matrix.dependencies }}/requirements-test.txt
+        run: python3 -m pip install -r .github/requirements-test.txt
       - name: Configure
         run: cmake -S . -B build
       - name: Build
