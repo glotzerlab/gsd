@@ -52,5 +52,5 @@ jobs:
       - uses: actions/upload-artifact@v2.2.3
         with:
           path: |
-            ${name}-${description}.tar.gz
+            *.tar.gz
             changelog.md
