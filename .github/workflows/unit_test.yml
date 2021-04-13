@@ -62,7 +62,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2.3.4
       - name: Install prereqs
-        run: python3 -m pip -r .github/${{ matrix.dependencies }}/requirements-test.txt
+        run: python3 -m pip install -r .github/${{ matrix.dependencies }}/requirements-test.txt
       - name: Configure
         run: cmake -S . -B build
       - name: Build
