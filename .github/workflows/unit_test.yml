@@ -72,7 +72,7 @@ jobs:
         run: cmake --build build -j 4 --config Release
       - if: runner.os == 'Windows'
         name: Copy pyd files
-        run: cp .\gsd\Release\*.pyd gsd\
+        run: cp ./gsd/Release/*.pyd gsd/
         working-directory: build
       - name: Run tests
         run: python3 -m pytest --pyargs gsd ${pytest_options} -v --log-level=DEBUG
