@@ -17,6 +17,10 @@ on:
 env:
   pytest_options: -p gsd.pytest_plugin_validate --validate
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   unit_test_linux:
     name: Unit test on Linux (${{ matrix.image }})
@@ -51,7 +55,7 @@ jobs:
         env:
           PYTHONPATH: ${{ github.workspace }}/build
 
-  unit_test_mac:
+  unit_test_other:
     name: Unit test on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
@@ -72,7 +76,6 @@ jobs:
         working-directory: build
       - name: Run tests
         run: python3 -m pytest --pyargs gsd ${pytest_options} -v --log-level=DEBUG
-        shell: bash
         working-directory: ${{ runner.temp }}
         env:
           PYTHONPATH: ${{ github.workspace }}/build
