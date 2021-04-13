@@ -19,7 +19,7 @@ env:
 
 jobs:
   unit_test_linux:
-    name: Unit test on ${{ matrix.image }}
+    name: Unit test on Linux (${{ matrix.image }})
     runs-on: ubuntu-latest
     container:
       image: glotzerlab/ci:2021.03-${{ matrix.image }}
@@ -56,7 +56,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-10.15]
+        os: [macos-10.15, windows-2019]
 
     steps:
       - uses: actions/checkout@v2.3.4
@@ -65,8 +65,12 @@ jobs:
       - name: Configure
         run: cmake -S . -B build
       - name: Build
-        run: cmake --build build -j 4
-      - name: Run tets
+        run: cmake --build build -j 4 --target Release
+      - if: runner.os == 'Windows'
+        name: Copy pyd files
+        run: cp .\gsd\Release\*.pyd gsd\
+        working-directory: build
+      - name: Run tests
         run: python3 -m pytest --pyargs gsd ${pytest_options} -v --log-level=DEBUG
         working-directory: ${{ runner.temp }}
         env:
