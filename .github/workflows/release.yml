@@ -1,0 +1,37 @@
+name: Release
+
+on:
+  # Trigger on pull requests.
+  pull_request:
+
+  # Trigger on pushes to the mainline branches and version tags. This prevents building commits
+  # twice when the pull request source branch is in the same repository.
+  push:
+    branches:
+      - "maint"
+      - "master"
+    tags:
+      - "v*"
+
+  # Trigger on request.
+  workflow_dispatch:
+
+env:
+  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+jobs:
+  release:
+    name: Build release tarball
+    runs-on: ubuntu-latest
+    container:
+      image: glotzerlab/ci:2021.03-ubuntu20.04
+      options: -u 0
+
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - name: Determine tag
+        run: echo "last_tag=$(git describe --abbrev=0)" >> $GITHUB_ENV
+      - run: echo ${last_tag}
+      - uses: actions/upload-artifact@v2.2.3
+        with:
+          path: ./wheelhouse/*.whl
