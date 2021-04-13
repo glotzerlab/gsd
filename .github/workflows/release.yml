@@ -29,8 +29,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2.3.4
-        fetch-depth: 0
-        submodule: true
+        with:
+          fetch-depth: 0
+          submodule: true
       - name: Determine tag
         run: echo "last_tag=$(git describe --abbrev=0)" >> $GITHUB_ENV
       - run: echo ${last_tag}
