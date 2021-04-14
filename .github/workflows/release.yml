@@ -71,7 +71,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/v')
         with:
-          files: *.tar.gz
+          files: "*.tar.gz"
           body_path: changelog.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
