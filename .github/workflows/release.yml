@@ -57,7 +57,7 @@ jobs:
             changelog.md
 
   publish:
-    name: Publish (GitHub)
+    name: Publish [GitHub]
     needs: [release]
     runs-on: ubuntu-latest
 

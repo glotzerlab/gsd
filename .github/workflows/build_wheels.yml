@@ -75,7 +75,7 @@ jobs:
           path: dist/*.tar.gz
 
   upload_pypi:
-    name: Publish
+    name: Publish [PyPI]
     needs: [build_wheels, build_sdist]
     runs-on: ubuntu-latest
 
