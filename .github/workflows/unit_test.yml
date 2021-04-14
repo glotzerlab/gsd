@@ -44,14 +44,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2.3.4
+        with:
+          path: code
       - name: Configure
-        run: mkdir -p build && cd build && cmake ../ -GNinja
+        run: mkdir -p build && cd build && cmake ../code -GNinja
       - name: Build
         run: ninja
         working-directory: build
       - name: Run tets
         run: python3 -m pytest --pyargs gsd ${pytest_options} -v --log-level=DEBUG
-        working-directory: ${{ runner.temp }}
         env:
           PYTHONPATH: ${{ github.workspace }}/build
 
@@ -64,10 +65,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2.3.4
+        with:
+          path: code
       - name: Install prereqs
-        run: python3 -m pip install -r .github/requirements-test.txt
+        run: python3 -m pip install -r code/.github/requirements-test.txt
       - name: Configure
-        run: cmake -S . -B build
+        run: cmake -S code -B build
       - name: Build
         run: cmake --build build -j 4 --config Release
       - if: runner.os == 'Windows'
@@ -76,6 +79,5 @@ jobs:
         working-directory: build
       - name: Run tests
         run: python3 -m pytest --pyargs gsd ${pytest_options} -v --log-level=DEBUG
-        working-directory: ${{ runner.temp }}
         env:
           PYTHONPATH: ${{ github.workspace }}/build
