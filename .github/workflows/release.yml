@@ -1,4 +1,4 @@
-name: Release
+name: GitHub Release
 
 on:
   # Trigger on pull requests.
@@ -57,7 +57,7 @@ jobs:
             changelog.md
 
   publish:
-    name: Publish
+    name: Publish (GitHub)
     needs: [release]
     runs-on: ubuntu-latest
 
@@ -67,10 +67,17 @@ jobs:
         with:
           name: release
 
-      - run: ls
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/v')
+        with:
+          files: *.tar.gz
+          body_path: changelog.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Slack notification
-        if: ${{ !startsWith(github.ref, 'refs/tags/v') && always() }}
+        if: startsWith(github.ref, 'refs/tags/v') && always()
         uses: act10ns/slack@v1.2.2
         with:
           status: ${{ job.status }}
