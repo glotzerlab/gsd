@@ -83,6 +83,7 @@ jobs:
         env:
           PYTHONPATH: ${{ github.workspace }}/build
 
+  # This job is used to provide a single requirement for branch merge conditions.
   tests_complete:
     name: Unit test
     if: always()
@@ -90,9 +91,4 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Slack notification
-        if: github.event == 'push' && (github.ref == 'refs/heads/maint' || github.ref == 'refs/heads/master') && (needs.unit_test_linux.result == 'failure' || needs.unit_test_other.result == 'failure')
-        uses: act10ns/slack@v1.2.2
-        with:
-          status: failure
-          channel: '#dev-gsd-notifications'
+      run: echo "Done!"

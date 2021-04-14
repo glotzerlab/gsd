@@ -38,3 +38,13 @@ jobs:
         run: cmake -B build
       - name: Execute ${{ matrix.name }}
         run: ${{ matrix.command }}
+
+  # This job is used to provide a single requirement for branch merge conditions.
+  checks_complete:
+    name: Style check
+    if: always()
+    needs: [style_checks]
+    runs-on: ubuntu-latest
+
+    steps:
+      run: echo "Done!"
