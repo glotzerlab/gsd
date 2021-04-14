@@ -34,21 +34,30 @@ jobs:
           fetch-depth: 0
           submodules: true
           path: code
-      - name: Determine tag
-        run: echo "last_tag=$(git describe --abbrev=0)" >> $GITHUB_ENV
+
+      - name: Determine last tag via git describe
+        if: ${{ ! startsWith(github.ref, 'refs/tags/v') }}
+        run: echo "tag=$(git describe --abbrev=0)" >> $GITHUB_ENV
         working-directory: code
-      - name: Determine full description
-        run: echo "description=$(git describe)" >> $GITHUB_ENV
-        working-directory: code
+
+      # git describe does not return the current tag in tag pushes on GitHub Actions, use GITHUB_REF instead
+      - name: Determine tag from GITHUB_REF
+        if:  startsWith(github.ref, 'refs/tags/v')
+        run: echo "tag=$(echo ${GITHUB_REF} | sed  -e 's/refs\/tags\///g')" >> $GITHUB_ENV
+
       - name: Write version change log
-        run: .github/workflows/make-changelog-md.sh  ${last_tag} | tee ${GITHUB_WORKSPACE}/changelog.md
+        run: .github/workflows/make-changelog-md.sh  ${tag} | tee ${GITHUB_WORKSPACE}/changelog.md
         working-directory: code
+
       - name: Copy source
-        run: cp -R code ${name}-${description}
+        run: cp -R code ${name}-${tag}
+
       - name: Remove .git
-        run: rm -rf ${name}-${description}/.git && ls -la ${name}-${description}
+        run: rm -rf ${name}-${tag}/.git && ls -laR ${name}-${tag}
+
       - name: Tar source
-        run: tar -cvzf ${name}-${description}.tar.gz ${name}-${description}
+        run: tar -cvzf ${name}-${tag}.tar.gz ${name}-${tag}
+
       - uses: actions/upload-artifact@v2.2.3
         with:
           name: release
@@ -77,7 +86,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Slack notification
-        if: startsWith(github.ref, 'refs/tags/v') && always()
+        if: startsWith(github.ref, 'refs/tags/v') && ( cancelled() || failure() )
         uses: act10ns/slack@v1.2.2
         with:
           status: ${{ job.status }}
