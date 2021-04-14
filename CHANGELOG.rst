@@ -7,6 +7,17 @@ Change Log
 v2.x
 ----
 
+v2.4.2 (2021-04-14)
+^^^^^^^^^^^^^^^^^^^
+
+*Added*
+
+* MacOS and Windows wheels on PyPI
+
+*Fixed*
+
+- Documented array shapes for angles, dihedrals, and impropers.
+
 v2.4.1 (2021-03-11)
 ^^^^^^^^^^^^^^^^^^^
 
