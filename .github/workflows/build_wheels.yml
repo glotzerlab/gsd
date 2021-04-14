@@ -49,6 +49,7 @@ jobs:
 
       - uses: actions/upload-artifact@v2.2.3
         with:
+          name: dist
           path: ./wheelhouse/*.whl
 
   build_sdist:
@@ -70,31 +71,45 @@ jobs:
 
       - uses: actions/upload-artifact@v2.2.3
         with:
+          name: dist
           path: dist/*.tar.gz
 
   upload_pypi:
-    name: Upload to PyPI
+    name: Publish [PyPI]
     needs: [build_wheels, build_sdist]
     runs-on: ubuntu-latest
 
-    # upload to PyPI on every tag starting with 'v'
-    if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v')
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v2.0.9
         with:
-          name: artifact
+          name: dist
           path: dist
 
-      - name: Upload
+      - name: Check files
+        run: ls -lR dist
+
+      - name: Upload to PyPI
+        # upload to PyPI on every tag starting with 'v'
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: pypa/gh-action-pypi-publish@v1.4.2
         with:
           user: __token__
-          password: ${{ secrets.PYPI_PASSWORD }}
+          password: ${{ secrets.PYPI_API_TOKEN }}
+
+      - name: Upload to TestPyPI
+        # otherwise, upload to TestPyPi
+        if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
+        uses: pypa/gh-action-pypi-publish@v1.4.2
+        with:
+          user: __token__
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          repository_url: https://test.pypi.org/legacy/
+          skip_existing: true
 
       - name: Slack notification
+        if: startsWith(github.ref, 'refs/tags/v') && always()
         uses: act10ns/slack@v1.2.2
         with:
           status: ${{ job.status }}
           channel: '#dev-gsd-notifications'
-        if: always()
