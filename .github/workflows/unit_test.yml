@@ -85,13 +85,13 @@ jobs:
 
   tests_complete:
     name: Unit test
-    if: github.event == 'push' && (github.ref == 'refs/heads/maint' || github.ref == 'refs/heads/master') && always()
+    if: always()
     needs: [unit_test_linux, unit_test_other]
     runs-on: ubuntu-latest
 
     steps:
       - name: Slack notification
-        if: needs.unit_test_linux.result == 'failure' || needs.unit_test_other.result == 'failure'
+        if: github.event == 'push' && (github.ref == 'refs/heads/maint' || github.ref == 'refs/heads/master') && (needs.unit_test_linux.result == 'failure' || needs.unit_test_other.result == 'failure')
         uses: act10ns/slack@v1.2.2
         with:
           status: failure
