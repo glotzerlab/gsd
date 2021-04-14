@@ -403,8 +403,8 @@ Topology
 .. chunk:: angles/group
 
     :Type: uint32
-    :Size: Nx2
-    :Default: 0,0
+    :Size: Nx3
+    :Default: 0,0,0
     :Units: number
 
     Store the particle tags in each angle.
@@ -444,8 +444,8 @@ Topology
 .. chunk:: dihedrals/group
 
     :Type: uint32
-    :Size: Nx2
-    :Default: 0,0
+    :Size: Nx4
+    :Default: 0,0,0,0
     :Units: number
 
     Store the particle tags in each dihedral.
@@ -485,8 +485,8 @@ Topology
 .. chunk:: impropers/group
 
     :Type: uint32
-    :Size: Nx2
-    :Default: 0,0
+    :Size: Nx4
+    :Default: 0,0,0,0
     :Units: number
 
     Store the particle tags in each improper.
