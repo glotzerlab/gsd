@@ -51,6 +51,7 @@ jobs:
         run: tar -cvzf ${name}-${description}.tar.gz ${name}-${description}
       - uses: actions/upload-artifact@v2.2.3
         with:
+          name: release
           path: |
             *.tar.gz
             changelog.md
@@ -64,6 +65,13 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v2.0.9
         with:
-          name: artifact
+          name: release
 
       - run: ls
+
+      - name: Slack notification
+        if: ${{ !startsWith(github.ref, 'refs/tags/v') && always() }}
+        uses: act10ns/slack@v1.2.2
+        with:
+          status: ${{ job.status }}
+          channel: '#dev-gsd-notifications'
