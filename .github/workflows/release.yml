@@ -54,3 +54,16 @@ jobs:
           path: |
             *.tar.gz
             changelog.md
+
+  publish:
+    name: Publish
+    needs: [release]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v2.0.9
+        with:
+          name: artifact
+
+      - run: ls
