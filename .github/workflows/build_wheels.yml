@@ -110,9 +110,11 @@ jobs:
         uses: 8398a7/action-slack@v3.9.0
         with:
           status: ${{ job.status }}
-          fields: workflow,job,repo,message,commit,job,took
+          fields: workflow,message,commit
           mention: channel
           if_mention: failure,cancelled
           channel: '#dev-gsd-notifications'
+          username: Github Action
+          author_name: ${{ job.name }}
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
