@@ -16,7 +16,6 @@ on:
 
 env:
   pytest_options: -p gsd.pytest_plugin_validate --validate
-  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
 defaults:
   run:

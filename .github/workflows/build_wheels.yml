@@ -16,9 +16,6 @@ on:
   # Trigger on request.
   workflow_dispatch:
 
-env:
-  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
 jobs:
   build_wheels:
     name: Build wheels on ${{ matrix.os }}
@@ -108,8 +105,14 @@ jobs:
           skip_existing: true
 
       - name: Slack notification
-        if: startsWith(github.ref, 'refs/tags/v') && always()
-        uses: act10ns/slack@v1.2.2
+        # if: startsWith(github.ref, 'refs/tags/v') && ( cancelled() || failure() )
+        if: always()
+        uses: 8398a7/action-slack@v3.9.0
         with:
           status: ${{ job.status }}
+          fields: workflow,job,repo,message,commit,job,took
+          mention: channel
+          if_mention: failure,cancelled
           channel: '#dev-gsd-notifications'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

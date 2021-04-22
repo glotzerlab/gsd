@@ -17,7 +17,6 @@ on:
   workflow_dispatch:
 
 env:
-  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
   name: gsd
 
 jobs:
@@ -86,8 +85,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Slack notification
-        if: startsWith(github.ref, 'refs/tags/v') && ( cancelled() || failure() )
-        uses: act10ns/slack@v1.2.2
+        # if: startsWith(github.ref, 'refs/tags/v') && ( cancelled() || failure() )
+        if: always()
+        uses: 8398a7/action-slack@v3.9.0
         with:
           status: ${{ job.status }}
+          fields: workflow,job,repo,message,commit,job,took
+          mention: channel
+          if_mention: failure,cancelled
           channel: '#dev-gsd-notifications'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
