@@ -51,7 +51,7 @@ jobs:
       - name: Build
         run: ninja
         working-directory: build
-      - name: Run tets
+      - name: Run tests
         run: python3 -m pytest --pyargs gsd ${pytest_options} -v --log-level=DEBUG
         env:
           PYTHONPATH: ${{ github.workspace }}/build
