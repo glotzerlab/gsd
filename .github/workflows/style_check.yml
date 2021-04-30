@@ -1,5 +1,9 @@
 name: Style check
 
+concurrency:
+  group: style_check-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   # Trigger on pull requests.
   pull_request:

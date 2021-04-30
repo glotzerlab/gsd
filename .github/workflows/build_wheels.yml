@@ -1,5 +1,9 @@
 name: PyPI
 
+concurrency:
+  group: build_wheels-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   # Trigger on pull requests.
   pull_request:
