@@ -89,7 +89,6 @@ jobs:
   # This job is used to provide a single requirement for branch merge conditions.
   tests_complete:
     name: Unit test
-    if: always()
     needs: [unit_test_linux, unit_test_other]
     runs-on: ubuntu-latest
 
