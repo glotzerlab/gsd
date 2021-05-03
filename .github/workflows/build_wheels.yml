@@ -1,7 +1,7 @@
 name: PyPI
 
 concurrency:
-  group: build_wheels-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 on:
