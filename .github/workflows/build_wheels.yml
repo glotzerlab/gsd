@@ -100,7 +100,7 @@ jobs:
 
       - name: Upload to TestPyPI
         # otherwise, upload to TestPyPi
-        if: ${{ !startsWith(github.ref, 'refs/tags/v') && (github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]') }}
+        if: ${{ !startsWith(github.ref, 'refs/tags/v') && github.event_name != 'pull_request' || (github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]') }}
         uses: pypa/gh-action-pypi-publish@v1.4.2
         with:
           user: __token__
