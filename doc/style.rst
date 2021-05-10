@@ -5,17 +5,25 @@
 Code style
 ==========
 
-All code in GSD must follow a consistent style to ensure readability.
-We provide configuration files for linters (specified below) so that developers
-can automatically validate and format files.
+All code in GSD must follow a consistent style to ensure readability. We provide configuration files
+for linters (specified below) so that developers can automatically validate and format files.
+
+These tools are configured for use with `pre-commit`_ in ``.pre-commit-config.yaml``. You can
+install pre-commit hooks to validate your code. Checks will run on pull requests. Run checks
+manually with::
+
+    pre-commit run --all-files
+
+.. _pre-commit: https://pre-commit.com/
 
 Python
 ------
 
-Python code in GSD should follow `PEP8
-<https://www.python.org/dev/peps/pep-0008>`_ with the formatting performed by
-`yapf <https://github.com/google/yapf>`_ (configuration in ``setup.cfg``).
-Code should pass all **flake8** tests and formatted by **yapf**.
+Python code in GSD should follow `PEP8`_ with the formatting performed by `yapf`_ (configuration in
+``setup.cfg``). Code should pass all **flake8** tests and formatted by **yapf**.
+
+.. _PEP8: https://www.python.org/dev/peps/pep-0008
+.. _yapf: https://github.com/google/yapf
 
 Tools
 ^^^^^
@@ -28,28 +36,26 @@ Tools
     * `flake8-docstrings <https://gitlab.com/pycqa/flake8-docstrings>`_
     * `flake8-rst-docstrings <https://github.com/peterjc/flake8-rst-docstrings>`_
 
-  * Run: ``flake8`` to see a list of linter violations.
-
+  * Configure flake8 in your editor to see violations on save.
 
 * Autoformatter: `yapf <https://github.com/google/yapf>`_
 
-  * Run: ``yapf -d -r .`` to see needed style changes.
-  * Run: ``yapf -i file.py`` to apply style changes to a whole file, or use
-    your IDE to apply **yapf** to a selection.
+  * Run: ``pre-commit run --all-files`` to apply style changes to the whole
+    repository.
 
 Documentation
 ^^^^^^^^^^^^^
 
-Python code should be documented with docstrings and added to the Sphinx
-documentation index in ``doc/``. Docstrings should follow `Google style
-<https://www.sphinx-doc.org/en/master/usage/extensions/example_google.html#example-google>`_
-formatting for use in `Napoleon
-<https://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html>`_.
+Python code should be documented with docstrings and added to the Sphinx documentation index in
+``doc/``. Docstrings should follow `Google style`_ formatting for use in `Napoleon`_.
+
+.. _Google Style: https://www.sphinx-doc.org/en/master/usage/extensions/example_google.html#example-google
+.. _Napoleon: https://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html
 
 C
 ---
 
-* Style is set by clang-format >= 10
+* Style is set by clang-format=11
 
   * Whitesmith's indentation style.
   * 100 character line width.
@@ -71,8 +77,9 @@ Tools
 
 * Autoformatter: `clang-format <https://clang.llvm.org/docs/ClangFormat.html>`_.
 
-  * Run: ``./run-clang-format.py -r .`` to see needed changes.
-  * Run: ``clang-format -i file.c`` to apply the changes.
+  * Run: ``pre-commit run --all-files --hook-stage manual`` to apply changes to
+    the whole repository. You must have a ``conda`` installation in your
+    ``PATH`` to run this.
 
 * Linter: `clang-tidy <https://clang.llvm.org/extra/clang-tidy/>`_
 
@@ -81,10 +88,9 @@ Tools
 Documentation
 ^^^^^^^^^^^^^
 
-Documentation comments should be in Javadoc format and precede the item they
-document for compatibility with Doxygen and most source code editors. Multi-line
-documentation comment blocks start with ``/**`` and single line ones start with
-``///``.
+Documentation comments should be in Javadoc format and precede the item they document for
+compatibility with Doxygen and most source code editors. Multi-line documentation comment blocks
+start with ``/**`` and single line ones start with ``///``.
 
 See :file:`gsd.h` for an example.
 
@@ -98,8 +104,8 @@ Restructured Text/Markdown files
 Other file types
 ----------------
 
-Use your best judgment and follow existing patterns when styling CMake and other
-files types. The following general guidelines apply:
+Use your best judgment and follow existing patterns when styling CMake and other files types. The
+following general guidelines apply:
 
 * 100 character line width.
 * 4 spaces per indent level.
@@ -108,6 +114,5 @@ files types. The following general guidelines apply:
 Editor configuration
 --------------------
 
-`Visual Studio Code <https://code.visualstudio.com/>`_ users: Open the provided
-workspace file (``gsd.code-workspace``) which provides configuration settings
-for these style guidelines.
+`Visual Studio Code <https://code.visualstudio.com/>`_ users: Open the provided workspace file
+(``gsd.code-workspace``) which provides configuration settings for these style guidelines.
