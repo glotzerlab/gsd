@@ -19,34 +19,32 @@ on:
   workflow_dispatch:
 
 jobs:
-  style_checks:
-    name: Run ${{ matrix.name }}
+  clang-tidy:
+    name: Run clang-tidy
     runs-on: ubuntu-latest
     container:
-      image: glotzerlab/ci:2021.03-clang10_py38
-      options: -u 0
-    strategy:
-      matrix:
-        include:
-          - name: clang_format
-            command: ./run-clang-format.py -r scripts gsd
-          - name: clang_tidy
-            command: clang-tidy -p=build gsd/*.c gsd/*.h scripts/*.cc --quiet --warnings-as-errors="*"
-          - name: flake8
-            command: flake8
-          - name: yapf
-            command: yapf -d -r .
+      image: glotzerlab/ci:2021.05-clang10_py38
     steps:
       - uses: actions/checkout@v2.3.4
       - name: Configure
         run: cmake -B build
-      - name: Execute ${{ matrix.name }}
-        run: ${{ matrix.command }}
+      - name: Execute clang-tidy
+        run: clang-tidy -p=build gsd/*.c gsd/*.h scripts/*.cc --quiet --warnings-as-errors="*"
+
+  pre-commit:
+    name: Run pre-commit
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2.3.4
+    - uses: actions/setup-python@v2.2.2
+    - uses: pre-commit/action@v2.0.3
+      with:
+        extra_args: --all-files --hook-stage manual clang-format
 
   # This job is used to provide a single requirement for branch merge conditions.
   checks_complete:
     name: Style check
-    needs: [style_checks]
+    needs: [clang-tidy, pre-commit]
     runs-on: ubuntu-latest
 
     steps:
