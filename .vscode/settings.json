@@ -37,7 +37,7 @@
         "devdoc": true,
         "dist": true,
         "doc/_build": true,
-        "doc/build": true,
+        "doc/build": true
     },
     "cSpell.words": [
         "abcdefg",
@@ -192,5 +192,5 @@
         "mkdir",
         "pyargs"
     ],
-    "C_Cpp.default.configurationProvider": "vector-of-bool.cmake-tools",
+    "C_Cpp.default.configurationProvider": "vector-of-bool.cmake-tools"
 }
