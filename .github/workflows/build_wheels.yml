@@ -107,18 +107,3 @@ jobs:
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}
           repository_url: https://test.pypi.org/legacy/
           skip_existing: true
-
-      - name: Slack notification
-        if: startsWith(github.ref, 'refs/tags/v') && always()
-        uses: 8398a7/action-slack@v3.9.0
-        with:
-          status: ${{ job.status }}
-          fields: workflow,job,message,commit
-          mention: channel
-          if_mention: failure,cancelled
-          channel: '#dev-gsd-notifications'
-          username: Github Action
-          author_name: ''
-          job_name: Publish [PyPI]
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
