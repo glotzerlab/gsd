@@ -23,7 +23,7 @@ repos:
     types_or: [python, cython]
     args:
     - --license-file=LICENSE
-    - --add="Part of GSD, released under the BSD 2-Clause License."
+    - --add=Part of GSD, released under the BSD 2-Clause License.
     - --keep-before=#!
   - id: fix-license-header
     name: Fix license headers (C)
