@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright (c) 2016-2021 The Regents of the University of Michigan
+# "Part of GSD, released under the BSD 2-Clause License."
 
 import sys
 import os
