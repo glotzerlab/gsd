@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
+# Copyright (c) 2016-2021 The Regents of the University of Michigan
+# Part of GSD, released under the BSD 2-Clause License.
 
 import sys
 import os
 import gsd
+import datetime
 
 extensions = [
     'sphinx.ext.autodoc',
@@ -23,7 +26,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 project = 'GSD'
-copyright = '2016-2021 The Regents of the University of Michigan'
+year = datetime.date.today().year
+copyright = f'2016-{ year } The Regents of the University of Michigan'
 
 version = gsd.__version__
 release = version
