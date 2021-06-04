@@ -1,1 +1,5 @@
 * @glotzerlab/gsd-maintainers
+
+# For changes to github settings, workflows, and CI, only assign maintainers
+.github @glotzerlab/gsd-maintainers
+.pre-commit-config.yaml @glotzerlab/gsd-maintainers
