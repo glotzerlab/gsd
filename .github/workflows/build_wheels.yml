@@ -48,7 +48,7 @@ jobs:
           CIBW_TEST_SKIP: "*-macosx_arm64"
           CIBW_TEST_REQUIRES: pytest
 
-      - uses: actions/upload-artifact@v2.2.3
+      - uses: actions/upload-artifact@v2.2.4
         with:
           name: dist
           path: ./wheelhouse/*.whl
@@ -70,7 +70,7 @@ jobs:
       - name: Build sdist
         run: python setup.py sdist
 
-      - uses: actions/upload-artifact@v2.2.3
+      - uses: actions/upload-artifact@v2.2.4
         with:
           name: dist
           path: dist/*.tar.gz
