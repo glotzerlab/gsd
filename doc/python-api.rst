@@ -4,8 +4,8 @@
 gsd python package
 ==================
 
-**GSD** provides a **Python** API intended for most users. Developers, or users not working with the Python language,
-may want to use the :ref:`c_api_`.
+**GSD** provides a **Python** API. Use the `gsd.hoomd` module to read and write files for
+HOOMD-blue.
 
 Submodules
 ----------
@@ -27,8 +27,8 @@ Package contents
 Logging
 -------
 
-All python modules in **GSD** use the python standard library module :py:mod:`logging` to log events. Use this module
-to control the verbosity and output destination::
+All python modules in **GSD** use the python standard library module :py:mod:`logging` to log
+events. Use this module to control the verbosity and output destination::
 
     import logging
     logging.basicConfig(level=logging.INFO)

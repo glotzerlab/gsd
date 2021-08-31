@@ -3,12 +3,11 @@
 
 """GSD reader written in pure python.
 
-:file:`pygsd.py` is a pure python implementation of a GSD reader. If your
-analysis tool is written in python and you want to embed a GSD reader without
-requiring C code compilation, then use the following python files from the
-:file:`gsd/` directory to make a pure python reader. It is not as high
-performance as the C reader, but is reasonable for files up to a few thousand
-frames.
+:file:`pygsd.py` is a pure Python implementation of a GSD reader. If your
+analysis tool is written in Python and you want to embed a GSD reader without
+requiring C code compilation or require the **gsd** Python package as a
+dependency, then use the following python files from the :file:`gsd/` directory
+to make a pure python reader. It is not as high performance as the C reader.
 
 * :file:`gsd/`
 
@@ -80,8 +79,8 @@ class GSDFile(object):
     GSDFile implements an object oriented class interface to the GSD file
     layer. Use it to open an existing file in a **read-only** mode. For
     read-write access to files, use the full featured C implementation in
-    :py:mod:`gsd.fl`. Otherwise, this implementation has all the same methods
-    and the two classes can be used interchangeably.
+    :py:mod:`gsd.fl`. Otherwise, the two implementations can be used
+    interchangeably.
 
     Examples:
         Open a file in **read-only** mode::
@@ -402,7 +401,7 @@ class GSDFile(object):
 
     @property
     def gsd_version(self):
-        """`typing.Tuple` [int, int]: GSD file layer version number.
+        """tuple[int, int]: GSD file layer version number.
 
         The tuple is in the order (major, minor).
         """
@@ -411,7 +410,7 @@ class GSDFile(object):
 
     @property
     def schema_version(self):
-        """`typing.Tuple` [int, int]: Schema version number.
+        """tuple[int, int]: Schema version number.
 
         The tuple is in the order (major, minor).
         """
