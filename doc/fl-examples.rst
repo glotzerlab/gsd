@@ -3,8 +3,8 @@
 
 .. _fl-examples:
 
-File layer
-----------
+File layer examples
+-------------------
 
 The file layer python module `gsd.fl` allows direct low level access to read and
 write **GSD** files of any schema. The **HOOMD** reader (`gsd.hoomd`) provides

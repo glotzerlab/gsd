@@ -3,8 +3,8 @@
 
 .. _hoomd-examples:
 
-HOOMD
------
+HOOMD examples
+--------------
 
 `gsd.hoomd` provides high-level access to **HOOMD** schema **GSD** files.
 
@@ -22,11 +22,10 @@ Define a snapshot
     s.particles.position = [[0,0,0],[1,1,1], [-1,-1,-1], [1,-1,-1]]
     s.configuration.box = [3, 3, 3, 0, 0, 0]
 
-`gsd.hoomd` represents the state of a single frame with an instance of
-the class `gsd.hoomd.Snapshot`. Instantiate this class to create a
-system configuration. All fields default to `None` and are only written into
-the file if not `None` and do not match the data in the first frame or
-defaults specified in the schema.
+`gsd.hoomd` represents the state of a single frame with an instance of the class
+`gsd.hoomd.Snapshot`. Instantiate this class to create a system configuration. All fields default to
+`None`. Each field is written to the file when not `None` **and** when the data does not match the
+data in the first frame or defaults specified in the schema.
 
 Create a hoomd gsd file
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -37,6 +36,8 @@ Create a hoomd gsd file
     @suppress
     f.close()
 
+Use `gsd.hoomd.open` to open a **GSD** file with the high level interface
+`gsd.hoomd.HOOMDTrajectory`.
 
 Write frames to a gsd file
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -57,13 +58,12 @@ Write frames to a gsd file
     @suppress
     f.close()
 
-Use `gsd.hoomd.open` to open a **GSD** file with the high level interface
-`gsd.hoomd.HOOMDTrajectory`. It behaves like a `list`, with
-`append <gsd.hoomd.HOOMDTrajectory.append>` and
-`extend <gsd.hoomd.HOOMDTrajectory.extend>` methods.
+`gsd.hoomd.HOOMDTrajectory` is similar to a sequence of `gsd.hoomd.Snapshot` objects. The
+`append <gsd.hoomd.HOOMDTrajectory.append>` and `extend <gsd.hoomd.HOOMDTrajectory.extend>` methods
+add frames to the trajectory.
 
 .. note:: `gsd.hoomd.HOOMDTrajectory` currently does not support files opened in
-          append mode.
+          the 'ab' mode.
 
 .. tip:: When using `extend <gsd.hoomd.HOOMDTrajectory.extend>`, pass in a
          generator or generator expression to avoid storing the entire
@@ -105,8 +105,7 @@ trajectory.
     f.close()
 
 Slicing a trajectory creates a trajectory view, which can then be queried for
-length or sliced again. Selecting individual frames from a view works exactly
-like selecting individual frames from the original trajectory object.
+length or sliced again.
 
 Pure python reader
 ^^^^^^^^^^^^^^^^^^
@@ -213,20 +212,19 @@ Use multiprocessing
 
    import multiprocessing
 
-   def cnt_part(args):
+   def count_particles(args):
       t, frame = args
       return len(t[frame].particles.position)
 
    with gsd.hoomd.open(name='test.gsd', mode='rb') as t:
       with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
-         result = pool.map(cnt_part, [(t, frame) for frame in range(len(t))])
+         result = pool.map(count_particles, [(t, frame) for frame in range(len(t))])
 
     result
 
-`gsd.hoomd.HOOMDTrajectory` can be pickled when in read mode to allow for
-multiprocessing through pythons native multiprocessing library. Here
-``cnt_part`` finds the number of particles in each frame and appends it to a
-list.
+`gsd.hoomd.HOOMDTrajectory` can be pickled when in read mode to allow for multiprocessing through
+pythons native multiprocessing library. Here ``count_particles`` finds the number of particles in
+each frame and appends it to a list.
 
 Using the command line
 ^^^^^^^^^^^^^^^^^^^^^^
