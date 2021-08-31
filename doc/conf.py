@@ -16,7 +16,11 @@ extensions = [
     'IPython.sphinxext.ipython_directive'
 ]
 
-intersphinx_mapping = {'python': ('https://docs.python.org/3', None), 'numpy': ('https://docs.scipy.org/doc/numpy', None)}
+napoleon_include_special_with_doc = True
+
+intersphinx_mapping = {'python': ('https://docs.python.org/3', None),
+                       'numpy': ('https://numpy.org/doc/stable', None),
+                       'hoomd': ('https://hoomd-blue.readthedocs.io/en/latest/', None),}
 autodoc_docstring_signature = True;
 
 templates_path = ['_templates']
