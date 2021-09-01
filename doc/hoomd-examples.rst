@@ -22,10 +22,10 @@ Define a snapshot
     s.particles.position = [[0,0,0],[1,1,1], [-1,-1,-1], [1,-1,-1]]
     s.configuration.box = [3, 3, 3, 0, 0, 0]
 
-`gsd.hoomd` represents the state of a single frame with an instance of the class
-`gsd.hoomd.Snapshot`. Instantiate this class to create a system configuration. All fields default to
-`None`. Each field is written to the file when not `None` **and** when the data does not match the
-data in the first frame or defaults specified in the schema.
+`gsd.hoomd.Snapshot` stores the state of a single system configuration, or frame, in the file.
+Instantiate this class to create a system configuration. All fields default to `None`. Each field is
+written to the file when not `None` **and** when the data does not match the data in the first frame
+or defaults specified in the schema.
 
 Create a hoomd gsd file
 ^^^^^^^^^^^^^^^^^^^^^^^

@@ -274,10 +274,12 @@ Properties
 
     All particles must be inside the box:
 
-    * :math:`x \ge -l_x/2 + (xz-xy \cdot yz) \cdot z + xy  \cdot  y` and :math:`x < l_x/2 + (xz-xy \cdot yz) \cdot z + xy  \cdot  y`
-    * :math:`y \ge -l_y/2 + yz  \cdot  z` and :math:`y < l_y/2 + yz \cdot z`
-    * :math:`z \ge -l_z/2` and :math:`z < l_z/2`
+    * :math:`-l_x/2 + (xz-xy \cdot yz) \cdot z + xy \cdot y \le x < l_x/2 + (xz-xy \cdot yz) \cdot z + xy \cdot  y`
+    * :math:`-l_y/2 + yz \cdot z \le y < l_y/2 + yz \cdot z`
+    * :math:`-l_z/2 \le z < l_z/2`
 
+    Where :math:`l_x`, :math:`l_y`, :math:`l_z`, :math:`xy`, :math:`xz`, and :math:`yz` are the
+    simulation box parameters (:chunk:`configuration/box`).
 
 .. chunk:: particles/orientation
 
