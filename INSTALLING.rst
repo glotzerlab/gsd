@@ -152,7 +152,7 @@ Release tarballs are also available on the `GitHub release pages`_.
 Install with setuptools
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-Use **pip** to install the python module into your virtual environment:
+Use **pip** to install the Python module into your virtual environment:
 
 .. code-block:: bash
 
@@ -164,7 +164,7 @@ Build with CMake for development
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 In addition to the setuptools build system. GSD also provides a `CMake`_ configuration for
-development and testing. You can assemble a functional python module in the given build directory.
+development and testing. You can assemble a functional Python module in the given build directory.
 First, configure the build with ``cmake``.
 
 .. code-block:: bash
@@ -268,7 +268,7 @@ Using the C library
 
 **gsd** is implemented in a single C file. Copy ``gsd/gsd.h`` and ``gsd/gsd.c`` into your project.
 
-Using the pure python reader
+Using the pure Python reader
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If you only need to read files, you can skip installing and just extract the module modules

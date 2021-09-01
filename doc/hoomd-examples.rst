@@ -36,8 +36,7 @@ Create a hoomd gsd file
     @suppress
     f.close()
 
-Use `gsd.hoomd.open` to open a **GSD** file with the high level interface
-`gsd.hoomd.HOOMDTrajectory`.
+Use `gsd.hoomd.open` to open a **GSD** file as a `gsd.hoomd.HOOMDTrajectory` instance.
 
 Write frames to a gsd file
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -223,8 +222,8 @@ Use multiprocessing
     result
 
 `gsd.hoomd.HOOMDTrajectory` can be pickled when in read mode to allow for multiprocessing through
-pythons native multiprocessing library. Here ``count_particles`` finds the number of particles in
-each frame and appends it to a list.
+Python's :py:mod:`multiprocessing` library. Here ``count_particles`` finds the number of particles
+in each frame and appends it to a list.
 
 Using the command line
 ^^^^^^^^^^^^^^^^^^^^^^

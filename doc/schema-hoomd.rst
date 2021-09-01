@@ -657,7 +657,7 @@ well-defined value.
 
 .. note::
 
-    HOOMD-blue versions 3.0 and newer do not write state data.
+    HOOMD-blue >= v3.0.0 do not write state data.
 
 ========================================================== ====== ========= ================
 Name                                                       Type   Size      Units

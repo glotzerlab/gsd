@@ -4,7 +4,7 @@
 """The GSD main module.
 
 The main package :py:mod:`gsd` is the root package. It holds submodules
-and does not import them. Users import the modules they need into their python
+and does not import them. Users import the modules they need into their Python
 script::
 
     import gsd.fl

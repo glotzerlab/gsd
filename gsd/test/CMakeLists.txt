@@ -1,4 +1,4 @@
-# copy python modules to the build directory to make it a working python package
+# copy Python modules to the build directory to make it a working Python package
 MACRO(copy_file file)
     add_custom_command (
         OUTPUT ${file}
