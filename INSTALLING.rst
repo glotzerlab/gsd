@@ -111,9 +111,7 @@ Install prerequisites
 
 **General requirements:**
 
-TODO: test on gcc11, clang12.
-
-* **C compiler** (tested with gcc 7-10, clang 6-11, vs2017-2019)
+* **C compiler** (tested with gcc 7-11, clang 6-12, visual studio 2019-2022)
 * **Python** >= 3.6
 * **numpy** >= 1.9.3
 * **Cython** >= 0.22
