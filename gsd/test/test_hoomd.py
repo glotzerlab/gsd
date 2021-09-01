@@ -71,7 +71,7 @@ def test_defaults(tmp_path, open_mode):
 
     with gsd.hoomd.open(name=tmp_path / "test_defaults.gsd",
                         mode=open_mode.read) as hf:
-        s = hf.read_frame(0)
+        s = hf[0]
 
         assert s.configuration.step == 0
         assert s.configuration.dimensions == 3
@@ -254,7 +254,7 @@ def test_fallback(tmp_path, open_mode):
     with gsd.hoomd.open(name=tmp_path / "test_fallback.gsd",
                         mode=open_mode.read) as hf:
         assert len(hf) == 3
-        s = hf.read_frame(0)
+        s = hf[0]
 
         assert s.configuration.step == snap0.configuration.step
         assert s.configuration.dimensions == snap0.configuration.dimensions
@@ -322,7 +322,7 @@ def test_fallback(tmp_path, open_mode):
         numpy.testing.assert_array_equal(s.log['value'], snap0.log['value'])
 
         # test that everything but position remained the same in frame 1
-        s = hf.read_frame(1)
+        s = hf[1]
 
         assert s.configuration.step == snap0.configuration.step
         assert s.configuration.dimensions == snap0.configuration.dimensions
@@ -392,7 +392,7 @@ def test_fallback(tmp_path, open_mode):
 
         # check that the third frame goes back to defaults because it has a
         # different N
-        s = hf.read_frame(2)
+        s = hf[2]
 
         assert s.particles.N == 3
         assert s.particles.types == ['q', 's']
@@ -506,7 +506,7 @@ def test_fallback2(tmp_path, open_mode):
                         mode=open_mode.read) as hf:
         assert len(hf) == 2
 
-        s = hf.read_frame(1)
+        s = hf[1]
         numpy.testing.assert_array_equal(s.particles.mass, snap0.particles.mass)
 
 
@@ -678,14 +678,14 @@ def test_state(tmp_path, open_mode):
     with gsd.hoomd.open(name=tmp_path / "test_state.gsd",
                         mode=open_mode.read) as hf:
         assert len(hf) == 2
-        s = hf.read_frame(0)
+        s = hf[0]
 
         numpy.testing.assert_array_equal(s.state['hpmc/sphere/radius'],
                                          snap0.state['hpmc/sphere/radius'])
         numpy.testing.assert_array_equal(s.state['hpmc/sphere/orientable'],
                                          snap0.state['hpmc/sphere/orientable'])
 
-        s = hf.read_frame(1)
+        s = hf[1]
 
         numpy.testing.assert_array_equal(
             s.state['hpmc/convex_polyhedron/N'],
@@ -716,7 +716,7 @@ def test_log(tmp_path, open_mode):
     with gsd.hoomd.open(name=tmp_path / "test_log.gsd",
                         mode=open_mode.read) as hf:
         assert len(hf) == 2
-        s = hf.read_frame(0)
+        s = hf[0]
 
         numpy.testing.assert_array_equal(s.log['particles/net_force'],
                                          snap0.log['particles/net_force'])
@@ -727,7 +727,7 @@ def test_log(tmp_path, open_mode):
         numpy.testing.assert_array_equal(s.log['value/pressure'],
                                          snap0.log['value/pressure'])
 
-        s = hf.read_frame(1)
+        s = hf[1]
 
         # unspecified entries pull from frame 0
         numpy.testing.assert_array_equal(s.log['particles/net_force'],

@@ -21,6 +21,7 @@ import numpy
 from collections import OrderedDict
 import logging
 import json
+import warnings
 
 try:
     from gsd import fl
@@ -711,7 +712,7 @@ class HOOMDTrajectory(object):
         # want the initial frame specified as a reference to detect if chunks
         # need to be written
         if self._initial_frame is None and len(self) > 0:
-            self.read_frame(0)
+            self._read_frame(0)
 
         for path in [
                 'configuration',
@@ -823,14 +824,21 @@ class HOOMDTrajectory(object):
         from frame 0, or initialize from default values if not in frame 0. Cache
         frame 0 data to avoid file read overhead. Return any default data as
         non-writable numpy arrays.
+
+        .. deprecated:: v2.5
         """
+        warnings.warn("Deprecated, trajectory[idx]", DeprecationWarning)
+        return self._read_frame(idx)
+
+    def _read_frame(self, idx):
+        """Implements read_frame."""
         if idx >= len(self):
             raise IndexError
 
         logger.debug('reading frame ' + str(idx) + ' from: ' + str(self.file))
 
         if self._initial_frame is None and idx != 0:
-            self.read_frame(0)
+            self._read_frame(0)
 
         snap = Snapshot()
         # read configuration first
@@ -986,7 +994,7 @@ class HOOMDTrajectory(object):
                 key += len(self)
             if key >= len(self) or key < 0:
                 raise IndexError()
-            return self.read_frame(key)
+            return self._read_frame(key)
         else:
             raise TypeError
 
