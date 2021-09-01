@@ -825,7 +825,7 @@ class HOOMDTrajectory(object):
         frame 0 data to avoid file read overhead. Return any default data as
         non-writable numpy arrays.
 
-        .. deprecated: v2.5
+        .. deprecated:: v2.5
         """
         warnings.warn("Deprecated, trajectory[idx]", DeprecationWarning)
         return self._read_frame(idx)
