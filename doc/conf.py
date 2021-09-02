@@ -6,6 +6,7 @@ import sys
 import os
 import gsd
 import datetime
+import tempfile
 
 extensions = [
     'sphinx.ext.autodoc',
@@ -53,6 +54,13 @@ def setup(app):
                         objname='Data chunk',
                         indextemplate='single: %s (data chunk)')
 
+tmpdir = tempfile.TemporaryDirectory()
+
 ###### IPython directive settings
 ipython_mplbackend = ''
-ipython_execlines = ['import gsd.fl', 'import gsd.hoomd', 'import gsd.pygsd', 'import numpy']
+ipython_execlines = ['import gsd.fl',
+                     'import gsd.hoomd',
+                     'import gsd.pygsd',
+                     'import numpy',
+                     'import os',
+                     f'os.chdir("{tmpdir.name}")']
