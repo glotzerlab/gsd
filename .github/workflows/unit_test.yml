@@ -30,11 +30,13 @@ jobs:
     name: Unit test on Linux [${{ matrix.image }}]
     runs-on: ubuntu-latest
     container:
-      image: glotzerlab/ci:2021.03-${{ matrix.image }}
+      image: glotzerlab/ci:2021.08-${{ matrix.image }}
       options: -u 0
     strategy:
       matrix:
-        image: [clang11_py39,
+        image: [clang12_py39,
+                gcc11_py39,
+                clang11_py39,
                 gcc10_py39,
                 gcc9_py38,
                 clang10_py38,
@@ -65,7 +67,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-10.15, windows-2019]
+        os: [macos-10.15, macos-11, windows-2019, windows-2022]
 
     steps:
       - uses: actions/checkout@v2.3.4

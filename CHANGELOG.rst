@@ -54,11 +54,11 @@ v2.3.0 (2020-10-30)
 *Added*
 
 * Support clang 11.
-* Support python 3.9.
+* Support Python 3.9.
 
 *Changed*
 
-* Install unit tests with the python package.
+* Install unit tests with the Python package.
 
 *Fixed*
 

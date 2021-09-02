@@ -28,7 +28,7 @@ jobs:
     name: Build release tarball
     runs-on: ubuntu-latest
     container:
-      image: glotzerlab/ci:2021.03-ubuntu20.04
+      image: glotzerlab/ci:2021.08-ubuntu20.04
       options: -u 0
 
     steps:

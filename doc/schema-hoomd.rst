@@ -16,6 +16,11 @@ when they are not present in an older version file.
 :Schema name: ``hoomd``
 :Schema version: 1.4
 
+.. seealso::
+
+    `hoomd.State` for a full description of how HOOMD interprets this
+    data.
+
 Use-cases
 ---------
 
@@ -143,7 +148,7 @@ Configuration
     to a triclinic geometry.
 
     * ``box[0:3]``: :math:`(l_x, l_y, l_z)` the box length in each direction, in length units
-    * ``box[3:]``: :math:`(xy, xz, yz)` the tilt factors, unitless values
+    * ``box[3:]``: :math:`(xy, xz, yz)` the tilt factors, dimensionless values
 
 
 Particle data
@@ -269,10 +274,12 @@ Properties
 
     All particles must be inside the box:
 
-    * :math:`x > -l_x/2 + (xz-xy \cdot yz) \cdot z + xy  \cdot  y` and :math:`x < l_x/2 + (xz-xy \cdot yz) \cdot z + xy  \cdot  y`
-    * :math:`y > -l_y/2 + yz  \cdot  z` and :math:`y < l_y/2 + yz \cdot z`
-    * :math:`z > -l_z/2` and :math:`z < l_z/2`
+    * :math:`-l_x/2 + (xz-xy \cdot yz) \cdot z + xy \cdot y \le x < l_x/2 + (xz-xy \cdot yz) \cdot z + xy \cdot  y`
+    * :math:`-l_y/2 + yz \cdot z \le y < l_y/2 + yz \cdot z`
+    * :math:`-l_z/2 \le z < l_z/2`
 
+    Where :math:`l_x`, :math:`l_y`, :math:`l_z`, :math:`xy`, :math:`xz`, and :math:`yz` are the
+    simulation box parameters (:chunk:`configuration/box`).
 
 .. chunk:: particles/orientation
 
@@ -652,9 +659,7 @@ well-defined value.
 
 .. note::
 
-    HOOMD-blue versions 3.0 and newer write state data in an application defined
-    format in ``log/*``, **not** in ``state/*``. See the HOOMD-blue
-    documentation for details on the data chunks it reads and writes.
+    HOOMD-blue >= v3.0.0 do not write state data.
 
 ========================================================== ====== ========= ================
 Name                                                       Type   Size      Units
