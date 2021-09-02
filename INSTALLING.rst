@@ -253,10 +253,9 @@ documentation.
 
 .. tip::
 
-    When using CMake builds, change to the build directory before running ``sphinx-build``::
+    When using CMake builds, set PYTHONPATH to the build directory before running ``sphinx-build``::
 
-        $ cd build/gsd
-        $ sphinx-build -b html ../../gsd/doc ../gsd-documentation
+        $ PYTHONPATH=build/gsd sphinx-build -b html gsd/doc build/gsd-documentation
 
 .. _Sphinx: https://www.sphinx-doc.org/
 
