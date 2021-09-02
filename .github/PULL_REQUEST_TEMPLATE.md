@@ -1,6 +1,7 @@
 <!-- Please confirm that your work is based on the correct branch. -->
-<!-- Bug fixes should based on *maint*. -->
-<!-- New features should based on *master*. -->
+<!-- Base backwards compatible bug fixes on `trunk-patch`. -->
+<!-- Base additional functionality on `trunk-minor`. -->
+<!-- Base API incompatible changes on `trunk-major`. -->
 
 ## Description
 
@@ -29,6 +30,6 @@ Resolves #???
 
 ## Checklist:
 
-- [ ] I have reviewed the [**Contributor Guidelines**](https://github.com/glotzerlab/gsd/blob/master/CONTRIBUTING.md).
-- [ ] I agree with the terms of the [**GSD Contributor Agreement**](https://github.com/glotzerlab/gsd/blob/master/ContributorAgreement.md).
+- [ ] I have reviewed the [**Contributor Guidelines**](https://github.com/glotzerlab/gsd/blob/trunk-patch/CONTRIBUTING.rst).
+- [ ] I agree with the terms of the [**GSD Contributor Agreement**](https://github.com/glotzerlab/gsd/blob/trunk-patch/ContributorAgreement.md).
 - [ ] My name is on the list of contributors (`doc/credits.rst`) in the pull request source branch.

@@ -12,8 +12,9 @@ on:
   # twice when the pull request source branch is in the same repository.
   push:
     branches:
-      - "maint"
-      - "master"
+      - "trunk-patch"
+      - "trunk-minor"
+      - "trunk-major"
     tags:
       - "v*"
 
