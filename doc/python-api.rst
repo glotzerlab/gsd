@@ -1,11 +1,11 @@
 .. Copyright (c) 2016-2021 The Regents of the University of Michigan
 .. Part of GSD, released under the BSD 2-Clause License.
 
-gsd python package
+gsd Python package
 ==================
 
-**GSD** provides a **Python** API intended for most users. Developers, or users not working with the Python language,
-may want to use the :ref:`c_api_`.
+**GSD** provides a **Python** API. Use the `gsd.hoomd` module to read and write files for
+HOOMD-blue.
 
 Submodules
 ----------
@@ -27,8 +27,8 @@ Package contents
 Logging
 -------
 
-All python modules in **GSD** use the python standard library module :py:mod:`logging` to log events. Use this module
-to control the verbosity and output destination::
+All Python modules in **GSD** use the Python standard library module :py:mod:`logging` to log
+events. Use this module to control the verbosity and output destination::
 
     import logging
     logging.basicConfig(level=logging.INFO)

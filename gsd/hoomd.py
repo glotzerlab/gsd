@@ -3,10 +3,7 @@
 
 """Read and write HOOMD schema GSD files.
 
-The main package :py:mod:`gsd.hoomd` is a reference implementation of the
-GSD schema ``hoomd``. It is a simple, but high performance and memory
-efficient, reader and writer for the schema. See :ref:`hoomd-examples`
-for full examples.
+:py:mod:`gsd.hoomd` reads and writes GSD files with the ``hoomd`` schema.
 
 * `open` - Open a hoomd schema GSD file.
 * `HOOMDTrajectory` - Read and write hoomd schema GSD files.
@@ -15,6 +12,9 @@ for full examples.
     * `ConfigurationData` - Store configuration data in a snapshot.
     * `ParticleData` - Store particle data in a snapshot.
     * `BondData` - Store topology data in a snapshot.
+
+See Also:
+    See :ref:`hoomd-examples` for full examples.
 """
 
 import numpy
@@ -110,10 +110,14 @@ class ParticleData(object):
     quantities in `numpy.ndarray` objects of the defined types. User created
     snapshots may provide input data that can be converted to a `numpy.ndarray`.
 
+    See Also:
+        `hoomd.State` for a full description of how HOOMD interprets this
+        data.
+
     Attributes:
         N (int): Number of particles in the snapshot (:chunk:`particles/N`).
 
-        types (`typing.List` [str]):
+        types (tuple[str]):
             Names of the particle types (:chunk:`particles/types`).
 
         position ((*N*, 3) `numpy.ndarray` of ``numpy.float32``):
@@ -149,7 +153,7 @@ class ParticleData(object):
         image ((*N*, 3) `numpy.ndarray` of ``numpy.int32``):
             Particle image (:chunk:`particles/image`).
 
-        type_shapes (`typing.List` [`typing.Dict`]): Shape specifications for
+        type_shapes (tuple[dict]): Shape specifications for
             visualizing particle types (:chunk:`particles/type_shapes`).
     """
 
@@ -248,16 +252,21 @@ class BondData(object):
     """Store bond data chunks.
 
     Use the `Snapshot.bonds`, `Snapshot.angles`, `Snapshot.dihedrals`,
-    `Snapshot.impropers`, and `Snapshot.pairs` attributes to access the bonds.
+    `Snapshot.impropers`, and `Snapshot.pairs` attributes to access the bond
+    topology.
 
     Instances resulting from file read operations will always store array
     quantities in `numpy.ndarray` objects of the defined types. User created
     snapshots may provide input data that can be converted to a `numpy.ndarray`.
 
+    See Also:
+        `hoomd.State` for a full description of how HOOMD interprets this
+        data.
+
     Note:
 
         *M* varies depending on the type of bond. `BondData` represents all
-        types of bonds.
+        types of topology connections.
 
         ======== ===
         Type     *M*
@@ -270,16 +279,17 @@ class BondData(object):
         ======== ===
 
     Attributes:
-        N (int): Number of particles in the snapshot
+        N (int): Number of bonds/angles/dihedrals/impropers/pairs in the
+          snapshot
           (:chunk:`bonds/N`, :chunk:`angles/N`, :chunk:`dihedrals/N`,
           :chunk:`impropers/N`, :chunk:`pairs/N`).
 
-        types (`typing.List` [str]): Names of the particle types
+        types (list[str]): Names of the particle types
           (:chunk:`bonds/types`, :chunk:`angles/types`,
           :chunk:`dihedrals/types`, :chunk:`impropers/types`,
           :chunk:`pairs/types`).
 
-        typeid ((*N*, 3) `numpy.ndarray` of ``numpy.uint32``):
+        typeid ((*N*,) `numpy.ndarray` of ``numpy.uint32``):
           Bond type id (:chunk:`bonds/typeid`,
           :chunk:`angles/typeid`, :chunk:`dihedrals/typeid`,
           :chunk:`impropers/typeid`, :chunk:`pairs/types`).
@@ -327,7 +337,7 @@ class BondData(object):
 
 
 class ConstraintData(object):
-    """Store constraint data chunks.
+    """Store constraint data.
 
     Use the `Snapshot.constraints` attribute to access the constraints.
 
@@ -335,8 +345,12 @@ class ConstraintData(object):
     quantities in `numpy.ndarray` objects of the defined types. User created
     snapshots may provide input data that can be converted to a `numpy.ndarray`.
 
+    See Also:
+        `hoomd.State` for a full description of how HOOMD interprets this
+        data.
+
     Attributes:
-        N (int): Number of particles in the snapshot (:chunk:`constraints/N`).
+        N (int): Number of constraints in the snapshot (:chunk:`constraints/N`).
 
         value ((*N*, ) `numpy.ndarray` of ``numpy.float32``):
             Constraint length (:chunk:`constraints/value`).
@@ -401,9 +415,9 @@ class Snapshot(object):
 
         constraints (`ConstraintData`): Distance constraints.
 
-        state (typing.Dict): State data.
+        state (dict): State data.
 
-        log (typing.Dict): Logged data (values must be `numpy.ndarray` or
+        log (dict): Logged data (values must be `numpy.ndarray` or
             `array_like`)
     """
 
@@ -683,7 +697,7 @@ class HOOMDTrajectory(object):
 
     @property
     def file(self):
-        """:class:`gsd.fl.GSDFile`: The underlying file handle."""
+        """:class:`gsd.fl.GSDFile`: The file handle."""
         return self._file
 
     def __len__(self):
@@ -805,7 +819,7 @@ class HOOMDTrajectory(object):
         Args:
             iterable: An iterable object the provides :py:class:`Snapshot`
                 instances. This could be another HOOMDTrajectory, a generator
-                that modifies snapshots, or a simple list of snapshots.
+                that modifies snapshots, or a list of snapshots.
         """
         for item in iterable:
             self.append(item)
@@ -991,7 +1005,7 @@ class HOOMDTrajectory(object):
             raise TypeError
 
     def __iter__(self):
-        """Iterate over HOOMD trajectories."""
+        """Iterate over frames in the trajectory."""
         return _HOOMDTrajectoryIterable(self, range(len(self)))
 
     def __enter__(self):
@@ -1013,8 +1027,8 @@ def open(name, mode='rb'):
         mode (str): File open mode.
 
     Returns:
-        An `HOOMDTrajectory` instance that accesses the file *name* with the
-        given mode.
+        `HOOMDTrajectory` instance that accesses the file **name** with the
+        given **mode**.
 
     Valid values for mode:
 
@@ -1035,13 +1049,13 @@ def open(name, mode='rb'):
     +------------------+---------------------------------------------+
     | ``'xb'``         | Create a gsd file exclusively and opens it  |
     |                  | for writing.                                |
-    |                  | Raise an :py:exc:`FileExistsError`          |
-    |                  | exception if it already exists.             |
+    |                  | Raise :py:exc:`FileExistsError`             |
+    |                  | if it already exists.                       |
     +------------------+---------------------------------------------+
     | ``'xb+'``        | Create a gsd file exclusively and opens it  |
     |                  | for reading and writing.                    |
-    |                  | Raise an :py:exc:`FileExistsError`          |
-    |                  | exception if it already exists.             |
+    |                  | Raise :py:exc:`FileExistsError`             |
+    |                  | if it already exists.                       |
     +------------------+---------------------------------------------+
     | ``'ab'``         | Open an existing file for writing.          |
     |                  | Does *not* create or overwrite existing     |

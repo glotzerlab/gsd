@@ -5,5 +5,5 @@ gsd.pygsd module
 ^^^^^^^^^^^^^^^^
 
 .. automodule:: gsd.pygsd
-    :synopsis: pygsd provides a GSD reader written in pure python
+    :synopsis: pygsd provides a GSD reader written in pure Python.
     :members: GSDFile

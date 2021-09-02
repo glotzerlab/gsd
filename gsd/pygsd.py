@@ -1,14 +1,13 @@
 # Copyright (c) 2016-2021 The Regents of the University of Michigan
 # Part of GSD, released under the BSD 2-Clause License.
 
-"""GSD reader written in pure python.
+"""GSD reader written in pure Python.
 
-:file:`pygsd.py` is a pure python implementation of a GSD reader. If your
-analysis tool is written in python and you want to embed a GSD reader without
-requiring C code compilation, then use the following python files from the
-:file:`gsd/` directory to make a pure python reader. It is not as high
-performance as the C reader, but is reasonable for files up to a few thousand
-frames.
+:file:`pygsd.py` is a pure Python implementation of a GSD reader. If your
+analysis tool is written in Python and you want to embed a GSD reader without
+requiring C code compilation or require the **gsd** Python package as a
+dependency, then use the following Python files from the :file:`gsd/` directory
+to make a pure Python reader. It is not as high performance as the C reader.
 
 * :file:`gsd/`
 
@@ -17,7 +16,7 @@ frames.
     * :file:`hoomd.py`
 
 
-The reader reads from file-like python objects, which may be useful for reading
+The reader reads from file-like Python objects, which may be useful for reading
 from in memory buffers, and in-database grid files, For regular files on the
 filesystem, and for writing gsd files, use :py:mod:`gsd.fl`.
 
@@ -72,7 +71,7 @@ gsd_type_mapping = {
 class GSDFile(object):
     """GSD file access interface.
 
-    Implemented in pure python and accepts any python file-like object.
+    Implemented in pure Python and accepts any Python file-like object.
 
     Args:
         file: File-like object to read.
@@ -80,8 +79,8 @@ class GSDFile(object):
     GSDFile implements an object oriented class interface to the GSD file
     layer. Use it to open an existing file in a **read-only** mode. For
     read-write access to files, use the full featured C implementation in
-    :py:mod:`gsd.fl`. Otherwise, this implementation has all the same methods
-    and the two classes can be used interchangeably.
+    :py:mod:`gsd.fl`. Otherwise, the two implementations can be used
+    interchangeably.
 
     Examples:
         Open a file in **read-only** mode::
@@ -133,7 +132,7 @@ class GSDFile(object):
             raise RuntimeError("Unsupported GSD file version: "
                                + str(self.__file))
 
-        # determine the file size (only works in python 3)
+        # determine the file size (only works in Python 3)
         self.__file.seek(0, 2)
 
         # read the namelist block into a dict for easy lookup
@@ -402,7 +401,7 @@ class GSDFile(object):
 
     @property
     def gsd_version(self):
-        """`typing.Tuple` [int, int]: GSD file layer version number.
+        """tuple[int, int]: GSD file layer version number.
 
         The tuple is in the order (major, minor).
         """
@@ -411,7 +410,7 @@ class GSDFile(object):
 
     @property
     def schema_version(self):
-        """`typing.Tuple` [int, int]: Schema version number.
+        """tuple[int, int]: Schema version number.
 
         The tuple is in the order (major, minor).
         """

@@ -641,7 +641,7 @@ def test_gsd_v1_read():
 
         check_v1_file_read(f)
 
-    # and the pure python implementation
+    # and the pure Python implementation
     with gsd.pygsd.GSDFile(
             file=open(str(test_path / 'test_gsd_v1.gsd'), mode='rb')) as f:
 
@@ -775,7 +775,7 @@ def test_gsd_v1_write(tmp_path, open_mode):
 
         check_v1_file_read(f)
 
-    # and the pure python implementation
+    # and the pure Python implementation
     with gsd.pygsd.GSDFile(
             file=open(str(tmp_path / 'test_gsd_v1.gsd'), mode='rb')) as f:
 
@@ -850,7 +850,7 @@ def test_gsd_v1_upgrade_write(tmp_path, open_mode):
 
         check_v1_file_read(f)
 
-    # and the pure python implementation
+    # and the pure Python implementation
     with gsd.pygsd.GSDFile(
             file=open(str(tmp_path / 'test_gsd_v1.gsd'), mode='rb')) as f:
 

@@ -160,7 +160,7 @@ def open(name, mode, application=None, schema=None, schema_version=None):
 
         schema (str): Name of the data schema.
 
-        schema_version (`typing.Tuple` [int, int]): Schema version number
+        schema_version (tuple[int, int]): Schema version number
             (major, minor).
 
     Valid values for mode:
@@ -182,25 +182,25 @@ def open(name, mode, application=None, schema=None, schema_version=None):
     +------------------+---------------------------------------------+
     | ``'xb'``         | Create a gsd file exclusively and opens it  |
     |                  | for writing.                                |
-    |                  | Raise an :py:exc:`FileExistsError`          |
-    |                  | exception if it already exists.             |
+    |                  | Raise :py:exc:`FileExistsError`             |
+    |                  | if it already exists.                       |
     +------------------+---------------------------------------------+
     | ``'xb+'``        | Create a gsd file exclusively and opens it  |
     |                  | for reading and writing.                    |
-    |                  | Raise an :py:exc:`FileExistsError`          |
-    |                  | exception if it already exists.             |
+    |                  | Raise :py:exc:`FileExistsError`             |
+    |                  | if it already exists.                       |
     +------------------+---------------------------------------------+
     | ``'ab'``         | Open an existing file for writing.          |
     |                  | Does *not* create or overwrite existing     |
     |                  | files.                                      |
     +------------------+---------------------------------------------+
 
-    When opening a file for reading (``'r' and 'a' modes): ``application`` and
-    ``schema_version`` are ignored and may be ``None``. When ``schema`` is not
-    ``None``, :py:func:`open` throws an exception if the
-    file's schema does not match ``schema``.
+    When opening a file for reading (``'r'`` and ``'a'`` modes): ``application``
+    and ``schema_version`` are ignored and may be ``None``. When ``schema`` is
+    not ``None``, :py:func:`open` throws an exception if the file's schema does
+    not match ``schema``.
 
-    When opening a file for writing (``'w' or 'x'`` modes): The given
+    When opening a file for writing (``'w'`` or ``'x'`` modes): The given
     ``application``, ``schema``, and ``schema_version`` are saved in the file
     and must not be None.
 
@@ -240,9 +240,28 @@ cdef class GSDFile:
 
     GSD file access interface.
 
-    GSDFile implements an object oriented class interface to the GSD file
-    layer. Use :py:func:`open` to open a GSD file and obtain a GSDFile instance.
-    :py:class:`GSDFile` can be used as a context manager.
+    Args:
+
+        name (str): Name of the open file.
+
+        mode (str): Mode of the open file.
+
+        gsd_version (tuple[int, int]): GSD file layer version number
+            (major, minor).
+
+        application (str): Name of the generating application.
+
+        schema (str): Name of the data schema.
+
+        schema_version (tuple[int, int]): Schema version number
+            (major, minor).
+
+        nframes (int): Number of frames.
+
+    :py:class:`GSDFile` implements an object oriented class interface to the GSD
+    file layer. Use :py:func:`open` to open a GSD file and obtain a
+    :py:class:`GSDFile` instance. :py:class:`GSDFile` can be used as a context
+    manager.
 
     Attributes:
 
@@ -250,14 +269,14 @@ cdef class GSDFile:
 
         mode (str): Mode of the open file.
 
-        gsd_version (`typing.Tuple` [int, int]): GSD file layer version number
+        gsd_version (tuple[int, int]): GSD file layer version number
             (major, minor).
 
         application (str): Name of the generating application.
 
         schema (str): Name of the data schema.
 
-        schema_version (`typing.Tuple` [int, int]): Schema version number
+        schema_version (tuple[int, int]): Schema version number
             (major, minor).
 
         nframes (int): Number of frames.
@@ -610,7 +629,8 @@ cdef class GSDFile:
             name (str): Name of the chunk
 
         Returns:
-            bool: True if the chunk exists in the file. False if it does not.
+            bool: ``True`` if the chunk exists in the file at the given frame.\
+              ``False`` if it does not.
 
         Example:
             .. ipython:: python
@@ -668,16 +688,15 @@ cdef class GSDFile:
             name (str): Name of the chunk
 
         Returns:
-            ``numpy.ndarray[type, ndim=?, mode='c']``: Data read from file.
-            ``type`` is determined by the chunk metadata. If the data is
-            NxM in the file and M > 1, return a 2D array. If the data is
-            Nx1, return a 1D array.
+            ``(N,M)`` or ``(N,)`` `numpy.ndarray` of ``type``: Data read from
+            file. ``N``, ``M``, and ``type`` are determined by the chunk
+            metadata. If the data is NxM in the file and M > 1, return a 2D
+            array. If the data is Nx1, return a 1D array.
 
         .. tip::
             Each call invokes a disk read and allocation of a
-            new numpy array for storage. To avoid overhead, don't call
-            :py:meth:`read_chunk()` on the same chunk repeatedly. Cache the
-            arrays instead.
+            new numpy array for storage. To avoid overhead, call
+            :py:meth:`read_chunk()` on the same chunk only once.
 
         Example:
             .. ipython:: python
@@ -813,7 +832,7 @@ cdef class GSDFile:
             match (str): Start of the chunk name to match
 
         Returns:
-            typing.List[str]: Matching chunk names
+            list[str]: Matching chunk names
 
         Example:
             .. ipython:: python
