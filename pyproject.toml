@@ -16,15 +16,12 @@ test-command = "pytest --pyargs gsd -v --log-level=DEBUG"
 test-skip = "*-macosx_arm64"
 test-requires = "pytest"
 
-[tool.cibuildwheel.linux]
 # Build only on 64-bit architectures.
 archs = ["auto64"]
 
 [tool.cibuildwheel.macos]
 # MacOS wheels for numpy on cp310 are not available (as of 2021-10-08)
-skip = "cp310-*"
-archs = ["x86_64", "arm64"]
+skip = ["pp*", "cp310-*"]
 
-[tool.cibuildwheel.windows]
-# Build only on 64-bit architectures.
-archs = ["auto64"]
+# Build for x86_64 and arm64
+archs = ["x86_64", "arm64"]
