@@ -10,6 +10,13 @@ HOOMD examples
 
 View the page source to find unformatted example code.
 
+Import the module
+^^^^^^^^^^^^^^^^^
+
+.. ipython:: python
+
+    import gsd.hoomd
+
 Define a snapshot
 ^^^^^^^^^^^^^^^^^
 

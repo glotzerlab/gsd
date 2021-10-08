@@ -3,12 +3,12 @@
 
 """The GSD main module.
 
-The main package :py:mod:`gsd` is the root package. It holds submodules
-and does not import them. Users import the modules they need into their Python
-script::
+The main package :py:mod:`gsd` is the root package. It holds the submodules
+:py:mod:`gsd.fl` and :py:mod:`gsd.hoomd`, but does not import them by default.
+You must explicitly modules before use::
 
     import gsd.fl
-    f = gsd.fl.GSDFile('filename', 'rb');
+    import gsd.hoomd
 
 Attributes:
     __version__ (str): GSD software version number. This is the version number
