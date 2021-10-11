@@ -5,9 +5,10 @@
 
 The main package :py:mod:`gsd` is the root package. It holds the submodules
 :py:mod:`gsd.fl` and :py:mod:`gsd.hoomd`, but does not import them by default.
-You must explicitly modules before use::
+You must explicitly import these modules before use::
 
     import gsd.fl
+
     import gsd.hoomd
 
 Attributes:
