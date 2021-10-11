@@ -12,6 +12,13 @@ higher level access to **HOOMD** schema files, see :ref:`hoomd-examples`.
 
 View the page source to find unformatted example code.
 
+Import the module
+^^^^^^^^^^^^^^^^^
+
+.. ipython:: python
+
+    import gsd.fl
+
 Open a gsd file
 ^^^^^^^^^^^^^^^
 
