@@ -13,12 +13,21 @@ v2.x
 v2.4.3 (not yet released)
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+*Changed*
+
+* Improved documentation.
+
+*Deprecated*
+
+- ``HOOMDTrajectory.read_frame`` - use indexing to access frames from a trajectory. Use
+  ``trajectory[index]``.
+
 v2.4.2 (2021-04-14)
 ^^^^^^^^^^^^^^^^^^^
 
 *Added*
 
-* MacOS and Windows wheels on PyPI
+* MacOS and Windows wheels on PyPI.
 
 *Fixed*
 

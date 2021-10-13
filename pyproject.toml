@@ -6,3 +6,22 @@ requires = ["setuptools>=42",
             "wheel",
             "Cython",
             "oldest-supported-numpy"]
+
+[tool.cibuildwheel]
+# Build for cpython only
+skip =  "pp*"
+
+# Test the wheels.
+test-command = "pytest --pyargs gsd -v --log-level=DEBUG"
+test-skip = "*-macosx_arm64"
+test-requires = "pytest"
+
+# Build only on 64-bit architectures.
+archs = ["auto64"]
+
+[tool.cibuildwheel.macos]
+# MacOS wheels for numpy on cp310 are not available (as of 2021-10-08)
+skip = ["pp*", "cp310-*"]
+
+# Build for x86_64 and arm64
+archs = ["x86_64", "arm64"]
