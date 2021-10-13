@@ -12,7 +12,8 @@ python:
 conda:
     environment: doc/environment.yml
 
-formats: all
+formats:
+  - htmlzip
 
 build:
   image: stable
