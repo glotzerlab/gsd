@@ -10,8 +10,8 @@ Change Log
 v2.x
 ----
 
-v2.5.0 (not yet released)
-^^^^^^^^^^^^^^^^^^^^^^^^^
+v2.5.0 (2021-10-13)
+^^^^^^^^^^^^^^^^^^^
 
 *Changed*
 
@@ -19,8 +19,8 @@ v2.5.0 (not yet released)
 
 *Deprecated*
 
-- ``HOOMDTrajectory.read_frame`` - use indexing to access frames from a trajectory. Use
-  ``trajectory[index]``.
+- ``HOOMDTrajectory.read_frame`` - use indexing (``trajectory[index]``) to access frames from a
+  trajectory.
 
 v2.4.2 (2021-04-14)
 ^^^^^^^^^^^^^^^^^^^
