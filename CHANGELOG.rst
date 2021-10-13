@@ -10,7 +10,7 @@ Change Log
 v2.x
 ----
 
-v2.4.3 (not yet released)
+v2.5.0 (not yet released)
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 *Changed*
