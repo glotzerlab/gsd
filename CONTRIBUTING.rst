@@ -44,7 +44,7 @@ __________________________________
 All contributors must agree to the Contributor Agreement before their pull request can be merged.
 
 Set your git identity
----------------------
+_____________________
 
 Git identifies every commit you make with your name and e-mail. `Set your identity`_ to correctly
 identify your work and set it identically on all systems and accounts where you make commits.
