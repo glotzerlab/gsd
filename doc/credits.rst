@@ -14,3 +14,4 @@ The following people contributed to GSD.
 * Vyas Ramasubramani, University of Michigan
 * Luis Y. Rivera-Rivera, University of Michigan
 * Brandon Butler, University of Michigan
+* Arthur Zamarin, Gentoo Linux
