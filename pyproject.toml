@@ -20,8 +20,7 @@ test-requires = "pytest"
 archs = ["auto64"]
 
 [tool.cibuildwheel.macos]
-# MacOS wheels for numpy on cp310 are not available (as of 2021-10-08)
-skip = ["pp*", "cp310-*"]
+skip = ["pp*"]
 
 # Build for x86_64 and arm64
 archs = ["x86_64", "arm64"]
