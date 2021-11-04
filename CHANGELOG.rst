@@ -10,6 +10,13 @@ Change Log
 v2.x
 ----
 
+v2.5.1 (not yet released)
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Added*
+
+* Support for Python 3.10.
+
 v2.5.0 (2021-10-13)
 ^^^^^^^^^^^^^^^^^^^
 

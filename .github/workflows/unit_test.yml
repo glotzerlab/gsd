@@ -31,12 +31,12 @@ jobs:
     name: Unit test on Linux [${{ matrix.image }}]
     runs-on: ubuntu-latest
     container:
-      image: glotzerlab/ci:2021.08-${{ matrix.image }}
+      image: glotzerlab/ci:2021.11-${{ matrix.image }}
       options: -u 0
     strategy:
       matrix:
-        image: [clang12_py39,
-                gcc11_py39,
+        image: [clang12_py310,
+                gcc11_py310,
                 clang11_py39,
                 gcc10_py39,
                 gcc9_py38,
