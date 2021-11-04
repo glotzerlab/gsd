@@ -20,7 +20,9 @@ test-requires = "pytest"
 archs = ["auto64"]
 
 [tool.cibuildwheel.macos]
-skip = ["pp*"]
-
 # Build for x86_64 and arm64
 archs = ["x86_64", "arm64"]
+
+[tool.cibuildwheel.linux]
+# dependencies do not build for musl
+skip = ["pp* *musllinux*"]
