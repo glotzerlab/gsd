@@ -35,7 +35,8 @@ jobs:
       options: -u 0
     strategy:
       matrix:
-        image: [clang12_py310,
+        image: [clang13_py310,
+                clang12_py310,
                 gcc11_py310,
                 clang11_py39,
                 gcc10_py39,
