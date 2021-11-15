@@ -76,10 +76,6 @@ Tools
 
 * Autoformatter: `clang-format <https://clang.llvm.org/docs/ClangFormat.html>`_.
 
-  * Run: ``pre-commit run --all-files --hook-stage manual`` to apply changes to
-    the whole repository. You must have a ``conda`` installation in your
-    ``PATH`` to run this.
-
 * Linter: `clang-tidy <https://clang.llvm.org/extra/clang-tidy/>`_
 
   * Compile **GSD** with **CMake** to see **clang-tidy** output.
