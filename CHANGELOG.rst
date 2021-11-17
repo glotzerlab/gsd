@@ -10,12 +10,13 @@ Change Log
 v2.x
 ----
 
-v2.5.1 (not yet released)
-^^^^^^^^^^^^^^^^^^^^^^^^^
+v2.5.1 (2021-11-17)
+^^^^^^^^^^^^^^^^^^^
 
 *Added*
 
 * Support for Python 3.10.
+* Support for clang 13.
 
 v2.5.0 (2021-10-13)
 ^^^^^^^^^^^^^^^^^^^
