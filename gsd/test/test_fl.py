@@ -906,6 +906,8 @@ def test_utf8(tmp_path):
         f.write_chunk(name='chunk1', data=data)
         f.end_frame()
 
+    assert os.path.exists(tmp_path / fname)
+
     with gsd.fl.open(name=tmp_path / fname,
                      mode='wb',
                      application='test_open',
