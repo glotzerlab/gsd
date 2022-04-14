@@ -25,22 +25,13 @@ set(PYTHON_VERSION "${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}")
 string(REPLACE "." "" _python_version_no_dots ${PYTHON_VERSION})
 
 # determine the include directory
-if (PYTHON_VERSION VERSION_GREATER 3)
-    run_python("import sysconfig\; print(sysconfig.get_path('include'))" _python_include_hint)
-    run_python("import sysconfig\; print(sysconfig.get_config_var('LIBDIR'))" _python_lib_hint)
-    run_python("import sysconfig\; print(sysconfig.get_config_var('BINDIR'))" _python_prefix_hint)
-else()
-    run_python("from distutils import sysconfig\; print sysconfig.get_python_inc()" _python_include_hint)
-    run_python("from distutils import sysconfig\; print sysconfig.PREFIX" _python_prefix_hint)
-endif()
+run_python("import sysconfig\; print(sysconfig.get_path('include'))" _python_include_hint)
+run_python("import sysconfig\; print(sysconfig.get_config_var('LIBDIR'))" _python_lib_hint)
+run_python("import sysconfig\; print(sysconfig.get_config_var('BINDIR'))" _python_prefix_hint)
 
 find_path(PYTHON_INCLUDE_DIR Python.h
           HINTS ${_python_include_hint}
           NO_DEFAULT_PATH)
-
-# determine the packages directory
-run_python("from distutils import sysconfig\; print(sysconfig.get_python_lib( plat_specific=True))" PYTHON_SYSTEM_SITE)
-run_python("import site\; print(site.USER_SITE)" PYTHON_USER_SITE)
 
 # find the python library
 # add a blank suffix to the beginning to find the Python framework
@@ -55,7 +46,8 @@ find_library(PYTHON_LIBRARY
 set(${CMAKE_FIND_LIBRARY_SUFFIXES} _old_suffixes)
 
 INCLUDE(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(Python DEFAULT_MSG PYTHON_EXECUTABLE PYTHON_LIBRARY PYTHON_INCLUDE_DIR PYTHON_SYSTEM_SITE PYTHON_USER_SITE)
+message(STATUS "Python library: ${PYTHON_LIBRARY}")
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(Python DEFAULT_MSG PYTHON_EXECUTABLE PYTHON_LIBRARY PYTHON_INCLUDE_DIR)
 
 #### Setup numpy
 if (PYTHON_VERSION VERSION_GREATER 3)
