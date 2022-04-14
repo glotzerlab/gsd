@@ -47,6 +47,7 @@ set(${CMAKE_FIND_LIBRARY_SUFFIXES} _old_suffixes)
 
 INCLUDE(FindPackageHandleStandardArgs)
 message(STATUS "Python library: ${PYTHON_LIBRARY}")
+find_package_message(python_library "Found Python library: ${PYTHON_LIBRARY}" "[${PYTHON_LIBRARY}]")
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(Python DEFAULT_MSG PYTHON_EXECUTABLE PYTHON_LIBRARY PYTHON_INCLUDE_DIR)
 
 #### Setup numpy
