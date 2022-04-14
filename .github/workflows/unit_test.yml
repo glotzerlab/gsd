@@ -69,13 +69,12 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-10.15, macos-11] #, windows-2019, windows-2022]
+        os: [macos-10.15, macos-11, windows-2019, windows-2022]
 
     steps:
       - uses: actions/checkout@v2.3.4
         with:
           path: code
-      - run: ls -l /Users/runner/hostedtoolcache/Python/3.10.4/x64/lib
       - name: Set up Python
         uses: actions/setup-python@v3.1.2
         with:
