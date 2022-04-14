@@ -1315,15 +1315,15 @@ inline static int gsd_append_name(uint16_t* id, struct gsd_handle* handle, const
     @param pathname file path using UTF-8 encoding on all platforms
     @return file descriptor
 */
-inline static int gsd_open_file(const char *pathname, int flags, int mode)
-{
+inline static int gsd_open_file(const char* pathname, int flags, int mode)
+    {
 #ifndef _WIN32
     return open(pathname, flags, mode);
 #else
     // On Windows, we call the _wopen() function, which requires converting the UTF-8 input path to
     // UTF-16 wide-character encoding.
     int count_wchars;
-    wchar_t *wpathname;
+    wchar_t* wpathname;
     int fd;
 
     // First, determine the number of wide characters needed to represent the input string.
@@ -1335,7 +1335,7 @@ inline static int gsd_open_file(const char *pathname, int flags, int mode)
     free(wpathname);
     return fd;
 #endif
-}
+    }
 
 /** @internal
     @brief Truncate the file and write a new gsd header.
@@ -1604,8 +1604,8 @@ int gsd_create(const char* fname,
 
     // create the file
     int fd = gsd_open_file(fname,
-                  O_RDWR | O_CREAT | O_TRUNC | extra_flags,
-                  S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
+                           O_RDWR | O_CREAT | O_TRUNC | extra_flags,
+                           S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
     int retval = gsd_initialize_file(fd, application, schema, schema_version);
     close(fd);
     return retval;
@@ -1649,8 +1649,8 @@ int gsd_create_and_open(struct gsd_handle* handle,
 
     // create the file
     handle->fd = gsd_open_file(fname,
-                      O_RDWR | O_CREAT | O_TRUNC | extra_flags,
-                      S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
+                               O_RDWR | O_CREAT | O_TRUNC | extra_flags,
+                               S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
     int retval = gsd_initialize_file(handle->fd, application, schema, schema_version);
     if (retval != 0)
         {
