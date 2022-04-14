@@ -38,7 +38,7 @@ find_path(PYTHON_INCLUDE_DIR Python.h
 set(_old_suffixes ${CMAKE_FIND_LIBRARY_SUFFIXES})
 set(CMAKE_FIND_LIBRARY_SUFFIXES ";${CMAKE_FIND_LIBRARY_SUFFIXES}")
 find_library(PYTHON_LIBRARY
-             NAMES python${PYTHON_VERSION} python${PYTHON_VERSION}m
+             NAMES python${PYTHON_VERSION} python${PYTHON_VERSION}m python${_python_version_no_dots}
              HINTS ${_python_lib_hint} ${_python_prefix_hint} ${_python_prefix_hint}/DLLs
              PATH_SUFFIXES lib64 lib libs
              NO_DEFAULT_PATH
