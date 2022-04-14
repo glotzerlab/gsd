@@ -327,7 +327,7 @@ extern "C"
 
     /** Create a GSD file
 
-        @param fname File name.
+        @param fname File name (UTF-8 encoded).
         @param application Generating application name (truncated to 63 chars).
         @param schema Schema name for data to be written in this GSD file (truncated to 63 chars).
         @param schema_version Version of the scheme data to be written (make with
@@ -350,7 +350,7 @@ extern "C"
     /** Create and open a GSD file
 
         @param handle Handle to open.
-        @param fname File name.
+        @param fname File name (UTF-8 encoded).
         @param application Generating application name (truncated to 63 chars).
         @param schema Schema name for data to be written in this GSD file (truncated to 63 chars).
         @param schema_version Version of the scheme data to be written (make with
@@ -384,7 +384,7 @@ extern "C"
     /** Open a GSD file
 
         @param handle Handle to open.
-        @param fname File name to open.
+        @param fname File name to open (UTF-8 encoded).
         @param flags Either GSD_OPEN_READWRITE, GSD_OPEN_READONLY, or GSD_OPEN_APPEND.
 
         @pre The file name *fname* is a GSD file.

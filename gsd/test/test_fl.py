@@ -12,6 +12,7 @@ import random
 import pathlib
 import os
 import shutil
+import sys
 
 test_path = pathlib.Path(os.path.realpath(__file__)).parent
 
@@ -890,3 +891,39 @@ def test_zero_size(tmp_path, open_mode):
         data_read = f.read_chunk(frame=0, name='data')
         assert data_read.shape == (0,)
         assert data_read.dtype == numpy.float32
+
+
+@pytest.mark.skipif(sys.version_info < (3, 7),
+                    reason="Python 3.6 fails to handle non-ascii characters.")
+def test_utf8(tmp_path):
+    """Test that the API handles UTF-8 encoding for the filename."""
+    data = numpy.array([1, 2, 3, 4, 5, 10012], dtype=numpy.int64)
+
+    fname = '中文.gsd'
+
+    with gsd.fl.open(name=tmp_path / fname,
+                     mode='xb',
+                     application='test_open',
+                     schema='none',
+                     schema_version=[1, 2]) as f:
+        f.write_chunk(name='chunk1', data=data)
+        f.end_frame()
+
+    dir_list = os.listdir(tmp_path)
+    print(dir_list)
+    assert fname in dir_list
+
+    with gsd.fl.open(name=tmp_path / fname,
+                     mode='wb',
+                     application='test_open',
+                     schema='none',
+                     schema_version=[1, 2]) as f:
+        f.write_chunk(name='chunk1', data=data)
+        f.end_frame()
+
+    with gsd.fl.open(name=tmp_path / fname,
+                     mode='rb',
+                     application='test_open',
+                     schema='none',
+                     schema_version=[1, 2]) as f:
+        f.read_chunk(0, name='chunk1')
