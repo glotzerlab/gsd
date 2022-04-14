@@ -21,7 +21,7 @@ Functions
     that location. The generated gsd file is not opened. Call
     :c:func:`gsd_open()` to open it for writing.
 
-    :param fname: File name.
+    :param fname: File name (UTF-8 encoded).
     :param application: Generating application name (truncated to 63 chars).
     :param schema: Schema name for data to be written in this GSD file
       (truncated to 63 chars).
@@ -45,7 +45,7 @@ Functions
     file at that location. Open the generated gsd file in *handle*.
 
     :param handle: Handle to open.
-    :param fname: File name.
+    :param fname: File name (UTF-8 encoded).
     :param application: Generating application name (truncated to 63 chars).
     :param schema: Schema name for data to be written in this GSD file
       (truncated to 63 chars).
@@ -71,7 +71,7 @@ Functions
     Open a GSD file and populates the handle for use by later API calls.
 
     :param handle: Handle to open.
-    :param fname: File name to open.
+    :param fname: File name to open (UTF-8 encoded).
     :param flags: Either ``GSD_OPEN_READWRITE``, ``GSD_OPEN_READONLY``, or
       ``GSD_OPEN_APPEND``.
 
