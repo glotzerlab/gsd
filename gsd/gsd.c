@@ -8,7 +8,9 @@
 #pragma warning(disable : 4996)
 
 #define GSD_USE_MMAP 0
+#define WIN32_LEAN_AND_MEAN
 #include <io.h>
+#include <windows.h>
 
 #else // linux / mac
 
@@ -83,7 +85,6 @@ enum
 // define windows wrapper functions
 #ifdef _WIN32
 #define lseek _lseeki64
-#define open _open
 #define ftruncate _chsize
 #define fsync _commit
 typedef int64_t ssize_t;
@@ -1310,6 +1311,33 @@ inline static int gsd_append_name(uint16_t* id, struct gsd_handle* handle, const
     }
 
 /** @internal
+    @brief Cross-platform wrapper for the POSIX open() system function.
+    @param pathname file path using UTF-8 encoding on all platforms
+    @return file descriptor
+*/
+inline static int gsd_open_file(const char *pathname, int flags, int mode)
+{
+#ifndef _WIN32
+    return open(pathname, flags, mode);
+#else
+    // On Windows, we call the _wopen() function, which requires converting the UTF-8 input path to
+    // UTF-16 wide-character encoding.
+    int count_wchars;
+    wchar_t *wpathname;
+    int fd;
+
+    // First, determine the number of wide characters needed to represent the input string.
+    count_wchars = MultiByteToWideChar(CP_UTF8, 0, pathname, -1, NULL, 0);
+    // Then allocate temporary wchar_t buffer and perform the string conversion.
+    wpathname = malloc(sizeof(wchar_t) * count_wchars);
+    MultiByteToWideChar(CP_UTF8, 0, pathname, -1, wpathname, count_wchars);
+    fd = _wopen(wpathname, flags, mode);
+    free(wpathname);
+    return fd;
+#endif
+}
+
+/** @internal
     @brief Truncate the file and write a new gsd header.
 
     @param fd file descriptor to initialize
@@ -1575,7 +1603,7 @@ int gsd_create(const char* fname,
 #endif
 
     // create the file
-    int fd = open(fname,
+    int fd = gsd_open_file(fname,
                   O_RDWR | O_CREAT | O_TRUNC | extra_flags,
                   S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
     int retval = gsd_initialize_file(fd, application, schema, schema_version);
@@ -1620,7 +1648,7 @@ int gsd_create_and_open(struct gsd_handle* handle,
         }
 
     // create the file
-    handle->fd = open(fname,
+    handle->fd = gsd_open_file(fname,
                       O_RDWR | O_CREAT | O_TRUNC | extra_flags,
                       S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
     int retval = gsd_initialize_file(handle->fd, application, schema, schema_version);
@@ -1651,17 +1679,17 @@ int gsd_open(struct gsd_handle* handle, const char* fname, const enum gsd_open_f
     // open the file
     if (flags == GSD_OPEN_READWRITE)
         {
-        handle->fd = open(fname, O_RDWR | extra_flags);
+        handle->fd = gsd_open_file(fname, O_RDWR | extra_flags, 0);
         handle->open_flags = GSD_OPEN_READWRITE;
         }
     else if (flags == GSD_OPEN_READONLY)
         {
-        handle->fd = open(fname, O_RDONLY | extra_flags);
+        handle->fd = gsd_open_file(fname, O_RDONLY | extra_flags, 0);
         handle->open_flags = GSD_OPEN_READONLY;
         }
     else if (flags == GSD_OPEN_APPEND)
         {
-        handle->fd = open(fname, O_RDWR | extra_flags);
+        handle->fd = gsd_open_file(fname, O_RDWR | extra_flags, 0);
         handle->open_flags = GSD_OPEN_APPEND;
         }
 
