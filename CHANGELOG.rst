@@ -10,6 +10,13 @@ Change Log
 v2.x
 ----
 
+v2.5.2 (2022-04-15)
+^^^^^^^^^^^^^^^^^^^
+
+*Fixed*
+
+* Incorrect handling of non-ASCII characters on Windows.
+
 v2.5.1 (2021-11-17)
 ^^^^^^^^^^^^^^^^^^^
 
