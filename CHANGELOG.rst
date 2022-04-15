@@ -10,6 +10,15 @@ Change Log
 v2.x
 ----
 
+v2.5.2 (2022-04-15)
+^^^^^^^^^^^^^^^^^^^
+
+*Fixed*
+
+* Correctly handle non-ASCII characters on Windows.
+* Document that the ``fname`` argument to ``gsd_`` C API functions is UTF-8
+  encoded.
+
 v2.5.1 (2021-11-17)
 ^^^^^^^^^^^^^^^^^^^
 
