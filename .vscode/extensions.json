@@ -4,10 +4,8 @@
         "twxs.cmake",
         "ms-vscode.cmake-tools",
         "streetsidesoftware.code-spell-checker",
-        "lak132.indent-to-bracket",
         "guyskk.language-cython",
         "ms-python.python",
-        "ms-azure-devops.azure-pipelines",
         "stkb.rewrap"
     ]
 }
