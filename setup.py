@@ -38,6 +38,11 @@ setup(name='gsd',
       url='https://gsd.readthedocs.io',
       download_url='http://glotzerlab.engin.umich.edu/Downloads/'
                    'gsd/gsd-v2.5.2.tar.gz',
+      project_urls={
+          "Documentation": "https://gsd.readthedocs.io",
+          "Source Code": "https://github.com/glotzerlab/gsd",
+          "Issue Tracker": "https://github.com/glotzerlab/gsd/issues",
+      },
 
       classifiers=[
           "Development Status :: 5 - Production/Stable",
