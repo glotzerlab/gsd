@@ -54,6 +54,7 @@ setup(name='gsd',
           "Topic :: Scientific/Engineering :: Physics",
           ],
 
+      install_requires=['numpy>=1.9.3'],
       python_requires='>=3.6',
       ext_modules=extensions,
       packages=['gsd', 'gsd.test'],
