@@ -36,8 +36,8 @@ setup(name='gsd',
       author='Joshua A. Anderson',
       author_email='joaander@umich.edu',
       url='https://gsd.readthedocs.io',
-      download_url='http://glotzerlab.engin.umich.edu/Downloads/'
-                   'gsd/gsd-v2.5.3.tar.gz',
+      download_url='https://github.com/glotzerlab/gsd/releases/download/v2.5.3'
+                   '/gsd-v2.5.3.tar.gz',
       project_urls={
           "Documentation": "https://gsd.readthedocs.io",
           "Source Code": "https://github.com/glotzerlab/gsd",
