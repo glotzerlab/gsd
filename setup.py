@@ -38,6 +38,11 @@ setup(name='gsd',
       url='https://gsd.readthedocs.io',
       download_url='http://glotzerlab.engin.umich.edu/Downloads/'
                    'gsd/gsd-v2.5.2.tar.gz',
+      project_urls={
+          "Documentation": "https://gsd.readthedocs.io",
+          "Source Code": "https://github.com/glotzerlab/gsd",
+          "Issue Tracker": "https://github.com/glotzerlab/gsd/issues",
+      },
 
       classifiers=[
           "Development Status :: 5 - Production/Stable",
@@ -49,8 +54,8 @@ setup(name='gsd',
           "Topic :: Scientific/Engineering :: Physics",
           ],
 
-      install_requires=['numpy>=1.9.3,<2'],
-      python_requires='~=3.6',
+      install_requires=['numpy>=1.9.3'],
+      python_requires='>=3.6',
       ext_modules=extensions,
       packages=['gsd', 'gsd.test'],
       package_data={'gsd': ['test/*.gsd']},

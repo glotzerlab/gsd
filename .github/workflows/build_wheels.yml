@@ -23,17 +23,20 @@ on:
 
 jobs:
   build_wheels:
-    name: Build wheels on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+    name: Build wheels [py${{ matrix.python_version }}, ${{ matrix.os }}]
+    runs-on: ${{ matrix.os }}-latest
     strategy:
       matrix:
-        os: [ubuntu-20.04, windows-2019, macos-10.15]
+        os: [ubuntu, windows, macos]
+        python_version: ["3.6", "3.7", "3.8", "3.9", "3.10"]
 
     steps:
       - uses: actions/checkout@v3.0.2
 
       - name: Build wheels
         uses: pypa/cibuildwheel@2.6.0
+        env:
+          CIBW_PROJECT_REQUIRES_PYTHON: "==${{ matrix.python_version }}.*"
 
       - uses: actions/upload-artifact@v3.1.0
         with:
