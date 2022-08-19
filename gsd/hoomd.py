@@ -248,6 +248,10 @@ class ParticleData(object):
             self.image = numpy.ascontiguousarray(self.image, dtype=numpy.int32)
             self.image = self.image.reshape([self.N, 3])
 
+        if (self.types is not None
+                and (not len(set(self.types)) == len(self.types))):
+            raise ValueError("Type names must be unique.")
+
 
 class BondData(object):
     """Store bond data chunks.
@@ -335,6 +339,10 @@ class BondData(object):
         if self.group is not None:
             self.group = numpy.ascontiguousarray(self.group, dtype=numpy.int32)
             self.group = self.group.reshape([self.N, self.M])
+
+        if (self.types is not None
+                and (not len(set(self.types)) == len(self.types))):
+            raise ValueError("Type names must be unique.")
 
 
 class ConstraintData(object):

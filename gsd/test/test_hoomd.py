@@ -754,3 +754,18 @@ def test_pickle(tmp_path, open_mode):
         pkl = pickle.dumps(traj)
         with pickle.loads(pkl) as hf:
             assert len(hf) == 20
+
+
+@pytest.mark.parametrize(
+    'container',
+    ['particles', 'bonds', 'angles', 'dihedrals', 'impropers', 'pairs'])
+def test_no_duplicate_types(tmp_path, container):
+    """Test that duplicate types raise an error."""
+    with gsd.hoomd.open(name=tmp_path / "test_create.gsd", mode='wb') as hf:
+
+        snap = gsd.hoomd.Snapshot()
+
+        getattr(snap, container).types = ['A', 'B', 'B', 'C']
+
+        with pytest.raises(ValueError):
+            hf.append(snap)
