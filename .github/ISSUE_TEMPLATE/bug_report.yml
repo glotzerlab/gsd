@@ -59,7 +59,7 @@ body:
       label: GSD
       description: |
         What version of GSD are you using?
-      placeholder: 2.5.3
+      placeholder: 2.6.0
     validations:
       required: true
   - type: markdown
