@@ -42,35 +42,47 @@ body:
       description: What platform are you using? Select all that apply.
       multiple: true
       options:
-        - label: Linux
-        - label: macOS
-        - label: Windows
+        - Linux
+        - macOS
+        - Windows
   - type: dropdown
     attributes:
       label: Installation method
       description: How did you install GSD?
       options:
-        - label: Conda package
-        - label: Compiled from source
-        - label: glotzerlab-software container
-        - label: PyPI package
+        - Compiled from source
+        - Conda package
+        - glotzerlab-software container
+        - PyPI package
   - type: input
     attributes:
       label: GSD
-      description: What version of GSD are you using?
-      placeholder: python3 -c "import gsd; print(gsd.__version__)"
+      description: |
+        What version of GSD are you using?
+      placeholder: 2.5.3
     validations:
       required: true
+  - type: markdown
+    attributes:
+      value: |
+        Run `python3 -c "import gsd; print(gsd.__version__)"` to find your GSD version.
   - type: input
     attributes:
       label: Python version
       description: What version of Python are you using?
-      placeholder: python3 --version"
+      placeholder: 3.10.6
+  - type: markdown
+    attributes:
+      value: |
+        Run `python3 --version` to find your Python version.
   - type: dropdown
     attributes:
       label: Developer
-      description: Who should implement the fix? We would welcome your contribution!
+      description: Who should implement the fix?
       multiple: false
       options:
-        - label: I will submit a pull request that fixes this problem.
-        - label: Would someone else please fix this?
+        - I will submit a pull request that fixes this problem.
+        - Would someone else please fix this?
+  - type: markdown
+    attributes:
+      value: We would welcome your contribution!
