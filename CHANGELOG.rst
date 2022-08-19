@@ -10,6 +10,13 @@ Change Log
 v2.x
 ----
 
+v2.6.0 (2022-08-19)
+^^^^^^^^^^^^^^^^^^^
+
+*Changed:*
+
+* Raise an error when writing a frame with duplicate types.
+
 v2.5.3 (2022-06-22)
 ^^^^^^^^^^^^^^^^^^^
 
