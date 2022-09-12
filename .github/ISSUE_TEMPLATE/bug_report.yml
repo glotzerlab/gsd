@@ -36,6 +36,8 @@ body:
     attributes:
       label: Expected output
       description: What output do you expect?
+    validations:
+      required: true
   - type: dropdown
     attributes:
       label: Platform
@@ -45,6 +47,8 @@ body:
         - Linux
         - macOS
         - Windows
+    validations:
+      required: true
   - type: dropdown
     attributes:
       label: Installation method
@@ -54,6 +58,8 @@ body:
         - Conda package
         - glotzerlab-software container
         - PyPI package
+    validations:
+      required: true
   - type: input
     attributes:
       label: GSD
@@ -71,18 +77,9 @@ body:
       label: Python version
       description: What version of Python are you using?
       placeholder: 3.10.6
+    validations:
+      required: true
   - type: markdown
     attributes:
       value: |
         Run `python3 --version` to find your Python version.
-  - type: dropdown
-    attributes:
-      label: Developer
-      description: Who should implement the fix?
-      multiple: false
-      options:
-        - I will submit a pull request that fixes this problem.
-        - Would someone else please fix this?
-  - type: markdown
-    attributes:
-      value: We would welcome your contribution!
