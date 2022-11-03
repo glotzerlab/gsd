@@ -927,3 +927,37 @@ def test_utf8(tmp_path):
                      schema='none',
                      schema_version=[1, 2]) as f:
         f.read_chunk(0, name='chunk1')
+
+
+@pytest.mark.parametrize('mode', ['wb', 'wb+', 'ab', 'rb+', 'xb', 'xb+'])
+def test_read_write(tmp_path, mode):
+    """Test that data chunks can read from files opened in all write modes."""
+    if mode[0] == 'r' or mode[0] == 'a':
+        with gsd.fl.open(name=tmp_path / 'test_read_write.gsd',
+                        mode='wb',
+                        application='test_read_write',
+                        schema='none',
+                        schema_version=[1, 2]):
+            pass
+
+    data = numpy.array([10], dtype=numpy.int64)
+    nframes = 1024
+
+    with gsd.fl.open(name=tmp_path / 'test_read_write.gsd',
+                     mode=mode,
+                     application='test_read_write',
+                     schema='none',
+                     schema_version=[1, 2]) as f:
+        assert f.mode == mode
+        for i in range(nframes):
+            data[0] = i
+            f.write_chunk(name='data1', data=data)
+            data[0] = i * 10
+            f.write_chunk(name='data10', data=data)
+            f.end_frame()
+
+        for i in range(nframes):
+            data1 = f.read_chunk(frame=i, name='data1')
+            data10 = f.read_chunk(frame=i, name='data10')
+            assert data1[0] == i
+            assert data10[0] == i * 10

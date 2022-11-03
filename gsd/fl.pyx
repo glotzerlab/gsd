@@ -173,15 +173,16 @@ def open(name, mode, application=None, schema=None, schema_version=None):
     | ``'rb+'``        | Open an existing file for reading and       |
     |                  | writing.                                    |
     +------------------+---------------------------------------------+
-    | ``'wb'``         | Open a file for writing. Creates the file   |
-    |                  | if needed, or overwrites an existing file.  |
+    | ``'wb'``         | Open a file for reading and writing.        |
+    |                  | Creates the file if needed, or overwrites   |
+    |                  | an existing file.                           |
     +------------------+---------------------------------------------+
     | ``'wb+'``        | Open a file for reading and writing.        |
     |                  | Creates the file if needed, or overwrites   |
     |                  | an existing file.                           |
     +------------------+---------------------------------------------+
     | ``'xb'``         | Create a gsd file exclusively and opens it  |
-    |                  | for writing.                                |
+    |                  | for reading and writing.                    |
     |                  | Raise :py:exc:`FileExistsError`             |
     |                  | if it already exists.                       |
     +------------------+---------------------------------------------+
@@ -190,9 +191,9 @@ def open(name, mode, application=None, schema=None, schema_version=None):
     |                  | Raise :py:exc:`FileExistsError`             |
     |                  | if it already exists.                       |
     +------------------+---------------------------------------------+
-    | ``'ab'``         | Open an existing file for writing.          |
-    |                  | Does *not* create or overwrite existing     |
-    |                  | files.                                      |
+    | ``'ab'``         | Open an existing file for reading and       |
+    |                  | writing. Does *not* create or overwrite     |
+    |                  | existing files.                             |
     +------------------+---------------------------------------------+
 
     When opening a file for reading (``'r'`` and ``'a'`` modes): ``application``
