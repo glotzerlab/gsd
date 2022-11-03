@@ -934,10 +934,10 @@ def test_read_write(tmp_path, mode):
     """Test that data chunks can read from files opened in all write modes."""
     if mode[0] == 'r' or mode[0] == 'a':
         with gsd.fl.open(name=tmp_path / 'test_read_write.gsd',
-                        mode='wb',
-                        application='test_read_write',
-                        schema='none',
-                        schema_version=[1, 2]):
+                         mode='wb',
+                         application='test_read_write',
+                         schema='none',
+                         schema_version=[1, 2]):
             pass
 
     data = numpy.array([10], dtype=numpy.int64)
