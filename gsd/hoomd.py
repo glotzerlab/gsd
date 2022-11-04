@@ -815,7 +815,8 @@ class HOOMDTrajectory(object):
                              + '/' + name)
                 return False
 
-        if numpy.array_equiv(data, container._default_value[name]):
+        if numpy.array_equiv(data, container._default_value[name]) \
+                and not self.file.chunk_exists(frame=0, name=path + '/' + name):
             logger.debug('skipping data chunk, default value: ' + path + '/'
                          + name)
             return False

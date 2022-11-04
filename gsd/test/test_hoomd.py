@@ -166,8 +166,8 @@ def test_defaults(tmp_path, open_mode):
         assert len(s.state) == 0
 
 
-def test_fallback(tmp_path, open_mode):
-    """Test that properties fall back to defaults when the N changes."""
+def make_nondefault_snapshot():
+    """Make a snapshot with all non-default values."""
     snap0 = gsd.hoomd.Snapshot()
     snap0.configuration.step = 10000
     snap0.configuration.dimensions = 2
@@ -230,10 +230,83 @@ def test_fallback(tmp_path, open_mode):
     snap0.pairs.group = [[0, 3]]
 
     snap0.log['value'] = [1, 2, 4, 10, 12, 18, 22]
+    return snap0
+
+
+def assert_snapshots_equal(s, snap0, check_position=True, check_step=True):
+    """Assert that two snapshots are equal."""
+    if check_step:
+        assert s.configuration.step == snap0.configuration.step
+
+    assert s.configuration.dimensions == snap0.configuration.dimensions
+    numpy.testing.assert_array_equal(s.configuration.box,
+                                     snap0.configuration.box)
+    assert s.particles.N == snap0.particles.N
+    assert s.particles.types == snap0.particles.types
+    assert s.particles.type_shapes == snap0.particles.type_shapes
+    numpy.testing.assert_array_equal(s.particles.typeid, snap0.particles.typeid)
+    numpy.testing.assert_array_equal(s.particles.mass, snap0.particles.mass)
+    numpy.testing.assert_array_equal(s.particles.diameter,
+                                     snap0.particles.diameter)
+    numpy.testing.assert_array_equal(s.particles.body, snap0.particles.body)
+    numpy.testing.assert_array_equal(s.particles.charge, snap0.particles.charge)
+    numpy.testing.assert_array_equal(s.particles.moment_inertia,
+                                     snap0.particles.moment_inertia)
+    if check_position:
+        numpy.testing.assert_array_equal(s.particles.position,
+                                         snap0.particles.position)
+    numpy.testing.assert_array_equal(s.particles.orientation,
+                                     snap0.particles.orientation)
+    numpy.testing.assert_array_equal(s.particles.velocity,
+                                     snap0.particles.velocity)
+    numpy.testing.assert_array_equal(s.particles.angmom, snap0.particles.angmom)
+    numpy.testing.assert_array_equal(s.particles.image, snap0.particles.image)
+
+    assert s.bonds.N == snap0.bonds.N
+    assert s.bonds.types == snap0.bonds.types
+    numpy.testing.assert_array_equal(s.bonds.typeid, snap0.bonds.typeid)
+    numpy.testing.assert_array_equal(s.bonds.group, snap0.bonds.group)
+
+    assert s.angles.N == snap0.angles.N
+    assert s.angles.types == snap0.angles.types
+    numpy.testing.assert_array_equal(s.angles.typeid, snap0.angles.typeid)
+    numpy.testing.assert_array_equal(s.angles.group, snap0.angles.group)
+
+    assert s.dihedrals.N == snap0.dihedrals.N
+    assert s.dihedrals.types == snap0.dihedrals.types
+    numpy.testing.assert_array_equal(s.dihedrals.typeid, snap0.dihedrals.typeid)
+    numpy.testing.assert_array_equal(s.dihedrals.group, snap0.dihedrals.group)
+
+    assert s.impropers.N == snap0.impropers.N
+    assert s.impropers.types == snap0.impropers.types
+    numpy.testing.assert_array_equal(s.impropers.typeid, snap0.impropers.typeid)
+    numpy.testing.assert_array_equal(s.impropers.group, snap0.impropers.group)
+
+    assert s.constraints.N == snap0.constraints.N
+    numpy.testing.assert_array_equal(s.constraints.value,
+                                     snap0.constraints.value)
+    numpy.testing.assert_array_equal(s.constraints.group,
+                                     snap0.constraints.group)
+
+    assert s.pairs.N == snap0.pairs.N
+    assert s.pairs.types == snap0.pairs.types
+    numpy.testing.assert_array_equal(s.pairs.typeid, snap0.pairs.typeid)
+    numpy.testing.assert_array_equal(s.pairs.group, snap0.pairs.group)
+
+
+def test_fallback(tmp_path, open_mode):
+    """Test that properties fall back to defaults when the N changes."""
+    snap0 = make_nondefault_snapshot()
 
     snap1 = gsd.hoomd.Snapshot()
     snap1.particles.N = 2
     snap1.particles.position = [[-2, -1, 0], [1, 3.0, 0.5]]
+    snap1.bonds.N = None
+    snap1.angles.N = None
+    snap1.dihedrals.N = None
+    snap1.impropers.N = None
+    snap1.constraints.N = None
+    snap1.pairs.N = None
 
     snap2 = gsd.hoomd.Snapshot()
     snap2.particles.N = 3
@@ -256,137 +329,14 @@ def test_fallback(tmp_path, open_mode):
         assert len(hf) == 3
         s = hf[0]
 
-        assert s.configuration.step == snap0.configuration.step
-        assert s.configuration.dimensions == snap0.configuration.dimensions
-        numpy.testing.assert_array_equal(s.configuration.box,
-                                         snap0.configuration.box)
-        assert s.particles.N == snap0.particles.N
-        assert s.particles.types == snap0.particles.types
-        assert s.particles.type_shapes == snap0.particles.type_shapes
-        numpy.testing.assert_array_equal(s.particles.typeid,
-                                         snap0.particles.typeid)
-        numpy.testing.assert_array_equal(s.particles.mass, snap0.particles.mass)
-        numpy.testing.assert_array_equal(s.particles.diameter,
-                                         snap0.particles.diameter)
-        numpy.testing.assert_array_equal(s.particles.body, snap0.particles.body)
-        numpy.testing.assert_array_equal(s.particles.charge,
-                                         snap0.particles.charge)
-        numpy.testing.assert_array_equal(s.particles.moment_inertia,
-                                         snap0.particles.moment_inertia)
-        numpy.testing.assert_array_equal(s.particles.position,
-                                         snap0.particles.position)
-        numpy.testing.assert_array_equal(s.particles.orientation,
-                                         snap0.particles.orientation)
-        numpy.testing.assert_array_equal(s.particles.velocity,
-                                         snap0.particles.velocity)
-        numpy.testing.assert_array_equal(s.particles.angmom,
-                                         snap0.particles.angmom)
-        numpy.testing.assert_array_equal(s.particles.image,
-                                         snap0.particles.image)
-
-        assert s.bonds.N == snap0.bonds.N
-        assert s.bonds.types == snap0.bonds.types
-        numpy.testing.assert_array_equal(s.bonds.typeid, snap0.bonds.typeid)
-        numpy.testing.assert_array_equal(s.bonds.group, snap0.bonds.group)
-
-        assert s.angles.N == snap0.angles.N
-        assert s.angles.types == snap0.angles.types
-        numpy.testing.assert_array_equal(s.angles.typeid, snap0.angles.typeid)
-        numpy.testing.assert_array_equal(s.angles.group, snap0.angles.group)
-
-        assert s.dihedrals.N == snap0.dihedrals.N
-        assert s.dihedrals.types == snap0.dihedrals.types
-        numpy.testing.assert_array_equal(s.dihedrals.typeid,
-                                         snap0.dihedrals.typeid)
-        numpy.testing.assert_array_equal(s.dihedrals.group,
-                                         snap0.dihedrals.group)
-
-        assert s.impropers.N == snap0.impropers.N
-        assert s.impropers.types == snap0.impropers.types
-        numpy.testing.assert_array_equal(s.impropers.typeid,
-                                         snap0.impropers.typeid)
-        numpy.testing.assert_array_equal(s.impropers.group,
-                                         snap0.impropers.group)
-
-        assert s.constraints.N == snap0.constraints.N
-        numpy.testing.assert_array_equal(s.constraints.value,
-                                         snap0.constraints.value)
-        numpy.testing.assert_array_equal(s.constraints.group,
-                                         snap0.constraints.group)
-
-        assert s.pairs.N == snap0.pairs.N
-        assert s.pairs.types == snap0.pairs.types
-        numpy.testing.assert_array_equal(s.pairs.typeid, snap0.pairs.typeid)
-        numpy.testing.assert_array_equal(s.pairs.group, snap0.pairs.group)
+        assert_snapshots_equal(s, snap0)
         assert 'value' in s.log
         numpy.testing.assert_array_equal(s.log['value'], snap0.log['value'])
 
         # test that everything but position remained the same in frame 1
         s = hf[1]
 
-        assert s.configuration.step == snap0.configuration.step
-        assert s.configuration.dimensions == snap0.configuration.dimensions
-        numpy.testing.assert_array_equal(s.configuration.box,
-                                         snap0.configuration.box)
-        assert s.particles.N == snap0.particles.N
-        assert s.particles.types == snap0.particles.types
-        assert s.particles.type_shapes == snap0.particles.type_shapes
-        numpy.testing.assert_array_equal(s.particles.typeid,
-                                         snap0.particles.typeid)
-        numpy.testing.assert_array_equal(s.particles.mass, snap0.particles.mass)
-        numpy.testing.assert_array_equal(s.particles.diameter,
-                                         snap0.particles.diameter)
-        numpy.testing.assert_array_equal(s.particles.body, snap0.particles.body)
-        numpy.testing.assert_array_equal(s.particles.charge,
-                                         snap0.particles.charge)
-        numpy.testing.assert_array_equal(s.particles.moment_inertia,
-                                         snap0.particles.moment_inertia)
-        numpy.testing.assert_array_equal(s.particles.position,
-                                         snap1.particles.position)
-        numpy.testing.assert_array_equal(s.particles.orientation,
-                                         snap0.particles.orientation)
-        numpy.testing.assert_array_equal(s.particles.velocity,
-                                         snap0.particles.velocity)
-        numpy.testing.assert_array_equal(s.particles.angmom,
-                                         snap0.particles.angmom)
-        numpy.testing.assert_array_equal(s.particles.image,
-                                         snap0.particles.image)
-
-        assert s.bonds.N == snap0.bonds.N
-        assert s.bonds.types == snap0.bonds.types
-        numpy.testing.assert_array_equal(s.bonds.typeid, snap0.bonds.typeid)
-        numpy.testing.assert_array_equal(s.bonds.group, snap0.bonds.group)
-
-        assert s.angles.N == snap0.angles.N
-        assert s.angles.types == snap0.angles.types
-        numpy.testing.assert_array_equal(s.angles.typeid, snap0.angles.typeid)
-        numpy.testing.assert_array_equal(s.angles.group, snap0.angles.group)
-
-        assert s.dihedrals.N == snap0.dihedrals.N
-        assert s.dihedrals.types == snap0.dihedrals.types
-        numpy.testing.assert_array_equal(s.dihedrals.typeid,
-                                         snap0.dihedrals.typeid)
-        numpy.testing.assert_array_equal(s.dihedrals.group,
-                                         snap0.dihedrals.group)
-
-        assert s.impropers.N == snap0.impropers.N
-        assert s.impropers.types == snap0.impropers.types
-        numpy.testing.assert_array_equal(s.impropers.typeid,
-                                         snap0.impropers.typeid)
-        numpy.testing.assert_array_equal(s.impropers.group,
-                                         snap0.impropers.group)
-
-        assert s.constraints.N == snap0.constraints.N
-        numpy.testing.assert_array_equal(s.constraints.value,
-                                         snap0.constraints.value)
-        numpy.testing.assert_array_equal(s.constraints.group,
-                                         snap0.constraints.group)
-
-        assert s.pairs.N == snap0.pairs.N
-        assert s.pairs.types == snap0.pairs.types
-        numpy.testing.assert_array_equal(s.pairs.typeid, snap0.pairs.typeid)
-        numpy.testing.assert_array_equal(s.pairs.group, snap0.pairs.group)
-
+        assert_snapshots_equal(s, snap0, check_position=False)
         assert 'value' in s.log
         numpy.testing.assert_array_equal(s.log['value'], snap0.log['value'])
 
@@ -485,18 +435,19 @@ def test_fallback(tmp_path, open_mode):
         numpy.testing.assert_array_equal(s.log['value'], snap0.log['value'])
 
 
-def test_fallback2(tmp_path, open_mode):
-    """Test additional fallback behaviors."""
-    snap0 = gsd.hoomd.Snapshot()
-    snap0.configuration.step = 1
-    snap0.configuration.dimensions = 3
-    snap0.particles.N = 2
-    snap0.particles.mass = [2, 3]
+def test_fallback_to_frame0(tmp_path, open_mode):
+    """Test that missing entries fall back to data in frame when N matches."""
+    snap0 = make_nondefault_snapshot()
 
     snap1 = gsd.hoomd.Snapshot()
-    snap1.configuration.step = 2
-    snap1.particles.N = 2
-    snap1.particles.position = [[1, 2, 3], [4, 5, 6]]
+    snap1.configuration.step = 200000
+    snap1.particles.N = None
+    snap1.bonds.N = None
+    snap1.angles.N = None
+    snap1.dihedrals.N = None
+    snap1.impropers.N = None
+    snap1.constraints.N = None
+    snap1.pairs.N = None
 
     with gsd.hoomd.open(name=tmp_path / "test_fallback2.gsd",
                         mode=open_mode.write) as hf:
@@ -507,7 +458,75 @@ def test_fallback2(tmp_path, open_mode):
         assert len(hf) == 2
 
         s = hf[1]
-        numpy.testing.assert_array_equal(s.particles.mass, snap0.particles.mass)
+        assert s.configuration.step == snap1.configuration.step
+        assert_snapshots_equal(s, snap0, check_step=False)
+        assert 'value' in s.log
+        numpy.testing.assert_array_equal(s.log['value'], snap0.log['value'])
+
+
+def test_no_fallback(tmp_path, open_mode):
+    """Test that writes of default quantities do not fall back to frame 0."""
+    snap0 = make_nondefault_snapshot()
+
+    snap1 = gsd.hoomd.Snapshot()
+    snap1.configuration.step = 200000
+    snap1.configuration.dimensions = 3
+    snap1.configuration.box = [1, 1, 1, 0, 0, 0]
+    snap1.particles.N = snap0.particles.N
+    snap1.particles.types = ['A']
+    snap1.particles.typeid = [0] * snap0.particles.N
+    snap1.particles.type_shapes = [{}]
+    snap1.particles.mass = [1.0] * snap0.particles.N
+    snap1.particles.charge = [0.0] * snap0.particles.N
+    snap1.particles.diameter = [1.0] * snap0.particles.N
+    snap1.particles.body = [-1] * snap0.particles.N
+    snap1.particles.moment_inertia = [[0, 0, 0]] * snap0.particles.N
+    snap1.particles.position = [[0, 0, 0]] * snap0.particles.N
+    snap1.particles.orientation = [[1, 0, 0, 0]] * snap0.particles.N
+    snap1.particles.velocity = [[0, 0, 0]] * snap0.particles.N
+    snap1.particles.angmom = [[0, 0, 0, 0]] * snap0.particles.N
+    snap1.particles.image = [[0, 0, 0]] * snap0.particles.N
+
+    snap1.bonds.N = snap0.bonds.N
+    snap1.bonds.types = ['A']
+    snap1.bonds.typeid = [0] * snap0.bonds.N
+    snap1.bonds.group = [[0, 0]] * snap0.bonds.N
+
+    snap1.angles.N = snap0.angles.N
+    snap1.angles.types = ['A']
+    snap1.angles.typeid = [0] * snap0.angles.N
+    snap1.angles.group = [[0, 0, 0]] * snap0.angles.N
+
+    snap1.dihedrals.N = snap0.dihedrals.N
+    snap1.dihedrals.types = ['A']
+    snap1.dihedrals.typeid = [0] * snap0.dihedrals.N
+    snap1.dihedrals.group = [[0, 0, 0, 0]] * snap0.dihedrals.N
+
+    snap1.impropers.N = snap0.impropers.N
+    snap1.impropers.types = ['A']
+    snap1.impropers.typeid = [0] * snap0.impropers.N
+    snap1.impropers.group = [[0, 0, 0, 0]] * snap0.impropers.N
+
+    snap1.constraints.N = snap0.constraints.N
+    snap1.constraints.value = [0] * snap0.constraints.N
+    snap1.constraints.group = [[0, 0]] * snap0.constraints.N
+
+    snap1.pairs.N = snap0.pairs.N
+    snap1.pairs.types = ['A']
+    snap1.pairs.typeid = [0] * snap0.pairs.N
+    snap1.pairs.group = [[0, 0]] * snap0.pairs.N
+
+    with gsd.hoomd.open(name=tmp_path / "test_no_fallback.gsd",
+                        mode=open_mode.write) as hf:
+        hf.extend([snap0, snap1])
+
+    with gsd.hoomd.open(name=tmp_path / "test_no_fallback.gsd",
+                        mode=open_mode.read) as hf:
+        assert len(hf) == 2
+
+        s = hf[1]
+        assert s.configuration.step == snap1.configuration.step
+        assert_snapshots_equal(s, snap1)
 
 
 def test_iteration(tmp_path, open_mode):
