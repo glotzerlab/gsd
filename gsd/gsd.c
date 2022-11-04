@@ -2077,10 +2077,6 @@ gsd_find_chunk(struct gsd_handle* handle, uint64_t frame, const char* name)
         {
         return NULL;
         }
-    if (handle->open_flags == GSD_OPEN_APPEND)
-        {
-        return NULL;
-        }
 
     // find the id for the given name
     uint16_t match_id = gsd_name_id_map_find(&handle->name_map, name);
@@ -2170,10 +2166,6 @@ int gsd_read_chunk(struct gsd_handle* handle, void* data, const struct gsd_index
     if (chunk == NULL)
         {
         return GSD_ERROR_INVALID_ARGUMENT;
-        }
-    if (handle->open_flags == GSD_OPEN_APPEND)
-        {
-        return GSD_ERROR_FILE_MUST_BE_READABLE;
         }
 
     size_t size = chunk->N * chunk->M * gsd_sizeof_type((enum gsd_type)chunk->type);
