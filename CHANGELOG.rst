@@ -10,6 +10,15 @@ Change Log
 v2.x
 ----
 
+v2.6.1 (2022-11-04)
+^^^^^^^^^^^^^^^^^^^
+
+*Fixed:*
+
+* Default values are now written to frame N (N != 0) when non-default values
+  exist in frame 0.
+* Data chunks can now be read from files opened in 'wb', 'xb', and 'ab' modes.
+
 v2.6.0 (2022-08-19)
 ^^^^^^^^^^^^^^^^^^^
 
