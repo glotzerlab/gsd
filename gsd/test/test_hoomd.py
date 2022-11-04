@@ -234,36 +234,33 @@ def make_nondefault_snapshot():
 
 
 def assert_snapshots_equal(s, snap0, check_position=True, check_step=True):
+    """Assert that two snapshots are equal."""
     if check_step:
         assert s.configuration.step == snap0.configuration.step
 
     assert s.configuration.dimensions == snap0.configuration.dimensions
     numpy.testing.assert_array_equal(s.configuration.box,
-                                        snap0.configuration.box)
+                                     snap0.configuration.box)
     assert s.particles.N == snap0.particles.N
     assert s.particles.types == snap0.particles.types
     assert s.particles.type_shapes == snap0.particles.type_shapes
-    numpy.testing.assert_array_equal(s.particles.typeid,
-                                        snap0.particles.typeid)
+    numpy.testing.assert_array_equal(s.particles.typeid, snap0.particles.typeid)
     numpy.testing.assert_array_equal(s.particles.mass, snap0.particles.mass)
     numpy.testing.assert_array_equal(s.particles.diameter,
-                                        snap0.particles.diameter)
+                                     snap0.particles.diameter)
     numpy.testing.assert_array_equal(s.particles.body, snap0.particles.body)
-    numpy.testing.assert_array_equal(s.particles.charge,
-                                        snap0.particles.charge)
+    numpy.testing.assert_array_equal(s.particles.charge, snap0.particles.charge)
     numpy.testing.assert_array_equal(s.particles.moment_inertia,
-                                        snap0.particles.moment_inertia)
+                                     snap0.particles.moment_inertia)
     if check_position:
         numpy.testing.assert_array_equal(s.particles.position,
-                                            snap0.particles.position)
+                                         snap0.particles.position)
     numpy.testing.assert_array_equal(s.particles.orientation,
-                                        snap0.particles.orientation)
+                                     snap0.particles.orientation)
     numpy.testing.assert_array_equal(s.particles.velocity,
-                                        snap0.particles.velocity)
-    numpy.testing.assert_array_equal(s.particles.angmom,
-                                        snap0.particles.angmom)
-    numpy.testing.assert_array_equal(s.particles.image,
-                                        snap0.particles.image)
+                                     snap0.particles.velocity)
+    numpy.testing.assert_array_equal(s.particles.angmom, snap0.particles.angmom)
+    numpy.testing.assert_array_equal(s.particles.image, snap0.particles.image)
 
     assert s.bonds.N == snap0.bonds.N
     assert s.bonds.types == snap0.bonds.types
@@ -277,23 +274,19 @@ def assert_snapshots_equal(s, snap0, check_position=True, check_step=True):
 
     assert s.dihedrals.N == snap0.dihedrals.N
     assert s.dihedrals.types == snap0.dihedrals.types
-    numpy.testing.assert_array_equal(s.dihedrals.typeid,
-                                        snap0.dihedrals.typeid)
-    numpy.testing.assert_array_equal(s.dihedrals.group,
-                                        snap0.dihedrals.group)
+    numpy.testing.assert_array_equal(s.dihedrals.typeid, snap0.dihedrals.typeid)
+    numpy.testing.assert_array_equal(s.dihedrals.group, snap0.dihedrals.group)
 
     assert s.impropers.N == snap0.impropers.N
     assert s.impropers.types == snap0.impropers.types
-    numpy.testing.assert_array_equal(s.impropers.typeid,
-                                        snap0.impropers.typeid)
-    numpy.testing.assert_array_equal(s.impropers.group,
-                                        snap0.impropers.group)
+    numpy.testing.assert_array_equal(s.impropers.typeid, snap0.impropers.typeid)
+    numpy.testing.assert_array_equal(s.impropers.group, snap0.impropers.group)
 
     assert s.constraints.N == snap0.constraints.N
     numpy.testing.assert_array_equal(s.constraints.value,
-                                        snap0.constraints.value)
+                                     snap0.constraints.value)
     numpy.testing.assert_array_equal(s.constraints.group,
-                                        snap0.constraints.group)
+                                     snap0.constraints.group)
 
     assert s.pairs.N == snap0.pairs.N
     assert s.pairs.types == snap0.pairs.types
