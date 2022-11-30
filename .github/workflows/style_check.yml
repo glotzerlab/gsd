@@ -24,7 +24,7 @@ jobs:
     name: Run clang-tidy
     runs-on: ubuntu-latest
     container:
-      image: glotzerlab/ci:2021.11-clang10_py38
+      image: glotzerlab/ci:2022.11-clang14_py311
     steps:
       - uses: actions/checkout@v3.1.0
       - name: Configure
