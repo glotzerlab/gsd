@@ -36,7 +36,7 @@ int main(int argc, char** argv) // NOLINT
         {
         for (auto const& name : names)
             {
-            gsd_write_chunk(&handle, name.c_str(), GSD_TYPE_DOUBLE, key_size, 1, 0, &data[0]);
+            gsd_write_chunk(&handle, name.c_str(), GSD_TYPE_DOUBLE, key_size, 1, 0, data.data());
             }
         gsd_end_frame(&handle);
         }
@@ -48,7 +48,7 @@ int main(int argc, char** argv) // NOLINT
         {
         for (auto const& name : names)
             {
-            gsd_write_chunk(&handle, name.c_str(), GSD_TYPE_DOUBLE, key_size, 1, 0, &data[0]);
+            gsd_write_chunk(&handle, name.c_str(), GSD_TYPE_DOUBLE, key_size, 1, 0, data.data());
             }
         gsd_end_frame(&handle);
         }
