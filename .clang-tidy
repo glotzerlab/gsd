@@ -7,4 +7,9 @@ Checks: 'bugprone-*,
          performance-*,
          readability-*,
          -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,
-         -modernize-use-trailing-return-type'
+         -modernize-use-trailing-return-type,
+         -readability-identifier-length,
+         -bugprone-reserved-identifier,
+         -bugprone-easily-swappable-parameters,
+         -readability-function-cognitive-complexity'
+
