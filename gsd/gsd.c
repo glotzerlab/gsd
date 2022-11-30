@@ -147,7 +147,7 @@ inline static void gsd_util_zero_memory(void* d, size_t size_to_zero)
 */
 inline static ssize_t gsd_io_pwrite_retry(int fd, const void* buf, size_t count, int64_t offset)
     {
-    ssize_t total_bytes_written = 0;
+    size_t total_bytes_written = 0;
     const char* ptr = (char*)buf;
 
     // perform multiple pwrite calls to complete a large write successfully
@@ -189,7 +189,7 @@ inline static ssize_t gsd_io_pwrite_retry(int fd, const void* buf, size_t count,
 */
 inline static ssize_t gsd_io_pread_retry(int fd, void* buf, size_t count, int64_t offset)
     {
-    ssize_t total_bytes_read = 0;
+    size_t total_bytes_read = 0;
     char* ptr = (char*)buf;
 
     // perform multiple pread calls to complete a large write successfully
@@ -609,7 +609,7 @@ inline static int gsd_index_buffer_map(struct gsd_index_buffer* buf, struct gsd_
     // map the index in read only mode
     size_t page_size = getpagesize();
     size_t index_size = sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries;
-    ssize_t offset = (handle->header.index_location / page_size) * page_size;
+    size_t offset = (handle->header.index_location / page_size) * page_size;
     buf->mapped_data = mmap(NULL,
                             index_size + (handle->header.index_location - offset),
                             PROT_READ,
@@ -811,7 +811,7 @@ inline static int gsd_cmp_index_entry(const struct gsd_index_entry* a,
     @brief Compute heap parent node.
     @param i Node index.
 */
-inline static ssize_t gsd_heap_parent(ssize_t i)
+inline static size_t gsd_heap_parent(size_t i)
     {
     return (i - 1) / 2;
     }
@@ -820,7 +820,7 @@ inline static ssize_t gsd_heap_parent(ssize_t i)
     @brief Compute heap left child.
     @param i Node index.
 */
-inline static ssize_t gsd_heap_left_child(ssize_t i)
+inline static size_t gsd_heap_left_child(size_t i)
     {
     return 2 * i + 1;
     }
@@ -963,8 +963,8 @@ inline static int gsd_expand_file_index(struct gsd_handle* handle, size_t size_r
 
     // write the current index to the end of the file
     int64_t new_index_location = lseek(handle->fd, 0, SEEK_END);
-    int64_t old_index_location = int64_t(handle->header.index_location);
-    ssize_t total_bytes_written = 0;
+    int64_t old_index_location = handle->header.index_location;
+    size_t total_bytes_written = 0;
     size_t old_index_bytes = size_old * sizeof(struct gsd_index_entry);
     while (total_bytes_written < old_index_bytes)
         {
@@ -2002,7 +2002,7 @@ int gsd_write_chunk(struct gsd_handle* handle,
             gsd_flush_write_buffer(handle);
             }
 
-        entry.location = int64_t(handle->write_buffer.size);
+        entry.location = handle->write_buffer.size;
 
         // add an entry to the buffer index
         struct gsd_index_entry* index_entry;

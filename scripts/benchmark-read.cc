@@ -44,7 +44,7 @@ int main(int argc, char** argv) // NOLINT
                 {
                 data.resize(e->N * e->M * gsd_sizeof_type((gsd_type)e->type));
                 }
-            gsd_read_chunk(&handle, &data[0], e);
+            gsd_read_chunk(&handle, data.data(), e);
             }
         }
 

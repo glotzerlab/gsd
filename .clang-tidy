@@ -11,5 +11,8 @@ Checks: 'bugprone-*,
          -readability-identifier-length,
          -bugprone-reserved-identifier,
          -bugprone-easily-swappable-parameters,
-         -readability-function-cognitive-complexity'
+         -readability-function-cognitive-complexity,
+         -cert-dcl37-c,
+         -cert-dcl51-cpp,
+         -bugprone-narrowing-conversions'
 
