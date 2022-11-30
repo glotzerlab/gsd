@@ -15,4 +15,3 @@ Checks: 'bugprone-*,
          -cert-dcl37-c,
          -cert-dcl51-cpp,
          -bugprone-narrowing-conversions'
-
