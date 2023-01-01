@@ -33,7 +33,7 @@ jobs:
       options: -u 0
 
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v3.2.0
         with:
           fetch-depth: 0
           submodules: true

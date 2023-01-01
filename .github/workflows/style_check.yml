@@ -26,7 +26,7 @@ jobs:
     container:
       image: glotzerlab/ci:2022.11-clang14_py311
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v3.2.0
       - name: Configure
         run: cmake -B build
       - name: Execute clang-tidy
