@@ -33,6 +33,11 @@ try:
 except ImportError:
     gsd = None
 
+try:
+    import pandas
+except ImportError:
+    pandasgsd = None
+
 logger = logging.getLogger('gsd.hoomd')
 
 
@@ -1092,3 +1097,44 @@ def open(name, mode='rb'):
                          schema_version=[1, 4])
 
     return HOOMDTrajectory(gsdfileobj)
+
+def read_log(name):
+    """Read scalar values from a hoomd schema GSD file.
+
+    Args:
+        name (str): File name to open.
+
+    Returns:
+        `pandas.DataFrame`
+    """
+    if fl is None:
+        raise RuntimeError("file layer module is not available")
+    if gsd is None:
+        raise RuntimeError("gsd module is not available")
+    if pandas is None:
+        raise RuntimeError("pandas module is not available")
+
+    gsdfileobj = fl.open(name=str(name),
+                         mode='rb',
+                         application='gsd.hoomd ' + gsd.__version__,
+                         schema='hoomd',
+                         schema_version=[1, 4])
+
+    logged_data_names = gsdfileobj.find_matching_chunk_names('log/')
+    if len(logged_data_names) > 0:
+        logged_data_dict = dict()
+        for log in logged_data_names:
+            if gsdfileobj.chunk_exists(frame=0, name=log):
+                tmp = gsdfileobj.read_chunk(frame=0, name=log)
+                if tmp.shape[0] == 1:
+                    logged_data_dict[log] = [*tmp]
+
+        for idx in range(1, gsdfileobj.nframes):
+            for log in logged_data_dict.keys():
+                if gsdfileobj.chunk_exists(frame=idx, name=log):
+                    logged_data_dict[log].extend(gsdfileobj.read_chunk(frame=idx, name=log))
+
+        dataframe = pandas.DataFrame.from_dict(logged_data_dict, orient='index')
+        return dataframe
+    else:
+        raise RuntimeError('No logged data in file: ' + name)
