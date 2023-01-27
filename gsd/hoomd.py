@@ -36,7 +36,7 @@ except ImportError:
 try:
     import pandas
 except ImportError:
-    pandasgsd = None
+    pandas = None
 
 logger = logging.getLogger('gsd.hoomd')
 
@@ -1098,7 +1098,7 @@ def open(name, mode='rb'):
 
     return HOOMDTrajectory(gsdfileobj)
 
-def read_log(name):
+def read_log(name, scalar_only=True):
     """Read scalar values from a hoomd schema GSD file.
 
     Args:
@@ -1121,20 +1121,34 @@ def read_log(name):
                          schema_version=[1, 4])
 
     logged_data_names = gsdfileobj.find_matching_chunk_names('log/')
-    if len(logged_data_names) > 0:
+    # Always log timestep associated with each log entry
+    logged_data_names.insert(0, 'configuration/step')
+    if len(logged_data_names) > 1:
         logged_data_dict = dict()
         for log in logged_data_names:
             if gsdfileobj.chunk_exists(frame=0, name=log):
                 tmp = gsdfileobj.read_chunk(frame=0, name=log)
-                if tmp.shape[0] == 1:
-                    logged_data_dict[log] = [*tmp]
+                if scalar_only and not tmp.shape[0] == 1:
+                    pass
+                else:
+                    logged_data_dict[log] = numpy.zeros_like(tmp, shape=(gsdfileobj.nframes, *tmp.shape))
+                    logged_data_dict[log][0] = tmp
 
         for idx in range(1, gsdfileobj.nframes):
             for log in logged_data_dict.keys():
-                if gsdfileobj.chunk_exists(frame=idx, name=log):
-                    logged_data_dict[log].extend(gsdfileobj.read_chunk(frame=idx, name=log))
+                if not gsdfileobj.chunk_exists(frame=idx, name=log):
+                    idx = 0
+                logged_data_dict[log][idx] = gsdfileobj.read_chunk(frame=idx, name=log)
 
-        dataframe = pandas.DataFrame.from_dict(logged_data_dict, orient='index')
-        return dataframe
+        return logged_data_dict
     else:
         raise RuntimeError('No logged data in file: ' + name)
+
+def read_log_as_dataframe(name, **kwargs):
+
+    logged_data_dict = read_log(name, scalar_only=True)
+    for log in logged_data_dict:
+        logged_data_dict[log] = numpy.ravel(logged_data_dict[log])
+    dataframe = pandas.DataFrame.from_dict(logged_data_dict, **kwargs)
+
+    return dataframe
