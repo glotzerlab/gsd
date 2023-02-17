@@ -41,13 +41,22 @@ exclude_patterns = ['_build']
 
 default_role = 'any'
 
-pygments_style = 'sphinx'
+pygments_style = "friendly"
+pygments_dark_style = "native"
 
-html_theme = 'sphinx_rtd_theme'
+html_theme = 'furo'
 html_static_path = ['_static']
-html_css_files = [
-    'css/gsd-theme.css',
-]
+html_theme_options = {
+    "dark_css_variables": {
+        "color-brand-primary": "#5187b2",
+        "color-brand-content": "#5187b2",
+    },
+    "light_css_variables": {
+        "color-brand-primary": "#406a8c",
+        "color-brand-content": "#406a8c",
+    },
+}
+
 ### Add custom directives
 def setup(app):
     app.add_object_type('chunk', 'chunk',

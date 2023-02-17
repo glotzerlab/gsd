@@ -1,0 +1,5 @@
+cython
+furo
+sphinx
+ipython
+numpy
