@@ -398,6 +398,7 @@ cdef class GSDFile:
 
         Example:
             .. ipython:: python
+                :okexcept:
 
                 f = gsd.fl.open(name='file.gsd', mode='wb+',
                                 application="My application",
@@ -409,7 +410,6 @@ cdef class GSDFile:
 
                 f.close()
                 # Read fails because the file is closed
-                @okexcept
                 data = f.read_chunk(frame=0, name='chunk1')
 
         """
@@ -701,6 +701,7 @@ cdef class GSDFile:
 
         Example:
             .. ipython:: python
+                :okexcept:
 
                 with gsd.fl.open(name='file.gsd', mode='wb',
                                  application="My application",
@@ -725,7 +726,6 @@ cdef class GSDFile:
                                 schema="My Schema", schema_version=[1,0])
                 f.read_chunk(frame=0, name='chunk1')
                 f.read_chunk(frame=1, name='chunk1')
-                @okexcept
                 f.read_chunk(frame=2, name='chunk1')
                 f.close()
         """
