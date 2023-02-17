@@ -130,13 +130,13 @@ Read-only access
 ^^^^^^^^^^^^^^^^
 
 .. ipython:: python
+    :okexcept:
 
     f = gsd.fl.open(name="file.gsd", mode='rb')
     if f.chunk_exists(frame=0, name='chunk1'):
         data = f.read_chunk(frame=0, name='chunk1')
     data
     # Fails because the file is open read only
-    @okexcept
     f.write_chunk(name='error', data=numpy.array([1]))
     f.close()
 
@@ -180,13 +180,13 @@ Write a file in append mode
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. ipython:: python
+    :okexcept:
 
     f = gsd.fl.open(name="file.gsd", mode='ab')
     f.write_chunk(name='int', data=numpy.array([10,20], dtype=numpy.int16));
     f.end_frame()
     f.nframes
     # Reads fail in append mode
-    @okexcept
     f.read_chunk(frame=2, name='double')
     f.close()
 
