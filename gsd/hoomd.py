@@ -33,11 +33,6 @@ try:
 except ImportError:
     gsd = None
 
-try:
-    import pandas
-except ImportError:
-    pandas = None
-
 logger = logging.getLogger('gsd.hoomd')
 
 
@@ -1106,6 +1101,12 @@ def read_log(name, scalar_only=True):
 
     Returns:
         `dict`
+
+    To create a dataframe with the logged data::
+
+        import pandas as pd
+
+        df = pd.DataFrame(gsd.hoomd.read_log('log.gsd', scalar_only=True))
     """
     if fl is None:
         raise RuntimeError("file layer module is not available")
@@ -1121,44 +1122,24 @@ def read_log(name, scalar_only=True):
     logged_data_names = gsdfileobj.find_matching_chunk_names('log/')
     # Always log timestep associated with each log entry
     logged_data_names.insert(0, 'configuration/step')
-    if len(logged_data_names) > 1:
-        logged_data_dict = dict()
-        for log in logged_data_names:
-            if gsdfileobj.chunk_exists(frame=0, name=log):
-                tmp = gsdfileobj.read_chunk(frame=0, name=log)
-                if scalar_only and not tmp.shape[0] == 1:
-                    pass
-                else:
-                    logged_data_dict[log] = numpy.zeros_like(tmp, shape=(gsdfileobj.nframes, *tmp.shape))
-                    logged_data_dict[log][0] = tmp
+    if len(logged_data_names) == 1:
+        raise RuntimeError('No logged data in file: ' + name)
+
+    logged_data_dict = dict()
+    for log in logged_data_names:
+        if gsdfileobj.chunk_exists(frame=0, name=log):
+            tmp = gsdfileobj.read_chunk(frame=0, name=log)
+            if scalar_only and not tmp.shape[0] == 1:
+                continue
+            if tmp.shape[0] == 1:
+                logged_data_dict[log] = numpy.full(fill_value=tmp[0], shape=(gsdfileobj.nframes,))
+            else:
+                logged_data_dict[log] = numpy.tile(tmp, (gsdfileobj.nframes, 1))
 
         for idx in range(1, gsdfileobj.nframes):
             for log in logged_data_dict.keys():
                 if not gsdfileobj.chunk_exists(frame=idx, name=log):
-                    idx = 0
+                    continue
                 logged_data_dict[log][idx] = gsdfileobj.read_chunk(frame=idx, name=log)
 
         return logged_data_dict
-    else:
-        raise RuntimeError('No logged data in file: ' + name)
-
-def read_log_as_dataframe(name, **kwargs):
-
-    """Read scalar values from a hoomd schema GSD file and create a pandas dataframe.
-
-    Args:
-        name (str): File name to open.
-
-    Returns:
-        `pandas.DataFrame`
-    """
-
-    if pandas is None:
-        raise RuntimeError("pandas module is not available")
-
-    logged_data_dict = read_log(name, scalar_only=True)
-    for log in logged_data_dict:
-        logged_data_dict[log] = numpy.ravel(logged_data_dict[log])
-    dataframe = pandas.DataFrame.from_dict(logged_data_dict, **kwargs)
-
-    return dataframe
