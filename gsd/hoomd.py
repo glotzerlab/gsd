@@ -1099,20 +1099,18 @@ def open(name, mode='rb'):
     return HOOMDTrajectory(gsdfileobj)
 
 def read_log(name, scalar_only=True):
-    """Read scalar values from a hoomd schema GSD file.
+    """Read log from a hoomd schema GSD file into a dict of time-series arrays.
 
     Args:
         name (str): File name to open.
 
     Returns:
-        `pandas.DataFrame`
+        `dict`
     """
     if fl is None:
         raise RuntimeError("file layer module is not available")
     if gsd is None:
         raise RuntimeError("gsd module is not available")
-    if pandas is None:
-        raise RuntimeError("pandas module is not available")
 
     gsdfileobj = fl.open(name=str(name),
                          mode='rb',
@@ -1145,6 +1143,18 @@ def read_log(name, scalar_only=True):
         raise RuntimeError('No logged data in file: ' + name)
 
 def read_log_as_dataframe(name, **kwargs):
+
+    """Read scalar values from a hoomd schema GSD file and create a pandas dataframe.
+
+    Args:
+        name (str): File name to open.
+
+    Returns:
+        `pandas.DataFrame`
+    """
+
+    if pandas is None:
+        raise RuntimeError("pandas module is not available")
 
     logged_data_dict = read_log(name, scalar_only=True)
     for log in logged_data_dict:
