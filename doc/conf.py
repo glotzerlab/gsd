@@ -64,5 +64,4 @@ ipython_execlines = ['import gsd.fl',
                      'import gsd.pygsd',
                      'import numpy',
                      'import os',
-                     'import pandas',
                      f'os.chdir("{tmpdir.name}")']
