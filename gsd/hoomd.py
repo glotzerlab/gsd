@@ -7,11 +7,13 @@
 
 * `open` - Open a hoomd schema GSD file.
 * `HOOMDTrajectory` - Read and write hoomd schema GSD files.
+* `read_log` - Read log from a hoomd schema GSD file into a dict of time-series
+  arrays.
 * `Snapshot` - Store the state of a single frame.
 
-    * `ConfigurationData` - Store configuration data in a snapshot.
-    * `ParticleData` - Store particle data in a snapshot.
-    * `BondData` - Store topology data in a snapshot.
+  * `ConfigurationData` - Store configuration data in a snapshot.
+  * `ParticleData` - Store particle data in a snapshot.
+  * `BondData` - Store topology data in a snapshot.
 
 See Also:
     See :ref:`hoomd-examples` for full examples.
@@ -1094,16 +1096,17 @@ def open(name, mode='rb'):
     return HOOMDTrajectory(gsdfileobj)
 
 
-def read_log(name, scalar_only=True):
+def read_log(name, scalar_only=False):
     """Read log from a hoomd schema GSD file into a dict of time-series arrays.
 
     Args:
         name (str): File name to open.
+        scalar_only (bool): Set to `True` to include only scalar log values.
 
     Returns:
         `dict`
 
-    To create a dataframe with the logged data::
+    To create a *pandas* ``DataFrame`` with the logged data::
 
         import pandas as pd
 
@@ -1145,4 +1148,4 @@ def read_log(name, scalar_only=True):
                 logged_data_dict[log][idx] = gsdfileobj.read_chunk(frame=idx,
                                                                    name=log)
 
-        return logged_data_dict
+    return logged_data_dict
