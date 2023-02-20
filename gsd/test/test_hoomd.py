@@ -791,7 +791,7 @@ def test_no_duplicate_types(tmp_path, container):
 
 
 def test_read_log(tmp_path):
-    """Test that data logged in gsd files are read correctly. """
+    """Test that data logged in gsd files are read correctly."""
     snap0 = gsd.hoomd.Snapshot()
     snap0.log['particles/pair_lj_energy'] = [0, -5, -8, -3]
     snap0.log['value/potential_energy'] = [10]
