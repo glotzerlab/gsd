@@ -1131,8 +1131,16 @@ def read_log(name, scalar_only=False):
 
         logged_data_dict = dict()
         for log in logged_data_names:
-            if gsdfileobj.chunk_exists(frame=0, name=log):
-                tmp = gsdfileobj.read_chunk(frame=0, name=log)
+            log_exists_frame_0 = gsdfileobj.chunk_exists(frame=0, name=log)
+            is_configuration_step = log == 'configuration/step'
+
+            if log_exists_frame_0 or is_configuration_step:
+                if is_configuration_step and not log_exists_frame_0:
+                    # handle default configuration step on frame 0
+                    tmp = numpy.array([0], dtype=numpy.uint64)
+                else:
+                    tmp = gsdfileobj.read_chunk(frame=0, name=log)
+
                 if scalar_only and not tmp.shape[0] == 1:
                     continue
                 if tmp.shape[0] == 1:

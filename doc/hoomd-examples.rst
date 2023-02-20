@@ -159,8 +159,9 @@ another prefix for other quantities.
 .. ipython:: python
 
     log = gsd.hoomd.read_log(name='example.gsd', scalar_only=True)
-    print(list(log.keys()))
-    print(log['log/value/potential_energy'])
+    list(log.keys())
+    log['log/value/potential_energy']
+    log['configuration/step']
 
 Read logged data from the ``log`` dictionary.
 
