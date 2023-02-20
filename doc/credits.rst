@@ -16,3 +16,4 @@ The following people contributed to GSD.
 * Brandon Butler, University of Michigan
 * Arthur Zamarin, Gentoo Linux
 * Alexander Stukowski, OVITO GmbH
+* Charlotte Shiqi Zhao, University of Michigan
