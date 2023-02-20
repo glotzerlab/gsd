@@ -142,26 +142,24 @@ Access logged data
     with gsd.hoomd.open(name='example.gsd', mode='wb') as f:
         s = gsd.hoomd.Snapshot()
         s.particles.N = 4
-        s.log['particles/net_force'] = numpy.array([[-1,2,-3],
-                                        [0,2,-4],
-                                        [-3,2,1],
-                                        [1,2,3]], dtype=numpy.float32)
-        s.log['value/potential_energy'] = [1.5]
-        f.append(s)
+        for i in range(10):
+            s.log['particles/net_force'] = numpy.array([[-1,2,-3+i],
+                                            [0,2,-4],
+                                            [-3,2,1],
+                                            [1,2,3]], dtype=numpy.float32)
+            s.log['value/potential_energy'] = [1.5+i]
+            f.append(s)
 
 Logged data is stored in the ``log`` dictionary as numpy arrays. Place data into
-this dictionary directly without the 'log/' prefix and gsd will include it in
+this dictionary directly without the ``'log/'`` prefix and gsd will include it in
 the output. Store per-particle quantities with the prefix ``particles/``. Choose
 another prefix for other quantities.
 
 .. ipython:: python
 
-    f = gsd.hoomd.open(name='example.gsd', mode='rb')
-    s = f[0]
-    s.log['particles/net_force']
-    s.log['value/potential_energy']
-    @suppress
-    f.close()
+    log = gsd.hoomd.read_log(name='example.gsd', scalar_only=True)
+    print(list(log.keys()))
+    print(log['log/value/potential_energy'])
 
 Read logged data from the ``log`` dictionary.
 
