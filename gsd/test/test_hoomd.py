@@ -789,6 +789,7 @@ def test_no_duplicate_types(tmp_path, container):
         with pytest.raises(ValueError):
             hf.append(snap)
 
+
 def test_read_log(tmp_path):
     """Test that data logged in gsd files are read correctly. """
     snap0 = gsd.hoomd.Snapshot()
@@ -801,38 +802,56 @@ def test_read_log(tmp_path):
     snap1.log['particles/pair_lj_energy'] = [1, 2, -4, -10]
     snap1.log['value/pressure'] = [5]
 
-    with gsd.hoomd.open(name=tmp_path / "test_log.gsd",
-                        mode='wb') as hf:
+    with gsd.hoomd.open(name=tmp_path / "test_log.gsd", mode='wb') as hf:
         hf.extend([snap0, snap1])
 
     # Test scalar_only = False
-    logged_data_dict = gsd.hoomd.read_log(name=tmp_path / "test_log.gsd", scalar_only=False)
+    logged_data_dict = gsd.hoomd.read_log(name=tmp_path / "test_log.gsd",
+                                          scalar_only=False)
 
     assert len(logged_data_dict) == 4
-    assert list(logged_data_dict.keys()) == ['configuration/step', 'log/particles/pair_lj_energy',
-    'log/value/potential_energy', 'log/value/pressure']
+    assert list(logged_data_dict.keys()) == [
+        'configuration/step', 'log/particles/pair_lj_energy',
+        'log/value/potential_energy', 'log/value/pressure'
+    ]
 
-    numpy.testing.assert_array_equal(logged_data_dict['configuration/step'], [0, 1])
-    numpy.testing.assert_array_equal(logged_data_dict['log/particles/pair_lj_energy'],
-                                        [snap0.log['particles/pair_lj_energy'], snap1.log['particles/pair_lj_energy']])
-    numpy.testing.assert_array_equal(logged_data_dict['log/value/potential_energy'],
-                                        [*snap0.log['value/potential_energy'], *snap0.log['value/potential_energy']])
-    numpy.testing.assert_array_equal(logged_data_dict['log/value/pressure'],
-                                        [*snap0.log['value/pressure'], *snap1.log['value/pressure']])
+    numpy.testing.assert_array_equal(logged_data_dict['configuration/step'],
+                                     [0, 1])
+    numpy.testing.assert_array_equal(
+        logged_data_dict['log/particles/pair_lj_energy'], [
+            snap0.log['particles/pair_lj_energy'],
+            snap1.log['particles/pair_lj_energy']
+        ])
+    numpy.testing.assert_array_equal(
+        logged_data_dict['log/value/potential_energy'], [
+            *snap0.log['value/potential_energy'],
+            *snap0.log['value/potential_energy']
+        ])
+    numpy.testing.assert_array_equal(
+        logged_data_dict['log/value/pressure'],
+        [*snap0.log['value/pressure'], *snap1.log['value/pressure']])
 
     # Test scalar_only = True
-    logged_data_dict = gsd.hoomd.read_log(name=tmp_path / "test_log.gsd", scalar_only=True)
+    logged_data_dict = gsd.hoomd.read_log(name=tmp_path / "test_log.gsd",
+                                          scalar_only=True)
     assert len(logged_data_dict) == 3
-    assert list(logged_data_dict.keys()) == ['configuration/step', 'log/value/potential_energy', 'log/value/pressure']
-    numpy.testing.assert_array_equal(logged_data_dict['configuration/step'], [0, 1])
-    numpy.testing.assert_array_equal(logged_data_dict['log/value/potential_energy'],
-                                        [*snap0.log['value/potential_energy'], *snap0.log['value/potential_energy']])
-    numpy.testing.assert_array_equal(logged_data_dict['log/value/pressure'],
-                                        [*snap0.log['value/pressure'], *snap1.log['value/pressure']])
+    assert list(logged_data_dict.keys()) == [
+        'configuration/step', 'log/value/potential_energy', 'log/value/pressure'
+    ]
+    numpy.testing.assert_array_equal(logged_data_dict['configuration/step'],
+                                     [0, 1])
+    numpy.testing.assert_array_equal(
+        logged_data_dict['log/value/potential_energy'], [
+            *snap0.log['value/potential_energy'],
+            *snap0.log['value/potential_energy']
+        ])
+    numpy.testing.assert_array_equal(
+        logged_data_dict['log/value/pressure'],
+        [*snap0.log['value/pressure'], *snap1.log['value/pressure']])
 
     # No logged data
-    with gsd.hoomd.open(name=tmp_path / "test_log.gsd",
-                        mode='wb') as hf:
+    with gsd.hoomd.open(name=tmp_path / "test_log.gsd", mode='wb') as hf:
         hf.extend([gsd.hoomd.Snapshot(), gsd.hoomd.Snapshot()])
     with pytest.raises(RuntimeError):
-        logged_data_dict = gsd.hoomd.read_log(name=str(tmp_path / "test_log.gsd"))
+        logged_data_dict = gsd.hoomd.read_log(name=str(tmp_path
+                                                       / "test_log.gsd"))
