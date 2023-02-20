@@ -1,9 +1,0 @@
-channels:
-  - conda-forge
-dependencies:
-  - cython
-  - python==3.7
-  - sphinx
-  - sphinx_rtd_theme
-  - ipython
-  - numpy

@@ -77,7 +77,7 @@ To build the documentation from source (optional):
 
 1. `Install prerequisites`_::
 
-   $ <package-manager> install sphinx sphinx_rtd_theme ipython
+   $ <package-manager> install sphinx furo ipython
 
 2. `Build the documentation`_::
 
@@ -120,6 +120,7 @@ Install prerequisites
 
 * **Sphinx**
 * **IPython**
+* **furo**
 * an internet connection
 
 **To execute unit tests:**

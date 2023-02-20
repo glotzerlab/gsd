@@ -178,39 +178,6 @@ Read logged data from the ``log`` dictionary.
             s.log['invalid'] = dict(a=1, b=5)
             f.append(s)
 
-Access state data
-^^^^^^^^^^^^^^^^^
-
-.. ipython:: python
-
-    with gsd.hoomd.open(name='test2.gsd', mode='wb') as f:
-        s = gsd.hoomd.Snapshot()
-        s.particles.types = ['A', 'B']
-        s.state['hpmc/convex_polygon/N'] = [3, 4]
-        s.state['hpmc/convex_polygon/vertices'] = [[-1, -1],
-                                                   [1, -1],
-                                                   [1, 1],
-                                                   [-2, -2],
-                                                   [2, -2],
-                                                   [2, 2],
-                                                   [-2, 2]]
-        f.append(s)
-
-State data is stored in the ``state`` dictionary as numpy arrays. Place data
-into this dictionary directly without the 'state/' prefix and gsd will include
-it in the output. Shape vertices are stored in a packed format. In this example,
-type 'A' has 3 vertices (the first 3 in the list) and type 'B' has 4 (the next
-4).
-
-.. ipython:: python
-
-    with gsd.hoomd.open(name='test2.gsd', mode='rb') as f:
-        s = f[0]
-        print(s.state['hpmc/convex_polygon/N'])
-        print(s.state['hpmc/convex_polygon/vertices'])
-
-Access read state data in the same way.
-
 Use multiprocessing
 ^^^^^^^^^^^^^^^^^^^
 
