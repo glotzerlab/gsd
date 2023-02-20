@@ -1093,6 +1093,7 @@ def open(name, mode='rb'):
 
     return HOOMDTrajectory(gsdfileobj)
 
+
 def read_log(name, scalar_only=True):
     """Read log from a hoomd schema GSD file into a dict of time-series arrays.
 
@@ -1132,7 +1133,8 @@ def read_log(name, scalar_only=True):
             if scalar_only and not tmp.shape[0] == 1:
                 continue
             if tmp.shape[0] == 1:
-                logged_data_dict[log] = numpy.full(fill_value=tmp[0], shape=(gsdfileobj.nframes,))
+                logged_data_dict[log] = numpy.full(fill_value=tmp[0],
+                                                   shape=(gsdfileobj.nframes,))
             else:
                 logged_data_dict[log] = numpy.tile(tmp, (gsdfileobj.nframes, 1))
 
@@ -1140,6 +1142,7 @@ def read_log(name, scalar_only=True):
             for log in logged_data_dict.keys():
                 if not gsdfileobj.chunk_exists(frame=idx, name=log):
                     continue
-                logged_data_dict[log][idx] = gsdfileobj.read_chunk(frame=idx, name=log)
+                logged_data_dict[log][idx] = gsdfileobj.read_chunk(frame=idx,
+                                                                   name=log)
 
         return logged_data_dict
