@@ -143,6 +143,7 @@ Access logged data
         s = gsd.hoomd.Snapshot()
         s.particles.N = 4
         for i in range(10):
+            s.configuration.step = i
             s.log['particles/net_force'] = numpy.array([[-1,2,-3+i],
                                             [0,2,-4],
                                             [-3,2,1],

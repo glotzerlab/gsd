@@ -1117,35 +1117,36 @@ def read_log(name, scalar_only=False):
     if gsd is None:
         raise RuntimeError("gsd module is not available")
 
-    gsdfileobj = fl.open(name=str(name),
-                         mode='rb',
-                         application='gsd.hoomd ' + gsd.__version__,
-                         schema='hoomd',
-                         schema_version=[1, 4])
+    with fl.open(name=str(name),
+                 mode='rb',
+                 application='gsd.hoomd ' + gsd.__version__,
+                 schema='hoomd',
+                 schema_version=[1, 4]) as gsdfileobj:
 
-    logged_data_names = gsdfileobj.find_matching_chunk_names('log/')
-    # Always log timestep associated with each log entry
-    logged_data_names.insert(0, 'configuration/step')
-    if len(logged_data_names) == 1:
-        raise RuntimeError('No logged data in file: ' + name)
+        logged_data_names = gsdfileobj.find_matching_chunk_names('log/')
+        # Always log timestep associated with each log entry
+        logged_data_names.insert(0, 'configuration/step')
+        if len(logged_data_names) == 1:
+            raise RuntimeError('No logged data in file: ' + name)
 
-    logged_data_dict = dict()
-    for log in logged_data_names:
-        if gsdfileobj.chunk_exists(frame=0, name=log):
-            tmp = gsdfileobj.read_chunk(frame=0, name=log)
-            if scalar_only and not tmp.shape[0] == 1:
-                continue
-            if tmp.shape[0] == 1:
-                logged_data_dict[log] = numpy.full(fill_value=tmp[0],
-                                                   shape=(gsdfileobj.nframes,))
-            else:
-                logged_data_dict[log] = numpy.tile(tmp, (gsdfileobj.nframes, 1))
-
-        for idx in range(1, gsdfileobj.nframes):
-            for log in logged_data_dict.keys():
-                if not gsdfileobj.chunk_exists(frame=idx, name=log):
+        logged_data_dict = dict()
+        for log in logged_data_names:
+            if gsdfileobj.chunk_exists(frame=0, name=log):
+                tmp = gsdfileobj.read_chunk(frame=0, name=log)
+                if scalar_only and not tmp.shape[0] == 1:
                     continue
-                logged_data_dict[log][idx] = gsdfileobj.read_chunk(frame=idx,
-                                                                   name=log)
+                if tmp.shape[0] == 1:
+                    logged_data_dict[log] = numpy.full(
+                        fill_value=tmp[0], shape=(gsdfileobj.nframes,))
+                else:
+                    logged_data_dict[log] = numpy.tile(tmp,
+                                                       (gsdfileobj.nframes, 1))
+
+            for idx in range(1, gsdfileobj.nframes):
+                for log in logged_data_dict.keys():
+                    if not gsdfileobj.chunk_exists(frame=idx, name=log):
+                        continue
+                    logged_data_dict[log][idx] = gsdfileobj.read_chunk(
+                        frame=idx, name=log)
 
     return logged_data_dict
