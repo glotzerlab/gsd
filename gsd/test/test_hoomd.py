@@ -794,12 +794,24 @@ def test_read_log(tmp_path):
     """Test that data logged in gsd files are read correctly."""
     snap0 = gsd.hoomd.Snapshot()
     snap0.log['particles/pair_lj_energy'] = [0, -5, -8, -3]
+    snap0.log['particles/pair_lj_force'] = [
+        (0, 0, 0),
+        (1, 1, 1),
+        (2, 2, 2),
+        (3, 3, 3),
+    ]
     snap0.log['value/potential_energy'] = [10]
     snap0.log['value/pressure'] = [-3]
 
     snap1 = gsd.hoomd.Snapshot()
     snap1.configuration.step = 1
     snap1.log['particles/pair_lj_energy'] = [1, 2, -4, -10]
+    snap1.log['particles/pair_lj_force'] = [
+        (1, 1, 1),
+        (2, 2, 2),
+        (3, 3, 3),
+        (4, 4, 4),
+    ]
     snap1.log['value/pressure'] = [5]
 
     with gsd.hoomd.open(name=tmp_path / "test_log.gsd", mode='wb') as hf:
@@ -809,10 +821,11 @@ def test_read_log(tmp_path):
     logged_data_dict = gsd.hoomd.read_log(name=tmp_path / "test_log.gsd",
                                           scalar_only=False)
 
-    assert len(logged_data_dict) == 4
+    assert len(logged_data_dict) == 5
     assert list(logged_data_dict.keys()) == [
         'configuration/step', 'log/particles/pair_lj_energy',
-        'log/value/potential_energy', 'log/value/pressure'
+        'log/particles/pair_lj_force', 'log/value/potential_energy',
+        'log/value/pressure'
     ]
 
     numpy.testing.assert_array_equal(logged_data_dict['configuration/step'],
@@ -821,6 +834,11 @@ def test_read_log(tmp_path):
         logged_data_dict['log/particles/pair_lj_energy'], [
             snap0.log['particles/pair_lj_energy'],
             snap1.log['particles/pair_lj_energy']
+        ])
+    numpy.testing.assert_array_equal(
+        logged_data_dict['log/particles/pair_lj_force'], [
+            snap0.log['particles/pair_lj_force'],
+            snap1.log['particles/pair_lj_force']
         ])
     numpy.testing.assert_array_equal(
         logged_data_dict['log/value/potential_energy'], [
