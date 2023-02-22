@@ -407,33 +407,17 @@ class ConstraintData(object):
             self.group = self.group.reshape([self.N, self.M])
 
 
-class Frame(object):
+class Snapshot(object):
     """System state at one point in time.
 
-    Attributes:
-        configuration (`ConfigurationData`): Configuration data.
+    .. deprecated:: 2.8.0
 
-        particles (`ParticleData`): Particles.
-
-        bonds (`BondData`): Bonds.
-
-        angles (`BondData`): Angles.
-
-        dihedrals (`BondData`): Dihedrals.
-
-        impropers (`BondData`): Impropers.
-
-        pairs (`BondData`): Special pair.
-
-        constraints (`ConstraintData`): Distance constraints.
-
-        state (dict): State data.
-
-        log (dict): Logged data (values must be `numpy.ndarray` or
-            `array_like`)
+        Replaced by `Frame`.
     """
-
     def __init__(self):
+        if not isinstance(self, Frame):
+            warnings.warn("Snapshot is deprecated, use Frame", FutureWarning)
+
         self.configuration = ConfigurationData()
         self.particles = ParticleData()
         self.bonds = BondData(2)
@@ -632,16 +616,33 @@ class Frame(object):
                 raise RuntimeError('Not a valid state: ' + k)
 
 
-class Snapshot(Frame):
+class Frame(Snapshot):
     """System state at one point in time.
 
-    .. deprecated:: 2.8.0
+    Attributes:
+        configuration (`ConfigurationData`): Configuration data.
 
-        Replaced by `Frame`.
+        particles (`ParticleData`): Particles.
+
+        bonds (`BondData`): Bonds.
+
+        angles (`BondData`): Angles.
+
+        dihedrals (`BondData`): Dihedrals.
+
+        impropers (`BondData`): Impropers.
+
+        pairs (`BondData`): Special pair.
+
+        constraints (`ConstraintData`): Distance constraints.
+
+        state (dict): State data.
+
+        log (dict): Logged data (values must be `numpy.ndarray` or
+            `array_like`)
     """
 
     def __init__(self):
-        warnings.warn("Snapshot is deprecated, use Frame", FutureWarning)
         super().__init__()
 
 
