@@ -1108,9 +1108,14 @@ def read_log(name, scalar_only=False):
 
     To create a *pandas* ``DataFrame`` with the logged data::
 
-        import pandas as pd
+        import pandas
 
-        df = pd.DataFrame(gsd.hoomd.read_log('log.gsd', scalar_only=True))
+        df = pandas.DataFrame(gsd.hoomd.read_log('log.gsd', scalar_only=True))
+
+    Caution:
+        `read_log` requires that a logged quantity has the same shape in all
+        frames. Use `open` and `Snapshot.log` to read files where the shape
+        changes from frame to frame.
     """
     if fl is None:
         raise RuntimeError("file layer module is not available")
