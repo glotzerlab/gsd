@@ -1147,8 +1147,9 @@ def read_log(name, scalar_only=False):
                     logged_data_dict[log] = numpy.full(
                         fill_value=tmp[0], shape=(gsdfileobj.nframes,))
                 else:
-                    logged_data_dict[log] = numpy.tile(tmp,
-                                                       (gsdfileobj.nframes, 1))
+                    logged_data_dict[log] = numpy.tile(
+                        tmp,
+                        (gsdfileobj.nframes,) + tuple(1 for _ in tmp.shape))
 
             for idx in range(1, gsdfileobj.nframes):
                 for log in logged_data_dict.keys():
