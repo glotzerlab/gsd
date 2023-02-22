@@ -414,6 +414,7 @@ class Snapshot(object):
 
         Replaced by `Frame`.
     """
+
     def __init__(self):
         if not isinstance(self, Frame):
             warnings.warn("Snapshot is deprecated, use Frame", FutureWarning)
@@ -831,7 +832,14 @@ class HOOMDTrajectory(object):
                              + '/' + name)
                 return False
 
-        if numpy.array_equiv(data, container._default_value[name]) \
+        matches_default_value = False
+        if name == 'types':
+            matches_default_value = data == container._default_value[name]
+        else:
+            matches_default_value = numpy.array_equiv(
+                data, container._default_value[name])
+
+        if matches_default_value \
                 and not self.file.chunk_exists(frame=0, name=path + '/' + name):
             logger.debug('skipping data chunk, default value: ' + path + '/'
                          + name)
