@@ -408,7 +408,7 @@ class ConstraintData(object):
 
 
 class Frame(object):
-    """Frame of a system state.
+    """System state at one point in time.
 
     Attributes:
         configuration (`ConfigurationData`): Configuration data.
@@ -632,6 +632,19 @@ class Frame(object):
                 raise RuntimeError('Not a valid state: ' + k)
 
 
+class Snapshot(Frame):
+    """System state at one point in time.
+
+    .. deprecated:: 2.8.0
+
+        Replaced by `Frame`.
+    """
+
+    def __init__(self):
+        warnings.warn("Snapshot is deprecated, use Frame", FutureWarning)
+        super().__init__()
+
+
 class _HOOMDTrajectoryIterable(object):
     """Iterable over a HOOMDTrajectory object."""
 
@@ -729,8 +742,7 @@ class HOOMDTrajectory(object):
         frame. If it is the same, do not write it out as it can be instantiated
         either from the value at the initial frame or the default value.
         """
-        logger.debug('Appending frame to hoomd trajectory: '
-                     + str(self.file))
+        logger.debug('Appending frame to hoomd trajectory: ' + str(self.file))
 
         frame.validate()
 
@@ -874,7 +886,8 @@ class HOOMDTrajectory(object):
             frame.configuration.step = step_arr[0]
         else:
             if self._initial_frame is not None:
-                frame.configuration.step = self._initial_frame.configuration.step
+                frame.configuration.step = \
+                    self._initial_frame.configuration.step
             else:
                 frame.configuration.step = \
                     frame.configuration._default_value['step']
@@ -985,7 +998,7 @@ class HOOMDTrajectory(object):
         for state in frame._valid_state:
             if self.file.chunk_exists(frame=idx, name='state/' + state):
                 frame.state[state] = self.file.read_chunk(frame=idx,
-                                                         name='state/' + state)
+                                                          name='state/' + state)
 
         # read log data
         logged_data_names = self.file.find_matching_chunk_names('log/')

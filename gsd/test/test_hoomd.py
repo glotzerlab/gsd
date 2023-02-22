@@ -244,12 +244,14 @@ def assert_frames_equal(s, frame0, check_position=True, check_step=True):
     assert s.particles.N == frame0.particles.N
     assert s.particles.types == frame0.particles.types
     assert s.particles.type_shapes == frame0.particles.type_shapes
-    numpy.testing.assert_array_equal(s.particles.typeid, frame0.particles.typeid)
+    numpy.testing.assert_array_equal(s.particles.typeid,
+                                     frame0.particles.typeid)
     numpy.testing.assert_array_equal(s.particles.mass, frame0.particles.mass)
     numpy.testing.assert_array_equal(s.particles.diameter,
                                      frame0.particles.diameter)
     numpy.testing.assert_array_equal(s.particles.body, frame0.particles.body)
-    numpy.testing.assert_array_equal(s.particles.charge, frame0.particles.charge)
+    numpy.testing.assert_array_equal(s.particles.charge,
+                                     frame0.particles.charge)
     numpy.testing.assert_array_equal(s.particles.moment_inertia,
                                      frame0.particles.moment_inertia)
     if check_position:
@@ -259,7 +261,8 @@ def assert_frames_equal(s, frame0, check_position=True, check_step=True):
                                      frame0.particles.orientation)
     numpy.testing.assert_array_equal(s.particles.velocity,
                                      frame0.particles.velocity)
-    numpy.testing.assert_array_equal(s.particles.angmom, frame0.particles.angmom)
+    numpy.testing.assert_array_equal(s.particles.angmom,
+                                     frame0.particles.angmom)
     numpy.testing.assert_array_equal(s.particles.image, frame0.particles.image)
 
     assert s.bonds.N == frame0.bonds.N
@@ -274,12 +277,14 @@ def assert_frames_equal(s, frame0, check_position=True, check_step=True):
 
     assert s.dihedrals.N == frame0.dihedrals.N
     assert s.dihedrals.types == frame0.dihedrals.types
-    numpy.testing.assert_array_equal(s.dihedrals.typeid, frame0.dihedrals.typeid)
+    numpy.testing.assert_array_equal(s.dihedrals.typeid,
+                                     frame0.dihedrals.typeid)
     numpy.testing.assert_array_equal(s.dihedrals.group, frame0.dihedrals.group)
 
     assert s.impropers.N == frame0.impropers.N
     assert s.impropers.types == frame0.impropers.types
-    numpy.testing.assert_array_equal(s.impropers.typeid, frame0.impropers.typeid)
+    numpy.testing.assert_array_equal(s.impropers.typeid,
+                                     frame0.impropers.typeid)
     numpy.testing.assert_array_equal(s.impropers.group, frame0.impropers.group)
 
     assert s.constraints.N == frame0.constraints.N
@@ -688,7 +693,7 @@ def test_state(tmp_path, open_mode):
 
     frame1.state['hpmc/convex_polyhedron/N'] = [3]
     frame1.state['hpmc/convex_polyhedron/vertices'] = [[-1, -1, -1], [0, 1, 1],
-                                                      [1, 0, 0]]
+                                                       [1, 0, 0]]
 
     with gsd.hoomd.open(name=tmp_path / "test_state.gsd",
                         mode=open_mode.write) as hf:
