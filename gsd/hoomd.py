@@ -6,11 +6,11 @@
 :py:mod:`gsd.hoomd` reads and writes GSD files with the ``hoomd`` schema.
 
 * `HOOMDTrajectory` - Read and write hoomd schema GSD files.
-* `Snapshot` - Store the state of a single frame.
+* `Frame` - Store the state of a single frame.
 
-  * `ConfigurationData` - Store configuration data in a snapshot.
-  * `ParticleData` - Store particle data in a snapshot.
-  * `BondData` - Store topology data in a snapshot.
+  * `ConfigurationData` - Store configuration data in a frame.
+  * `ParticleData` - Store particle data in a frame.
+  * `BondData` - Store topology data in a frame.
 
 * `open` - Open a hoomd schema GSD file.
 * `read_log` - Read log from a hoomd schema GSD file into a dict of time-series
@@ -42,7 +42,7 @@ logger = logging.getLogger('gsd.hoomd')
 class ConfigurationData(object):
     """Store configuration data.
 
-    Use the `Snapshot.configuration` attribute of a to access the configuration.
+    Use the `Frame.configuration` attribute of a to access the configuration.
 
     Attributes:
         step (int): Time step of this frame (:chunk:`configuration/step`).
@@ -108,18 +108,18 @@ class ConfigurationData(object):
 class ParticleData(object):
     """Store particle data chunks.
 
-    Use the `Snapshot.particles` attribute of a to access the particles.
+    Use the `Frame.particles` attribute of a to access the particles.
 
     Instances resulting from file read operations will always store array
     quantities in `numpy.ndarray` objects of the defined types. User created
-    snapshots may provide input data that can be converted to a `numpy.ndarray`.
+    frames may provide input data that can be converted to a `numpy.ndarray`.
 
     See Also:
         `hoomd.State` for a full description of how HOOMD interprets this
         data.
 
     Attributes:
-        N (int): Number of particles in the snapshot (:chunk:`particles/N`).
+        N (int): Number of particles in the frame (:chunk:`particles/N`).
 
         types (tuple[str]):
             Names of the particle types (:chunk:`particles/types`).
@@ -259,13 +259,13 @@ class ParticleData(object):
 class BondData(object):
     """Store bond data chunks.
 
-    Use the `Snapshot.bonds`, `Snapshot.angles`, `Snapshot.dihedrals`,
-    `Snapshot.impropers`, and `Snapshot.pairs` attributes to access the bond
+    Use the `Frame.bonds`, `Frame.angles`, `Frame.dihedrals`,
+    `Frame.impropers`, and `Frame.pairs` attributes to access the bond
     topology.
 
     Instances resulting from file read operations will always store array
     quantities in `numpy.ndarray` objects of the defined types. User created
-    snapshots may provide input data that can be converted to a `numpy.ndarray`.
+    frames may provide input data that can be converted to a `numpy.ndarray`.
 
     See Also:
         `hoomd.State` for a full description of how HOOMD interprets this
@@ -288,7 +288,7 @@ class BondData(object):
 
     Attributes:
         N (int): Number of bonds/angles/dihedrals/impropers/pairs in the
-          snapshot
+          frame
           (:chunk:`bonds/N`, :chunk:`angles/N`, :chunk:`dihedrals/N`,
           :chunk:`impropers/N`, :chunk:`pairs/N`).
 
@@ -351,18 +351,18 @@ class BondData(object):
 class ConstraintData(object):
     """Store constraint data.
 
-    Use the `Snapshot.constraints` attribute to access the constraints.
+    Use the `Frame.constraints` attribute to access the constraints.
 
     Instances resulting from file read operations will always store array
     quantities in `numpy.ndarray` objects of the defined types. User created
-    snapshots may provide input data that can be converted to a `numpy.ndarray`.
+    frames may provide input data that can be converted to a `numpy.ndarray`.
 
     See Also:
         `hoomd.State` for a full description of how HOOMD interprets this
         data.
 
     Attributes:
-        N (int): Number of constraints in the snapshot (:chunk:`constraints/N`).
+        N (int): Number of constraints in the frame (:chunk:`constraints/N`).
 
         value ((*N*, ) `numpy.ndarray` of ``numpy.float32``):
             Constraint length (:chunk:`constraints/value`).
@@ -407,8 +407,8 @@ class ConstraintData(object):
             self.group = self.group.reshape([self.N, self.M])
 
 
-class Snapshot(object):
-    """Snapshot of a system state.
+class Frame(object):
+    """Frame of a system state.
 
     Attributes:
         configuration (`ConfigurationData`): Configuration data.
@@ -468,8 +468,8 @@ class Snapshot(object):
         ]
 
     def validate(self):
-        """Validate all contained snapshot data."""
-        logger.debug('Validating Snapshot')
+        """Validate all contained frame data."""
+        logger.debug('Validating Frame')
 
         self.configuration.validate()
         self.particles.validate()
@@ -716,23 +716,23 @@ class HOOMDTrajectory(object):
         """The number of frames in the trajectory."""
         return self.file.nframes
 
-    def append(self, snapshot):
-        """Append a snapshot to a hoomd gsd file.
+    def append(self, frame):
+        """Append a frame to a hoomd gsd file.
 
         Args:
-            snapshot (:py:class:`Snapshot`): Snapshot to append.
+            frame (:py:class:`Frame`): Frame to append.
 
-        Write the given snapshot to the file at the current frame and increase
+        Write the given frame to the file at the current frame and increase
         the frame counter. Do not write any fields that are ``None``. For all
         non-``None`` fields, scan them and see if they match the initial frame
         or the default value. If the given data differs, write it out to the
         frame. If it is the same, do not write it out as it can be instantiated
         either from the value at the initial frame or the default value.
         """
-        logger.debug('Appending snapshot to hoomd trajectory: '
+        logger.debug('Appending frame to hoomd trajectory: '
                      + str(self.file))
 
-        snapshot.validate()
+        frame.validate()
 
         # want the initial frame specified as a reference to detect if chunks
         # need to be written
@@ -749,9 +749,9 @@ class HOOMDTrajectory(object):
                 'constraints',
                 'pairs',
         ]:
-            container = getattr(snapshot, path)
+            container = getattr(frame, path)
             for name in container._default_value:
-                if self._should_write(path, name, snapshot):
+                if self._should_write(path, name, frame):
                     logger.debug('writing data chunk: ' + path + '/' + name)
                     data = getattr(container, name)
 
@@ -773,11 +773,11 @@ class HOOMDTrajectory(object):
                     self.file.write_chunk(path + '/' + name, data)
 
         # write state data
-        for state, data in snapshot.state.items():
+        for state, data in frame.state.items():
             self.file.write_chunk('state/' + state, data)
 
         # write log data
-        for log, data in snapshot.log.items():
+        for log, data in frame.log.items():
             self.file.write_chunk('log/' + log, data)
 
         self.file.end_frame()
@@ -792,19 +792,19 @@ class HOOMDTrajectory(object):
         self.file.close()
         del self._initial_frame
 
-    def _should_write(self, path, name, snapshot):
+    def _should_write(self, path, name, frame):
         """Test if we should write a given data chunk.
 
         Args:
             path (str): Path part of the data chunk.
             name (str): Name part of the data chunk.
-            snapshot (:py:class:`Snapshot`): Snapshot data is from.
+            frame (:py:class:`Frame`): Frame data is from.
 
         Returns:
             False if the data matches that in the initial frame. False
             if the data matches all default values. True otherwise.
         """
-        container = getattr(snapshot, path)
+        container = getattr(frame, path)
         data = getattr(container, name)
 
         if data is None:
@@ -830,9 +830,9 @@ class HOOMDTrajectory(object):
         """Append each item of the iterable to the file.
 
         Args:
-            iterable: An iterable object the provides :py:class:`Snapshot`
+            iterable: An iterable object the provides :py:class:`Frame`
                 instances. This could be another HOOMDTrajectory, a generator
-                that modifies snapshots, or a list of snapshots.
+                that modifies frames, or a list of frames.
         """
         for item in iterable:
             self.append(item)
@@ -844,7 +844,7 @@ class HOOMDTrajectory(object):
             idx (int): Frame index to read.
 
         Returns:
-            `Snapshot` with the frame data
+            `Frame` with the frame data
 
         Replace any data chunks not present in the given frame with either data
         from frame 0, or initialize from default values if not in frame 0. Cache
@@ -866,40 +866,40 @@ class HOOMDTrajectory(object):
         if self._initial_frame is None and idx != 0:
             self._read_frame(0)
 
-        snap = Snapshot()
+        frame = Frame()
         # read configuration first
         if self.file.chunk_exists(frame=idx, name='configuration/step'):
             step_arr = self.file.read_chunk(frame=idx,
                                             name='configuration/step')
-            snap.configuration.step = step_arr[0]
+            frame.configuration.step = step_arr[0]
         else:
             if self._initial_frame is not None:
-                snap.configuration.step = self._initial_frame.configuration.step
+                frame.configuration.step = self._initial_frame.configuration.step
             else:
-                snap.configuration.step = \
-                    snap.configuration._default_value['step']
+                frame.configuration.step = \
+                    frame.configuration._default_value['step']
 
         if self.file.chunk_exists(frame=idx, name='configuration/dimensions'):
             dimensions_arr = self.file.read_chunk(
                 frame=idx, name='configuration/dimensions')
-            snap.configuration.dimensions = dimensions_arr[0]
+            frame.configuration.dimensions = dimensions_arr[0]
         else:
             if self._initial_frame is not None:
-                snap.configuration.dimensions = \
+                frame.configuration.dimensions = \
                     self._initial_frame.configuration.dimensions
             else:
-                snap.configuration.dimensions = \
-                    snap.configuration._default_value['dimensions']
+                frame.configuration.dimensions = \
+                    frame.configuration._default_value['dimensions']
 
         if self.file.chunk_exists(frame=idx, name='configuration/box'):
-            snap.configuration.box = self.file.read_chunk(
+            frame.configuration.box = self.file.read_chunk(
                 frame=idx, name='configuration/box')
         else:
             if self._initial_frame is not None:
-                snap.configuration.box = self._initial_frame.configuration.box
+                frame.configuration.box = self._initial_frame.configuration.box
             else:
-                snap.configuration.box = \
-                    snap.configuration._default_value['box']
+                frame.configuration.box = \
+                    frame.configuration._default_value['box']
 
         # then read all groups that have N, types, etc...
         for path in [
@@ -911,7 +911,7 @@ class HOOMDTrajectory(object):
                 'constraints',
                 'pairs',
         ]:
-            container = getattr(snap, path)
+            container = getattr(frame, path)
             if self._initial_frame is not None:
                 initial_frame_container = getattr(self._initial_frame, path)
 
@@ -982,25 +982,25 @@ class HOOMDTrajectory(object):
                     container.__dict__[name].flags.writeable = False
 
         # read state data
-        for state in snap._valid_state:
+        for state in frame._valid_state:
             if self.file.chunk_exists(frame=idx, name='state/' + state):
-                snap.state[state] = self.file.read_chunk(frame=idx,
+                frame.state[state] = self.file.read_chunk(frame=idx,
                                                          name='state/' + state)
 
         # read log data
         logged_data_names = self.file.find_matching_chunk_names('log/')
         for log in logged_data_names:
             if self.file.chunk_exists(frame=idx, name=log):
-                snap.log[log[4:]] = self.file.read_chunk(frame=idx, name=log)
+                frame.log[log[4:]] = self.file.read_chunk(frame=idx, name=log)
             else:
                 if self._initial_frame is not None:
-                    snap.log[log[4:]] = self._initial_frame.log[log[4:]]
+                    frame.log[log[4:]] = self._initial_frame.log[log[4:]]
 
         # store initial frame
         if self._initial_frame is None and idx == 0:
-            self._initial_frame = snap
+            self._initial_frame = frame
 
-        return snap
+        return frame
 
     def __getitem__(self, key):
         """Index trajectory frames.
@@ -1109,7 +1109,7 @@ def read_log(name, scalar_only=False):
 
     Caution:
         `read_log` requires that a logged quantity has the same shape in all
-        frames. Use `open` and `Snapshot.log` to read files where the shape
+        frames. Use `open` and `Frame.log` to read files where the shape
         changes from frame to frame.
 
     To create a *pandas* ``DataFrame`` with the logged data:

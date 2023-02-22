@@ -20,19 +20,19 @@ from subprocess import call, PIPE
 
 def write_frame(file, frame, position, orientation):
     """Write a frame to the file."""
-    snap = gsd.hoomd.Snapshot()
-    snap.particles.N = position.shape[0]
-    snap.configuration.step = frame * 10
+    frame = gsd.hoomd.Frame()
+    frame.particles.N = position.shape[0]
+    frame.configuration.step = frame * 10
     position[0][0] = frame
     orientation[0][0] = frame
-    snap.particles.position = position
-    snap.particles.orientation = orientation
-    file.append(snap)
+    frame.particles.position = position
+    frame.particles.orientation = orientation
+    file.append(frame)
 
 
-def read_frame(file, frame, position, orientation):
+def read_frame(file, frame_idx, position, orientation):
     """Read a frame from the file."""
-    snap = file[frame]  # noqa
+    frame = file[frame_idx]  # noqa
 
 
 def write_file(file, nframes, N, position, orientation):
