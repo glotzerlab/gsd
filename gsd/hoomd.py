@@ -874,7 +874,7 @@ class HOOMDTrajectory(object):
 
         .. deprecated:: v2.5
         """
-        warnings.warn("Deprecated, trajectory[idx]", DeprecationWarning)
+        warnings.warn("Deprecated, trajectory[idx]", FutureWarning)
         return self._read_frame(idx)
 
     def _read_frame(self, idx):
