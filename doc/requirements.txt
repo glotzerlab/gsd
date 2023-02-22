@@ -1,5 +1,6 @@
 cython
 furo
-sphinx
 ipython
 numpy
+pandas
+sphinx

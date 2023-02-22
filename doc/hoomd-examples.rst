@@ -143,13 +143,13 @@ Access logged data
         snapshot = gsd.hoomd.Snapshot()
         snapshot.particles.N = 4
         for i in range(10):
-            snapshot.configuration.step = i
+            snapshot.configuration.step = i*100
             snapshot.log['particles/net_force'] = numpy.array([[-1,2,-3+i],
                                                                [0,2,-4],
                                                                [-3,2,1],
                                                                [1,2,3]],
                                                               dtype=numpy.float32)
-            snapshot.log['value/potential_energy'] = [1.5+i]
+            snapshot.log['value/potential_energy'] = 1.5+i
             f.append(snapshot)
 
 Logged data is stored in the ``log`` dictionary as numpy arrays. Place data into

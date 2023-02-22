@@ -5,15 +5,16 @@
 
 :py:mod:`gsd.hoomd` reads and writes GSD files with the ``hoomd`` schema.
 
-* `open` - Open a hoomd schema GSD file.
 * `HOOMDTrajectory` - Read and write hoomd schema GSD files.
-* `read_log` - Read log from a hoomd schema GSD file into a dict of time-series
-  arrays.
 * `Snapshot` - Store the state of a single frame.
 
   * `ConfigurationData` - Store configuration data in a snapshot.
   * `ParticleData` - Store particle data in a snapshot.
   * `BondData` - Store topology data in a snapshot.
+
+* `open` - Open a hoomd schema GSD file.
+* `read_log` - Read log from a hoomd schema GSD file into a dict of time-series
+  arrays.
 
 See Also:
     See :ref:`hoomd-examples` for full examples.
@@ -1106,16 +1107,20 @@ def read_log(name, scalar_only=False):
     Returns:
         `dict`
 
-    To create a *pandas* ``DataFrame`` with the logged data::
-
-        import pandas
-
-        df = pandas.DataFrame(gsd.hoomd.read_log('log.gsd', scalar_only=True))
-
     Caution:
         `read_log` requires that a logged quantity has the same shape in all
         frames. Use `open` and `Snapshot.log` to read files where the shape
         changes from frame to frame.
+
+    To create a *pandas* ``DataFrame`` with the logged data:
+
+    .. ipython:: python
+
+        import pandas
+
+        df = pandas.DataFrame(gsd.hoomd.read_log('log-example.gsd',
+                                                  scalar_only=True))
+        df
     """
     if fl is None:
         raise RuntimeError("file layer module is not available")
