@@ -1104,8 +1104,16 @@ def read_log(name, scalar_only=False):
         name (str): File name to open.
         scalar_only (bool): Set to `True` to include only scalar log values.
 
+    The log data includes :chunk:`configuration/step` and all matching
+    :chunk:`log/user_defined`, :chunk:`log/bonds/user_defined`, and
+    :chunk:`log/particles/user_defined` quantities in the file.
+
     Returns:
         `dict`
+
+    Note:
+        `read_log` issues a `RuntimeWarning` when there are no matching
+        ``log/`` quantities in the file.
 
     Caution:
         `read_log` requires that a logged quantity has the same shape in all
@@ -1137,7 +1145,7 @@ def read_log(name, scalar_only=False):
         # Always log timestep associated with each log entry
         logged_data_names.insert(0, 'configuration/step')
         if len(logged_data_names) == 1:
-            raise RuntimeError('No logged data in file: ' + name)
+            warnings.warn('No logged data in file: ' + str(name), RuntimeWarning)
 
         logged_data_dict = dict()
         for log in logged_data_names:

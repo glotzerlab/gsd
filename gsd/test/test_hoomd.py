@@ -867,9 +867,15 @@ def test_read_log(tmp_path):
         logged_data_dict['log/value/pressure'],
         [*snap0.log['value/pressure'], *snap1.log['value/pressure']])
 
-    # No logged data
+
+def test_read_log_warning(tmp_path):
+    """Test that read_log issues a warning."""
+    snapshot = gsd.hoomd.Snapshot()
+
     with gsd.hoomd.open(name=tmp_path / "test_log.gsd", mode='wb') as hf:
-        hf.extend([gsd.hoomd.Snapshot(), gsd.hoomd.Snapshot()])
-    with pytest.raises(RuntimeError):
-        logged_data_dict = gsd.hoomd.read_log(name=str(tmp_path
-                                                       / "test_log.gsd"))
+        hf.extend([snapshot])
+
+    with pytest.warns(RuntimeWarning):
+        log = gsd.hoomd.read_log(tmp_path / "test_log.gsd")
+
+    assert list(log.keys()) == ['configuration/step']
