@@ -1167,7 +1167,8 @@ def read_log(name, scalar_only=False):
         # Always log timestep associated with each log entry
         logged_data_names.insert(0, 'configuration/step')
         if len(logged_data_names) == 1:
-            warnings.warn('No logged data in file: ' + str(name), RuntimeWarning)
+            warnings.warn('No logged data in file: ' + str(name),
+                          RuntimeWarning)
 
         logged_data_dict = dict()
         for log in logged_data_names:
