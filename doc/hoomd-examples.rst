@@ -17,19 +17,19 @@ Import the module
 
     import gsd.hoomd
 
-Define a snapshot
+Define a frame
 ^^^^^^^^^^^^^^^^^
 
 .. ipython:: python
 
-    snapshot = gsd.hoomd.Snapshot()
-    snapshot.particles.N = 4
-    snapshot.particles.types = ['A', 'B']
-    snapshot.particles.typeid = [0,0,1,1]
-    snapshot.particles.position = [[0,0,0],[1,1,1], [-1,-1,-1], [1,-1,-1]]
-    snapshot.configuration.box = [3, 3, 3, 0, 0, 0]
+    frame = gsd.hoomd.Frame()
+    frame.particles.N = 4
+    frame.particles.types = ['A', 'B']
+    frame.particles.typeid = [0,0,1,1]
+    frame.particles.position = [[0,0,0],[1,1,1], [-1,-1,-1], [1,-1,-1]]
+    frame.configuration.box = [3, 3, 3, 0, 0, 0]
 
-`gsd.hoomd.Snapshot` stores the state of a single system configuration, or frame, in the file.
+`gsd.hoomd.Frame` stores the state of a single system configuration, or frame, in the file.
 Instantiate this class to create a system configuration. All fields default to `None`. Each field is
 written to the file when not `None` **and** when the data does not match the data in the first frame
 or defaults specified in the schema.
@@ -51,11 +51,11 @@ Write frames to a gsd file
 .. ipython:: python
 
     def create_frame(i):
-        snapshot = gsd.hoomd.Snapshot()
-        snapshot.configuration.step = i
-        snapshot.particles.N = 4+i
-        snapshot.particles.position = numpy.random.random(size=(4+i,3))
-        return snapshot
+        frame = gsd.hoomd.Frame()
+        frame.configuration.step = i
+        frame.particles.N = 4+i
+        frame.particles.position = numpy.random.random(size=(4+i,3))
+        return frame
 
     f = gsd.hoomd.open(name='example.gsd', mode='wb')
     f.extend( (create_frame(i) for i in range(10)) )
@@ -64,7 +64,7 @@ Write frames to a gsd file
     @suppress
     f.close()
 
-`gsd.hoomd.HOOMDTrajectory` is similar to a sequence of `gsd.hoomd.Snapshot` objects. The
+`gsd.hoomd.HOOMDTrajectory` is similar to a sequence of `gsd.hoomd.Frame` objects. The
 `append <gsd.hoomd.HOOMDTrajectory.append>` and `extend <gsd.hoomd.HOOMDTrajectory.extend>` methods
 add frames to the trajectory.
 
@@ -81,15 +81,15 @@ Randomly index frames
 .. ipython:: python
 
     f = gsd.hoomd.open(name='example.gsd', mode='rb')
-    snapshot = f[5]
-    snapshot.configuration.step
-    snapshot.particles.N
-    snapshot.particles.position
+    frame = f[5]
+    frame.configuration.step
+    frame.particles.N
+    frame.particles.position
     @suppress
     f.close()
 
 `gsd.hoomd.HOOMDTrajectory` supports random indexing of frames in the file.
-Indexing into a trajectory returns a `gsd.hoomd.Snapshot`.
+Indexing into a trajectory returns a `gsd.hoomd.Frame`.
 
 Slicing and selection
 ^^^^^^^^^^^^^^^^^^^^^
@@ -101,12 +101,12 @@ trajectory.
 
     f = gsd.hoomd.open(name='example.gsd', mode='rb')
 
-    for snapshot in f[5:-2]:
-        print(snapshot.configuration.step, end=' ')
+    for frame in f[5:-2]:
+        print(frame.configuration.step, end=' ')
 
     every_2nd_frame = f[::2]  # create a view of a trajectory subset
-    for snapshot in every_2nd_frame[:4]:
-        print(snapshot.configuration.step, end=' ')
+    for frame in every_2nd_frame[:4]:
+        print(frame.configuration.step, end=' ')
     @suppress
     f.close()
 
@@ -140,17 +140,17 @@ Access logged data
 .. ipython:: python
 
     with gsd.hoomd.open(name='log-example.gsd', mode='wb') as f:
-        snapshot = gsd.hoomd.Snapshot()
-        snapshot.particles.N = 4
+        frame = gsd.hoomd.Frame()
+        frame.particles.N = 4
         for i in range(10):
-            snapshot.configuration.step = i*100
-            snapshot.log['particles/net_force'] = numpy.array([[-1,2,-3+i],
+            frame.configuration.step = i*100
+            frame.log['particles/net_force'] = numpy.array([[-1,2,-3+i],
                                                                [0,2,-4],
                                                                [-3,2,1],
                                                                [1,2,3]],
                                                               dtype=numpy.float32)
-            snapshot.log['value/potential_energy'] = 1.5+i
-            f.append(snapshot)
+            frame.log['value/potential_energy'] = 1.5+i
+            f.append(frame)
 
 Logged data is stored in the ``log`` dictionary as numpy arrays. Place data into
 this dictionary directly without the ``'log/'`` prefix and gsd will include it in
@@ -174,10 +174,10 @@ Read logged data from the ``log`` dictionary.
         :okexcept:
 
         with gsd.hoomd.open(name='example.gsd', mode='wb') as f:
-            snapshot = gsd.hoomd.Snapshot()
-            snapshot.particles.N = 4
-            snapshot.log['invalid'] = dict(a=1, b=5)
-            f.append(snapshot)
+            frame = gsd.hoomd.Frame()
+            frame.particles.N = 4
+            frame.log['invalid'] = dict(a=1, b=5)
+            f.append(frame)
 
 Use multiprocessing
 ^^^^^^^^^^^^^^^^^^^
@@ -187,12 +187,12 @@ Use multiprocessing
    import multiprocessing
 
    def count_particles(args):
-      t, frame = args
-      return len(t[frame].particles.position)
+      t, frame_idx = args
+      return len(t[frame_idx].particles.position)
 
    with gsd.hoomd.open(name='example.gsd', mode='rb') as t:
       with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
-         result = pool.map(count_particles, [(t, frame) for frame in range(len(t))])
+         result = pool.map(count_particles, [(t, frame_idx) for frame_idx in range(len(t))])
 
     result
 

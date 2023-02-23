@@ -7,3 +7,4 @@ gsd.hoomd module
 .. automodule:: gsd.hoomd
     :synopsis: Reference implementation for reading/writing hoomd schema GSD files.
     :members:
+    :show-inheritance:

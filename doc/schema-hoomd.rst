@@ -38,7 +38,7 @@ Data chunks
 -----------
 
 Each frame the ``hoomd`` schema may contain one or more data chunks. The layout
-and names of the chunksmatch that of the binary snapshot API in HOOMD-blue
+and names of the chunksmatch that of the binary frame API in HOOMD-blue
 itself. Data chunks are organized in categories. These categories have no
 meaning in the ``hoomd`` schema specification, and are simply an organizational
 tool. Some file writers may implement options that act on categories (i.e. write
@@ -132,7 +132,7 @@ Configuration
     Number of dimensions in the simulation. Must be 2 or 3.
 
     .. note::
-        When using `gsd.hoomd.Snapshot`, the object will try to intelligently default to a
+        When using `gsd.hoomd.Frame`, the object will try to intelligently default to a
         dimension. When setting a box with :math:`L_z = 0`, ``dimensions`` will default to
         2 otherwise 3. Explicit setting of this value by users always takes precedence.
 

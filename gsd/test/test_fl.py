@@ -40,7 +40,7 @@ def test_create(tmp_path):
 ])
 def test_dtype(tmp_path, typ):
     """Test all supported data types."""
-    data1d = numpy.array([1, 2, 3, 4, 5, 10012], dtype=typ)
+    data1d = numpy.array([1, 2, 3, 4, 5, 127], dtype=typ)
     data2d = numpy.array([[10, 20], [30, 40], [50, 80]], dtype=typ)
     data_zero = numpy.array([], dtype=typ)
 

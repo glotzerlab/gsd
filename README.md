@@ -22,7 +22,7 @@ API to specify the initial condition for a **HOOMD-blue** simulation or analyze 
 
 Create a hoomd gsd file.
 ```python
->>> s = gsd.hoomd.Snapshot()
+>>> s = gsd.hoomd.Frame()
 >>> s.particles.N = 4
 >>> s.particles.types = ['A', 'B']
 >>> s.particles.typeid = [0,0,1,1]
@@ -35,7 +35,7 @@ Create a hoomd gsd file.
 Append frames to a gsd file:
 ```python
 >>> def create_frame(i):
-...     s = gsd.hoomd.Snapshot();
+...     s = gsd.hoomd.Frame();
 ...     s.configuration.step = i;
 ...     s.particles.N = 4+i;
 ...     s.particles.position = numpy.random.random(size=(4+i,3))
@@ -49,12 +49,12 @@ Append frames to a gsd file:
 Randomly index frames:
 ```python
 >>> with gsd.hoomd.open('test.gsd', 'rb') as t:
-...     snap = t[5]
-...     print(snap.configuration.step)
+...     frame = t[5]
+...     print(frame.configuration.step)
 4
-...     print(snap.particles.N)
+...     print(frame.particles.N)
 8
-...     print(snap.particles.position)
+...     print(frame.particles.position)
 [[ 0.56993282  0.42243481  0.5502916 ]
  [ 0.36892486  0.38167036  0.27310368]
  [ 0.04739023  0.13603486  0.196539  ]
