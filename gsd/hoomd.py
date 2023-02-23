@@ -5,13 +5,16 @@
 
 :py:mod:`gsd.hoomd` reads and writes GSD files with the ``hoomd`` schema.
 
-* `open` - Open a hoomd schema GSD file.
 * `HOOMDTrajectory` - Read and write hoomd schema GSD files.
 * `Snapshot` - Store the state of a single frame.
 
-    * `ConfigurationData` - Store configuration data in a snapshot.
-    * `ParticleData` - Store particle data in a snapshot.
-    * `BondData` - Store topology data in a snapshot.
+  * `ConfigurationData` - Store configuration data in a snapshot.
+  * `ParticleData` - Store particle data in a snapshot.
+  * `BondData` - Store topology data in a snapshot.
+
+* `open` - Open a hoomd schema GSD file.
+* `read_log` - Read log from a hoomd schema GSD file into a dict of time-series
+  arrays.
 
 See Also:
     See :ref:`hoomd-examples` for full examples.
@@ -1092,3 +1095,86 @@ def open(name, mode='rb'):
                          schema_version=[1, 4])
 
     return HOOMDTrajectory(gsdfileobj)
+
+
+def read_log(name, scalar_only=False):
+    """Read log from a hoomd schema GSD file into a dict of time-series arrays.
+
+    Args:
+        name (str): File name to open.
+        scalar_only (bool): Set to `True` to include only scalar log values.
+
+    The log data includes :chunk:`configuration/step` and all matching
+    :chunk:`log/user_defined`, :chunk:`log/bonds/user_defined`, and
+    :chunk:`log/particles/user_defined` quantities in the file.
+
+    Returns:
+        `dict`
+
+    Note:
+        `read_log` issues a `RuntimeWarning` when there are no matching
+        ``log/`` quantities in the file.
+
+    Caution:
+        `read_log` requires that a logged quantity has the same shape in all
+        frames. Use `open` and `Snapshot.log` to read files where the shape
+        changes from frame to frame.
+
+    To create a *pandas* ``DataFrame`` with the logged data:
+
+    .. ipython:: python
+
+        import pandas
+
+        df = pandas.DataFrame(gsd.hoomd.read_log('log-example.gsd',
+                                                  scalar_only=True))
+        df
+    """
+    if fl is None:
+        raise RuntimeError("file layer module is not available")
+    if gsd is None:
+        raise RuntimeError("gsd module is not available")
+
+    with fl.open(name=str(name),
+                 mode='rb',
+                 application='gsd.hoomd ' + gsd.__version__,
+                 schema='hoomd',
+                 schema_version=[1, 4]) as gsdfileobj:
+
+        logged_data_names = gsdfileobj.find_matching_chunk_names('log/')
+        # Always log timestep associated with each log entry
+        logged_data_names.insert(0, 'configuration/step')
+        if len(logged_data_names) == 1:
+            warnings.warn('No logged data in file: ' + str(name),
+                          RuntimeWarning)
+
+        logged_data_dict = dict()
+        for log in logged_data_names:
+            log_exists_frame_0 = gsdfileobj.chunk_exists(frame=0, name=log)
+            is_configuration_step = log == 'configuration/step'
+
+            if log_exists_frame_0 or is_configuration_step:
+                if is_configuration_step and not log_exists_frame_0:
+                    # handle default configuration step on frame 0
+                    tmp = numpy.array([0], dtype=numpy.uint64)
+                else:
+                    tmp = gsdfileobj.read_chunk(frame=0, name=log)
+
+                if scalar_only and not tmp.shape[0] == 1:
+                    continue
+                if tmp.shape[0] == 1:
+                    logged_data_dict[log] = numpy.full(
+                        fill_value=tmp[0], shape=(gsdfileobj.nframes,))
+                else:
+                    logged_data_dict[log] = numpy.tile(
+                        tmp,
+                        (gsdfileobj.nframes,) + tuple(1 for _ in tmp.shape))
+
+            for idx in range(1, gsdfileobj.nframes):
+                for log in logged_data_dict.keys():
+                    if not gsdfileobj.chunk_exists(frame=idx, name=log):
+                        continue
+                    logged_data_dict[log][idx] = gsdfileobj.read_chunk(
+                        frame=idx, name=log)
+
+    return logged_data_dict
