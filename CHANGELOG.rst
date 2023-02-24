@@ -10,6 +10,22 @@ Change Log
 v2.x
 ----
 
+v2.8.0 (2023-02-24)
+^^^^^^^^^^^^^^^^^^^
+
+*Added:*
+
+* ``gsd.hoomd.read_log`` - Read log quantities from a GSD file.
+* ``gsd.hoomd.Frame`` class to replace ``gsd.hoomd.Snapshot``.
+
+*Changed:*
+
+* Improved documentation.
+
+*Deprecated:*
+
+* ``gsd.hoomd.Snapshot``.
+
 v2.7.0 (2022-11-30)
 ^^^^^^^^^^^^^^^^^^^
 
