@@ -1894,6 +1894,13 @@ int gsd_end_frame(struct gsd_handle* handle)
         return retval;
         }
 
+    // sync the data before writing the index
+    retval = fsync(handle->fd);
+    if (retval != 0)
+        {
+        return GSD_ERROR_IO;
+        }
+
     // write the frame index to the file
     if (handle->frame_index.size > 0)
         {
