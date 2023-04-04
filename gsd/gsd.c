@@ -58,10 +58,16 @@ enum
     GSD_INITIAL_FRAME_INDEX_SIZE = 16
     };
 
-/// Size of write buffer
+/// Initial size of write buffer
 enum
     {
-    GSD_WRITE_BUFFER_SIZE = 16 * 1024 * 1024
+    GSD_INITIAL_WRITE_BUFFER_SIZE = 1024
+    };
+
+/// Maximum size of write buffer
+enum
+    {
+    GSD_MAXIMUM_WRITE_BUFFER_SIZE = 16 * 1024 * 1024
     };
 
 /// Size of copy buffer
@@ -1570,7 +1576,7 @@ inline static int gsd_initialize_handle(struct gsd_handle* handle)
             return retval;
             }
 
-        retval = gsd_byte_buffer_allocate(&handle->write_buffer, GSD_WRITE_BUFFER_SIZE);
+        retval = gsd_byte_buffer_allocate(&handle->write_buffer, GSD_INITIAL_WRITE_BUFFER_SIZE);
         if (retval != GSD_SUCCESS)
             {
             return retval;
@@ -1994,10 +2000,10 @@ int gsd_write_chunk(struct gsd_handle* handle,
     size_t size = N * M * gsd_sizeof_type(type);
 
     // decide whether to write this chunk to the buffer or straight to disk
-    if (size < handle->write_buffer.reserved / 2)
+    if (size < GSD_MAXIMUM_WRITE_BUFFER_SIZE / 2)
         {
         // flush the buffer if this entry won't fit
-        if (size > (handle->write_buffer.reserved - handle->write_buffer.size))
+        if (size > (GSD_MAXIMUM_WRITE_BUFFER_SIZE - handle->write_buffer.size))
             {
             gsd_flush_write_buffer(handle);
             }
