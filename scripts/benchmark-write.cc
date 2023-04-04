@@ -17,7 +17,7 @@ int main(int argc, char** argv) // NOLINT
     {
     const size_t n_keys = 16;
     const size_t n_frames = 100;
-    const size_t key_size = 1024 * 1024;
+    const size_t key_size = static_cast<const size_t>(1024) * static_cast<const size_t>(1024);
 
     std::vector<double> data(key_size);
 
@@ -71,7 +71,9 @@ int main(int argc, char** argv) // NOLINT
     std::cout << "Write time: " << time_per_key / us * n_keys << " microseconds/frame."
               << std::endl;
 
-    const double mb_per_second = double(key_size * 8 + 32 * 2) / 1048576.0 / time_per_key;
+    const double mb_per_second
+        = double(key_size * 8 + static_cast<const size_t>(32) * static_cast<const size_t>(2))
+          / 1048576.0 / time_per_key;
     std::cout << "MB/s: " << mb_per_second << " MB/s." << std::endl;
 
     gsd_close(&handle);
