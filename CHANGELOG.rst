@@ -15,7 +15,7 @@ v2.8.1 (2023-03-13)
 
 *Fixed:*
 
-* Reduce memory usage in most use-cases.
+* Reduce memory usage in most use cases.
 * Reduce likelihood  of data corruption when writing GSD files.
 
 v2.8.0 (2023-02-24)
