@@ -28,7 +28,7 @@ except ImportError:
 
 
 setup(name='gsd',
-      version='2.8.0',
+      version='2.8.1',
       description=desc,
       long_description=readme,
       long_description_content_type='text/markdown',
@@ -36,8 +36,8 @@ setup(name='gsd',
       author='Joshua A. Anderson',
       author_email='joaander@umich.edu',
       url='https://gsd.readthedocs.io',
-      download_url='https://github.com/glotzerlab/gsd/releases/download/v2.8.0'
-                   '/gsd-v2.8.0.tar.gz',
+      download_url='https://github.com/glotzerlab/gsd/releases/download/v2.8.1'
+                   '/gsd-v2.8.1.tar.gz',
       project_urls={
           "Documentation": "https://gsd.readthedocs.io",
           "Source Code": "https://github.com/glotzerlab/gsd",
