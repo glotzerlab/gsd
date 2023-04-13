@@ -10,6 +10,14 @@ Change Log
 v2.x
 ----
 
+v2.9.0 (not yet released)
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Changed:*
+
+* Test on gcc9, clang10, and newer.
+* Test and provide binary wheels on Python 3.8 and newer.
+
 v2.8.1 (2023-03-13)
 ^^^^^^^^^^^^^^^^^^^
 
