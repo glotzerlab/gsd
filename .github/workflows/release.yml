@@ -29,7 +29,7 @@ jobs:
     name: Build release tarball
     runs-on: ubuntu-latest
     container:
-      image: glotzerlab/ci:2022.11-ubuntu22.04
+      image: glotzerlab/ci:2023.03-ubuntu22.04
       options: -u 0
 
     steps:
