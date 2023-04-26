@@ -314,6 +314,9 @@ extern "C"
 
         /// Access the names in the namelist
         struct gsd_name_id_map name_map;
+
+        /// Number of index entries pending in the current frame.
+        uint64_t pending_index_entries;
         };
 
     /** Specify a version
@@ -428,7 +431,7 @@ extern "C"
 
         @pre *handle* was opened by gsd_open().
 
-        @post Write any remaining buffered data for *complete* frames.
+        @post If the file is writable, write any remaining buffered data for *complete* frames.
         @post The file is closed.
         @post *handle* is freed and can no longer be used.
 

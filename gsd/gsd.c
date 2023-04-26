@@ -1120,7 +1120,7 @@ inline static int gsd_flush_write_buffer(struct gsd_handle* handle)
     // reset write_buffer for new data
     handle->write_buffer.size = 0;
 
-    // move buffer_index entries to file_index
+    // Move buffer_index entries to frame_index.
     size_t i;
     for (i = 0; i < handle->buffer_index.size; i++)
         {
@@ -1590,6 +1590,8 @@ inline static int gsd_initialize_handle(struct gsd_handle* handle)
             }
         }
 
+    handle->pending_index_entries = 0;
+
     return GSD_SUCCESS;
     }
 
@@ -1800,10 +1802,21 @@ int gsd_close(struct gsd_handle* handle)
         return GSD_ERROR_INVALID_ARGUMENT;
         }
 
+    int retval;
+
+    if (handle->open_flags != GSD_OPEN_READONLY)
+        {
+        retval = gsd_flush(handle);
+        if (retval != GSD_SUCCESS)
+            {
+            return retval;
+            }
+        }
+
     // save the fd so we can use it after freeing the handle
     int fd = handle->fd;
 
-    int retval = gsd_index_buffer_free(&handle->file_index);
+    retval = gsd_index_buffer_free(&handle->file_index);
     if (retval != GSD_SUCCESS)
         {
         return retval;
@@ -1883,8 +1896,27 @@ int gsd_end_frame(struct gsd_handle* handle)
         return GSD_ERROR_FILE_MUST_BE_WRITABLE;
         }
 
-    // increment the frame counter
     handle->cur_frame++;
+    handle->pending_index_entries = 0;
+
+    if (handle->frame_index.size > 0)
+        {
+        return gsd_flush(handle);
+        }
+
+    return GSD_SUCCESS;
+    }
+
+int gsd_flush(struct gsd_handle* handle)
+    {
+    if (handle == NULL)
+        {
+        return GSD_ERROR_INVALID_ARGUMENT;
+        }
+    if (handle->open_flags == GSD_OPEN_READONLY)
+        {
+        return GSD_ERROR_FILE_MUST_BE_WRITABLE;
+        }
 
     // flush the namelist buffer
     int retval = gsd_flush_name_buffer(handle);
@@ -1907,13 +1939,20 @@ int gsd_end_frame(struct gsd_handle* handle)
         return GSD_ERROR_IO;
         }
 
-    // write the frame index to the file
-    if (handle->frame_index.size > 0)
+    // Write the frame index to the file, excluding the index entries that are part of the current
+    // frame.
+    if (handle->pending_index_entries > handle->frame_index.size)
+        {
+        return GSD_ERROR_INVALID_ARGUMENT;
+        }
+    uint64_t index_entries_to_write = handle->frame_index.size - handle->pending_index_entries;
+
+    if (index_entries_to_write > 0)
         {
         // ensure there is enough space in the index
-        if ((handle->file_index.size + handle->frame_index.size) > handle->file_index.reserved)
+        if ((handle->file_index.size + index_entries_to_write) > handle->file_index.reserved)
             {
-            gsd_expand_file_index(handle, handle->file_index.size + handle->frame_index.size);
+            gsd_expand_file_index(handle, handle->file_index.size + index_entries_to_write);
             }
 
         // sort the index before writing
@@ -1927,7 +1966,7 @@ int gsd_end_frame(struct gsd_handle* handle)
         int64_t write_pos = handle->header.index_location
                             + sizeof(struct gsd_index_entry) * handle->file_index.size;
 
-        size_t bytes_to_write = sizeof(struct gsd_index_entry) * handle->frame_index.size;
+        size_t bytes_to_write = sizeof(struct gsd_index_entry) * index_entries_to_write;
         ssize_t bytes_written
             = gsd_io_pwrite_retry(handle->fd, handle->frame_index.data, bytes_to_write, write_pos);
 
@@ -1940,14 +1979,24 @@ int gsd_end_frame(struct gsd_handle* handle)
         // add the entries to the file index
         memcpy(handle->file_index.data + handle->file_index.size,
                handle->frame_index.data,
-               sizeof(struct gsd_index_entry) * handle->frame_index.size);
+               sizeof(struct gsd_index_entry) * index_entries_to_write);
 #endif
 
         // update size of file index
-        handle->file_index.size += handle->frame_index.size;
+        handle->file_index.size += index_entries_to_write;
 
-        // clear the frame index
-        handle->frame_index.size = 0;
+        // Clear the frame index, keeping those in the current unfinished frame.
+        if (handle->pending_index_entries > 0)
+            {
+            for (uint64_t i = 0; i < handle->pending_index_entries; i++)
+                {
+                handle->frame_index.data[i]
+                    = handle->frame_index
+                          .data[handle->frame_index.size - handle->pending_index_entries];
+                }
+            }
+
+        handle->frame_index.size = handle->pending_index_entries;
         }
 
     return GSD_SUCCESS;
@@ -2063,6 +2112,7 @@ int gsd_write_chunk(struct gsd_handle* handle,
         handle->file_size += bytes_written;
         }
 
+    handle->pending_index_entries++;
     return GSD_SUCCESS;
     }
 
@@ -2089,6 +2139,14 @@ gsd_find_chunk(struct gsd_handle* handle, uint64_t frame, const char* name)
     if (frame >= gsd_get_nframes(handle))
         {
         return NULL;
+        }
+    if (handle->open_flags != GSD_OPEN_READONLY)
+        {
+        int retval = gsd_flush(handle);
+        if (retval != GSD_SUCCESS)
+            {
+            return NULL;
+            }
         }
 
     // find the id for the given name
@@ -2180,6 +2238,14 @@ int gsd_read_chunk(struct gsd_handle* handle, void* data, const struct gsd_index
         {
         return GSD_ERROR_INVALID_ARGUMENT;
         }
+    if (handle->open_flags != GSD_OPEN_READONLY)
+        {
+        int retval = gsd_flush(handle);
+        if (retval != GSD_SUCCESS)
+            {
+            return retval;
+            }
+        }
 
     size_t size = chunk->N * chunk->M * gsd_sizeof_type((enum gsd_type)chunk->type);
     if (size == 0)
@@ -2270,6 +2336,14 @@ gsd_find_matching_chunk_name(struct gsd_handle* handle, const char* match, const
     if (handle->file_names.n_names == 0)
         {
         return NULL;
+        }
+    if (handle->open_flags != GSD_OPEN_READONLY)
+        {
+        int retval = gsd_flush(handle);
+        if (retval != GSD_SUCCESS)
+            {
+            return NULL;
+            }
         }
 
     // return nothing found if the name buffer is corrupt
