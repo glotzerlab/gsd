@@ -422,13 +422,13 @@ extern "C"
     */
     int gsd_truncate(struct gsd_handle* handle);
 
-    /** Close a GSD file
+    /** Close a GSD file.
 
         @param handle GSD file to close.
 
         @pre *handle* was opened by gsd_open().
-        @pre gsd_end_frame() has been called since the last call to gsd_write_chunk().
 
+        @post Write any remaining buffered data for *complete* frames.
         @post The file is closed.
         @post *handle* is freed and can no longer be used.
 
@@ -442,14 +442,14 @@ extern "C"
     */
     int gsd_close(struct gsd_handle* handle);
 
-    /** Commit the current frame and increment the frame counter.
+    /** Increment the frame counter.
 
         @param handle Handle to an open GSD file
 
         @pre *handle* was opened by gsd_open().
-        @pre gsd_write_chunk() has been called at least once since the last call to gsd_end_frame().
 
-        @post The current frame counter is increased by 1 and cached indexes are written to disk.
+        @post The current frame counter is increased by 1.
+        @post Flush the write if it has overflowed. See gsd_flush().
 
         @return
           - GSD_SUCCESS (0) on success. Negative value on failure:
@@ -460,7 +460,26 @@ extern "C"
     */
     int gsd_end_frame(struct gsd_handle* handle);
 
-    /** Write a data chunk to the current frame
+    /** Flush the write buffer.
+
+        @param handle Handle to an open GSD file
+
+        @pre *handle* was opened by gsd_open().
+
+        @post Write all data buffered by gsd_write_chunk() to the file.
+        @post Write the index entries for all data chunks written prior to the last call to
+              gsd_end_frame().
+
+        @return
+          - GSD_SUCCESS (0) on success. Negative value on failure:
+          - GSD_ERROR_IO: IO error (check errno).
+          - GSD_ERROR_INVALID_ARGUMENT: *handle* is NULL.
+          - GSD_ERROR_FILE_MUST_BE_WRITABLE: The file was opened read-only.
+          - GSD_ERROR_MEMORY_ALLOCATION_FAILED: Unable to allocate memory.
+    */
+    int gsd_flush(struct gsd_handle* handle);
+
+    /** Add a data chunk to the current frame.
 
         @param handle Handle to an open GSD file.
         @param name Name of the data chunk.
@@ -474,8 +493,8 @@ extern "C"
         @pre *name* is a unique name for data chunks in the given frame.
         @pre data is allocated and contains at least `N * M * gsd_sizeof_type(type)` bytes.
 
-        @post The given data chunk is written to the end of the file and its location is updated in
-        the in-memory index.
+        @post If there is space, add the data chunk to the write buffer. Otherwise, write the chunk
+        directly to the file.
 
         @note If the GSD file is version 1.0, the chunk name is truncated to 63 bytes. GSD version
         2.0 files support arbitrarily long names.
