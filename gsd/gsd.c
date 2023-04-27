@@ -965,7 +965,8 @@ inline static int gsd_expand_file_index(struct gsd_handle* handle, size_t size_r
         }
 
     // allocate the copy buffer
-    uint64_t copy_buffer_size = GSD_DEFAULT_INDEX_ENTRIES_TO_BUFFER * sizeof(struct gsd_index_entry);
+    uint64_t copy_buffer_size
+        = GSD_DEFAULT_INDEX_ENTRIES_TO_BUFFER * sizeof(struct gsd_index_entry);
     if (copy_buffer_size > size_old * sizeof(struct gsd_index_entry))
         {
         copy_buffer_size = size_old * sizeof(struct gsd_index_entry);
