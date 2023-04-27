@@ -1104,6 +1104,11 @@ def open(name, mode='rb'):
     |                  | writing. Does *not* create or overwrite     |
     |                  | existing files.                             |
     +------------------+---------------------------------------------+
+
+    .. deprecated:: 2.9.0
+
+        The following values to ``mode`` are deprecated: ``'ab'``, ``'xb'``,
+        and ``'wb'``.
     """
     if fl is None:
         raise RuntimeError("file layer module is not available")

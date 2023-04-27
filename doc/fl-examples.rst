@@ -25,7 +25,7 @@ Open a gsd file
 .. ipython:: python
 
     f = gsd.fl.open(name="file.gsd",
-                    mode='wb',
+                    mode='wb+',
                     application="My application",
                     schema="My Schema",
                     schema_version=[1,0])
@@ -57,7 +57,7 @@ Write data
 .. ipython:: python
 
     f = gsd.fl.open(name="file.gsd",
-                    mode='wb',
+                    mode='wb+',
                     application="My application",
                     schema="My Schema",
                     schema_version=[1,0]);
@@ -176,23 +176,6 @@ Open a file in read/write mode
 
 Open a file in read/write mode to allow both reading and writing.
 
-Write a file in append mode
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. ipython:: python
-    :okexcept:
-
-    f = gsd.fl.open(name="file.gsd", mode='ab')
-    f.write_chunk(name='int', data=numpy.array([10,20], dtype=numpy.int16));
-    f.end_frame()
-    f.nframes
-    # Reads fail in append mode
-    f.read_chunk(frame=2, name='double')
-    f.close()
-
-Open a file in append mode to write additional chunks to an existing file,
-but prevent reading.
-
 Use as a context manager
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -236,7 +219,7 @@ Truncate
 
 .. ipython:: python
 
-    f = gsd.fl.open(name="file.gsd", mode='ab')
+    f = gsd.fl.open(name="file.gsd", mode='rb+')
     f.nframes
     f.schema, f.schema_version, f.application
     f.truncate()

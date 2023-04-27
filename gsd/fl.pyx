@@ -16,6 +16,7 @@ import logging
 import numpy
 import os
 from pickle import PickleError
+import warnings
 from libc.stdint cimport uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t,\
     uint64_t, int64_t
 from libc.errno cimport errno
@@ -205,11 +206,16 @@ def open(name, mode, application=None, schema=None, schema_version=None):
     ``application``, ``schema``, and ``schema_version`` are saved in the file
     and must not be None.
 
+    .. deprecated:: 2.9.0
+
+        The following values to ``mode`` are deprecated: ``'ab'``, ``'xb'``,
+        and ``'wb'``.
+
     Example:
 
         .. ipython:: python
 
-            with gsd.fl.open(name='file.gsd', mode='wb',
+            with gsd.fl.open(name='file.gsd', mode='wb+',
                              application="My application", schema="My Schema",
                              schema_version=[1,0]) as f:
                 f.write_chunk(name='chunk1',
@@ -301,6 +307,8 @@ cdef class GSDFile:
         if mode == 'wb':
             c_flags = libgsd.GSD_OPEN_APPEND
             overwrite = 1
+            warnings.warn("The 'wb' mode is deprecated, use 'wb+'",
+                           FutureWarning)
         elif mode == 'wb+':
             c_flags = libgsd.GSD_OPEN_READWRITE
             overwrite = 1
@@ -312,12 +320,16 @@ cdef class GSDFile:
             c_flags = libgsd.GSD_OPEN_APPEND
             overwrite = 1
             exclusive_create = 1
+            warnings.warn("The 'xb' mode is deprecated, use 'xb+'",
+                           FutureWarning)
         elif mode == 'xb+':
             c_flags = libgsd.GSD_OPEN_READWRITE
             overwrite = 1
             exclusive_create = 1
         elif mode == 'ab':
             c_flags = libgsd.GSD_OPEN_APPEND
+            warnings.warn("The 'ab' mode is deprecated, use 'rb+'",
+                           FutureWarning)
         else:
             raise ValueError("mode must be 'wb', 'wb+', 'rb', 'rb+', "
                              "'xb', 'xb+', or 'ab'")
@@ -431,7 +443,7 @@ cdef class GSDFile:
         Example:
             .. ipython:: python
 
-                with gsd.fl.open(name='file.gsd', mode='wb',
+                with gsd.fl.open(name='file.gsd', mode='wb+',
                                  application="My application",
                                  schema="My Schema", schema_version=[1,0]) as f:
                     for i in range(10):
@@ -440,7 +452,7 @@ cdef class GSDFile:
                                                        dtype=numpy.float32))
                         f.end_frame()
 
-                f = gsd.fl.open(name='file.gsd', mode='ab',
+                f = gsd.fl.open(name='file.gsd', mode='rb+',
                                 application="My application",
                                 schema="My Schema", schema_version=[1,0])
                 f.nframes
@@ -476,7 +488,7 @@ cdef class GSDFile:
         Example:
             .. ipython:: python
 
-                f = gsd.fl.open(name='file.gsd', mode='wb',
+                f = gsd.fl.open(name='file.gsd', mode='wb+',
                                 application="My application",
                                 schema="My Schema", schema_version=[1,0])
 
@@ -527,7 +539,7 @@ cdef class GSDFile:
         Example:
             .. ipython:: python
 
-                f = gsd.fl.open(name='file.gsd', mode='wb',
+                f = gsd.fl.open(name='file.gsd', mode='wb+',
                                 application="My application",
                                 schema="My Schema", schema_version=[1,0])
 
@@ -636,7 +648,7 @@ cdef class GSDFile:
         Example:
             .. ipython:: python
 
-                with gsd.fl.open(name='file.gsd', mode='wb',
+                with gsd.fl.open(name='file.gsd', mode='wb+',
                                  application="My application",
                                  schema="My Schema", schema_version=[1,0]) as f:
                     f.write_chunk(name='chunk1',
@@ -703,7 +715,7 @@ cdef class GSDFile:
             .. ipython:: python
                 :okexcept:
 
-                with gsd.fl.open(name='file.gsd', mode='wb',
+                with gsd.fl.open(name='file.gsd', mode='wb+',
                                  application="My application",
                                  schema="My Schema", schema_version=[1,0]) as f:
                     f.write_chunk(name='chunk1',
@@ -838,7 +850,7 @@ cdef class GSDFile:
         Example:
             .. ipython:: python
 
-                with gsd.fl.open(name='file.gsd', mode='wb',
+                with gsd.fl.open(name='file.gsd', mode='wb+',
                                  application="My application",
                                  schema="My Schema", schema_version=[1,0]) as f:
                     f.write_chunk(name='data/chunk1',

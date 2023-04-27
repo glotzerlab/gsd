@@ -28,7 +28,7 @@ Create a hoomd gsd file.
 >>> s.particles.typeid = [0,0,1,1]
 >>> s.particles.position = [[0,0,0],[1,1,1], [-1,-1,-1], [1,-1,-1]]
 >>> s.configuration.box = [3, 3, 3, 0, 0, 0]
->>> traj = gsd.hoomd.open(name='test.gsd', mode='wb')
+>>> traj = gsd.hoomd.open(name='test.gsd', mode='wb+')
 >>> traj.append(s)
 ```
 
@@ -76,7 +76,7 @@ Slice frames:
 ## File layer examples
 
 ```python
-with gsd.fl.open(name='file.gsd', mode='wb') as f:
+with gsd.fl.open(name='file.gsd', mode='wb+') as f:
     f.write_chunk(name='position', data=numpy.array([[1,2,3],[4,5,6]], dtype=numpy.float32));
     f.write_chunk(name='angle', data=numpy.array([0, 1], dtype=numpy.float32));
     f.write_chunk(name='box', data=numpy.array([10, 10, 10], dtype=numpy.float32));

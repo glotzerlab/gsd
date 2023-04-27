@@ -39,7 +39,7 @@ Create a hoomd gsd file
 
 .. ipython:: python
 
-    f = gsd.hoomd.open(name='file.gsd', mode='wb')
+    f = gsd.hoomd.open(name='file.gsd', mode='wb+')
     @suppress
     f.close()
 
@@ -57,7 +57,7 @@ Write frames to a gsd file
         frame.particles.position = numpy.random.random(size=(4+i,3))
         return frame
 
-    f = gsd.hoomd.open(name='example.gsd', mode='wb')
+    f = gsd.hoomd.open(name='example.gsd', mode='wb+')
     f.extend( (create_frame(i) for i in range(10)) )
     f.append( create_frame(10) )
     len(f)
@@ -139,7 +139,7 @@ Access logged data
 
 .. ipython:: python
 
-    with gsd.hoomd.open(name='log-example.gsd', mode='wb') as f:
+    with gsd.hoomd.open(name='log-example.gsd', mode='wb+') as f:
         frame = gsd.hoomd.Frame()
         frame.particles.N = 4
         for i in range(10):
@@ -173,7 +173,7 @@ Read logged data from the ``log`` dictionary.
     .. ipython:: python
         :okexcept:
 
-        with gsd.hoomd.open(name='example.gsd', mode='wb') as f:
+        with gsd.hoomd.open(name='example.gsd', mode='wb+') as f:
             frame = gsd.hoomd.Frame()
             frame.particles.N = 4
             frame.log['invalid'] = dict(a=1, b=5)
