@@ -77,10 +77,11 @@ To build the documentation from source (optional):
 
 1. `Install prerequisites`_::
 
-   $ <package-manager> install sphinx furo ipython
+   $ <package-manager> install breathe doxygen sphinx furo ipython
 
 2. `Build the documentation`_::
 
+   $ cd gsd && doxygen && cd ..
    $ sphinx-build -b html gsd/doc build/gsd-documentation
 
 The sections below provide details on each of these steps.
@@ -118,6 +119,8 @@ Install prerequisites
 
 **To build the documentation**:
 
+* **breathe**
+* **Doxygen**
 * **Sphinx**
 * **IPython**
 * **furo**
@@ -235,7 +238,15 @@ Add the ``--validate`` option to include longer-running validation tests:
 Build the documentation
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-Run `Sphinx`_ to build the documentation:
+Run `Doxygen`_ to generate the C++ documentation:
+
+.. code-block:: bash
+
+   $ cd gsd
+   $ doxygen
+   $ cd ..
+
+Run `Sphinx`_ to build the HTML documentation:
 
 .. code-block:: bash
 
@@ -259,6 +270,7 @@ documentation.
         $ PYTHONPATH=build/gsd sphinx-build -b html gsd/doc build/gsd-documentation
 
 .. _Sphinx: https://www.sphinx-doc.org/
+.. _Doxygen: https://www.doxygen.nl/
 
 Embedding GSD in your project
 -----------------------------

@@ -2,13 +2,14 @@
 # Copyright (c) 2016-2023 The Regents of the University of Michigan
 # Part of GSD, released under the BSD 2-Clause License.
 
-import sys
 import os
+import subprocess
 import gsd
 import datetime
 import tempfile
 
 extensions = [
+    'breathe',
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
     'sphinx.ext.intersphinx',
@@ -74,3 +75,18 @@ ipython_execlines = ['import gsd.fl',
                      'import numpy',
                      'import os',
                      f'os.chdir("{tmpdir.name}")']
+
+
+dirname = os.path.abspath(os.path.dirname(__file__))
+breathe_projects = {'gsd': os.path.join(dirname, '..', 'devdoc', 'xml')}
+breathe_default_project = 'gsd'
+
+breathe_domain_by_extension = {
+    "h" : "c",
+}
+
+read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
+
+if read_the_docs_build:
+
+     subprocess.call('cd ../doxygen; doxygen', shell=True)
