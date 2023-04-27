@@ -17,8 +17,10 @@ Attributes:
                        not the file layer version it reads/writes.
 """
 
+import signal
 import sys
 from .version import __version__  # noqa: F401
 
-if sys.version_info < (3, 5) or sys.version_info >= (4, 0):
-    raise RuntimeError("Python ~= 3.5 is required")
+# Install a SIGTERM handler that gracefully exits, allowing open files to flush
+# buffered writes and close.
+signal.signal(signal.SIGTERM, lambda n, f: sys.exit(128))
