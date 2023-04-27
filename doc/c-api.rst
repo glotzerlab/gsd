@@ -44,6 +44,8 @@ Functions
     Create an empty gsd file with the given name. Overwrite any existing
     file at that location. Open the generated gsd file in *handle*.
 
+    The file descriptor is closed if there when an error opening the file.
+
     :param handle: Handle to open.
     :param fname: File name (UTF-8 encoded).
     :param application: Generating application name (truncated to 63 chars).
@@ -69,6 +71,8 @@ Functions
                              gsd_open_flag flags)
 
     Open a GSD file and populates the handle for use by later API calls.
+
+    The file descriptor is closed if there is an error opening the file.
 
     :param handle: Handle to open.
     :param fname: File name to open (UTF-8 encoded).
@@ -111,8 +115,11 @@ Functions
 
     :param handle: GSD file to close.
 
+    For writable files: All data and index entries buffered before the previous call to
+    :c:func:`gsd_end_frame()` is written to the file (see :c:func:`gsd_flush()`).
+
     .. warning::
-        Ensure that all :c:func:`gsd_write_chunk()` calls are committed with
+        Ensure that all :c:func:`gsd_write_chunk()` calls are completed with
         :c:func:`gsd_end_frame()` before closing the file.
 
     :return:
@@ -123,7 +130,23 @@ Functions
 
 .. c:function:: int gsd_end_frame(gsd_handle* handle)
 
-    Commit the current frame and increment the frame counter.
+    Increment the frame counter by 1 and flush the write buffer if it has overflowed (see
+    :c:func:`gsd_flush()`.
+
+    :param handle: Handle to an open GSD file.
+
+    :return:
+
+      * GSD_SUCCESS (0) on success. Negative value on failure:
+      * GSD_ERROR_IO: IO error (check errno).
+      * GSD_ERROR_INVALID_ARGUMENT: *handle* is NULL.
+      * GSD_ERROR_FILE_MUST_BE_WRITABLE: The file was opened read-only.
+      * GSD_ERROR_MEMORY_ALLOCATION_FAILED: Unable to allocate memory.
+
+.. c:function:: int gsd_flush(gsd_handle* handle)
+
+    Write all data buffered by :c:func:`gsd_write_chunk()` to the file. Write index entries buffered
+    by :c:func:`gsd_write_chunk()` prior to the last call to :c:func:`gsd_end_frame()` to the file.
 
     :param handle: Handle to an open GSD file.
 
@@ -143,11 +166,12 @@ Functions
                                     uint8_t flags, \
                                     const void *data)
 
-    Write a data chunk to the current frame. The chunk name must be unique
-    within each frame. The given data chunk is written to the end of the file
-    and its location is updated in the in-memory index. The data pointer must be
-    allocated and contain at least contains at least ``N * M *
-    gsd_sizeof_type(type)`` bytes.
+    Write a data chunk to the current frame. The chunk name must be unique within each frame.
+    When there is space in the buffer, add the data to the buffer. Otherwise, write it to the
+    end of the file. Add the index entry to the buffer.
+
+    The data pointer must be allocated and contain at least contains at least ``N * M *
+    gsd_sizeof_type(type)`` bytes (*data* may be ``NULL`` when *N* is 0).
 
     :param handle: Handle to an open GSD file.
     :param name: Name of the data chunk.
@@ -184,6 +208,8 @@ Functions
 
     :return: A pointer to the found chunk, or NULL if not found.
 
+    .. note:: :c:func:`gsd_find_chunk()` calls :c:func:`gsd_flush()` when the file is writable.
+
 .. c:function:: int gsd_read_chunk(gsd_handle* handle, \
                                    void* data, \
                                    const gsd_index_entry_t* chunk)
@@ -203,6 +229,8 @@ Functions
       * GSD_ERROR_INVALID_ARGUMENT: *handle* is NULL, *data* is NULL, or *chunk* is NULL.
       * GSD_ERROR_FILE_MUST_BE_READABLE: The file was opened in append mode.
       * GSD_ERROR_FILE_CORRUPT: The GSD file is corrupt.
+
+    .. note:: :c:func:`gsd_read_chunk()` calls :c:func:`gsd_flush()` when the file is writable.
 
 .. c:function:: uint64_t gsd_get_nframes(gsd_handle* handle)
 
@@ -249,6 +277,9 @@ Functions
 
     :return: Pointer to a string, ``NULL`` if no more matching chunks are found
       found, or ``NULL`` if ``prev`` is invalid.
+
+    .. note:: :c:func:`gsd_find_matching_chunk_name()` calls :c:func:`gsd_flush()` when the file is
+              writable.
 
 .. c:function:: int gsd_upgrade(gsd_handle* handle)
 
