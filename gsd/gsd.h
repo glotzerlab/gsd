@@ -319,7 +319,7 @@ extern "C"
         uint64_t pending_index_entries;
         };
 
-    /** Specify a version
+    /** Specify a version.
 
         @param major major version
         @param minor minor version
@@ -328,7 +328,7 @@ extern "C"
     */
     uint32_t gsd_make_version(unsigned int major, unsigned int minor);
 
-    /** Create a GSD file
+    /** Create a GSD file.
 
         @param fname File name (UTF-8 encoded).
         @param application Generating application name (truncated to 63 chars).
@@ -350,7 +350,7 @@ extern "C"
                    const char* schema,
                    uint32_t schema_version);
 
-    /** Create and open a GSD file
+    /** Create and open a GSD file.
 
         @param handle Handle to open.
         @param fname File name (UTF-8 encoded).
@@ -384,7 +384,7 @@ extern "C"
                             enum gsd_open_flag flags,
                             int exclusive_create);
 
-    /** Open a GSD file
+    /** Open a GSD file.
 
         @param handle Handle to open.
         @param fname File name to open (UTF-8 encoded).
@@ -406,7 +406,7 @@ extern "C"
     */
     int gsd_open(struct gsd_handle* handle, const char* fname, enum gsd_open_flag flags);
 
-    /** Truncate a GSD file
+    /** Truncate a GSD file.
 
         @param handle Open GSD file to truncate.
 
@@ -431,11 +431,12 @@ extern "C"
 
         @pre *handle* was opened by gsd_open().
 
-        @post If the file is writable, write any remaining buffered data for *complete* frames.
+        @post Writable files: All data and index entries buffered before the previous call to
+              gsd_end_frame() is written to the file (see gsd_flush()).
         @post The file is closed.
         @post *handle* is freed and can no longer be used.
 
-        @warning Ensure that all gsd_write_chunk() calls are committed with gsd_end_frame() before
+        @warning Ensure that all gsd_write_chunk() calls are completed with gsd_end_frame() before
         closing the file.
 
         @return
@@ -445,14 +446,14 @@ extern "C"
     */
     int gsd_close(struct gsd_handle* handle);
 
-    /** Increment the frame counter.
+    /** Complete the current frame.
 
         @param handle Handle to an open GSD file
 
         @pre *handle* was opened by gsd_open().
 
         @post The current frame counter is increased by 1.
-        @post Flush the write if it has overflowed. See gsd_flush().
+        @post Flush the write buffer if it has overflowed. See gsd_flush().
 
         @return
           - GSD_SUCCESS (0) on success. Negative value on failure:
@@ -469,9 +470,9 @@ extern "C"
 
         @pre *handle* was opened by gsd_open().
 
-        @post Write all data buffered by gsd_write_chunk() to the file.
-        @post Write the index entries for all data chunks written prior to the last call to
-              gsd_end_frame().
+        @post All data buffered by gsd_write_chunk() are present in the file.
+        @post All index entries buffered by gsd_write_chunk() prior to the last call to
+              gsd_end_frame() are present in the file.
 
         @return
           - GSD_SUCCESS (0) on success. Negative value on failure:
@@ -496,8 +497,9 @@ extern "C"
         @pre *name* is a unique name for data chunks in the given frame.
         @pre data is allocated and contains at least `N * M * gsd_sizeof_type(type)` bytes.
 
-        @post If there is space, add the data chunk to the write buffer. Otherwise, write the chunk
-        directly to the file.
+        @post When there is space in the buffer: The given data is present in the write buffer.
+              Otherwise, the data is present at the end of the file.
+        @post The index is present in the buffer.
 
         @note If the GSD file is version 1.0, the chunk name is truncated to 63 bytes. GSD version
         2.0 files support arbitrarily long names.
@@ -521,7 +523,7 @@ extern "C"
                         uint8_t flags,
                         const void* data);
 
-    /** Find a chunk in the GSD file
+    /** Find a chunk in the GSD file.
 
         @param handle Handle to an open GSD file
         @param frame Frame to look for chunk
@@ -533,11 +535,13 @@ extern "C"
         read the data.
 
         @return A pointer to the found chunk, or NULL if not found.
+
+        @note gsd_find_chunk() calls gsd_flush() when the file is writable.
     */
     const struct gsd_index_entry*
     gsd_find_chunk(struct gsd_handle* handle, uint64_t frame, const char* name);
 
-    /** Read a chunk from the GSD file
+    /** Read a chunk from the GSD file.
 
         @param handle Handle to an open GSD file.
         @param data Data buffer to read into.
@@ -554,10 +558,12 @@ extern "C"
           - GSD_ERROR_INVALID_ARGUMENT: *handle* is NULL, *data* is NULL, or *chunk* is NULL.
           - GSD_ERROR_FILE_MUST_BE_READABLE: The file was opened in append mode.
           - GSD_ERROR_FILE_CORRUPT: The GSD file is corrupt.
+
+        @note gsd_read_chunk() calls gsd_flush() when the file is writable.
     */
     int gsd_read_chunk(struct gsd_handle* handle, void* data, const struct gsd_index_entry* chunk);
 
-    /** Get the number of frames in the GSD file
+    /** Get the number of frames in the GSD file.
 
         @param handle Handle to an open GSD file
 
@@ -590,6 +596,8 @@ extern "C"
 
         @return Pointer to a string, NULL if no more matching chunks are found found, or NULL if
         *prev* is invalid
+
+        @note  gsd_find_matching_chunk_name() calls gsd_flush() when the file is writable.
     */
     const char*
     gsd_find_matching_chunk_name(struct gsd_handle* handle, const char* match, const char* prev);
