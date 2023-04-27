@@ -64,16 +64,16 @@ enum
     GSD_INITIAL_WRITE_BUFFER_SIZE = 1024
     };
 
-/// Maximum size of write buffer
+/// Default maximum size of write buffer
 enum
     {
-    GSD_MAXIMUM_WRITE_BUFFER_SIZE = 16 * 1024 * 1024
+    GSD_DEFAULT_MAXIMUM_WRITE_BUFFER_SIZE = 64 * 1024 * 1024
     };
 
-/// Size of copy buffer
+/// Default number of index entries to buffer
 enum
     {
-    GSD_COPY_BUFFER_SIZE = 128 * 1024
+    GSD_DEFAULT_INDEX_ENTRIES_TO_BUFFER = 262144
     };
 
 /// Size of hash map
@@ -965,7 +965,12 @@ inline static int gsd_expand_file_index(struct gsd_handle* handle, size_t size_r
         }
 
     // allocate the copy buffer
-    char* buf = malloc(GSD_COPY_BUFFER_SIZE);
+    uint64_t copy_buffer_size = GSD_DEFAULT_INDEX_ENTRIES_TO_BUFFER * sizeof(struct gsd_index_entry);
+    if (copy_buffer_size > size_old * sizeof(struct gsd_index_entry))
+        {
+        copy_buffer_size = size_old * sizeof(struct gsd_index_entry);
+        }
+    char* buf = malloc(copy_buffer_size);
 
     // write the current index to the end of the file
     int64_t new_index_location = lseek(handle->fd, 0, SEEK_END);
@@ -974,8 +979,8 @@ inline static int gsd_expand_file_index(struct gsd_handle* handle, size_t size_r
     size_t old_index_bytes = size_old * sizeof(struct gsd_index_entry);
     while (total_bytes_written < old_index_bytes)
         {
-        size_t bytes_to_copy = GSD_COPY_BUFFER_SIZE;
-        if (old_index_bytes - total_bytes_written < GSD_COPY_BUFFER_SIZE)
+        size_t bytes_to_copy = copy_buffer_size;
+        if (old_index_bytes - total_bytes_written < copy_buffer_size)
             {
             bytes_to_copy = old_index_bytes - total_bytes_written;
             }
@@ -1006,13 +1011,13 @@ inline static int gsd_expand_file_index(struct gsd_handle* handle, size_t size_r
         }
 
     // fill the new index space with 0s
-    gsd_util_zero_memory(buf, GSD_COPY_BUFFER_SIZE);
+    gsd_util_zero_memory(buf, copy_buffer_size);
 
     size_t new_index_bytes = size_new * sizeof(struct gsd_index_entry);
     while (total_bytes_written < new_index_bytes)
         {
-        size_t bytes_to_copy = GSD_COPY_BUFFER_SIZE;
-        if (new_index_bytes - total_bytes_written < GSD_COPY_BUFFER_SIZE)
+        size_t bytes_to_copy = copy_buffer_size;
+        if (new_index_bytes - total_bytes_written < copy_buffer_size)
             {
             bytes_to_copy = new_index_bytes - total_bytes_written;
             }
@@ -1591,6 +1596,8 @@ inline static int gsd_initialize_handle(struct gsd_handle* handle)
         }
 
     handle->pending_index_entries = 0;
+    handle->maximum_write_buffer_size = GSD_DEFAULT_MAXIMUM_WRITE_BUFFER_SIZE;
+    handle->index_entries_to_buffer = GSD_DEFAULT_INDEX_ENTRIES_TO_BUFFER;
 
     return GSD_SUCCESS;
     }
@@ -1899,7 +1906,7 @@ int gsd_end_frame(struct gsd_handle* handle)
     handle->cur_frame++;
     handle->pending_index_entries = 0;
 
-    if (handle->frame_index.size > 0)
+    if (handle->frame_index.size > 0 || handle->buffer_index.size > handle->index_entries_to_buffer)
         {
         return gsd_flush(handle);
         }
@@ -2056,10 +2063,10 @@ int gsd_write_chunk(struct gsd_handle* handle,
     size_t size = N * M * gsd_sizeof_type(type);
 
     // decide whether to write this chunk to the buffer or straight to disk
-    if (size < GSD_MAXIMUM_WRITE_BUFFER_SIZE / 2)
+    if (size < handle->maximum_write_buffer_size)
         {
         // flush the buffer if this entry won't fit
-        if (size > (GSD_MAXIMUM_WRITE_BUFFER_SIZE - handle->write_buffer.size))
+        if (size > (handle->maximum_write_buffer_size - handle->write_buffer.size))
             {
             gsd_flush_write_buffer(handle);
             }
@@ -2558,6 +2565,48 @@ int gsd_upgrade(struct gsd_handle* handle)
             return retval;
             }
         }
+
+    return GSD_SUCCESS;
+    }
+
+uint64_t gsd_get_maximum_write_buffer_size(struct gsd_handle* handle)
+    {
+    if (handle == NULL)
+        {
+        return 0;
+        }
+    return handle->maximum_write_buffer_size;
+    }
+
+int gsd_set_maximum_write_buffer_size(struct gsd_handle* handle, uint64_t size)
+    {
+    if (handle == NULL || size == 0)
+        {
+        return GSD_ERROR_INVALID_ARGUMENT;
+        }
+
+    handle->maximum_write_buffer_size = size;
+
+    return GSD_SUCCESS;
+    }
+
+uint64_t gsd_get_index_entries_to_buffer(struct gsd_handle* handle)
+    {
+    if (handle == NULL)
+        {
+        return 0;
+        }
+    return handle->index_entries_to_buffer;
+    }
+
+int gsd_set_index_entries_to_buffer(struct gsd_handle* handle, uint64_t number)
+    {
+    if (handle == NULL || number == 0)
+        {
+        return GSD_ERROR_INVALID_ARGUMENT;
+        }
+
+    handle->index_entries_to_buffer = number;
 
     return GSD_SUCCESS;
     }
