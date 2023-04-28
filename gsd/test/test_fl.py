@@ -978,6 +978,14 @@ def test_flush(tmp_path, open_mode, n_flush):
         f.end_frame()
         f.write_chunk(name='chunk3', data=data)
 
+        # Ensure that the data is buffered by opening the file with a 2nd
+        # handle read-only and checking it.
+        with gsd.fl.open(name=tmp_path / 'test_flush.gsd',
+                         mode='rb') as f_readonly:
+            assert not f_readonly.chunk_exists(frame=0, name='chunk1')
+            assert not f_readonly.chunk_exists(frame=1, name='chunk2')
+            assert f_readonly.nframes == 0
+
         # 0 calls to flush tests the implicit flush on close, 2 calls to flush
         # tests that repeated calls are handled properly.
         for i in range(n_flush):
