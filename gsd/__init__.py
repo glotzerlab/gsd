@@ -23,4 +23,4 @@ from .version import __version__  # noqa: F401
 
 # Install a SIGTERM handler that gracefully exits, allowing open files to flush
 # buffered writes and close.
-signal.signal(signal.SIGTERM, lambda n, f: sys.exit(128))
+signal.signal(signal.SIGTERM, lambda n, f: sys.exit(1))
