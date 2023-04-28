@@ -238,7 +238,7 @@ Add the ``--validate`` option to include longer-running validation tests:
 Build the documentation
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-Run `Doxygen`_ to generate the C++ documentation:
+Run `Doxygen`_ to generate the C documentation:
 
 .. code-block:: bash
 
