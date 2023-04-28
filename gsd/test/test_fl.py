@@ -1007,6 +1007,9 @@ def test_maximum_write_buffer_size(tmp_path, open_mode):
         f.maximum_write_buffer_size = 1024
         assert f.maximum_write_buffer_size == 1024
 
+        with pytest.raises(RuntimeError):
+            f.maximum_write_buffer_size = 0
+
 
 def test_index_entries_to_buffer(tmp_path, open_mode):
     """Test index_entries_to_buffer."""
@@ -1019,3 +1022,6 @@ def test_index_entries_to_buffer(tmp_path, open_mode):
         assert f.index_entries_to_buffer > 0
         f.index_entries_to_buffer = 1024
         assert f.index_entries_to_buffer == 1024
+
+        with pytest.raises(RuntimeError):
+            f.index_entries_to_buffer = 0
