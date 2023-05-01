@@ -11,7 +11,7 @@ Submodules
 ----------
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 1
 
    python-module-gsd.fl
    python-module-gsd.hoomd
@@ -37,3 +37,10 @@ events. Use this module to control the verbosity and output destination::
 
     Module :py:mod:`logging`
         Documentation of the :py:mod:`logging` standard module.
+
+Signal handling
+---------------
+
+On import, `gsd` installs a ``SIGTERM`` signal handler that calls `sys.exit` so that open gsd files
+have a chance to flush write buffers (`GSDFile.flush`) when a user's process is terminated. Use
+`signal.signal` to adjust this behavior as needed.

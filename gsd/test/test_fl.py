@@ -961,3 +961,75 @@ def test_read_write(tmp_path, mode):
             data10 = f.read_chunk(frame=i, name='data10')
             assert data1[0] == i
             assert data10[0] == i * 10
+
+
+@pytest.mark.parametrize('n_flush', [0, 1, 2])
+def test_flush(tmp_path, open_mode, n_flush):
+    """Test flush."""
+    data = numpy.array([1, 2, 3, 4, 5, 10012], dtype=numpy.int64)
+    with gsd.fl.open(name=tmp_path / 'test_flush.gsd',
+                     mode=open_mode.write,
+                     application='test_flush',
+                     schema='none',
+                     schema_version=[1, 2]) as f:
+        f.write_chunk(name='chunk1', data=data)
+        f.end_frame()
+        f.write_chunk(name='chunk2', data=data)
+        f.end_frame()
+        f.write_chunk(name='chunk3', data=data)
+
+        # Ensure that the data is buffered by opening the file with a 2nd
+        # handle read-only and checking it.
+        with gsd.fl.open(name=tmp_path / 'test_flush.gsd',
+                         mode='rb') as f_readonly:
+            assert not f_readonly.chunk_exists(frame=0, name='chunk1')
+            assert not f_readonly.chunk_exists(frame=1, name='chunk2')
+            assert f_readonly.nframes == 0
+
+        # 0 calls to flush tests the implicit flush on close, 2 calls to flush
+        # tests that repeated calls are handled properly.
+        for i in range(n_flush):
+            f.flush()
+
+    with gsd.fl.open(name=tmp_path / 'test_flush.gsd',
+                     mode=open_mode.read) as f:
+        assert f.chunk_exists(frame=0, name='chunk1')
+        assert f.chunk_exists(frame=1, name='chunk2')
+
+        # The third chunk is not written because end_frame is not called a
+        # third time.
+
+        assert not f.chunk_exists(frame=2, name='chunk3')
+        assert f.nframes == 2
+
+
+def test_maximum_write_buffer_size(tmp_path, open_mode):
+    """Test maximum_write_buffer_size."""
+    with gsd.fl.open(name=tmp_path / 'test_maximum_write_buffer_size.gsd',
+                     mode=open_mode.write,
+                     application='test_maximum_write_buffer_size',
+                     schema='none',
+                     schema_version=[1, 2]) as f:
+
+        assert f.maximum_write_buffer_size > 0
+        f.maximum_write_buffer_size = 1024
+        assert f.maximum_write_buffer_size == 1024
+
+        with pytest.raises(RuntimeError):
+            f.maximum_write_buffer_size = 0
+
+
+def test_index_entries_to_buffer(tmp_path, open_mode):
+    """Test index_entries_to_buffer."""
+    with gsd.fl.open(name=tmp_path / 'test_index_entries_to_buffer.gsd',
+                     mode=open_mode.write,
+                     application='test_index_entries_to_buffer',
+                     schema='none',
+                     schema_version=[1, 2]) as f:
+
+        assert f.index_entries_to_buffer > 0
+        f.index_entries_to_buffer = 1024
+        assert f.index_entries_to_buffer == 1024
+
+        with pytest.raises(RuntimeError):
+            f.index_entries_to_buffer = 0
