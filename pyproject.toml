@@ -33,7 +33,7 @@ Issues = "https://github.com/glotzerlab/gsd/issues"
 packages = ["gsd", "gsd.test"]
 
 [build-system]
-requires = ["setuptools>=42",
+requires = ["setuptools>=64.0.0",
             "wheel",
             "Cython",
             "oldest-supported-numpy"]
