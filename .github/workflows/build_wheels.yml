@@ -59,7 +59,7 @@ jobs:
         run: python3 -m pip --disable-pip-version-check install numpy cython --upgrade --progress-bar=off
 
       - name: Build sdist
-        run: python setup.py sdist
+        run: python -m build --sdist --wheel --outdir dist/ .
 
       - uses: actions/upload-artifact@v3.1.2
         with:
