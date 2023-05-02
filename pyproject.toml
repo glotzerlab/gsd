@@ -1,9 +1,39 @@
 [project]
 requires-python = ">=3.6"
 name = "gsd"
+version = "2.8.1"
+description = "General simulation data file format."
+readme = "README.md"
+license = {text = "BSD-2-Clause"}
+authors = [
+    {name = "Joshua A. Anderson", email = "joaander@umich.edu"},
+]
+classifiers=[
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: POSIX",
+    "License :: OSI Approved :: BSD License",
+    "Topic :: Scientific/Engineering :: Physics",
+    ]
+dependencies = ["numpy>=1.9.3"]
+
+[project.scripts]
+gsd = "gsd.__main__:main"
+
+[project.urls]
+Homepage = "https://gsd.readthedocs.io"
+Documentation = "https://gsd.readthedocs.io"
+Download = "https://github.com/glotzerlab/gsd/releases/download/v2.8.1/gsd-v2.8.1.tar.gz"
+Source = "https://github.com/glotzerlab/gsd"
+Issues = "https://github.com/glotzerlab/gsd/issues"
+
+[tool.setuptools]
+packages = ["gsd", "gsd.test"]
 
 [build-system]
-requires = ["setuptools>=42",
+requires = ["setuptools>=64.0.0",
             "wheel",
             "Cython",
             "oldest-supported-numpy"]

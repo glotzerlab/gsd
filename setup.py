@@ -4,7 +4,6 @@
 from setuptools import setup
 from setuptools.extension import Extension
 import numpy
-import os
 from Cython.Build import cythonize
 
 extensions = cythonize(
@@ -16,52 +15,4 @@ extensions = cythonize(
         )],
     compiler_directives={'language_level': 3})
 
-# Read README for PyPI, fallback to short description if it fails.
-desc = 'General simulation data file format.'
-try:
-    readme_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                               'README.md')
-    with open(readme_file) as f:
-        readme = f.read()
-except ImportError:
-    readme = desc
-
-
-setup(name='gsd',
-      version='2.8.1',
-      description=desc,
-      long_description=readme,
-      long_description_content_type='text/markdown',
-      license='BSD - 2 clause',
-      author='Joshua A. Anderson',
-      author_email='joaander@umich.edu',
-      url='https://gsd.readthedocs.io',
-      download_url='https://github.com/glotzerlab/gsd/releases/download/v2.8.1'
-                   '/gsd-v2.8.1.tar.gz',
-      project_urls={
-          "Documentation": "https://gsd.readthedocs.io",
-          "Source Code": "https://github.com/glotzerlab/gsd",
-          "Issue Tracker": "https://github.com/glotzerlab/gsd/issues",
-      },
-
-      classifiers=[
-          "Development Status :: 5 - Production/Stable",
-          'Intended Audience :: Developers',
-          "Intended Audience :: Science/Research",
-          'Operating System :: MacOS :: MacOS X',
-          'Operating System :: POSIX',
-          "License :: OSI Approved :: BSD License",
-          "Topic :: Scientific/Engineering :: Physics",
-          ],
-
-      install_requires=['numpy>=1.9.3'],
-      python_requires='>=3.6',
-      ext_modules=extensions,
-      packages=['gsd', 'gsd.test'],
-      package_data={'gsd': ['test/*.gsd']},
-      entry_points={
-          'console_scripts': [
-              'gsd = gsd.__main__:main',
-          ],
-      }
-      )
+setup(ext_modules=extensions)
