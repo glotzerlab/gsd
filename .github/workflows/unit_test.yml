@@ -46,7 +46,7 @@ jobs:
                 clang10_py38]
 
     steps:
-      - uses: actions/checkout@v3.5.0
+      - uses: actions/checkout@v3.5.2
         with:
           path: code
       - name: Configure
@@ -67,11 +67,11 @@ jobs:
         os: [macos-11, macos-12, windows-2019, windows-2022]
 
     steps:
-      - uses: actions/checkout@v3.5.0
+      - uses: actions/checkout@v3.5.2
         with:
           path: code
       - name: Set up Python
-        uses: actions/setup-python@v4.5.0
+        uses: actions/setup-python@v4.6.0
         with:
           python-version: '3.10'
       - name: Install prereqs
