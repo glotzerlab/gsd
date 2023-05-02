@@ -75,7 +75,7 @@ A Python interface to the file layer allows reference implementations and
 convenience methods for schemas. Most non-technical users of GSD will probably
 use these reference implementations directly in their scripts.
 
-The low level C library is wrapped with cython. A Python setup.py file will
+The low level C library is wrapped with cython. A Python ``pyproject.toml`` file will
 provide simple installation on as many systems as possible. Cython c++ output is
 checked in to the repository so users do not even need cython as a dependency.
 
