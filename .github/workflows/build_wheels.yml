@@ -58,12 +58,12 @@ jobs:
       - uses: actions/cache@v3.3.1
         with:
           path: ~/.cache/pip
-          key: gsd-build-wheels-pip-${{ hashFiles('.github/requirements-build.txt') }}
+          key: gsd-build-wheels-pip-${{ hashFiles('.github/requirements-build-sdist.txt') }}
           restore-keys: |
             gsd-build-wheels-pip-
 
       - name: Install build
-        run: python3 -m pip --disable-pip-version-check install -r .github/requirements-build.txt --progress-bar=off
+        run: python3 -m pip --disable-pip-version-check install -r .github/requirements-build-sdist.txt --progress-bar=off
 
       - name: Build sdist
         run: python -m build --sdist --outdir dist/ .
