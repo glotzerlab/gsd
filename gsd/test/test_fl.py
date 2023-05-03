@@ -315,7 +315,7 @@ def test_dtype_errors(tmp_path, open_mode):
     with pytest.raises(Exception):
         data = numpy.array([1, 2, 3, 4, 5, 10012], dtype=numpy.bool_)
 
-        with gsd.fl.open(name=tmp_path / 'test_dtype_errors.gsd',
+        with gsd.fl.open(name=tmp_path / 'test_dtype_errors1.gsd',
                          mode=open_mode.write,
                          application='test_dtype_errors',
                          schema='none',
@@ -326,7 +326,7 @@ def test_dtype_errors(tmp_path, open_mode):
     with pytest.raises(Exception):
         data = numpy.array([1, 2, 3, 4, 5, 10012], dtype=numpy.float16)
 
-        with gsd.fl.open(name=tmp_path / 'test_dtype_errors.gsd',
+        with gsd.fl.open(name=tmp_path / 'test_dtype_errors2.gsd',
                          mode=open_mode.write,
                          application='test_dtype_errors',
                          schema='none',
@@ -337,7 +337,7 @@ def test_dtype_errors(tmp_path, open_mode):
     with pytest.raises(Exception):
         data = numpy.array([1, 2, 3, 4, 5, 10012], dtype=numpy.complex64)
 
-        with gsd.fl.open(name=tmp_path / 'test_dtype_errors.gsd',
+        with gsd.fl.open(name=tmp_path / 'test_dtype_errors3.gsd',
                          mode=open_mode.write,
                          application='test_dtype_errors',
                          schema='none',
@@ -348,7 +348,7 @@ def test_dtype_errors(tmp_path, open_mode):
     with pytest.raises(Exception):
         data = numpy.array([1, 2, 3, 4, 5, 10012], dtype=numpy.complex128)
 
-        with gsd.fl.open(name=tmp_path / 'test_dtype_errors.gsd',
+        with gsd.fl.open(name=tmp_path / 'test_dtype_errors4.gsd',
                          mode=open_mode.write,
                          application='test_dtype_errors',
                          schema='none',
