@@ -768,13 +768,11 @@ def test_log(tmp_path, open_mode):
 
 def test_pickle(tmp_path):
     """Test that hoomd trajectory objects can be pickled."""
-    with gsd.hoomd.open(name=tmp_path / "test_pickling.gsd",
-                        mode='w') as traj:
+    with gsd.hoomd.open(name=tmp_path / "test_pickling.gsd", mode='w') as traj:
         traj.extend((create_frame(i) for i in range(20)))
         with pytest.raises(pickle.PickleError):
             pkl = pickle.dumps(traj)
-    with gsd.hoomd.open(name=tmp_path / "test_pickling.gsd",
-                        mode='r') as traj:
+    with gsd.hoomd.open(name=tmp_path / "test_pickling.gsd", mode='r') as traj:
         pkl = pickle.dumps(traj)
         with pickle.loads(pkl) as hf:
             assert len(hf) == 20

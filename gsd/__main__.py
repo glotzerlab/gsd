@@ -116,13 +116,25 @@ def main():
                              default='hoomd',
                              choices=['hoomd', 'none'],
                              help="The file schema.")
-    parser_read.add_argument(
-        '-m',
-        '--mode',
-        type=str,
-        default='r',
-        choices=['rb', 'rb+', 'wb', 'wb+', 'xb', 'xb+', 'ab', 'w', 'r', 'r+', 'x', 'a',],
-        help="The file mode.")
+    parser_read.add_argument('-m',
+                             '--mode',
+                             type=str,
+                             default='r',
+                             choices=[
+                                 'rb',
+                                 'rb+',
+                                 'wb',
+                                 'wb+',
+                                 'xb',
+                                 'xb+',
+                                 'ab',
+                                 'w',
+                                 'r',
+                                 'r+',
+                                 'x',
+                                 'a',
+                             ],
+                             help="The file mode.")
     parser_read.set_defaults(func=main_read)
 
     # This is a hack, as argparse itself does not

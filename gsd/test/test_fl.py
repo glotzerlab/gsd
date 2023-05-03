@@ -166,8 +166,7 @@ def test_append(tmp_path, open_mode):
 
     # test again with pygsd
     with gsd.pygsd.GSDFile(
-            file=open(str(tmp_path
-                          / 'test_append.gsd'), mode='rb')) as f:
+            file=open(str(tmp_path / 'test_append.gsd'), mode='rb')) as f:
         assert f.nframes == nframes
         for i in range(nframes):
             data1 = f.read_chunk(frame=i, name='data1')
@@ -883,9 +882,8 @@ def test_zero_size(tmp_path, open_mode):
         assert data_read.dtype == numpy.float32
 
     # test again with pygsd
-    with gsd.pygsd.GSDFile(
-            file=open(str(tmp_path
-                          / 'test_zero.gsd'), mode='rb')) as f:
+    with gsd.pygsd.GSDFile(file=open(str(tmp_path
+                                         / 'test_zero.gsd'), mode='rb')) as f:
         assert f.nframes == 1
         data_read = f.read_chunk(frame=0, name='data')
         assert data_read.shape == (0,)
