@@ -68,7 +68,7 @@ def main_read(args):
         })
         attributes.update({"Number of frames": len(traj)})
     else:
-        if args.mode not in ['rb', 'rb+', 'ab']:
+        if args.mode not in ['rb', 'rb+', 'a', 'r', 'r+']:
             raise ValueError("Unsupported schema for creating a file.")
         handle = fl.open(args.file, args.mode)
         local_ns.update({
@@ -120,8 +120,8 @@ def main():
         '-m',
         '--mode',
         type=str,
-        default='rb',
-        choices=['rb', 'rb+', 'wb', 'wb+', 'xb', 'xb+', 'ab'],
+        default='r',
+        choices=['rb', 'rb+', 'wb', 'wb+', 'xb', 'xb+', 'ab', 'w', 'r', 'r+', 'x', 'a',],
         help="The file mode.")
     parser_read.set_defaults(func=main_read)
 

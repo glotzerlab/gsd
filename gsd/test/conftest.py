@@ -7,7 +7,7 @@ import pytest
 import collections
 
 Mode = collections.namedtuple('Mode', 'read write')
-mode_list = [Mode('rb', 'wb'), Mode('rb+', 'wb+')]
+mode_list = [Mode('r', 'w'), Mode('a', 'x'), Mode('r', 'a')]
 
 
 def open_mode_name(mode):

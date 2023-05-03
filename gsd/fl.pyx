@@ -223,7 +223,7 @@ def open(name, mode, application=None, schema=None, schema_version=None):
 
         .. ipython:: python
 
-            with gsd.fl.open(name='file.gsd', mode='wb+',
+            with gsd.fl.open(name='file.gsd', mode='w',
                              application="My application", schema="My Schema",
                              schema_version=[1,0]) as f:
                 f.write_chunk(name='chunk1',
@@ -240,7 +240,7 @@ def open(name, mode, application=None, schema=None, schema_version=None):
                                                dtype=numpy.float32))
                 f.end_frame()
 
-            f = gsd.fl.open(name='file.gsd', mode='rb')
+            f = gsd.fl.open(name='file.gsd', mode='r')
             if f.chunk_exists(frame=0, name='chunk1'):
                 data = f.read_chunk(frame=0, name='chunk1')
             data
@@ -438,7 +438,7 @@ cdef class GSDFile:
             .. ipython:: python
                 :okexcept:
 
-                f = gsd.fl.open(name='file.gsd', mode='wb+',
+                f = gsd.fl.open(name='file.gsd', mode='w',
                                 application="My application",
                                 schema="My Schema", schema_version=[1,0])
                 f.write_chunk(name='chunk1',
@@ -469,7 +469,7 @@ cdef class GSDFile:
         Example:
             .. ipython:: python
 
-                with gsd.fl.open(name='file.gsd', mode='wb+',
+                with gsd.fl.open(name='file.gsd', mode='w',
                                  application="My application",
                                  schema="My Schema", schema_version=[1,0]) as f:
                     for i in range(10):
@@ -478,7 +478,7 @@ cdef class GSDFile:
                                                        dtype=numpy.float32))
                         f.end_frame()
 
-                f = gsd.fl.open(name='file.gsd', mode='rb+',
+                f = gsd.fl.open(name='file.gsd', mode='r+',
                                 application="My application",
                                 schema="My Schema", schema_version=[1,0])
                 f.nframes
@@ -514,7 +514,7 @@ cdef class GSDFile:
         Example:
             .. ipython:: python
 
-                f = gsd.fl.open(name='file.gsd', mode='wb+',
+                f = gsd.fl.open(name='file.gsd', mode='w',
                                 application="My application",
                                 schema="My Schema", schema_version=[1,0])
 
@@ -565,7 +565,7 @@ cdef class GSDFile:
         Example:
             .. ipython:: python
 
-                f = gsd.fl.open(name='file.gsd', mode='wb+',
+                f = gsd.fl.open(name='file.gsd', mode='w',
                                 application="My application",
                                 schema="My Schema", schema_version=[1,0])
 
@@ -674,7 +674,7 @@ cdef class GSDFile:
         Example:
             .. ipython:: python
 
-                with gsd.fl.open(name='file.gsd', mode='wb+',
+                with gsd.fl.open(name='file.gsd', mode='w',
                                  application="My application",
                                  schema="My Schema", schema_version=[1,0]) as f:
                     f.write_chunk(name='chunk1',
@@ -692,7 +692,7 @@ cdef class GSDFile:
                                                    dtype=numpy.float32))
                     f.end_frame()
 
-                f = gsd.fl.open(name='file.gsd', mode='rb',
+                f = gsd.fl.open(name='file.gsd', mode='r',
                                 application="My application",
                                 schema="My Schema", schema_version=[1,0])
 
@@ -741,7 +741,7 @@ cdef class GSDFile:
             .. ipython:: python
                 :okexcept:
 
-                with gsd.fl.open(name='file.gsd', mode='wb+',
+                with gsd.fl.open(name='file.gsd', mode='w',
                                  application="My application",
                                  schema="My Schema", schema_version=[1,0]) as f:
                     f.write_chunk(name='chunk1',
@@ -759,7 +759,7 @@ cdef class GSDFile:
                                                    dtype=numpy.float32))
                     f.end_frame()
 
-                f = gsd.fl.open(name='file.gsd', mode='rb',
+                f = gsd.fl.open(name='file.gsd', mode='r',
                                 application="My application",
                                 schema="My Schema", schema_version=[1,0])
                 f.read_chunk(frame=0, name='chunk1')
@@ -876,7 +876,7 @@ cdef class GSDFile:
         Example:
             .. ipython:: python
 
-                with gsd.fl.open(name='file.gsd', mode='wb+',
+                with gsd.fl.open(name='file.gsd', mode='w',
                                  application="My application",
                                  schema="My Schema", schema_version=[1,0]) as f:
                     f.write_chunk(name='data/chunk1',
@@ -894,7 +894,7 @@ cdef class GSDFile:
                                                    dtype=numpy.float32))
                     f.end_frame()
 
-                f = gsd.fl.open(name='file.gsd', mode='rb',
+                f = gsd.fl.open(name='file.gsd', mode='r',
                                 application="My application",
                                 schema="My Schema", schema_version=[1,0])
 
@@ -956,7 +956,7 @@ cdef class GSDFile:
 
     def __reduce__(self):
         """Allows filehandles to be pickled when in read only mode."""
-        if self.mode not in ['rb', 'rb+']:
+        if self.mode not in ['rb', 'r']:
             raise PickleError("Only read only GSDFiles can be pickled.")
         return (GSDFile,
                 (self.name, self.mode, self.application,

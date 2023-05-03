@@ -1059,7 +1059,7 @@ class HOOMDTrajectory(object):
         self.file.close()
 
 
-def open(name, mode='rb'):
+def open(name, mode='r'):
     """Open a hoomd schema GSD file.
 
     The return value of `open` can be used as a context manager.
@@ -1172,7 +1172,7 @@ def read_log(name, scalar_only=False):
         raise RuntimeError("gsd module is not available")
 
     with fl.open(name=str(name),
-                 mode='rb',
+                 mode='r',
                  application='gsd.hoomd ' + gsd.__version__,
                  schema='hoomd',
                  schema_version=[1, 4]) as gsdfileobj:
