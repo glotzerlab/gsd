@@ -1072,43 +1072,52 @@ def open(name, mode='rb'):
         `HOOMDTrajectory` instance that accesses the file **name** with the
         given **mode**.
 
-    Valid values for mode:
+    Valid values for ``mode``:
 
     +------------------+---------------------------------------------+
     | mode             | description                                 |
     +==================+=============================================+
-    | ``'rb'``         | Open an existing file for reading.          |
+    | ``'r'``          | Open an existing file for reading.          |
     +------------------+---------------------------------------------+
-    | ``'rb+'``        | Open an existing file for reading and       |
+    | ``'r+'``         | Open an existing file for reading and       |
     |                  | writing.                                    |
     +------------------+---------------------------------------------+
-    | ``'wb'``         | Open a file for reading and writing.        |
+    | ``'w'``          | Open a file for reading and writing.        |
     |                  | Creates the file if needed, or overwrites   |
     |                  | an existing file.                           |
     +------------------+---------------------------------------------+
-    | ``'wb+'``        | Open a file for reading and writing.        |
-    |                  | Creates the file if needed, or overwrites   |
-    |                  | an existing file.                           |
-    +------------------+---------------------------------------------+
-    | ``'xb'``         | Create a gsd file exclusively and opens it  |
+    | ``'x'``          | Create a gsd file exclusively and opens it  |
     |                  | for reading and writing.                    |
     |                  | Raise :py:exc:`FileExistsError`             |
     |                  | if it already exists.                       |
     +------------------+---------------------------------------------+
-    | ``'xb+'``        | Create a gsd file exclusively and opens it  |
-    |                  | for reading and writing.                    |
-    |                  | Raise :py:exc:`FileExistsError`             |
-    |                  | if it already exists.                       |
-    +------------------+---------------------------------------------+
-    | ``'ab'``         | Open an existing file for reading and       |
-    |                  | writing. Does *not* create or overwrite     |
-    |                  | existing files.                             |
+    | ``'a'``          | Open a file for reading and writing.        |
+    |                  | Creates the file if it doesn't exist.       |
     +------------------+---------------------------------------------+
 
     .. deprecated:: 2.9.0
 
-        The following values to ``mode`` are deprecated: ``'ab'``, ``'xb'``,
-        and ``'wb'``.
+        The following values to ``mode`` are deprecated:
+
+        +------------------+---------------------------------------------+
+        | mode             | description                                 |
+        +==================+=============================================+
+        | ``'rb'``         | Equivalent to ``'r'``                       |
+        +------------------+---------------------------------------------+
+        | ``'rb+'``        | Equivalent to ``'r+'``                      |
+        +------------------+---------------------------------------------+
+        | ``'wb'``         | Equivalent to ``'w'``                       |
+        +------------------+---------------------------------------------+
+        | ``'wb+'``        | Equivalent to ``'w'``                       |
+        +------------------+---------------------------------------------+
+        | ``'xb'``         | Equivalent to ``'x'``                       |
+        +------------------+---------------------------------------------+
+        | ``'xb+'``        | Equivalent to ``'x'``                       |
+        +------------------+---------------------------------------------+
+        | ``'ab'``         | Open an existing file for reading and       |
+        |                  | writing. Does *not* create or overwrite     |
+        |                  | existing files.                             |
+        +------------------+---------------------------------------------+
     """
     if fl is None:
         raise RuntimeError("file layer module is not available")

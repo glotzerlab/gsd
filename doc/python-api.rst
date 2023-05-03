@@ -11,7 +11,7 @@ Submodules
 ----------
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 1
 
    python-module-gsd.fl
    python-module-gsd.hoomd
