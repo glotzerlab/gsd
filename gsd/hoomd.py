@@ -1114,9 +1114,7 @@ def open(name, mode='r'):
         +------------------+---------------------------------------------+
         | ``'xb+'``        | Equivalent to ``'x'``                       |
         +------------------+---------------------------------------------+
-        | ``'ab'``         | Open an existing file for reading and       |
-        |                  | writing. Does *not* create or overwrite     |
-        |                  | existing files.                             |
+        | ``'ab'``         | Equivalent to ``'r+'``                      |
         +------------------+---------------------------------------------+
     """
     if fl is None:

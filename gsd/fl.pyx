@@ -214,9 +214,7 @@ def open(name, mode, application=None, schema=None, schema_version=None):
         +------------------+---------------------------------------------+
         | ``'xb+'``        | Equivalent to ``'x'``                       |
         +------------------+---------------------------------------------+
-        | ``'ab'``         | Open an existing file for reading and       |
-        |                  | writing. Does *not* create or overwrite     |
-        |                  | existing files.                             |
+        | ``'ab'``         | Equivalent to ``'r+'``                      |
         +------------------+---------------------------------------------+
 
     Example:
