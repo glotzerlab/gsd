@@ -16,6 +16,7 @@ import logging
 import numpy
 import os
 from pickle import PickleError
+import warnings
 from libc.stdint cimport uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t,\
     uint64_t, int64_t
 from libc.errno cimport errno
@@ -163,53 +164,64 @@ def open(name, mode, application=None, schema=None, schema_version=None):
         schema_version (tuple[int, int]): Schema version number
             (major, minor).
 
-    Valid values for mode:
+    Valid values for ``mode``:
 
     +------------------+---------------------------------------------+
     | mode             | description                                 |
     +==================+=============================================+
-    | ``'rb'``         | Open an existing file for reading.          |
+    | ``'r'``          | Open an existing file for reading.          |
     +------------------+---------------------------------------------+
-    | ``'rb+'``        | Open an existing file for reading and       |
+    | ``'r+'``         | Open an existing file for reading and       |
     |                  | writing.                                    |
     +------------------+---------------------------------------------+
-    | ``'wb'``         | Open a file for reading and writing.        |
+    | ``'w'``          | Open a file for reading and writing.        |
     |                  | Creates the file if needed, or overwrites   |
     |                  | an existing file.                           |
     +------------------+---------------------------------------------+
-    | ``'wb+'``        | Open a file for reading and writing.        |
-    |                  | Creates the file if needed, or overwrites   |
-    |                  | an existing file.                           |
-    +------------------+---------------------------------------------+
-    | ``'xb'``         | Create a gsd file exclusively and opens it  |
+    | ``'x'``          | Create a gsd file exclusively and opens it  |
     |                  | for reading and writing.                    |
     |                  | Raise :py:exc:`FileExistsError`             |
     |                  | if it already exists.                       |
     +------------------+---------------------------------------------+
-    | ``'xb+'``        | Create a gsd file exclusively and opens it  |
-    |                  | for reading and writing.                    |
-    |                  | Raise :py:exc:`FileExistsError`             |
-    |                  | if it already exists.                       |
-    +------------------+---------------------------------------------+
-    | ``'ab'``         | Open an existing file for reading and       |
-    |                  | writing. Does *not* create or overwrite     |
-    |                  | existing files.                             |
+    | ``'a'``          | Open a file for reading and writing.        |
+    |                  | Creates the file if it doesn't exist.       |
     +------------------+---------------------------------------------+
 
-    When opening a file for reading (``'r'`` and ``'a'`` modes): ``application``
-    and ``schema_version`` are ignored and may be ``None``. When ``schema`` is
-    not ``None``, :py:func:`open` throws an exception if the file's schema does
-    not match ``schema``.
+    When opening a file for reading (``'r'`` and ``'r+'`` modes):
+    ``application`` and ``schema_version`` are ignored and may be ``None``.
+    When ``schema`` is not ``None``, :py:func:`open` throws an exception if the
+    file's schema does not match ``schema``.
 
-    When opening a file for writing (``'w'`` or ``'x'`` modes): The given
-    ``application``, ``schema``, and ``schema_version`` are saved in the file
-    and must not be None.
+    When opening a file for writing (``'w'``, ``'x'``, or ``'a'`` modes): The
+    given ``application``, ``schema``, and ``schema_version`` must not be None.
+
+    .. deprecated:: 2.9.0
+
+        The following values to ``mode`` are deprecated:
+
+        +------------------+---------------------------------------------+
+        | mode             | description                                 |
+        +==================+=============================================+
+        | ``'rb'``         | Equivalent to ``'r'``                       |
+        +------------------+---------------------------------------------+
+        | ``'rb+'``        | Equivalent to ``'r+'``                      |
+        +------------------+---------------------------------------------+
+        | ``'wb'``         | Equivalent to ``'w'``                       |
+        +------------------+---------------------------------------------+
+        | ``'wb+'``        | Equivalent to ``'w'``                       |
+        +------------------+---------------------------------------------+
+        | ``'xb'``         | Equivalent to ``'x'``                       |
+        +------------------+---------------------------------------------+
+        | ``'xb+'``        | Equivalent to ``'x'``                       |
+        +------------------+---------------------------------------------+
+        | ``'ab'``         | Equivalent to ``'r+'``                      |
+        +------------------+---------------------------------------------+
 
     Example:
 
         .. ipython:: python
 
-            with gsd.fl.open(name='file.gsd', mode='wb',
+            with gsd.fl.open(name='file.gsd', mode='w',
                              application="My application", schema="My Schema",
                              schema_version=[1,0]) as f:
                 f.write_chunk(name='chunk1',
@@ -226,7 +238,7 @@ def open(name, mode, application=None, schema=None, schema_version=None):
                                                dtype=numpy.float32))
                 f.end_frame()
 
-            f = gsd.fl.open(name='file.gsd', mode='rb')
+            f = gsd.fl.open(name='file.gsd', mode='r')
             if f.chunk_exists(frame=0, name='chunk1'):
                 data = f.read_chunk(frame=0, name='chunk1')
             data
@@ -298,32 +310,56 @@ cdef class GSDFile:
         cdef int exclusive_create = 0
         cdef int overwrite = 0
 
+        self.mode = mode
+
         if mode == 'wb':
-            c_flags = libgsd.GSD_OPEN_APPEND
-            overwrite = 1
+            mode = 'w'
+            warnings.warn("The 'wb' mode is deprecated, use 'w'",
+                           FutureWarning)
         elif mode == 'wb+':
-            c_flags = libgsd.GSD_OPEN_READWRITE
-            overwrite = 1
+            mode = 'w'
+            warnings.warn("The 'wb+' mode is deprecated, use 'w'",
+                           FutureWarning)
         elif mode == 'rb':
-            c_flags = libgsd.GSD_OPEN_READONLY
+            mode = 'r'
+            warnings.warn("The 'rb' mode is deprecated, use 'r'",
+                           FutureWarning)
         elif mode == 'rb+':
-            c_flags = libgsd.GSD_OPEN_READWRITE
+            mode = 'r+'
+            warnings.warn("The 'rb+' mode is deprecated, use 'r+'",
+                           FutureWarning)
         elif mode == 'xb':
-            c_flags = libgsd.GSD_OPEN_APPEND
-            overwrite = 1
-            exclusive_create = 1
+            mode = 'x'
+            warnings.warn("The 'xb' mode is deprecated, use 'x'",
+                           FutureWarning)
         elif mode == 'xb+':
+            mode = 'x'
+            warnings.warn("The 'xb+' mode is deprecated, use 'x'",
+                           FutureWarning)
+        elif mode == 'ab':
+            mode = 'r+'
+            warnings.warn("The 'ab' mode is deprecated, use 'r+'",
+                           FutureWarning)
+
+        if mode == 'w':
+            c_flags = libgsd.GSD_OPEN_READWRITE
+            overwrite = 1
+        elif mode == 'r':
+            c_flags = libgsd.GSD_OPEN_READONLY
+        elif mode == 'r+':
+            c_flags = libgsd.GSD_OPEN_READWRITE
+        elif mode == 'x':
             c_flags = libgsd.GSD_OPEN_READWRITE
             overwrite = 1
             exclusive_create = 1
-        elif mode == 'ab':
-            c_flags = libgsd.GSD_OPEN_APPEND
+        elif mode == 'a':
+            c_flags = libgsd.GSD_OPEN_READWRITE
+            if not os.path.exists(name):
+                overwrite = 1
         else:
-            raise ValueError("mode must be 'wb', 'wb+', 'rb', 'rb+', "
-                             "'xb', 'xb+', or 'ab'")
+            raise ValueError("Invalid mode: " + mode)
 
         self.name = name
-        self.mode = mode
 
         cdef char * c_name
         cdef char * c_application
@@ -400,7 +436,7 @@ cdef class GSDFile:
             .. ipython:: python
                 :okexcept:
 
-                f = gsd.fl.open(name='file.gsd', mode='wb+',
+                f = gsd.fl.open(name='file.gsd', mode='w',
                                 application="My application",
                                 schema="My Schema", schema_version=[1,0])
                 f.write_chunk(name='chunk1',
@@ -431,7 +467,7 @@ cdef class GSDFile:
         Example:
             .. ipython:: python
 
-                with gsd.fl.open(name='file.gsd', mode='wb',
+                with gsd.fl.open(name='file.gsd', mode='w',
                                  application="My application",
                                  schema="My Schema", schema_version=[1,0]) as f:
                     for i in range(10):
@@ -440,7 +476,7 @@ cdef class GSDFile:
                                                        dtype=numpy.float32))
                         f.end_frame()
 
-                f = gsd.fl.open(name='file.gsd', mode='ab',
+                f = gsd.fl.open(name='file.gsd', mode='r+',
                                 application="My application",
                                 schema="My Schema", schema_version=[1,0])
                 f.nframes
@@ -476,7 +512,7 @@ cdef class GSDFile:
         Example:
             .. ipython:: python
 
-                f = gsd.fl.open(name='file.gsd', mode='wb',
+                f = gsd.fl.open(name='file.gsd', mode='w',
                                 application="My application",
                                 schema="My Schema", schema_version=[1,0])
 
@@ -527,7 +563,7 @@ cdef class GSDFile:
         Example:
             .. ipython:: python
 
-                f = gsd.fl.open(name='file.gsd', mode='wb',
+                f = gsd.fl.open(name='file.gsd', mode='w',
                                 application="My application",
                                 schema="My Schema", schema_version=[1,0])
 
@@ -636,7 +672,7 @@ cdef class GSDFile:
         Example:
             .. ipython:: python
 
-                with gsd.fl.open(name='file.gsd', mode='wb',
+                with gsd.fl.open(name='file.gsd', mode='w',
                                  application="My application",
                                  schema="My Schema", schema_version=[1,0]) as f:
                     f.write_chunk(name='chunk1',
@@ -654,7 +690,7 @@ cdef class GSDFile:
                                                    dtype=numpy.float32))
                     f.end_frame()
 
-                f = gsd.fl.open(name='file.gsd', mode='rb',
+                f = gsd.fl.open(name='file.gsd', mode='r',
                                 application="My application",
                                 schema="My Schema", schema_version=[1,0])
 
@@ -703,7 +739,7 @@ cdef class GSDFile:
             .. ipython:: python
                 :okexcept:
 
-                with gsd.fl.open(name='file.gsd', mode='wb',
+                with gsd.fl.open(name='file.gsd', mode='w',
                                  application="My application",
                                  schema="My Schema", schema_version=[1,0]) as f:
                     f.write_chunk(name='chunk1',
@@ -721,7 +757,7 @@ cdef class GSDFile:
                                                    dtype=numpy.float32))
                     f.end_frame()
 
-                f = gsd.fl.open(name='file.gsd', mode='rb',
+                f = gsd.fl.open(name='file.gsd', mode='r',
                                 application="My application",
                                 schema="My Schema", schema_version=[1,0])
                 f.read_chunk(frame=0, name='chunk1')
@@ -838,7 +874,7 @@ cdef class GSDFile:
         Example:
             .. ipython:: python
 
-                with gsd.fl.open(name='file.gsd', mode='wb',
+                with gsd.fl.open(name='file.gsd', mode='w',
                                  application="My application",
                                  schema="My Schema", schema_version=[1,0]) as f:
                     f.write_chunk(name='data/chunk1',
@@ -856,7 +892,7 @@ cdef class GSDFile:
                                                    dtype=numpy.float32))
                     f.end_frame()
 
-                f = gsd.fl.open(name='file.gsd', mode='rb',
+                f = gsd.fl.open(name='file.gsd', mode='r',
                                 application="My application",
                                 schema="My Schema", schema_version=[1,0])
 
@@ -918,7 +954,7 @@ cdef class GSDFile:
 
     def __reduce__(self):
         """Allows filehandles to be pickled when in read only mode."""
-        if self.mode not in ['rb', 'rb+']:
+        if self.mode not in ['rb', 'r']:
             raise PickleError("Only read only GSDFiles can be pickled.")
         return (GSDFile,
                 (self.name, self.mode, self.application,

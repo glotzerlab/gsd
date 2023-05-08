@@ -12,7 +12,7 @@ import pytest
 
 def test_create(tmp_path):
     """Test that gsd files can be created."""
-    with gsd.hoomd.open(name=tmp_path / "test_create.gsd", mode='wb') as hf:
+    with gsd.hoomd.open(name=tmp_path / "test_create.gsd", mode='w') as hf:
         assert hf.file.schema == 'hoomd'
         assert hf.file.schema_version >= (1, 0)
 
@@ -670,7 +670,7 @@ def test_view_slicing_and_iteration(tmp_path, open_mode):
 
 def test_truncate(tmp_path):
     """Test the truncate API."""
-    with gsd.hoomd.open(name=tmp_path / "test_iteration.gsd", mode='wb') as hf:
+    with gsd.hoomd.open(name=tmp_path / "test_iteration.gsd", mode='w') as hf:
         hf.extend((create_frame(i) for i in range(20)))
 
         assert len(hf) == 20
@@ -766,15 +766,13 @@ def test_log(tmp_path, open_mode):
                                          frame1.log['value/pressure'])
 
 
-def test_pickle(tmp_path, open_mode):
+def test_pickle(tmp_path):
     """Test that hoomd trajectory objects can be pickled."""
-    with gsd.hoomd.open(name=tmp_path / "test_pickling.gsd",
-                        mode=open_mode.write) as traj:
+    with gsd.hoomd.open(name=tmp_path / "test_pickling.gsd", mode='w') as traj:
         traj.extend((create_frame(i) for i in range(20)))
         with pytest.raises(pickle.PickleError):
             pkl = pickle.dumps(traj)
-    with gsd.hoomd.open(name=tmp_path / "test_pickling.gsd",
-                        mode=open_mode.read) as traj:
+    with gsd.hoomd.open(name=tmp_path / "test_pickling.gsd", mode='r') as traj:
         pkl = pickle.dumps(traj)
         with pickle.loads(pkl) as hf:
             assert len(hf) == 20
@@ -785,7 +783,7 @@ def test_pickle(tmp_path, open_mode):
     ['particles', 'bonds', 'angles', 'dihedrals', 'impropers', 'pairs'])
 def test_no_duplicate_types(tmp_path, container):
     """Test that duplicate types raise an error."""
-    with gsd.hoomd.open(name=tmp_path / "test_create.gsd", mode='wb') as hf:
+    with gsd.hoomd.open(name=tmp_path / "test_create.gsd", mode='w') as hf:
 
         frame = gsd.hoomd.Frame()
 
@@ -819,7 +817,7 @@ def test_read_log(tmp_path):
     ]
     frame1.log['value/pressure'] = [5]
 
-    with gsd.hoomd.open(name=tmp_path / "test_log.gsd", mode='wb') as hf:
+    with gsd.hoomd.open(name=tmp_path / "test_log.gsd", mode='w') as hf:
         hf.extend([frame0, frame1])
 
     # Test scalar_only = False
@@ -877,7 +875,7 @@ def test_read_log_warning(tmp_path):
     """Test that read_log issues a warning."""
     frame = gsd.hoomd.Frame()
 
-    with gsd.hoomd.open(name=tmp_path / "test_log.gsd", mode='wb') as hf:
+    with gsd.hoomd.open(name=tmp_path / "test_log.gsd", mode='w') as hf:
         hf.extend([frame])
 
     with pytest.warns(RuntimeWarning):
