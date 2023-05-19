@@ -46,7 +46,7 @@ jobs:
                 clang10_py38]
 
     steps:
-      - uses: actions/checkout@v3.5.0
+      - uses: actions/checkout@v3.5.2
         with:
           path: code
       - name: Configure
@@ -67,13 +67,23 @@ jobs:
         os: [macos-11, macos-12, windows-2019, windows-2022]
 
     steps:
-      - uses: actions/checkout@v3.5.0
+      - uses: actions/checkout@v3.5.2
         with:
           path: code
       - name: Set up Python
-        uses: actions/setup-python@v4.5.0
+        uses: actions/setup-python@v4.6.0
         with:
-          python-version: '3.10'
+          python-version: '3.11'
+      - name: Get pip cache dir
+        id: pip-cache
+        run: |
+          echo "dir=$(pip cache dir)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v3.3.1
+        with:
+          path: ${{ steps.pip-cache.outputs.dir }}
+          key: gsd-unit-test-${{ matrix.os }}-pip-${{ hashFiles('code/.github/requirements-test.txt') }}
+          restore-keys: |
+            gsd-unit-test-${{ matrix.os }}-pip-
       - name: Install prereqs
         run: python3 -m pip install -r code/.github/requirements-test.txt
       - name: Configure

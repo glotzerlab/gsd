@@ -10,13 +10,27 @@ Change Log
 v2.x
 ----
 
-v2.9.0 (not yet released)
-^^^^^^^^^^^^^^^^^^^^^^^^^
+v2.9.0 (2023-05-19)
+^^^^^^^^^^^^^^^^^^^
+
+*Added:*
+
+* File modes ``'r'``, ``'r+'``, ``'w'``, ``'x'``, and ``'a'``
+  (`#238 <https://github.com/glotzerlab/gsd/pull/238>`__).
 
 *Changed:*
 
-* Test on gcc9, clang10, and newer.
-* Test and provide binary wheels on Python 3.8 and newer.
+* Test on gcc9, clang10, and newer
+  (`#235 <https://github.com/glotzerlab/gsd/pull/235>`__).
+* Test and provide binary wheels on Python 3.8 and newer
+  (`#235 <https://github.com/glotzerlab/gsd/pull/235>`__).
+
+*Deprecated:*
+
+* File modes ``'wb'``, ``'wb+'``, ``'rb'``,  ``'rb+'``, ``'ab'``, ``'xb'``, and ``'xb+'``
+  (`#238 <https://github.com/glotzerlab/gsd/pull/238>`__).
+* [C API] ``GSD_APPEND`` file open mode
+  (`#238 <https://github.com/glotzerlab/gsd/pull/238>`__).
 
 v2.8.1 (2023-03-13)
 ^^^^^^^^^^^^^^^^^^^

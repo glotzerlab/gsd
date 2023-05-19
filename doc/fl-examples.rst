@@ -25,7 +25,7 @@ Open a gsd file
 .. ipython:: python
 
     f = gsd.fl.open(name="file.gsd",
-                    mode='wb',
+                    mode='w',
                     application="My application",
                     schema="My Schema",
                     schema_version=[1,0])
@@ -57,7 +57,7 @@ Write data
 .. ipython:: python
 
     f = gsd.fl.open(name="file.gsd",
-                    mode='wb',
+                    mode='w',
                     application="My application",
                     schema="My Schema",
                     schema_version=[1,0]);
@@ -90,7 +90,7 @@ Read data
 
 .. ipython:: python
 
-    f = gsd.fl.open(name="file.gsd", mode='rb')
+    f = gsd.fl.open(name="file.gsd", mode='r')
     f.read_chunk(frame=0, name='chunk1')
     f.read_chunk(frame=1, name='chunk2')
     f.close()
@@ -103,7 +103,7 @@ Test if a chunk exists
 
 .. ipython:: python
 
-    f = gsd.fl.open(name="file.gsd", mode='rb')
+    f = gsd.fl.open(name="file.gsd", mode='r')
     f.chunk_exists(frame=0, name='chunk1')
     f.chunk_exists(frame=1, name='chunk2')
     f.chunk_exists(frame=2, name='chunk1')
@@ -117,7 +117,7 @@ Discover chunk names
 
 .. ipython:: python
 
-    f = gsd.fl.open(name="file.gsd", mode='rb')
+    f = gsd.fl.open(name="file.gsd", mode='r')
     f.find_matching_chunk_names('')
     f.find_matching_chunk_names('chunk')
     f.find_matching_chunk_names('chunk1')
@@ -132,7 +132,7 @@ Read-only access
 .. ipython:: python
     :okexcept:
 
-    f = gsd.fl.open(name="file.gsd", mode='rb')
+    f = gsd.fl.open(name="file.gsd", mode='r')
     if f.chunk_exists(frame=0, name='chunk1'):
         data = f.read_chunk(frame=0, name='chunk1')
     data
@@ -147,7 +147,7 @@ Access file metadata
 
 .. ipython:: python
 
-    f = gsd.fl.open(name="file.gsd", mode='rb')
+    f = gsd.fl.open(name="file.gsd", mode='r')
     f.name
     f.mode
     f.gsd_version
@@ -165,7 +165,7 @@ Open a file in read/write mode
 .. ipython:: python
 
     f = gsd.fl.open(name="file.gsd",
-                    mode='wb+',
+                    mode='w',
                     application="My application",
                     schema="My Schema",
                     schema_version=[1,0])
@@ -176,29 +176,12 @@ Open a file in read/write mode
 
 Open a file in read/write mode to allow both reading and writing.
 
-Write a file in append mode
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. ipython:: python
-    :okexcept:
-
-    f = gsd.fl.open(name="file.gsd", mode='ab')
-    f.write_chunk(name='int', data=numpy.array([10,20], dtype=numpy.int16));
-    f.end_frame()
-    f.nframes
-    # Reads fail in append mode
-    f.read_chunk(frame=2, name='double')
-    f.close()
-
-Open a file in append mode to write additional chunks to an existing file,
-but prevent reading.
-
 Use as a context manager
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. ipython:: python
 
-    with gsd.fl.open(name="file.gsd", mode='rb') as f:
+    with gsd.fl.open(name="file.gsd", mode='r') as f:
         data = f.read_chunk(frame=0, name='double');
     data
 
@@ -211,7 +194,7 @@ Store string chunks
 .. ipython:: python
 
     f = gsd.fl.open(name="file.gsd",
-                    mode='wb+',
+                    mode='w',
                     application="My application",
                     schema="My Schema",
                     schema_version=[1,0])
@@ -236,7 +219,7 @@ Truncate
 
 .. ipython:: python
 
-    f = gsd.fl.open(name="file.gsd", mode='ab')
+    f = gsd.fl.open(name="file.gsd", mode='r+')
     f.nframes
     f.schema, f.schema_version, f.application
     f.truncate()

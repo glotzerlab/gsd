@@ -115,13 +115,11 @@ def run_benchmarks(N, size):
 
     # if the file size is small, write it once to warm up the disk
     if size < 64 * 1024**3:
-        gsd.hoomd.open(mode='wb', name='test.gsd')
-        with gsd.hoomd.open(name='test.gsd', mode='wb') as hf:
+        with gsd.hoomd.open(name='test.gsd', mode='w') as hf:
             write_file(hf, nframes, N, position, orientation)
 
     # write it again and time this one
-    gsd.hoomd.open(mode='wb', name='test.gsd')
-    with gsd.hoomd.open(name='test.gsd', mode='wb') as hf:
+    with gsd.hoomd.open(name='test.gsd', mode='w') as hf:
         start = time.time()
         write_file(hf, nframes, N, position, orientation)
 
@@ -136,7 +134,7 @@ def run_benchmarks(N, size):
     # time how long it takes to open the file
     print("Opening file... ", file=sys.stderr, flush=True, end='')
     start = time.time()
-    with gsd.hoomd.open(name='test.gsd', mode='rb') as hf:
+    with gsd.hoomd.open(name='test.gsd', mode='r') as hf:
         end = time.time()
 
         print(end - start, "s", file=sys.stderr, flush=True)

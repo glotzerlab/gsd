@@ -4,7 +4,7 @@ global-include *.c
 global-include *.h
 global-include *.ini
 include README.md
-include ChangeLog.md
+include CHANGELOG.rst
 include LICENSE
 include pyproject.toml
 include gsd/test/*.gsd

@@ -17,7 +17,7 @@ def test_large_n(tmp_path, N):
 
     data = numpy.linspace(0, N, num=N, endpoint=False, dtype=numpy.uint32)
     with gsd.fl.open(name=tmp_path / 'test_large_N.gsd',
-                     mode='xb',
+                     mode='x',
                      application='test_large_N',
                      schema='none',
                      schema_version=[1, 2]) as f:
@@ -25,7 +25,7 @@ def test_large_n(tmp_path, N):
         f.end_frame()
 
     with gsd.fl.open(name=tmp_path / 'test_large_N.gsd',
-                     mode='rb',
+                     mode='r',
                      application='test_large_N',
                      schema='none',
                      schema_version=[1, 2]) as f:

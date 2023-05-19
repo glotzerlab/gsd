@@ -23,7 +23,7 @@ filesystem, and for writing gsd files, use :py:mod:`gsd.fl`.
 The :py:class:`GSDFile` in this module can be used with the
 :py:class:`gsd.hoomd.HOOMDTrajectory` hoomd reader:
 
->>> with gsd.pygsd.GSDFile('test.gsd', 'rb') as f:
+>>> with gsd.pygsd.GSDFile('test.gsd', 'r') as f:
 ...     t = gsd.hoomd.HOOMDTrajectory(f)
 ...     pos = t[0].particles.position
 
@@ -37,7 +37,7 @@ import struct
 from collections import namedtuple
 import sys
 
-__version__ = "2.8.1"
+__version__ = "2.9.0"
 
 logger = logging.getLogger('gsd.pygsd')
 
@@ -85,20 +85,20 @@ class GSDFile(object):
     Examples:
         Open a file in **read-only** mode::
 
-            f = GSDFile(open('file.gsd', mode='rb'))
+            f = GSDFile(open('file.gsd', mode='r'))
             if f.chunk_exists(frame=0, name='chunk'):
                 data = f.read_chunk(frame=0, name='chunk')
 
         Access file **metadata**::
 
-            f = GSDFile(open('file.gsd', mode='rb'))
+            f = GSDFile(open('file.gsd', mode='r'))
             print(f.name, f.mode, f.gsd_version)
             print(f.application, f.schema, f.schema_version)
             print(f.nframes)
 
         Use as a **context manager**::
 
-            with GSDFile(open('file.gsd', mode='rb')) as f:
+            with GSDFile(open('file.gsd', mode='r')) as f:
                 data = f.read_chunk(frame=0, name='chunk')
     """
 
@@ -269,7 +269,7 @@ class GSDFile(object):
 
             Handle non-existent chunks::
 
-                with GSDFile(open('file.gsd', mode='rb')) as f:
+                with GSDFile(open('file.gsd', mode='r')) as f:
                     if f.chunk_exists(frame=0, name='chunk'):
                         return f.read_chunk(frame=0, name='chunk')
                     else:
@@ -294,19 +294,19 @@ class GSDFile(object):
         Examples:
             Read a 1D array::
 
-                with GSDFile(name=filename, mode='rb') as f:
+                with GSDFile(name=filename, mode='r') as f:
                     data = f.read_chunk(frame=0, name='chunk1d')
                     # data.shape == [N]
 
             Read a 2D array::
 
-                with GSDFile(name=filename, mode='rb') as f:
+                with GSDFile(name=filename, mode='r') as f:
                     data = f.read_chunk(frame=0, name='chunk2d')
                     # data.shape == [N,M]
 
             Read multiple frames::
 
-                with GSDFile(name=filename, mode='rb') as f:
+                with GSDFile(name=filename, mode='r') as f:
                     data0 = f.read_chunk(frame=0, name='chunk')
                     data1 = f.read_chunk(frame=1, name='chunk')
                     data2 = f.read_chunk(frame=2, name='chunk')
@@ -397,7 +397,7 @@ class GSDFile(object):
     @property
     def mode(self):
         """str: Mode of the open file."""
-        return 'rb'
+        return 'r'
 
     @property
     def gsd_version(self):

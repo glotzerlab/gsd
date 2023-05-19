@@ -39,7 +39,7 @@ Create a hoomd gsd file
 
 .. ipython:: python
 
-    f = gsd.hoomd.open(name='file.gsd', mode='wb')
+    f = gsd.hoomd.open(name='file.gsd', mode='w')
     @suppress
     f.close()
 
@@ -57,7 +57,7 @@ Write frames to a gsd file
         frame.particles.position = numpy.random.random(size=(4+i,3))
         return frame
 
-    f = gsd.hoomd.open(name='example.gsd', mode='wb')
+    f = gsd.hoomd.open(name='example.gsd', mode='w')
     f.extend( (create_frame(i) for i in range(10)) )
     f.append( create_frame(10) )
     len(f)
@@ -80,7 +80,7 @@ Randomly index frames
 
 .. ipython:: python
 
-    f = gsd.hoomd.open(name='example.gsd', mode='rb')
+    f = gsd.hoomd.open(name='example.gsd', mode='r')
     frame = f[5]
     frame.configuration.step
     frame.particles.N
@@ -99,7 +99,7 @@ trajectory.
 
 .. ipython:: python
 
-    f = gsd.hoomd.open(name='example.gsd', mode='rb')
+    f = gsd.hoomd.open(name='example.gsd', mode='r')
 
     for frame in f[5:-2]:
         print(frame.configuration.step, end=' ')
@@ -139,7 +139,7 @@ Access logged data
 
 .. ipython:: python
 
-    with gsd.hoomd.open(name='log-example.gsd', mode='wb') as f:
+    with gsd.hoomd.open(name='log-example.gsd', mode='w') as f:
         frame = gsd.hoomd.Frame()
         frame.particles.N = 4
         for i in range(10):
@@ -173,7 +173,7 @@ Read logged data from the ``log`` dictionary.
     .. ipython:: python
         :okexcept:
 
-        with gsd.hoomd.open(name='example.gsd', mode='wb') as f:
+        with gsd.hoomd.open(name='example.gsd', mode='w') as f:
             frame = gsd.hoomd.Frame()
             frame.particles.N = 4
             frame.log['invalid'] = dict(a=1, b=5)
@@ -190,7 +190,7 @@ Use multiprocessing
       t, frame_idx = args
       return len(t[frame_idx].particles.position)
 
-   with gsd.hoomd.open(name='example.gsd', mode='rb') as t:
+   with gsd.hoomd.open(name='example.gsd', mode='r') as t:
       with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
          result = pool.map(count_particles, [(t, frame_idx) for frame_idx in range(len(t))])
 
