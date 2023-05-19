@@ -36,8 +36,11 @@ Change Log
 
 *Removed:*
 
-* ``gsd.__version__``.
-
+* ``gsd.__version__`` - use `gsd.version.version`.
+* ``gsd.hoomd.Snapshot`` - use `gsd.hoomd.Frame`.
+* ``gsd.hoomd.HOOMDTrajectory.read_frame`` - use `gsd.hoomd.HOOMDTrajectory.__getitem__`.
+* The file modes ``'wb'``, ``'wb+'``, ``'rb'``,  ``'rb+'``, ``'ab'``, ``'xb'``, and ``'xb+'``. Use
+  ``'r'``, ``'r+'``, ``'w'``, ``'x'``, or ``'a'``.
 v2.x
 ----
 
