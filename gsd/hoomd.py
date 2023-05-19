@@ -858,7 +858,7 @@ class HOOMDTrajectory(object):
         for item in iterable:
             self.append(item)
 
-    def read_frame(self, idx):
+    def _read_frame(self, idx):
         """Read the frame at the given index from the file.
 
         Args:
@@ -871,14 +871,7 @@ class HOOMDTrajectory(object):
         from frame 0, or initialize from default values if not in frame 0. Cache
         frame 0 data to avoid file read overhead. Return any default data as
         non-writable numpy arrays.
-
-        .. deprecated:: v2.5
         """
-        warnings.warn("Deprecated, trajectory[idx]", FutureWarning)
-        return self._read_frame(idx)
-
-    def _read_frame(self, idx):
-        """Implements read_frame."""
         if idx >= len(self):
             raise IndexError
 
