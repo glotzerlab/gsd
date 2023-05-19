@@ -68,9 +68,6 @@ Write frames to a gsd file
 `append <gsd.hoomd.HOOMDTrajectory.append>` and `extend <gsd.hoomd.HOOMDTrajectory.extend>` methods
 add frames to the trajectory.
 
-.. note:: `gsd.hoomd.HOOMDTrajectory` currently does not support files opened in
-          the 'ab' mode.
-
 .. tip:: When using `extend <gsd.hoomd.HOOMDTrajectory.extend>`, pass in a
          generator or generator expression to avoid storing the entire
          trajectory in memory before writing it out.
