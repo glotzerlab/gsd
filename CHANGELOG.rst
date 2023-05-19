@@ -11,11 +11,28 @@ Change Log
 ---
 
 3.0.0 (not yet released)
-^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 *Added:*
 
 * ``gsd.version.version`` - version string identifier. PEP8 compliant name replaces ``__version__``.
+* ``GSDFile.flush`` - flush write buffers (C API ``gsd_flush``)
+  (`#237 <https://github.com/glotzerlab/gsd/pull/237>`__).
+* ``GSDFile.maximum_write_buffer_size`` - get/set the write buffer size
+  (C API ``gsd_get_maximum_write_buffer_size`` / ``gsd_set_maximum_write_buffer_size``)
+  (`#237 <https://github.com/glotzerlab/gsd/pull/237>`__).
+* ``GSDFile.index_entries_to_buffer`` - get/set the write buffer size
+  (C API ``index_entries_to_buffer`` / ``index_entries_to_buffer``)
+  (`#237 <https://github.com/glotzerlab/gsd/pull/237>`__).
+* On importing `gsd`, install a ``SIGTERM`` handler that calls ``sys.exit(1)``
+  (`#237 <https://github.com/glotzerlab/gsd/pull/237>`__).
+
+*Changed:*
+
+* ``write_chunk`` buffers writes across frames to increase performance
+  (`#237 <https://github.com/glotzerlab/gsd/pull/237>`__).
+* Use *Doxygen* and *breathe* to generate C API documentation in Sphinx
+  (`#237 <https://github.com/glotzerlab/gsd/pull/237>`__).
 
 *Removed:*
 
