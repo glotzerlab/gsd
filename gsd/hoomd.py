@@ -407,18 +407,33 @@ class ConstraintData(object):
             self.group = self.group.reshape([self.N, self.M])
 
 
-class Snapshot(object):
+class Frame:
     """System state at one point in time.
 
-    .. deprecated:: 2.8.0
+    Attributes:
+        configuration (`ConfigurationData`): Configuration data.
 
-        Replaced by `Frame`.
+        particles (`ParticleData`): Particles.
+
+        bonds (`BondData`): Bonds.
+
+        angles (`BondData`): Angles.
+
+        dihedrals (`BondData`): Dihedrals.
+
+        impropers (`BondData`): Impropers.
+
+        pairs (`BondData`): Special pair.
+
+        constraints (`ConstraintData`): Distance constraints.
+
+        state (dict): State data.
+
+        log (dict): Logged data (values must be `numpy.ndarray` or
+            `array_like`)
     """
 
     def __init__(self):
-        if not isinstance(self, Frame):
-            warnings.warn("Snapshot is deprecated, use Frame", FutureWarning)
-
         self.configuration = ConfigurationData()
         self.particles = ParticleData()
         self.bonds = BondData(2)
@@ -615,36 +630,6 @@ class Snapshot(object):
         for k in self.state:
             if k not in self._valid_state:
                 raise RuntimeError('Not a valid state: ' + k)
-
-
-class Frame(Snapshot):
-    """System state at one point in time.
-
-    Attributes:
-        configuration (`ConfigurationData`): Configuration data.
-
-        particles (`ParticleData`): Particles.
-
-        bonds (`BondData`): Bonds.
-
-        angles (`BondData`): Angles.
-
-        dihedrals (`BondData`): Dihedrals.
-
-        impropers (`BondData`): Impropers.
-
-        pairs (`BondData`): Special pair.
-
-        constraints (`ConstraintData`): Distance constraints.
-
-        state (dict): State data.
-
-        log (dict): Logged data (values must be `numpy.ndarray` or
-            `array_like`)
-    """
-
-    def __init__(self):
-        super().__init__()
 
 
 class _HOOMDTrajectoryIterable(object):
