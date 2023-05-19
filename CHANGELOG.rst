@@ -7,6 +7,20 @@ Change Log
 `GSD <https://github.com/glotzerlab/gsd>`_ releases follow `semantic versioning
 <https://semver.org/>`_.
 
+3.x
+---
+
+3.0.0 (not yet released)
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Added:*
+
+* ``gsd.version.version`` - version string identifier. PEP8 compliant name replaces ``__version__``.
+
+*Removed:*
+
+* ``gsd.__version__``.
+
 v2.x
 ----
 

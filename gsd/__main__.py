@@ -28,7 +28,7 @@ import sys
 import argparse
 import code
 
-from .version import __version__
+from . import version
 from .hoomd import open as hoomd_open
 from . import fl
 
@@ -80,7 +80,7 @@ def main_read(args):
 
     code.interact(local=local_ns,
                   banner=SHELL_BANNER.format(python_version=sys.version,
-                                             gsd_version=__version__,
+                                             gsd_version=version.version,
                                              fn=args.file,
                                              extras=extras + "\n"))
 
@@ -141,7 +141,7 @@ def main():
     # allow to parse only --version without any
     # of the other required arguments.
     if '--version' in sys.argv:
-        print('gsd', __version__)
+        print('gsd', version.version)
         sys.exit(0)
 
     args = parser.parse_args()

@@ -10,16 +10,11 @@ You must explicitly import these modules before use::
     import gsd.fl
 
     import gsd.hoomd
-
-Attributes:
-    __version__ (str): GSD software version number. This is the version number
-                       of the software package as a whole,
-                       not the file layer version it reads/writes.
 """
 
 import signal
 import sys
-from .version import __version__  # noqa: F401
+from . import version  # noqa: F401
 
 # Install a SIGTERM handler that gracefully exits, allowing open files to flush
 # buffered writes and close.

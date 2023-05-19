@@ -3,12 +3,14 @@
 
 """Define the current version of the gsd package.
 
-This file is kept separate from __init__.py so that it can be imported and used
-in other modules within the package.
+Attributes:
+    version (str): GSD software version number. This is the version number
+                   of the software package as a whole,
+                   not the file layer version it reads/writes.
 """
 
-__version__ = "2.9.0"
+version = "2.9.0"
 
 __all__ = [
-    '__version__',
+    'version',
 ]

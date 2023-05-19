@@ -16,6 +16,7 @@ Submodules
    python-module-gsd.fl
    python-module-gsd.hoomd
    python-module-gsd.pygsd
+   python-module-gsd.version
 
 Package contents
 ----------------

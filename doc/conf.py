@@ -36,7 +36,7 @@ project = 'GSD'
 year = datetime.date.today().year
 copyright = f'2016-{ year } The Regents of the University of Michigan'
 
-version = gsd.__version__
+version = gsd.version.version
 release = version
 
 exclude_patterns = ['_build']

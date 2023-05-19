@@ -1124,7 +1124,7 @@ def open(name, mode='r'):
 
     gsdfileobj = fl.open(name=str(name),
                          mode=mode,
-                         application='gsd.hoomd ' + gsd.__version__,
+                         application='gsd.hoomd ' + gsd.version.version,
                          schema='hoomd',
                          schema_version=[1, 4])
 
@@ -1171,7 +1171,7 @@ def read_log(name, scalar_only=False):
 
     with fl.open(name=str(name),
                  mode='r',
-                 application='gsd.hoomd ' + gsd.__version__,
+                 application='gsd.hoomd ' + gsd.version.version,
                  schema='hoomd',
                  schema_version=[1, 4]) as gsdfileobj:
 
