@@ -295,35 +295,6 @@ cdef class GSDFile:
 
         self.mode = mode
 
-        if mode == 'wb':
-            mode = 'w'
-            warnings.warn("The 'wb' mode is deprecated, use 'w'",
-                           FutureWarning)
-        elif mode == 'wb+':
-            mode = 'w'
-            warnings.warn("The 'wb+' mode is deprecated, use 'w'",
-                           FutureWarning)
-        elif mode == 'rb':
-            mode = 'r'
-            warnings.warn("The 'rb' mode is deprecated, use 'r'",
-                           FutureWarning)
-        elif mode == 'rb+':
-            mode = 'r+'
-            warnings.warn("The 'rb+' mode is deprecated, use 'r+'",
-                           FutureWarning)
-        elif mode == 'xb':
-            mode = 'x'
-            warnings.warn("The 'xb' mode is deprecated, use 'x'",
-                           FutureWarning)
-        elif mode == 'xb+':
-            mode = 'x'
-            warnings.warn("The 'xb+' mode is deprecated, use 'x'",
-                           FutureWarning)
-        elif mode == 'ab':
-            mode = 'r+'
-            warnings.warn("The 'ab' mode is deprecated, use 'r+'",
-                           FutureWarning)
-
         if mode == 'w':
             c_flags = libgsd.GSD_OPEN_READWRITE
             overwrite = 1
