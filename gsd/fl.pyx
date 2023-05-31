@@ -195,28 +195,6 @@ def open(name, mode, application=None, schema=None, schema_version=None):
     When opening a file for writing (``'w'``, ``'x'``, or ``'a'`` modes): The
     given ``application``, ``schema``, and ``schema_version`` must not be None.
 
-    .. deprecated:: 2.9.0
-
-        The following values to ``mode`` are deprecated:
-
-        +------------------+---------------------------------------------+
-        | mode             | description                                 |
-        +==================+=============================================+
-        | ``'rb'``         | Equivalent to ``'r'``                       |
-        +------------------+---------------------------------------------+
-        | ``'rb+'``        | Equivalent to ``'r+'``                      |
-        +------------------+---------------------------------------------+
-        | ``'wb'``         | Equivalent to ``'w'``                       |
-        +------------------+---------------------------------------------+
-        | ``'wb+'``        | Equivalent to ``'w'``                       |
-        +------------------+---------------------------------------------+
-        | ``'xb'``         | Equivalent to ``'x'``                       |
-        +------------------+---------------------------------------------+
-        | ``'xb+'``        | Equivalent to ``'x'``                       |
-        +------------------+---------------------------------------------+
-        | ``'ab'``         | Equivalent to ``'r+'``                      |
-        +------------------+---------------------------------------------+
-
     Example:
 
         .. ipython:: python
@@ -316,35 +294,6 @@ cdef class GSDFile:
         cdef int overwrite = 0
 
         self.mode = mode
-
-        if mode == 'wb':
-            mode = 'w'
-            warnings.warn("The 'wb' mode is deprecated, use 'w'",
-                           FutureWarning)
-        elif mode == 'wb+':
-            mode = 'w'
-            warnings.warn("The 'wb+' mode is deprecated, use 'w'",
-                           FutureWarning)
-        elif mode == 'rb':
-            mode = 'r'
-            warnings.warn("The 'rb' mode is deprecated, use 'r'",
-                           FutureWarning)
-        elif mode == 'rb+':
-            mode = 'r+'
-            warnings.warn("The 'rb+' mode is deprecated, use 'r+'",
-                           FutureWarning)
-        elif mode == 'xb':
-            mode = 'x'
-            warnings.warn("The 'xb' mode is deprecated, use 'x'",
-                           FutureWarning)
-        elif mode == 'xb+':
-            mode = 'x'
-            warnings.warn("The 'xb+' mode is deprecated, use 'x'",
-                           FutureWarning)
-        elif mode == 'ab':
-            mode = 'r+'
-            warnings.warn("The 'ab' mode is deprecated, use 'r+'",
-                           FutureWarning)
 
         if mode == 'w':
             c_flags = libgsd.GSD_OPEN_READWRITE

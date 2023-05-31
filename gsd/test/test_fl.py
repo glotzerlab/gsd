@@ -978,7 +978,7 @@ def test_flush(tmp_path, open_mode, n_flush):
         # Ensure that the data is buffered by opening the file with a 2nd
         # handle read-only and checking it.
         with gsd.fl.open(name=tmp_path / 'test_flush.gsd',
-                         mode='rb') as f_readonly:
+                         mode='r') as f_readonly:
             assert not f_readonly.chunk_exists(frame=0, name='chunk1')
             assert not f_readonly.chunk_exists(frame=1, name='chunk2')
             assert f_readonly.nframes == 0

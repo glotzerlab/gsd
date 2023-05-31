@@ -407,18 +407,33 @@ class ConstraintData(object):
             self.group = self.group.reshape([self.N, self.M])
 
 
-class Snapshot(object):
+class Frame:
     """System state at one point in time.
 
-    .. deprecated:: 2.8.0
+    Attributes:
+        configuration (`ConfigurationData`): Configuration data.
 
-        Replaced by `Frame`.
+        particles (`ParticleData`): Particles.
+
+        bonds (`BondData`): Bonds.
+
+        angles (`BondData`): Angles.
+
+        dihedrals (`BondData`): Dihedrals.
+
+        impropers (`BondData`): Impropers.
+
+        pairs (`BondData`): Special pair.
+
+        constraints (`ConstraintData`): Distance constraints.
+
+        state (dict): State data.
+
+        log (dict): Logged data (values must be `numpy.ndarray` or
+            `array_like`)
     """
 
     def __init__(self):
-        if not isinstance(self, Frame):
-            warnings.warn("Snapshot is deprecated, use Frame", FutureWarning)
-
         self.configuration = ConfigurationData()
         self.particles = ParticleData()
         self.bonds = BondData(2)
@@ -615,36 +630,6 @@ class Snapshot(object):
         for k in self.state:
             if k not in self._valid_state:
                 raise RuntimeError('Not a valid state: ' + k)
-
-
-class Frame(Snapshot):
-    """System state at one point in time.
-
-    Attributes:
-        configuration (`ConfigurationData`): Configuration data.
-
-        particles (`ParticleData`): Particles.
-
-        bonds (`BondData`): Bonds.
-
-        angles (`BondData`): Angles.
-
-        dihedrals (`BondData`): Dihedrals.
-
-        impropers (`BondData`): Impropers.
-
-        pairs (`BondData`): Special pair.
-
-        constraints (`ConstraintData`): Distance constraints.
-
-        state (dict): State data.
-
-        log (dict): Logged data (values must be `numpy.ndarray` or
-            `array_like`)
-    """
-
-    def __init__(self):
-        super().__init__()
 
 
 class _HOOMDTrajectoryIterable(object):
@@ -858,7 +843,7 @@ class HOOMDTrajectory(object):
         for item in iterable:
             self.append(item)
 
-    def read_frame(self, idx):
+    def _read_frame(self, idx):
         """Read the frame at the given index from the file.
 
         Args:
@@ -871,14 +856,7 @@ class HOOMDTrajectory(object):
         from frame 0, or initialize from default values if not in frame 0. Cache
         frame 0 data to avoid file read overhead. Return any default data as
         non-writable numpy arrays.
-
-        .. deprecated:: v2.5
         """
-        warnings.warn("Deprecated, trajectory[idx]", FutureWarning)
-        return self._read_frame(idx)
-
-    def _read_frame(self, idx):
-        """Implements read_frame."""
         if idx >= len(self):
             raise IndexError
 
@@ -1095,27 +1073,6 @@ def open(name, mode='r'):
     |                  | Creates the file if it doesn't exist.       |
     +------------------+---------------------------------------------+
 
-    .. deprecated:: 2.9.0
-
-        The following values to ``mode`` are deprecated:
-
-        +------------------+---------------------------------------------+
-        | mode             | description                                 |
-        +==================+=============================================+
-        | ``'rb'``         | Equivalent to ``'r'``                       |
-        +------------------+---------------------------------------------+
-        | ``'rb+'``        | Equivalent to ``'r+'``                      |
-        +------------------+---------------------------------------------+
-        | ``'wb'``         | Equivalent to ``'w'``                       |
-        +------------------+---------------------------------------------+
-        | ``'wb+'``        | Equivalent to ``'w'``                       |
-        +------------------+---------------------------------------------+
-        | ``'xb'``         | Equivalent to ``'x'``                       |
-        +------------------+---------------------------------------------+
-        | ``'xb+'``        | Equivalent to ``'x'``                       |
-        +------------------+---------------------------------------------+
-        | ``'ab'``         | Equivalent to ``'r+'``                      |
-        +------------------+---------------------------------------------+
     """
     if fl is None:
         raise RuntimeError("file layer module is not available")

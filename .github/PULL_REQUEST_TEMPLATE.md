@@ -21,15 +21,9 @@ Resolves #???
 <!--- Please build the sphinx documentation and check that any changes to
       documentation display properly. -->
 
-## Change log
-
-<!-- Propose a change log entry. -->
-```
-
-```
-
 ## Checklist:
 
 - [ ] I have reviewed the [**Contributor Guidelines**](https://github.com/glotzerlab/gsd/blob/trunk-patch/CONTRIBUTING.rst).
 - [ ] I agree with the terms of the [**GSD Contributor Agreement**](https://github.com/glotzerlab/gsd/blob/trunk-patch/ContributorAgreement.md).
 - [ ] My name is on the list of contributors (`doc/credits.rst`) in the pull request source branch.
+- [ ] I have added a change log entry to ``CHANGELOG.rst``.
