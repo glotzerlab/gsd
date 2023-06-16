@@ -10,8 +10,8 @@ Change Log
 3.x
 ---
 
-3.0.0 (not yet released)
-^^^^^^^^^^^^^^^^^^^^^^^^
+3.0.0 (2023-06-16)
+^^^^^^^^^^^^^^^^^^
 
 *Added:*
 
@@ -36,10 +36,10 @@ Change Log
 
 *Removed:*
 
-* ``gsd.__version__`` - use `gsd.version.version`.
-* ``gsd.hoomd.Snapshot`` - use `gsd.hoomd.Frame`
+* ``gsd.__version__`` - use ``gsd.version.version``.
+* ``gsd.hoomd.Snapshot`` - use ``gsd.hoomd.Frame``
   (`#249 <https://github.com/glotzerlab/gsd/pull/249>`__).
-* ``gsd.hoomd.HOOMDTrajectory.read_frame`` - use `gsd.hoomd.HOOMDTrajectory.__getitem__`
+* ``gsd.hoomd.HOOMDTrajectory.read_frame`` - use ``gsd.hoomd.HOOMDTrajectory.__getitem__``
   (`#249 <https://github.com/glotzerlab/gsd/pull/249>`__).
 * The file modes ``'wb'``, ``'wb+'``, ``'rb'``,  ``'rb+'``, ``'ab'``, ``'xb'``, and ``'xb+'``. Use
   ``'r'``, ``'r+'``, ``'w'``, ``'x'``, or ``'a'``
