@@ -65,18 +65,18 @@ body:
       label: GSD
       description: |
         What version of GSD are you using?
-      placeholder: 2.9.0
+      placeholder: 3.0.0
     validations:
       required: true
   - type: markdown
     attributes:
       value: |
-        Run `python3 -c "import gsd; print(gsd.__version__)"` to find your GSD version.
+        Run `python3 -c "import gsd; print(gsd.version.version)"` to find your GSD version.
   - type: input
     attributes:
       label: Python version
       description: What version of Python are you using?
-      placeholder: 3.10.6
+      placeholder: 3.11.3
     validations:
       required: true
   - type: markdown

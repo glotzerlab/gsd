@@ -7,11 +7,49 @@ Change Log
 `GSD <https://github.com/glotzerlab/gsd>`_ releases follow `semantic versioning
 <https://semver.org/>`_.
 
-v2.x
-----
+3.x
+---
 
-v2.9.0 (2023-05-19)
-^^^^^^^^^^^^^^^^^^^
+3.0.0 (2023-06-16)
+^^^^^^^^^^^^^^^^^^
+
+*Added:*
+
+* ``gsd.version.version`` - version string identifier. PEP8 compliant name replaces ``__version__``.
+* ``GSDFile.flush`` - flush write buffers (C API ``gsd_flush``)
+  (`#237 <https://github.com/glotzerlab/gsd/pull/237>`__).
+* ``GSDFile.maximum_write_buffer_size`` - get/set the write buffer size
+  (C API ``gsd_get_maximum_write_buffer_size`` / ``gsd_set_maximum_write_buffer_size``)
+  (`#237 <https://github.com/glotzerlab/gsd/pull/237>`__).
+* ``GSDFile.index_entries_to_buffer`` - get/set the write buffer size
+  (C API ``index_entries_to_buffer`` / ``index_entries_to_buffer``)
+  (`#237 <https://github.com/glotzerlab/gsd/pull/237>`__).
+* On importing `gsd`, install a ``SIGTERM`` handler that calls ``sys.exit(1)``
+  (`#237 <https://github.com/glotzerlab/gsd/pull/237>`__).
+
+*Changed:*
+
+* ``write_chunk`` buffers writes across frames to increase performance
+  (`#237 <https://github.com/glotzerlab/gsd/pull/237>`__).
+* Use *Doxygen* and *breathe* to generate C API documentation in Sphinx
+  (`#237 <https://github.com/glotzerlab/gsd/pull/237>`__).
+
+*Removed:*
+
+* ``gsd.__version__`` - use ``gsd.version.version``.
+* ``gsd.hoomd.Snapshot`` - use ``gsd.hoomd.Frame``
+  (`#249 <https://github.com/glotzerlab/gsd/pull/249>`__).
+* ``gsd.hoomd.HOOMDTrajectory.read_frame`` - use ``gsd.hoomd.HOOMDTrajectory.__getitem__``
+  (`#249 <https://github.com/glotzerlab/gsd/pull/249>`__).
+* The file modes ``'wb'``, ``'wb+'``, ``'rb'``,  ``'rb+'``, ``'ab'``, ``'xb'``, and ``'xb+'``. Use
+  ``'r'``, ``'r+'``, ``'w'``, ``'x'``, or ``'a'``
+  (`#249 <https://github.com/glotzerlab/gsd/pull/249>`__).
+
+2.x
+---
+
+2.9.0 (2023-05-19)
+^^^^^^^^^^^^^^^^^^
 
 *Added:*
 

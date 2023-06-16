@@ -195,28 +195,6 @@ def open(name, mode, application=None, schema=None, schema_version=None):
     When opening a file for writing (``'w'``, ``'x'``, or ``'a'`` modes): The
     given ``application``, ``schema``, and ``schema_version`` must not be None.
 
-    .. deprecated:: 2.9.0
-
-        The following values to ``mode`` are deprecated:
-
-        +------------------+---------------------------------------------+
-        | mode             | description                                 |
-        +==================+=============================================+
-        | ``'rb'``         | Equivalent to ``'r'``                       |
-        +------------------+---------------------------------------------+
-        | ``'rb+'``        | Equivalent to ``'r+'``                      |
-        +------------------+---------------------------------------------+
-        | ``'wb'``         | Equivalent to ``'w'``                       |
-        +------------------+---------------------------------------------+
-        | ``'wb+'``        | Equivalent to ``'w'``                       |
-        +------------------+---------------------------------------------+
-        | ``'xb'``         | Equivalent to ``'x'``                       |
-        +------------------+---------------------------------------------+
-        | ``'xb+'``        | Equivalent to ``'x'``                       |
-        +------------------+---------------------------------------------+
-        | ``'ab'``         | Equivalent to ``'r+'``                      |
-        +------------------+---------------------------------------------+
-
     Example:
 
         .. ipython:: python
@@ -293,6 +271,11 @@ cdef class GSDFile:
             (major, minor).
 
         nframes (int): Number of frames.
+
+        maximum_write_buffer_size (int): The Maximum write buffer size (bytes).
+
+        index_entries_to_buffer (int): Number of index entries to buffer before
+            flushing.
     """
 
     cdef libgsd.gsd_handle __handle
@@ -311,35 +294,6 @@ cdef class GSDFile:
         cdef int overwrite = 0
 
         self.mode = mode
-
-        if mode == 'wb':
-            mode = 'w'
-            warnings.warn("The 'wb' mode is deprecated, use 'w'",
-                           FutureWarning)
-        elif mode == 'wb+':
-            mode = 'w'
-            warnings.warn("The 'wb+' mode is deprecated, use 'w'",
-                           FutureWarning)
-        elif mode == 'rb':
-            mode = 'r'
-            warnings.warn("The 'rb' mode is deprecated, use 'r'",
-                           FutureWarning)
-        elif mode == 'rb+':
-            mode = 'r+'
-            warnings.warn("The 'rb+' mode is deprecated, use 'r+'",
-                           FutureWarning)
-        elif mode == 'xb':
-            mode = 'x'
-            warnings.warn("The 'xb' mode is deprecated, use 'x'",
-                           FutureWarning)
-        elif mode == 'xb+':
-            mode = 'x'
-            warnings.warn("The 'xb+' mode is deprecated, use 'x'",
-                           FutureWarning)
-        elif mode == 'ab':
-            mode = 'r+'
-            warnings.warn("The 'ab' mode is deprecated, use 'r+'",
-                           FutureWarning)
 
         if mode == 'w':
             c_flags = libgsd.GSD_OPEN_READWRITE
@@ -539,6 +493,22 @@ cdef class GSDFile:
 
         with nogil:
             retval = libgsd.gsd_end_frame(&self.__handle)
+
+        __raise_on_error(retval, self.name)
+
+    def flush(self):
+        """flush()
+
+        Flush all buffered frames to the file.
+        """
+
+        if not self.__is_open:
+            raise ValueError("File is not open")
+
+        logger.debug('flush: ' + self.name)
+
+        with nogil:
+            retval = libgsd.gsd_flush(&self.__handle)
 
         __raise_on_error(retval, self.name)
 
@@ -993,6 +963,34 @@ cdef class GSDFile:
                 raise ValueError("File is not open")
 
             return libgsd.gsd_get_nframes(&self.__handle)
+
+    property maximum_write_buffer_size:
+        def __get__(self):
+            if not self.__is_open:
+                raise ValueError("File is not open")
+
+            return libgsd.gsd_get_maximum_write_buffer_size(&self.__handle)
+
+        def __set__(self, size):
+            if not self.__is_open:
+                raise ValueError("File is not open")
+
+            retval = libgsd.gsd_set_maximum_write_buffer_size(&self.__handle, size)
+            __raise_on_error(retval, self.name)
+
+    property index_entries_to_buffer:
+        def __get__(self):
+            if not self.__is_open:
+                raise ValueError("File is not open")
+
+            return libgsd.gsd_get_index_entries_to_buffer(&self.__handle)
+
+        def __set__(self, number):
+            if not self.__is_open:
+                raise ValueError("File is not open")
+
+            retval = libgsd.gsd_set_index_entries_to_buffer(&self.__handle, number)
+            __raise_on_error(retval, self.name)
 
     def __dealloc__(self):
         if self.__is_open:

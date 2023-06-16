@@ -106,6 +106,7 @@ cdef extern from "gsd.h" nogil:
     int gsd_truncate(gsd_handle* handle)
     int gsd_close(gsd_handle* handle)
     int gsd_end_frame(gsd_handle* handle)
+    int gsd_flush(gsd_handle* handle)
     int gsd_write_chunk(gsd_handle* handle,
                         const char *name,
                         gsd_type type,
@@ -124,3 +125,7 @@ cdef extern from "gsd.h" nogil:
                                              const char *match,
                                              const char *prev)
     int gsd_upgrade(gsd_handle *handle)
+    uint64_t gsd_get_maximum_write_buffer_size(gsd_handle* handle)
+    int gsd_set_maximum_write_buffer_size(gsd_handle* handle, uint64_t size)
+    uint64_t gsd_get_index_entries_to_buffer(gsd_handle* handle)
+    int gsd_set_index_entries_to_buffer(gsd_handle* handle, uint64_t number)
