@@ -10,6 +10,14 @@ Change Log
 3.x
 ---
 
+3.0.1 (2023-06-19)
+^^^^^^^^^^^^^^^^^^
+
+*Fixed:*
+
+* Prevent ``ValueError: signal only works in main thread of the main interpreter`` when importing
+  gsd in a non-main thread.
+
 3.0.0 (2023-06-16)
 ^^^^^^^^^^^^^^^^^^
 
