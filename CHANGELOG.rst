@@ -10,6 +10,13 @@ Change Log
 3.x
 ---
 
+3.1.0 (2023-07-??)
+^^^^^^^^^^^^^^^^^^
+
+*Fixed:*
+
+* ``hoomd.read_log`` no longer triggers a numpy deprecation warning.
+
 3.0.1 (2023-06-20)
 ^^^^^^^^^^^^^^^^^^
 
