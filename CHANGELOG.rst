@@ -10,6 +10,13 @@ Change Log
 3.x
 ---
 
+3.1.0 (2023-07-??)
+^^^^^^^^^^^^^^^^^^
+
+*Added:*
+
+* ``HOOMDTrajectory.flush`` - flush buffered writes on an open ``HOOMDTrajectory``.
+
 3.0.1 (2023-06-20)
 ^^^^^^^^^^^^^^^^^^
 

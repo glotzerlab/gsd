@@ -1036,6 +1036,10 @@ class HOOMDTrajectory(object):
         """Close the file when the context manager exits."""
         self.file.close()
 
+    def flush(self):
+        """Flush all buffered frames to the file."""
+        self._file.flush()
+
 
 def open(name, mode='r'):
     """Open a hoomd schema GSD file.

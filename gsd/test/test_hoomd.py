@@ -33,6 +33,23 @@ def test_append(tmp_path, open_mode):
         assert len(hf) == 5
 
 
+def test_flush(tmp_path, open_mode):
+    """Test that HOOMTrajectory objects flush buffered writes."""
+    frame = gsd.hoomd.Frame()
+    frame.particles.N = 10
+
+    hf = gsd.hoomd.open(name=tmp_path / "test_append.gsd", mode=open_mode.write)
+    for i in range(5):
+        frame.configuration.step = i + 1
+        hf.append(frame)
+
+    hf.flush()
+
+    with gsd.hoomd.open(name=tmp_path / "test_append.gsd",
+                        mode=open_mode.read) as hf:
+        assert len(hf) == 5
+
+
 def create_frame(i):
     """Helper function to create frame objects."""
     frame = gsd.hoomd.Frame()
