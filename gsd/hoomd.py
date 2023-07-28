@@ -1169,7 +1169,10 @@ def read_log(name, scalar_only=False):
                 for log in logged_data_dict.keys():
                     if not gsdfileobj.chunk_exists(frame=idx, name=log):
                         continue
-                    logged_data_dict[log][idx] = gsdfileobj.read_chunk(
-                        frame=idx, name=log)
+                    data = gsdfileobj.read_chunk(frame=idx, name=log)
+                    if len(logged_data_dict[log][idx].shape) == 0:
+                        logged_data_dict[log][idx] = data[0]
+                    else:
+                        logged_data_dict[log][idx] = data
 
     return logged_data_dict

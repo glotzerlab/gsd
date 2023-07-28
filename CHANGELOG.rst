@@ -13,6 +13,10 @@ Change Log
 3.1.0 (2023-07-??)
 ^^^^^^^^^^^^^^^^^^
 
+*Fixed:*
+
+* ``hoomd.read_log`` no longer triggers a numpy deprecation warning.
+
 *Added:*
 
 * ``HOOMDTrajectory.flush`` - flush buffered writes on an open ``HOOMDTrajectory``.
