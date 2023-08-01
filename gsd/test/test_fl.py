@@ -1039,5 +1039,5 @@ def test_file_exists_error():
                          mode='x',
                          application='test_gsd_v1',
                          schema='none',
-                         schema_version=[1, 2]) as f:
+                         schema_version=[1, 2]):
             pass
