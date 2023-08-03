@@ -1030,3 +1030,14 @@ def test_index_entries_to_buffer(tmp_path, open_mode):
 
         with pytest.raises(RuntimeError):
             f.index_entries_to_buffer = 0
+
+
+def test_file_exists_error():
+    """Test that IO errors throw the correct Python Excetion."""
+    with pytest.raises(FileExistsError):
+        with gsd.fl.open(name=test_path / 'test_gsd_v1.gsd',
+                         mode='x',
+                         application='test_gsd_v1',
+                         schema='none',
+                         schema_version=[1, 2]):
+            pass
