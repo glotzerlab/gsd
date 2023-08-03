@@ -10,12 +10,12 @@ Change Log
 3.x
 ---
 
-3.1.1 (2023-??-??)
+3.1.1 (2023-08-03)
 ^^^^^^^^^^^^^^^^^^
 
 *Fixed:*
 
-* Raise a ``FileExistsError`` when opening a file that already exists with ``mode = 'x'``
+* Raise a ``FileExistsError`` when opening a file that already exists with ``mode = 'x'``.
 
 3.1.0 (2023-07-28)
 ^^^^^^^^^^^^^^^^^^
