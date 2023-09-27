@@ -10,23 +10,34 @@ Change Log
 3.x
 ---
 
+3.2.0 (2023-09-27)
+^^^^^^^^^^^^^^^^^^
+
+*Added:*
+
+* Support Python 3.12
+  (`#283 <https://github.com/glotzerlab/gsd/issues/283>`__).
+
 3.1.1 (2023-08-03)
 ^^^^^^^^^^^^^^^^^^
 
 *Fixed:*
 
-* Raise a ``FileExistsError`` when opening a file that already exists with ``mode = 'x'``.
+* Raise a ``FileExistsError`` when opening a file that already exists with ``mode = 'x'``
+  (`#270 <https://github.com/glotzerlab/gsd/issues/270>`__).
 
 3.1.0 (2023-07-28)
 ^^^^^^^^^^^^^^^^^^
 
 *Fixed:*
 
-* ``hoomd.read_log`` no longer triggers a numpy deprecation warning.
+* ``hoomd.read_log`` no longer triggers a numpy deprecation warning
+  (`#267 <https://github.com/glotzerlab/gsd/pull/267>`__).
 
 *Added:*
 
-* ``HOOMDTrajectory.flush`` - flush buffered writes on an open ``HOOMDTrajectory``.
+* ``HOOMDTrajectory.flush`` - flush buffered writes on an open ``HOOMDTrajectory``
+  (`#266 <https://github.com/glotzerlab/gsd/pull/266>`__).
 
 3.0.1 (2023-06-20)
 ^^^^^^^^^^^^^^^^^^
@@ -34,7 +45,7 @@ Change Log
 *Fixed:*
 
 * Prevent ``ValueError: signal only works in main thread of the main interpreter`` when importing
-  gsd in a non-main thread.
+  gsd in a non-main thread (`#257 <https://github.com/glotzerlab/gsd/issues/257>`__).
 
 3.0.0 (2023-06-16)
 ^^^^^^^^^^^^^^^^^^
