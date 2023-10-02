@@ -714,7 +714,7 @@ def test_gsd_v1_write(tmp_path, open_mode):
 
     values_str = []
     for v in values:
-        if type(v) == str and len(v) > 63:
+        if type(v) is str and len(v) > 63:
             # v1 files truncate names to 63 chars
             v = v[0:63]
         values_str.append(str(v))
@@ -735,7 +735,7 @@ def test_gsd_v1_write(tmp_path, open_mode):
         frame = 5
         random.shuffle(values)
         for value in values:
-            if type(value) == int:
+            if type(value) is int:
                 data = numpy.array([value * 13], dtype=numpy.int32)
             else:
                 data = numpy.array([hash(value)], dtype=numpy.int64)
@@ -756,7 +756,7 @@ def test_gsd_v1_write(tmp_path, open_mode):
         assert f.gsd_version == (1, 0)
 
         for value in values:
-            if type(value) == int:
+            if type(value) is int:
                 data = numpy.array([value * 13], dtype=numpy.int32)
             else:
                 data = numpy.array([hash(value)], dtype=numpy.int64)
@@ -807,7 +807,7 @@ def test_gsd_v1_upgrade_write(tmp_path, open_mode):
         frame = 5
         random.shuffle(values)
         for value in values:
-            if type(value) == int:
+            if type(value) is int:
                 data = numpy.array([value * 13], dtype=numpy.int32)
             else:
                 data = numpy.array([hash(value)], dtype=numpy.int64)
@@ -829,7 +829,7 @@ def test_gsd_v1_upgrade_write(tmp_path, open_mode):
         assert f.gsd_version == (2, 0)
 
         for value in values:
-            if type(value) == int:
+            if type(value) is int:
                 data = numpy.array([value * 13], dtype=numpy.int32)
             else:
                 data = numpy.array([hash(value)], dtype=numpy.int64)
