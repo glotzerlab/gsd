@@ -50,7 +50,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4.1.0
 
-      - uses: actions/setup-python@v4.7.0
+      - uses: actions/setup-python@v4.7.1
         name: Install Python
         with:
           python-version: '3.11'

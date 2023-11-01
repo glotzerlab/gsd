@@ -72,7 +72,7 @@ jobs:
         with:
           path: code
       - name: Set up Python
-        uses: actions/setup-python@v4.7.0
+        uses: actions/setup-python@v4.7.1
         with:
           python-version: '3.11'
       - name: Get pip cache dir
