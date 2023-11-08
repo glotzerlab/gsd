@@ -4,16 +4,20 @@ updates:
     directory: "/"
     target-branch: trunk-patch
     schedule:
-      interval: "monthly"
+      interval: "weekly"
+      time: "07:00"
+      timezone: "EST5EDT"
     pull-request-branch-name:
       separator: "-"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 1
 
   - package-ecosystem: "pip"
     directory: ".github"
     target-branch: trunk-patch
     schedule:
-      interval: "monthly"
+      interval: "weekly"
+      time: "07:00"
+      timezone: "EST5EDT"
     pull-request-branch-name:
       separator: "-"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 1
