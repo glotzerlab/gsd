@@ -8,7 +8,7 @@ GSD discussion board
 --------------------------
 
 Use the `GSD discussion board <https://github.com/glotzerlab/gsd/discussions/>`_ to
-post questions questions, ask for support, and discuss potential new features.
+post questions, ask for support, and discuss potential new features.
 
 Issue tracker
 -------------
