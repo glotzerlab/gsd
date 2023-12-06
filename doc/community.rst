@@ -4,13 +4,11 @@
 User community
 ==============
 
-hoomd-users mailing list
+GSD discussion board
 --------------------------
 
-**GSD** primarily exists as a file format for HOOMD-blue, so please use the
-`hoomd-users <https://groups.google.com/d/forum/hoomd-users>`_ mailing list.
-Subscribe for release announcements, to post questions questions for advice on
-using the software, and discuss potential new features.
+Use the `GSD discussion board <https://github.com/glotzerlab/gsd/discussions/>`_ to
+post questions questions, ask for support, and discuss potential new features.
 
 Issue tracker
 -------------

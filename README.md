@@ -12,8 +12,8 @@ API to specify the initial condition for a **HOOMD-blue** simulation or analyze 
   specification.
 * [Installation Guide](INSTALLING.rst): Instructions for installing and compiling **GSD**.
 * [HOOMD-blue](https://glotzerlab.engin.umich.edu/hoomd-blue/): Simulation engine that reads and writes **GSD** files.
-* [hoomd-users Google Group](https://groups.google.com/d/forum/hoomd-users):
-  Ask questions to the **HOOMD-blue** community.
+* [GSD discussion board](https://github.com/glotzerlab/gsd/discussions/):
+  Ask the **GSD** community for help.
 * [freud](https://freud.readthedocs.io): A powerful set of tools for analyzing trajectories.
 * [OVITO](https://www.ovito.org/): The Open Visualization Tool works with **GSD** files.
 * [gsd-vmd plugin](https://github.com/mphoward/gsd-vmd): VMD plugin to support **GSD** files.
