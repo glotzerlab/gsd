@@ -10,6 +10,14 @@ Change Log
 3.x
 ---
 
+3.2.1 (not yet released)
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Changed:*
+
+* Provide support via GitHub discussions
+  (`#308 <https://github.com/glotzerlab/gsd/issues/308>`__).
+
 3.2.0 (2023-09-27)
 ^^^^^^^^^^^^^^^^^^
 
