@@ -41,7 +41,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4.0.0
         with:
-          name: dist
+          name: dist-python-${{ matrix.python_version }}
           path: ./wheelhouse/*.whl
 
   build_sdist:
@@ -70,7 +70,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4.0.0
         with:
-          name: dist
+          name: dist-sdist
           path: dist/*.tar.gz
 
   upload_pypi:
@@ -82,8 +82,8 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v3.0.2
         with:
-          name: dist
-          path: dist
+          merge-multiple: 'true'
+          pattern: dist-*
 
       - name: Check files
         run: ls -lR dist
