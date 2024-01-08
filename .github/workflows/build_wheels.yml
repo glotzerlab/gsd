@@ -84,6 +84,7 @@ jobs:
         with:
           merge-multiple: 'true'
           pattern: dist-*
+          path: dist
 
       - name: Check files
         run: ls -lR dist
