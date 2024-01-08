@@ -5,7 +5,7 @@ ci:
 
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: 'v4.4.0'
+  rev: 'v4.5.0'
   hooks:
   - id: end-of-file-fixer
   - id: trailing-whitespace
@@ -58,7 +58,7 @@ repos:
     - flake8-docstrings==1.6.0
     - flake8-rst-docstrings==0.3.0
 - repo: https://github.com/pre-commit/mirrors-clang-format
-  rev: v16.0.6
+  rev: v17.0.6
   hooks:
   - id: clang-format
     types_or: [c, c++]
