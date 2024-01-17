@@ -24,13 +24,12 @@ The following options are available for the ``read`` subcommand:
     accepted by :func:`gsd.fl.open`.
 """
 
-import sys
 import argparse
 import code
+import sys
 
-from . import version
+from . import fl, version
 from .hoomd import open as hoomd_open
-from . import fl
 
 
 def _print_err(msg=None, *args):
@@ -76,7 +75,7 @@ def main_read(args):
         })
 
     extras = "\n".join(
-        "{}: {}".format(key, val) for key, val in attributes.items())
+        f"{key}: {val}" for key, val in attributes.items())
 
     code.interact(local=local_ns,
                   banner=SHELL_BANNER.format(python_version=sys.version,
@@ -158,12 +157,12 @@ def main():
             raise
         sys.exit(1)
     except RuntimeWarning as warning:
-        _print_err("Warning: {}".format(warning))
+        _print_err(f"Warning: {warning}")
         if args.debug:
             raise
         sys.exit(1)
     except Exception as error:
-        _print_err('Error: {}'.format(error))
+        _print_err(f'Error: {error}')
         if args.debug:
             raise
         sys.exit(1)

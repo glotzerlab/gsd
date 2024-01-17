@@ -3,16 +3,18 @@
 
 """Benchmark GSD HOOMD file read/write."""
 
-import time
-import gsd.fl
-import gsd.pygsd
-import gsd.hoomd
-import os
 import math
+import os
 import random
-import numpy
 import sys
-from subprocess import call, PIPE
+import time
+from subprocess import PIPE, call
+
+import numpy
+
+import gsd.fl
+import gsd.hoomd
+import gsd.pygsd
 
 # import logging
 # logging.basicConfig(level=logging.DEBUG)

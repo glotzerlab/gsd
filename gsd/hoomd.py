@@ -20,11 +20,12 @@ See Also:
     See :ref:`hoomd-examples` for full examples.
 """
 
-import numpy
-from collections import OrderedDict
-import logging
 import json
+import logging
 import warnings
+from collections import OrderedDict
+
+import numpy
 
 try:
     from gsd import fl
@@ -39,7 +40,7 @@ except ImportError:
 logger = logging.getLogger('gsd.hoomd')
 
 
-class ConfigurationData(object):
+class ConfigurationData:
     """Store configuration data.
 
     Use the `Frame.configuration` attribute of a to access the configuration.
@@ -105,7 +106,7 @@ class ConfigurationData(object):
             self.box = self.box.reshape([6])
 
 
-class ParticleData(object):
+class ParticleData:
     """Store particle data chunks.
 
     Use the `Frame.particles` attribute of a to access the particles.
@@ -256,7 +257,7 @@ class ParticleData(object):
             raise ValueError("Type names must be unique.")
 
 
-class BondData(object):
+class BondData:
     """Store bond data chunks.
 
     Use the `Frame.bonds`, `Frame.angles`, `Frame.dihedrals`,
@@ -272,7 +273,6 @@ class BondData(object):
         data.
 
     Note:
-
         *M* varies depending on the type of bond. `BondData` represents all
         types of topology connections.
 
@@ -348,7 +348,7 @@ class BondData(object):
             raise ValueError("Type names must be unique.")
 
 
-class ConstraintData(object):
+class ConstraintData:
     """Store constraint data.
 
     Use the `Frame.constraints` attribute to access the constraints.
@@ -632,7 +632,7 @@ class Frame:
                 raise RuntimeError('Not a valid state: ' + k)
 
 
-class _HOOMDTrajectoryIterable(object):
+class _HOOMDTrajectoryIterable:
     """Iterable over a HOOMDTrajectory object."""
 
     def __init__(self, trajectory, indices):
@@ -652,7 +652,7 @@ class _HOOMDTrajectoryIterable(object):
         return len(self._indices)
 
 
-class _HOOMDTrajectoryView(object):
+class _HOOMDTrajectoryView:
     """A view of a HOOMDTrajectory object.
 
     Enables the slicing and iteration over a subset of a trajectory
@@ -676,7 +676,7 @@ class _HOOMDTrajectoryView(object):
             return self._trajectory[self._indices[key]]
 
 
-class HOOMDTrajectory(object):
+class HOOMDTrajectory:
     """Read and write hoomd gsd files.
 
     Args:

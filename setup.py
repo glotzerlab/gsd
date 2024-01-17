@@ -1,10 +1,10 @@
 # Copyright (c) 2016-2023 The Regents of the University of Michigan
 # Part of GSD, released under the BSD 2-Clause License.
 
-from setuptools import setup
-from setuptools.extension import Extension
 import numpy
 from Cython.Build import cythonize
+from setuptools import setup
+from setuptools.extension import Extension
 
 extensions = cythonize(
     [Extension(

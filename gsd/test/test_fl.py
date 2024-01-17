@@ -3,16 +3,18 @@
 
 """Test gsd.fl."""
 
-import gsd.fl
-import gsd.pygsd
-import numpy
-import platform
-import pytest
-import random
-import pathlib
 import os
+import pathlib
+import platform
+import random
 import shutil
 import sys
+
+import numpy
+import pytest
+
+import gsd.fl
+import gsd.pygsd
 
 test_path = pathlib.Path(os.path.realpath(__file__)).parent
 

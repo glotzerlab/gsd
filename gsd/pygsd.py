@@ -29,13 +29,12 @@ The :py:class:`GSDFile` in this module can be used with the
 
 """
 
-from __future__ import print_function
-from __future__ import division
 import logging
-import numpy
 import struct
-from collections import namedtuple
 import sys
+from collections import namedtuple
+
+import numpy
 
 version = "3.2.0"
 
@@ -68,7 +67,7 @@ gsd_type_mapping = {
 }
 
 
-class GSDFile(object):
+class GSDFile:
     """GSD file access interface.
 
     Implemented in pure Python and accepts any Python file-like object.
@@ -117,7 +116,7 @@ class GSDFile(object):
             raise
 
         if len(header_raw) != gsd_header_struct.size:
-            raise IOError
+            raise OSError
 
         self.__header = gsd_header._make(gsd_header_struct.unpack(header_raw))
 
@@ -157,7 +156,7 @@ class GSDFile(object):
         for i in range(self.__header.index_allocated_entries):
             index_entry_raw = self.__file.read(gsd_index_entry_struct.size)
             if len(index_entry_raw) != gsd_index_entry_struct.size:
-                raise IOError
+                raise OSError
 
             idx = gsd_index_entry._make(
                 gsd_index_entry_struct.unpack(index_entry_raw))
@@ -266,7 +265,6 @@ class GSDFile(object):
             bool: True if the chunk exists in the file. False if it does not.
 
         Example:
-
             Handle non-existent chunks::
 
                 with GSDFile(open('file.gsd', mode='r')) as f:
@@ -342,7 +340,7 @@ class GSDFile(object):
         data_raw = self.__file.read(size)
 
         if len(data_raw) != size:
-            raise IOError
+            raise OSError
 
         data_npy = numpy.frombuffer(data_raw,
                                     dtype=gsd_type_mapping[chunk.type])

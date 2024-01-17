@@ -14,7 +14,8 @@ You must explicitly import these modules before use::
 
 import signal
 import sys
-from . import version  # noqa: F401
+
+from . import version
 
 # Install a SIGTERM handler that gracefully exits, allowing open files to flush
 # buffered writes and close. Catch ValueError and pass as there is no way to

@@ -2,11 +2,12 @@
 # Copyright (c) 2016-2023 The Regents of the University of Michigan
 # Part of GSD, released under the BSD 2-Clause License.
 
+import datetime
 import os
 import subprocess
-import gsd
-import datetime
 import tempfile
+
+import gsd
 
 extensions = [
     'breathe',
@@ -24,7 +25,7 @@ intersphinx_mapping = {'python': ('https://docs.python.org/3', None),
                        'numpy': ('https://numpy.org/doc/stable', None),
                        'hoomd': ('https://hoomd-blue.readthedocs.io/en/latest/', None),
 }
-autodoc_docstring_signature = True;
+autodoc_docstring_signature = True
 
 templates_path = ['_templates']
 

@@ -3,11 +3,13 @@
 
 """Test the gsd.hoomd API."""
 
+import pickle
+
+import numpy
+import pytest
+
 import gsd.fl
 import gsd.hoomd
-import numpy
-import pickle
-import pytest
 
 
 def test_create(tmp_path):
@@ -64,7 +66,7 @@ def test_extend(tmp_path, open_mode):
 
     with gsd.hoomd.open(name=tmp_path / "test_extend.gsd",
                         mode=open_mode.write) as hf:
-        hf.extend((create_frame(i) for i in range(5)))
+        hf.extend(create_frame(i) for i in range(5))
 
     with gsd.hoomd.open(name=tmp_path / "test_extend.gsd",
                         mode=open_mode.read) as hf:
@@ -555,7 +557,7 @@ def test_iteration(tmp_path, open_mode):
     """Test the iteration protocols for hoomd trajectories."""
     with gsd.hoomd.open(name=tmp_path / "test_iteration.gsd",
                         mode=open_mode.write) as hf:
-        hf.extend((create_frame(i) for i in range(20)))
+        hf.extend(create_frame(i) for i in range(20))
 
     with gsd.hoomd.open(name=tmp_path / "test_iteration.gsd",
                         mode=open_mode.read) as hf:
@@ -597,7 +599,7 @@ def test_slicing_and_iteration(tmp_path, open_mode):
     """Test that hoomd trajectories can be sliced."""
     with gsd.hoomd.open(name=tmp_path / "test_slicing.gsd",
                         mode=open_mode.write) as hf:
-        hf.extend((create_frame(i) for i in range(20)))
+        hf.extend(create_frame(i) for i in range(20))
 
     with gsd.hoomd.open(name=tmp_path / "test_slicing.gsd",
                         mode=open_mode.read) as hf:
@@ -640,7 +642,7 @@ def test_view_slicing_and_iteration(tmp_path, open_mode):
     """Test that trajectories can be sliced."""
     with gsd.hoomd.open(name=tmp_path / "test_slicing.gsd",
                         mode=open_mode.write) as hf:
-        hf.extend((create_frame(i) for i in range(40)))
+        hf.extend(create_frame(i) for i in range(40))
 
     with gsd.hoomd.open(name=tmp_path / "test_slicing.gsd",
                         mode=open_mode.read) as hf:
@@ -688,7 +690,7 @@ def test_view_slicing_and_iteration(tmp_path, open_mode):
 def test_truncate(tmp_path):
     """Test the truncate API."""
     with gsd.hoomd.open(name=tmp_path / "test_iteration.gsd", mode='w') as hf:
-        hf.extend((create_frame(i) for i in range(20)))
+        hf.extend(create_frame(i) for i in range(20))
 
         assert len(hf) == 20
         s = hf[10]  # noqa
@@ -786,7 +788,7 @@ def test_log(tmp_path, open_mode):
 def test_pickle(tmp_path):
     """Test that hoomd trajectory objects can be pickled."""
     with gsd.hoomd.open(name=tmp_path / "test_pickling.gsd", mode='w') as traj:
-        traj.extend((create_frame(i) for i in range(20)))
+        traj.extend(create_frame(i) for i in range(20))
         with pytest.raises(pickle.PickleError):
             pkl = pickle.dumps(traj)
     with gsd.hoomd.open(name=tmp_path / "test_pickling.gsd", mode='r') as traj:
