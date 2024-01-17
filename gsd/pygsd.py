@@ -274,7 +274,8 @@ class GSDFile:
                         return None
         """
         if not self.__is_open:
-            raise ValueError("File is not open")
+            msg = "File is not open"
+            raise ValueError(msg)
 
         chunk = self._find_chunk(frame, name)
         return chunk is not None
@@ -317,7 +318,8 @@ class GSDFile:
             arrays instead.
         """
         if not self.__is_open:
-            raise ValueError("File is not open")
+            msg = "File is not open"
+            raise ValueError(msg)
 
         chunk = self._find_chunk(frame, name)
 
@@ -429,7 +431,8 @@ class GSDFile:
     def nframes(self):
         """int: Number of frames in the file."""
         if not self.__is_open:
-            raise ValueError("File is not open")
+            msg = "File is not open"
+            raise ValueError(msg)
 
         if len(self.__index) == 0:
             return 0

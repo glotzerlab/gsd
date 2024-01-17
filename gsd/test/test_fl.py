@@ -100,7 +100,7 @@ def test_metadata(tmp_path, open_mode):
                      schema='none',
                      schema_version=[1, 2]) as f:
         assert f.mode == open_mode.write
-        for i in range(150):
+        for _i in range(150):
             f.write_chunk(name='data', data=data)
             f.end_frame()
 
@@ -263,7 +263,7 @@ def test_readonly_errors(tmp_path, open_mode):
                      application='test_readonly_errors',
                      schema='none',
                      schema_version=[1, 2]) as f:
-        for i in range(10):
+        for _i in range(10):
             f.write_chunk(name='chunk1', data=data)
             f.end_frame()
 
@@ -368,7 +368,7 @@ def test_truncate(tmp_path):
                      schema='none',
                      schema_version=[1, 2]) as f:
         assert f.mode == 'w'
-        for i in range(10):
+        for _i in range(10):
             f.write_chunk(name='data', data=data)
             f.end_frame()
 
@@ -987,7 +987,7 @@ def test_flush(tmp_path, open_mode, n_flush):
 
         # 0 calls to flush tests the implicit flush on close, 2 calls to flush
         # tests that repeated calls are handled properly.
-        for i in range(n_flush):
+        for _i in range(n_flush):
             f.flush()
 
     with gsd.fl.open(name=tmp_path / 'test_flush.gsd',

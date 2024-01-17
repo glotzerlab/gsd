@@ -254,7 +254,8 @@ class ParticleData:
 
         if (self.types is not None
                 and (not len(set(self.types)) == len(self.types))):
-            raise ValueError("Type names must be unique.")
+            msg = "Type names must be unique."
+            raise ValueError(msg)
 
 
 class BondData:
@@ -345,7 +346,8 @@ class BondData:
 
         if (self.types is not None
                 and (not len(set(self.types)) == len(self.types))):
-            raise ValueError("Type names must be unique.")
+            msg = "Type names must be unique."
+            raise ValueError(msg)
 
 
 class ConstraintData:
@@ -687,7 +689,8 @@ class HOOMDTrajectory:
 
     def __init__(self, file):
         if file.mode == 'ab':
-            raise ValueError('Append mode not yet supported')
+            msg = 'Append mode not yet supported'
+            raise ValueError(msg)
 
         self._file = file
         self._initial_frame = None
@@ -1079,9 +1082,11 @@ def open(name, mode='r'):
 
     """
     if fl is None:
-        raise RuntimeError("file layer module is not available")
+        msg = "file layer module is not available"
+        raise RuntimeError(msg)
     if gsd is None:
-        raise RuntimeError("gsd module is not available")
+        msg = "gsd module is not available"
+        raise RuntimeError(msg)
 
     gsdfileobj = fl.open(name=str(name),
                          mode=mode,
@@ -1126,9 +1131,11 @@ def read_log(name, scalar_only=False):
         df
     """
     if fl is None:
-        raise RuntimeError("file layer module is not available")
+        msg = "file layer module is not available"
+        raise RuntimeError(msg)
     if gsd is None:
-        raise RuntimeError("gsd module is not available")
+        msg = "gsd module is not available"
+        raise RuntimeError(msg)
 
     with fl.open(name=str(name),
                  mode='r',
@@ -1163,7 +1170,7 @@ def read_log(name, scalar_only=False):
                 else:
                     logged_data_dict[log] = numpy.tile(
                         tmp,
-                        (gsdfileobj.nframes,) + tuple(1 for _ in tmp.shape))
+                        (gsdfileobj.nframes, *tuple(1 for _ in tmp.shape)))
 
             for idx in range(1, gsdfileobj.nframes):
                 for log in logged_data_dict.keys():

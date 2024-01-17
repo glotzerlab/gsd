@@ -175,8 +175,8 @@ def run_sweep(size, size_str):
     if True:
         result = run_benchmarks(32 * 32, size)
 
-        print("{0:<7} {1:<6} {2:<9.4g} {3:<12.4g} "
-              "{4:<11.4g} {5:<13.4g} {6:<11.3g}".format(
+        print("{:<7} {:<6} {:<9.4g} {:<12.4g} "
+              "{:<11.4g} {:<13.4g} {:<11.3g}".format(
                   size_str, "32^2", result['open_time'] * 1000, result['write'],
                   result['seq_read'], result['random_read'],
                   result['random_read_time']))
@@ -184,7 +184,7 @@ def run_sweep(size, size_str):
 
     result = run_benchmarks(128 * 128, size)
 
-    print("{0:<7} {1:<6} {2:<9.4g} {3:<12.4g} {4:<11.4g} {5:<13.4g} {6:<11.3g}"
+    print("{:<7} {:<6} {:<9.4g} {:<12.4g} {:<11.4g} {:<13.4g} {:<11.3g}"
           .format(size_str, "128^2", result['open_time'] * 1000,
                   result['write'], result['seq_read'], result['random_read'],
                   result['random_read_time']))
@@ -192,7 +192,7 @@ def run_sweep(size, size_str):
 
     result = run_benchmarks(1024 * 1024, size)
 
-    print("{0:<7} {1:<6} {2:<9.4g} {3:<12.4g} {4:<11.4g} {5:<13.4g} {6:<11.3g}"
+    print("{:<7} {:<6} {:<9.4g} {:<12.4g} {:<11.4g} {:<13.4g} {:<11.3g}"
           .format(size_str, "1024^2", result['open_time'] * 1000,
                   result['write'], result['seq_read'], result['random_read'],
                   result['random_read_time']))
