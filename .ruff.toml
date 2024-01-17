@@ -24,12 +24,21 @@ ignore = [
   "D107", # Do not document __init__ separately from the class.
   "PLR09", # Allow "too many" statements/arguments/etc...
   "N816", # Allow mixed case names like kT.
+  "PT011", # PT011 insists that specific pytest.raises checks should impossibly more specific
+  "RUF012", # gsd does not use typing hints
 ]
 
 [lint.per-file-ignores]
 
 "__init__.py" = ["F401", # __init__.py import submodules for use by the package importer.
 ]
+
+"gsd/test/*.py" = ["PLR2004", # unit test value comparisons are not magic values
+]
+
+"doc/conf.py" = ["A001", # Allow copyright variable name
+                 "D", # conf.py does not need documentation
+    ]
 
 [pydocstyle]
 convention = "google"

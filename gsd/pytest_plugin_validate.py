@@ -20,7 +20,7 @@ def pytest_addoption(parser):
 
 
 @pytest.fixture(autouse=True)
-def skip_validate(request):
+def _skip_validate(request):
     """Skip validation tests by default.
 
     Pass the command line option --validate to enable these tests.

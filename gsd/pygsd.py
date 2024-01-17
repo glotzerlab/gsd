@@ -121,7 +121,8 @@ class GSDFile:
         self.__header = gsd_header._make(gsd_header_struct.unpack(header_raw))
 
         # validate the header
-        if self.__header.magic != 0x65DF65DF65DF65DF:
+        expected_magic = 0x65DF65DF65DF65DF
+        if self.__header.magic != expected_magic:
             raise RuntimeError("Not a GSD file: " + str(self.__file))
         if (self.__header.gsd_version < (1 << 16)
                 and self.__header.gsd_version != (0 << 16 | 3)):
@@ -349,8 +350,8 @@ class GSDFile:
 
         if chunk.M == 1:
             return data_npy
-        else:
-            return data_npy.reshape([chunk.N, chunk.M])
+
+        return data_npy.reshape([chunk.N, chunk.M])
 
     def find_matching_chunk_names(self, match):
         """Find chunk names in the file that start with the string *match*.
@@ -436,5 +437,5 @@ class GSDFile:
 
         if len(self.__index) == 0:
             return 0
-        else:
-            return self.__index[-1].frame + 1
+
+        return self.__index[-1].frame + 1

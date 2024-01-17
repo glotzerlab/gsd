@@ -28,14 +28,15 @@ from collections import OrderedDict
 import numpy
 
 try:
-    from gsd import fl
-except ImportError:
-    fl = None
-
-try:
     import gsd
 except ImportError:
     gsd = None
+
+fl_imported = True
+try:
+    import gsd.fl
+except ImportError:
+    fl_imported = False
 
 logger = logging.getLogger('gsd.hoomd')
 
@@ -69,10 +70,9 @@ class ConfigurationData:
 
     @property
     def box(self):
-        """((6, 1) `numpy.ndarray` of ``numpy.float32``): Box dimensions \
-        (:chunk:`configuration/box`).
+        """((6, 1) `numpy.ndarray` of ``numpy.float32``): Box dimensions.
 
-        [lx, ly, lz, xy, xz, yz].
+        [lx, ly, lz, xy, xz, yz]. See :chunk:`configuration/box`.
         """
         return self._box
 
@@ -674,8 +674,8 @@ class _HOOMDTrajectoryView:
     def __getitem__(self, key):
         if isinstance(key, slice):
             return type(self)(self._trajectory, self._indices[key])
-        else:
-            return self._trajectory[self._indices[key]]
+
+        return self._trajectory[self._indices[key]]
 
 
 class HOOMDTrajectory:
@@ -874,35 +874,32 @@ class HOOMDTrajectory:
             step_arr = self.file.read_chunk(frame=idx,
                                             name='configuration/step')
             frame.configuration.step = step_arr[0]
+        elif self._initial_frame is not None:
+            frame.configuration.step = \
+                self._initial_frame.configuration.step
         else:
-            if self._initial_frame is not None:
-                frame.configuration.step = \
-                    self._initial_frame.configuration.step
-            else:
-                frame.configuration.step = \
-                    frame.configuration._default_value['step']
+            frame.configuration.step = \
+                frame.configuration._default_value['step']
 
         if self.file.chunk_exists(frame=idx, name='configuration/dimensions'):
             dimensions_arr = self.file.read_chunk(
                 frame=idx, name='configuration/dimensions')
             frame.configuration.dimensions = dimensions_arr[0]
+        elif self._initial_frame is not None:
+            frame.configuration.dimensions = \
+                self._initial_frame.configuration.dimensions
         else:
-            if self._initial_frame is not None:
-                frame.configuration.dimensions = \
-                    self._initial_frame.configuration.dimensions
-            else:
-                frame.configuration.dimensions = \
-                    frame.configuration._default_value['dimensions']
+            frame.configuration.dimensions = \
+                frame.configuration._default_value['dimensions']
 
         if self.file.chunk_exists(frame=idx, name='configuration/box'):
             frame.configuration.box = self.file.read_chunk(
                 frame=idx, name='configuration/box')
+        elif self._initial_frame is not None:
+            frame.configuration.box = self._initial_frame.configuration.box
         else:
-            if self._initial_frame is not None:
-                frame.configuration.box = self._initial_frame.configuration.box
-            else:
-                frame.configuration.box = \
-                    frame.configuration._default_value['box']
+            frame.configuration.box = \
+                frame.configuration._default_value['box']
 
         # then read all groups that have N, types, etc...
         for path in [
@@ -922,9 +919,8 @@ class HOOMDTrajectory:
             if self.file.chunk_exists(frame=idx, name=path + '/N'):
                 N_arr = self.file.read_chunk(frame=idx, name=path + '/N')
                 container.N = N_arr[0]
-            else:
-                if self._initial_frame is not None:
-                    container.N = initial_frame_container.N
+            elif self._initial_frame is not None:
+                container.N = initial_frame_container.N
 
             # type names
             if 'types' in container._default_value:
@@ -933,11 +929,10 @@ class HOOMDTrajectory:
                     tmp = tmp.view(dtype=numpy.dtype((bytes, tmp.shape[1])))
                     tmp = tmp.reshape([tmp.shape[0]])
                     container.types = list(a.decode('UTF-8') for a in tmp)
+                elif self._initial_frame is not None:
+                    container.types = initial_frame_container.types
                 else:
-                    if self._initial_frame is not None:
-                        container.types = initial_frame_container.types
-                    else:
-                        container.types = container._default_value['types']
+                    container.types = container._default_value['types']
 
             # type shapes
             if ('type_shapes' in container._default_value
@@ -951,13 +946,12 @@ class HOOMDTrajectory:
                     container.type_shapes = \
                         list(json.loads(json_string.decode('UTF-8'))
                              for json_string in tmp)
+                elif self._initial_frame is not None:
+                    container.type_shapes = \
+                        initial_frame_container.type_shapes
                 else:
-                    if self._initial_frame is not None:
-                        container.type_shapes = \
-                            initial_frame_container.type_shapes
-                    else:
-                        container.type_shapes = \
-                            container._default_value['type_shapes']
+                    container.type_shapes = \
+                        container._default_value['type_shapes']
 
             for name in container._default_value:
                 if name in ('N', 'types', 'type_shapes'):
@@ -995,9 +989,8 @@ class HOOMDTrajectory:
         for log in logged_data_names:
             if self.file.chunk_exists(frame=idx, name=log):
                 frame.log[log[4:]] = self.file.read_chunk(frame=idx, name=log)
-            else:
-                if self._initial_frame is not None:
-                    frame.log[log[4:]] = self._initial_frame.log[log[4:]]
+            elif self._initial_frame is not None:
+                frame.log[log[4:]] = self._initial_frame.log[log[4:]]
 
         # store initial frame
         if self._initial_frame is None and idx == 0:
@@ -1018,14 +1011,15 @@ class HOOMDTrajectory:
         """
         if isinstance(key, slice):
             return _HOOMDTrajectoryView(self, range(*key.indices(len(self))))
-        elif isinstance(key, int):
+
+        if isinstance(key, int):
             if key < 0:
                 key += len(self)
             if key >= len(self) or key < 0:
                 raise IndexError()
             return self._read_frame(key)
-        else:
-            raise TypeError
+
+        raise TypeError
 
     def __iter__(self):
         """Iterate over frames in the trajectory."""
@@ -1044,7 +1038,7 @@ class HOOMDTrajectory:
         self._file.flush()
 
 
-def open(name, mode='r'):
+def open(name, mode='r'): # noqa: A001 - allow shadowing builtin open
     """Open a hoomd schema GSD file.
 
     The return value of `open` can be used as a context manager.
@@ -1081,14 +1075,14 @@ def open(name, mode='r'):
     +------------------+---------------------------------------------+
 
     """
-    if fl is None:
+    if not fl_imported:
         msg = "file layer module is not available"
         raise RuntimeError(msg)
     if gsd is None:
         msg = "gsd module is not available"
         raise RuntimeError(msg)
 
-    gsdfileobj = fl.open(name=str(name),
+    gsdfileobj = gsd.fl.open(name=str(name),
                          mode=mode,
                          application='gsd.hoomd ' + gsd.version.version,
                          schema='hoomd',
@@ -1130,14 +1124,14 @@ def read_log(name, scalar_only=False):
                                                   scalar_only=True))
         df
     """
-    if fl is None:
+    if not fl_imported:
         msg = "file layer module is not available"
         raise RuntimeError(msg)
     if gsd is None:
         msg = "gsd module is not available"
         raise RuntimeError(msg)
 
-    with fl.open(name=str(name),
+    with gsd.fl.open(name=str(name),
                  mode='r',
                  application='gsd.hoomd ' + gsd.version.version,
                  schema='hoomd',
@@ -1148,7 +1142,7 @@ def read_log(name, scalar_only=False):
         logged_data_names.insert(0, 'configuration/step')
         if len(logged_data_names) == 1:
             warnings.warn('No logged data in file: ' + str(name),
-                          RuntimeWarning)
+                          RuntimeWarning, stacklevel=2)
 
         logged_data_dict = dict()
         for log in logged_data_names:
@@ -1173,13 +1167,13 @@ def read_log(name, scalar_only=False):
                         (gsdfileobj.nframes, *tuple(1 for _ in tmp.shape)))
 
             for idx in range(1, gsdfileobj.nframes):
-                for log in logged_data_dict.keys():
-                    if not gsdfileobj.chunk_exists(frame=idx, name=log):
+                for key in logged_data_dict.keys():
+                    if not gsdfileobj.chunk_exists(frame=idx, name=key):
                         continue
-                    data = gsdfileobj.read_chunk(frame=idx, name=log)
-                    if len(logged_data_dict[log][idx].shape) == 0:
-                        logged_data_dict[log][idx] = data[0]
+                    data = gsdfileobj.read_chunk(frame=idx, name=key)
+                    if len(logged_data_dict[key][idx].shape) == 0:
+                        logged_data_dict[key][idx] = data[0]
                     else:
-                        logged_data_dict[log][idx] = data
+                        logged_data_dict[key][idx] = data
 
     return logged_data_dict

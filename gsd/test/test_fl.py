@@ -205,23 +205,23 @@ def test_chunk_exists(tmp_path, open_mode):
         read_data = f.read_chunk(frame=2, name='test')
 
         assert not f.chunk_exists(frame=1, name='chunk1')
-        with pytest.raises(Exception):
+        with pytest.raises(KeyError):
             read_data = f.read_chunk(frame=1, name='chunk1')
         assert not f.chunk_exists(frame=2, name='abcdefg')
-        with pytest.raises(Exception):
+        with pytest.raises(KeyError):
             read_data = f.read_chunk(frame=2, name='abcdefg')
         assert not f.chunk_exists(frame=0, name='test')
-        with pytest.raises(Exception):
+        with pytest.raises(KeyError):
             read_data = f.read_chunk(frame=0, name='test')
 
         assert not f.chunk_exists(frame=2, name='chunk1')
-        with pytest.raises(Exception):
+        with pytest.raises(KeyError):
             read_data = f.read_chunk(frame=2, name='chunk1')
         assert not f.chunk_exists(frame=0, name='abcdefg')
-        with pytest.raises(Exception):
+        with pytest.raises(KeyError):
             read_data = f.read_chunk(frame=0, name='abcdefg')
         assert not f.chunk_exists(frame=1, name='test')
-        with pytest.raises(Exception):
+        with pytest.raises(KeyError):
             read_data = f.read_chunk(frame=1, name='test')
 
     # test again with pygsd
@@ -235,23 +235,23 @@ def test_chunk_exists(tmp_path, open_mode):
         read_data = f.read_chunk(frame=2, name='test')
 
         assert not f.chunk_exists(frame=1, name='chunk1')
-        with pytest.raises(Exception):
+        with pytest.raises(KeyError):
             read_data = f.read_chunk(frame=1, name='chunk1')
         assert not f.chunk_exists(frame=2, name='abcdefg')
-        with pytest.raises(Exception):
+        with pytest.raises(KeyError):
             read_data = f.read_chunk(frame=2, name='abcdefg')
         assert not f.chunk_exists(frame=0, name='test')
-        with pytest.raises(Exception):
+        with pytest.raises(KeyError):
             read_data = f.read_chunk(frame=0, name='test')
 
         assert not f.chunk_exists(frame=2, name='chunk1')
-        with pytest.raises(Exception):
+        with pytest.raises(KeyError):
             read_data = f.read_chunk(frame=2, name='chunk1')
         assert not f.chunk_exists(frame=0, name='abcdefg')
-        with pytest.raises(Exception):
+        with pytest.raises(KeyError):
             read_data = f.read_chunk(frame=0, name='abcdefg')
         assert not f.chunk_exists(frame=1, name='test')
-        with pytest.raises(Exception):
+        with pytest.raises(KeyError):
             read_data = f.read_chunk(frame=1, name='test')  # noqa
 
 
@@ -273,20 +273,20 @@ def test_readonly_errors(tmp_path, open_mode):
                      application='test_readonly_errors',
                      schema='none',
                      schema_version=[1, 2]) as f:
-        with pytest.raises(Exception):
+        with pytest.raises(RuntimeError):
             f.end_frame()
 
-        with pytest.raises(Exception):
+        with pytest.raises(RuntimeError):
             f.write_chunk(name='chunk1', data=data)
 
     # test again with pygsd
     with gsd.pygsd.GSDFile(
             file=open(str(tmp_path
                           / 'test_readonly_errors.gsd'), mode='rb')) as f:
-        with pytest.raises(Exception):
+        with pytest.raises(NotImplementedError):
             f.end_frame()
 
-        with pytest.raises(Exception):
+        with pytest.raises(NotImplementedError):
             f.write_chunk(name='chunk1', data=data)
 
 
@@ -294,8 +294,9 @@ def test_fileio_errors(tmp_path, open_mode):
     """Test that OS file I/O errors pass through."""
     # These test cause python to crash on windows....
     if platform.system() != "Windows":
-        with pytest.raises(Exception):
+        with pytest.raises(FileNotFoundError):
             gsd.fl.open(name='/this/file/does/not/exist',
+                        mode='r',
                         application='test_readonly_errors',
                         schema='none',
                         schema_version=[1, 2])
@@ -313,49 +314,50 @@ def test_fileio_errors(tmp_path, open_mode):
 
 def test_dtype_errors(tmp_path, open_mode):
     """Test that unsupported data types result in errors."""
-    with pytest.raises(Exception):
-        data = numpy.array([1, 2, 3, 4, 5, 10012], dtype=numpy.bool_)
+    data = numpy.array([1, 2, 3, 4, 5, 10012], dtype=numpy.bool_)
 
-        with gsd.fl.open(name=tmp_path / 'test_dtype_errors1.gsd',
-                         mode=open_mode.write,
-                         application='test_dtype_errors',
-                         schema='none',
-                         schema_version=[1, 2]) as f:
+    with gsd.fl.open(name=tmp_path / 'test_dtype_errors1.gsd',
+                        mode=open_mode.write,
+                        application='test_dtype_errors',
+                        schema='none',
+                        schema_version=[1, 2]) as f:
+        with pytest.raises(ValueError):
             f.write_chunk(name='chunk1', data=data)
-            f.end_frame()
+        f.end_frame()
 
-    with pytest.raises(Exception):
-        data = numpy.array([1, 2, 3, 4, 5, 10012], dtype=numpy.float16)
+    data = numpy.array([1, 2, 3, 4, 5, 10012], dtype=numpy.float16)
 
-        with gsd.fl.open(name=tmp_path / 'test_dtype_errors2.gsd',
-                         mode=open_mode.write,
-                         application='test_dtype_errors',
-                         schema='none',
-                         schema_version=[1, 2]) as f:
+    with gsd.fl.open(name=tmp_path / 'test_dtype_errors2.gsd',
+                        mode=open_mode.write,
+                        application='test_dtype_errors',
+                        schema='none',
+                        schema_version=[1, 2]) as f:
+        with pytest.raises(ValueError):
             f.write_chunk(name='chunk1', data=data)
-            f.end_frame()
+        f.end_frame()
 
-    with pytest.raises(Exception):
-        data = numpy.array([1, 2, 3, 4, 5, 10012], dtype=numpy.complex64)
+    data = numpy.array([1, 2, 3, 4, 5, 10012], dtype=numpy.complex64)
 
-        with gsd.fl.open(name=tmp_path / 'test_dtype_errors3.gsd',
-                         mode=open_mode.write,
-                         application='test_dtype_errors',
-                         schema='none',
-                         schema_version=[1, 2]) as f:
+    with gsd.fl.open(name=tmp_path / 'test_dtype_errors3.gsd',
+                        mode=open_mode.write,
+                        application='test_dtype_errors',
+                        schema='none',
+                        schema_version=[1, 2]) as f:
+        with pytest.raises(ValueError):
             f.write_chunk(name='chunk1', data=data)
-            f.end_frame()
+        f.end_frame()
 
-    with pytest.raises(Exception):
-        data = numpy.array([1, 2, 3, 4, 5, 10012], dtype=numpy.complex128)
+    data = numpy.array([1, 2, 3, 4, 5, 10012], dtype=numpy.complex128)
 
-        with gsd.fl.open(name=tmp_path / 'test_dtype_errors4.gsd',
-                         mode=open_mode.write,
-                         application='test_dtype_errors',
-                         schema='none',
-                         schema_version=[1, 2]) as f:
+    with gsd.fl.open(name=tmp_path / 'test_dtype_errors4.gsd',
+                        mode=open_mode.write,
+                        application='test_dtype_errors',
+                        schema='none',
+                        schema_version=[1, 2]) as f:
+        with pytest.raises(ValueError):
             f.write_chunk(name='chunk1', data=data)
-            f.end_frame()
+
+        f.end_frame()
 
 
 def test_truncate(tmp_path):
@@ -580,7 +582,7 @@ def test_many_names(tmp_path, open_mode):
                      application='test_many_names',
                      schema='none',
                      schema_version=[1, 2]) as f:
-        for frame in range(5):
+        for _ in range(5):
             random.shuffle(values)
             for value in values:
                 f.write_chunk(name=str(value),
@@ -716,10 +718,11 @@ def test_gsd_v1_write(tmp_path, open_mode):
 
     values_str = []
     for v in values:
-        if type(v) is str and len(v) > 63:
+        check_v = v
+        if isinstance(v, str) and len(v) > 63:
             # v1 files truncate names to 63 chars
-            v = v[0:63]
-        values_str.append(str(v))
+            check_v = v[0:63]
+        values_str.append(str(check_v))
     values_str.sort()
 
     shutil.copy(test_path / 'test_gsd_v1.gsd', tmp_path / 'test_gsd_v1.gsd')
@@ -737,15 +740,17 @@ def test_gsd_v1_write(tmp_path, open_mode):
         frame = 5
         random.shuffle(values)
         for value in values:
-            if type(value) is int:
+            check_value = value
+
+            if isinstance(value, int):
                 data = numpy.array([value * 13], dtype=numpy.int32)
             else:
                 data = numpy.array([hash(value)], dtype=numpy.int64)
                 # v1 files truncate names to 63 chars
                 if len(value) > 63:
-                    value = value[0:63]
+                    check_value = value[0:63]
 
-            data_read = f.read_chunk(frame=frame, name=str(value))
+            data_read = f.read_chunk(frame=frame, name=str(check_value))
             numpy.testing.assert_array_equal(data, data_read)
 
     # test that we can write new entries to the file
@@ -758,7 +763,7 @@ def test_gsd_v1_write(tmp_path, open_mode):
         assert f.gsd_version == (1, 0)
 
         for value in values:
-            if type(value) is int:
+            if isinstance(value, int):
                 data = numpy.array([value * 13], dtype=numpy.int32)
             else:
                 data = numpy.array([hash(value)], dtype=numpy.int64)
@@ -809,7 +814,7 @@ def test_gsd_v1_upgrade_write(tmp_path, open_mode):
         frame = 5
         random.shuffle(values)
         for value in values:
-            if type(value) is int:
+            if isinstance(value, int):
                 data = numpy.array([value * 13], dtype=numpy.int32)
             else:
                 data = numpy.array([hash(value)], dtype=numpy.int64)
@@ -831,7 +836,7 @@ def test_gsd_v1_upgrade_write(tmp_path, open_mode):
         assert f.gsd_version == (2, 0)
 
         for value in values:
-            if type(value) is int:
+            if isinstance(value, int):
                 data = numpy.array([value * 13], dtype=numpy.int32)
             else:
                 data = numpy.array([hash(value)], dtype=numpy.int64)
