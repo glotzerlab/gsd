@@ -36,7 +36,7 @@ from collections import namedtuple
 
 import numpy
 
-version = "3.2.0"
+version = '3.2.0'
 
 logger = logging.getLogger('gsd.pygsd')
 
@@ -49,8 +49,7 @@ gsd_header = namedtuple(
 )
 gsd_header_struct = struct.Struct('QQQQQII64s64s80s')
 
-gsd_index_entry = namedtuple('gsd_index_entry',
-                             'frame N location M id type flags')
+gsd_index_entry = namedtuple('gsd_index_entry', 'frame N location M id type flags')
 gsd_index_entry_struct = struct.Struct('QQqIHBB')
 
 gsd_type_mapping = {
@@ -111,8 +110,7 @@ class GSDFile:
         try:
             header_raw = self.__file.read(gsd_header_struct.size)
         except UnicodeDecodeError:
-            print("\nDid you open the file in binary mode (rb)?\n",
-                  file=sys.stderr)
+            print('\nDid you open the file in binary mode (rb)?\n', file=sys.stderr)
             raise
 
         if len(header_raw) != gsd_header_struct.size:
@@ -123,14 +121,13 @@ class GSDFile:
         # validate the header
         expected_magic = 0x65DF65DF65DF65DF
         if self.__header.magic != expected_magic:
-            raise RuntimeError("Not a GSD file: " + str(self.__file))
-        if (self.__header.gsd_version < (1 << 16)
-                and self.__header.gsd_version != (0 << 16 | 3)):
-            raise RuntimeError("Unsupported GSD file version: "
-                               + str(self.__file))
+            raise RuntimeError('Not a GSD file: ' + str(self.__file))
+        if self.__header.gsd_version < (1 << 16) and self.__header.gsd_version != (
+            0 << 16 | 3
+        ):
+            raise RuntimeError('Unsupported GSD file version: ' + str(self.__file))
         if self.__header.gsd_version >= (3 << 16):
-            raise RuntimeError("Unsupported GSD file version: "
-                               + str(self.__file))
+            raise RuntimeError('Unsupported GSD file version: ' + str(self.__file))
 
         # determine the file size (only works in Python 3)
         self.__file.seek(0, 2)
@@ -139,8 +136,7 @@ class GSDFile:
         self.__namelist = {}
         c = 0
         self.__file.seek(self.__header.namelist_location, 0)
-        namelist_raw = self.__file.read(self.__header.namelist_allocated_entries
-                                        * 64)
+        namelist_raw = self.__file.read(self.__header.namelist_allocated_entries * 64)
 
         names = namelist_raw.split(b'\x00')
 
@@ -159,18 +155,17 @@ class GSDFile:
             if len(index_entry_raw) != gsd_index_entry_struct.size:
                 raise OSError
 
-            idx = gsd_index_entry._make(
-                gsd_index_entry_struct.unpack(index_entry_raw))
+            idx = gsd_index_entry._make(gsd_index_entry_struct.unpack(index_entry_raw))
 
             # 0 location signifies end of index
             if idx.location == 0:
                 break
 
             if not self.__is_entry_valid(idx):
-                raise RuntimeError("Corrupt GSD file: " + str(self.__file))
+                raise RuntimeError('Corrupt GSD file: ' + str(self.__file))
 
             if i > 0 and idx.frame < self.__index[i - 1].frame:
-                raise RuntimeError("Corrupt GSD file: " + str(self.__file))
+                raise RuntimeError('Corrupt GSD file: ' + str(self.__file))
 
             self.__index.append(idx)
 
@@ -236,7 +231,7 @@ class GSDFile:
         R = len(self.__index)
 
         # progressively narrow the search window by halves
-        while (R - L > 1):
+        while R - L > 1:
             m = (L + R) // 2
 
             if frame < self.__index[m].frame:
@@ -275,7 +270,7 @@ class GSDFile:
                         return None
         """
         if not self.__is_open:
-            msg = "File is not open"
+            msg = 'File is not open'
             raise ValueError(msg)
 
         chunk = self._find_chunk(frame, name)
@@ -319,24 +314,37 @@ class GSDFile:
             arrays instead.
         """
         if not self.__is_open:
-            msg = "File is not open"
+            msg = 'File is not open'
             raise ValueError(msg)
 
         chunk = self._find_chunk(frame, name)
 
         if chunk is None:
-            raise KeyError("frame " + str(frame) + " / chunk " + name
-                           + " not found in: " + str(self.__file))
+            raise KeyError(
+                'frame '
+                + str(frame)
+                + ' / chunk '
+                + name
+                + ' not found in: '
+                + str(self.__file)
+            )
 
-        logger.debug('read chunk: ' + str(self.__file) + ' - ' + str(frame)
-                     + ' - ' + name)
+        logger.debug(
+            'read chunk: ' + str(self.__file) + ' - ' + str(frame) + ' - ' + name
+        )
 
         size = chunk.N * chunk.M * gsd_type_mapping[chunk.type].itemsize
         if chunk.location == 0:
-            raise RuntimeError("Corrupt chunk: " + str(frame) + " / " + name
-                               + " in file" + str(self.__file))
+            raise RuntimeError(
+                'Corrupt chunk: '
+                + str(frame)
+                + ' / '
+                + name
+                + ' in file'
+                + str(self.__file)
+            )
 
-        if (size == 0):
+        if size == 0:
             return numpy.array([], dtype=gsd_type_mapping[chunk.type])
 
         self.__file.seek(chunk.location, 0)
@@ -345,8 +353,7 @@ class GSDFile:
         if len(data_raw) != size:
             raise OSError
 
-        data_npy = numpy.frombuffer(data_raw,
-                                    dtype=gsd_type_mapping[chunk.type])
+        data_npy = numpy.frombuffer(data_raw, dtype=gsd_type_mapping[chunk.type])
 
         if chunk.M == 1:
             return data_npy
@@ -407,7 +414,7 @@ class GSDFile:
         The tuple is in the order (major, minor).
         """
         v = self.__header.gsd_version
-        return (v >> 16, v & 0xffff)
+        return (v >> 16, v & 0xFFFF)
 
     @property
     def schema_version(self):
@@ -416,7 +423,7 @@ class GSDFile:
         The tuple is in the order (major, minor).
         """
         v = self.__header.schema_version
-        return (v >> 16, v & 0xffff)
+        return (v >> 16, v & 0xFFFF)
 
     @property
     def schema(self):
@@ -432,7 +439,7 @@ class GSDFile:
     def nframes(self):
         """int: Number of frames in the file."""
         if not self.__is_open:
-            msg = "File is not open"
+            msg = 'File is not open'
             raise ValueError(msg)
 
         if len(self.__index) == 0:

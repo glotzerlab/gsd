@@ -16,14 +16,15 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.mathjax',
     'IPython.sphinxext.ipython_console_highlighting',
-    'IPython.sphinxext.ipython_directive'
+    'IPython.sphinxext.ipython_directive',
 ]
 
 napoleon_include_special_with_doc = True
 
-intersphinx_mapping = {'python': ('https://docs.python.org/3', None),
-                       'numpy': ('https://numpy.org/doc/stable', None),
-                       'hoomd': ('https://hoomd-blue.readthedocs.io/en/latest/', None),
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3', None),
+    'numpy': ('https://numpy.org/doc/stable', None),
+    'hoomd': ('https://hoomd-blue.readthedocs.io/en/latest/', None),
 }
 autodoc_docstring_signature = True
 
@@ -44,38 +45,42 @@ exclude_patterns = ['_build']
 
 default_role = 'any'
 
-pygments_style = "friendly"
-pygments_dark_style = "native"
+pygments_style = 'friendly'
+pygments_dark_style = 'native'
 
 html_theme = 'furo'
 html_static_path = ['_static']
 html_theme_options = {
-    "dark_css_variables": {
-        "color-brand-primary": "#5187b2",
-        "color-brand-content": "#5187b2",
+    'dark_css_variables': {
+        'color-brand-primary': '#5187b2',
+        'color-brand-content': '#5187b2',
     },
-    "light_css_variables": {
-        "color-brand-primary": "#406a8c",
-        "color-brand-content": "#406a8c",
+    'light_css_variables': {
+        'color-brand-primary': '#406a8c',
+        'color-brand-content': '#406a8c',
     },
 }
 
+
 ### Add custom directives
 def setup(app):
-    app.add_object_type('chunk', 'chunk',
-                        objname='Data chunk',
-                        indextemplate='single: %s (data chunk)')
+    app.add_object_type(
+        'chunk', 'chunk', objname='Data chunk', indextemplate='single: %s (data chunk)'
+    )
+
 
 tmpdir = tempfile.TemporaryDirectory()
 
 ###### IPython directive settings
 ipython_mplbackend = ''
-ipython_execlines = ['import gsd.fl',
-                     'import gsd.hoomd',
-                     'import gsd.pygsd',
-                     'import numpy',
-                     'import os',
-                     f'os.chdir("{tmpdir.name}")']
+ipython_execlines = [
+    'import gsd.fl',
+    'import gsd.hoomd',
+    'import gsd.pygsd',
+    'import numpy',
+    'import os',
+    f'os.chdir("{tmpdir.name}")',
+]
 
 
 dirname = os.path.abspath(os.path.dirname(__file__))
@@ -83,11 +88,10 @@ breathe_projects = {'gsd': os.path.join(dirname, '..', 'devdoc', 'xml')}
 breathe_default_project = 'gsd'
 
 breathe_domain_by_extension = {
-    "h" : "c",
+    'h': 'c',
 }
 
 read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
 
 if read_the_docs_build:
-
-     subprocess.call('cd ..; doxygen', shell=True)
+    subprocess.call('cd ..; doxygen', shell=True)

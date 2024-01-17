@@ -61,28 +61,35 @@ def main_read(args):
     if args.schema == 'hoomd':
         traj = hoomd_open(args.file, mode=args.mode)
         handle = traj.file
-        local_ns.update({
-            'handle': handle,
-            'traj': traj,
-        })
-        attributes.update({"Number of frames": len(traj)})
+        local_ns.update(
+            {
+                'handle': handle,
+                'traj': traj,
+            }
+        )
+        attributes.update({'Number of frames': len(traj)})
     else:
         if args.mode not in ['rb', 'rb+', 'ab', 'a', 'r', 'r+']:
-            msg = "Unsupported schema for creating a file."
+            msg = 'Unsupported schema for creating a file.'
             raise ValueError(msg)
         handle = fl.open(args.file, args.mode)
-        local_ns.update({
-            'handle': handle,
-        })
+        local_ns.update(
+            {
+                'handle': handle,
+            }
+        )
 
-    extras = "\n".join(
-        f"{key}: {val}" for key, val in attributes.items())
+    extras = '\n'.join(f'{key}: {val}' for key, val in attributes.items())
 
-    code.interact(local=local_ns,
-                  banner=SHELL_BANNER.format(python_version=sys.version,
-                                             gsd_version=version.version,
-                                             fn=args.file,
-                                             extras=extras + "\n"))
+    code.interact(
+        local=local_ns,
+        banner=SHELL_BANNER.format(
+            python_version=sys.version,
+            gsd_version=version.version,
+            fn=args.file,
+            extras=extras + '\n',
+        ),
+    )
 
 
 def main():
@@ -95,46 +102,48 @@ def main():
         * read
     """
     parser = argparse.ArgumentParser(
-        description="The gsd package encodes canonical readers and writers "
-        "for the gsd file format.")
-    parser.add_argument('--version',
-                        action='store_true',
-                        help="Display the version number and exit.")
-    parser.add_argument('--debug',
-                        action='store_true',
-                        help="Show traceback on error for debugging.")
+        description='The gsd package encodes canonical readers and writers '
+        'for the gsd file format.'
+    )
+    parser.add_argument(
+        '--version', action='store_true', help='Display the version number and exit.'
+    )
+    parser.add_argument(
+        '--debug', action='store_true', help='Show traceback on error for debugging.'
+    )
     subparsers = parser.add_subparsers()
 
     parser_read = subparsers.add_parser('read')
-    parser_read.add_argument('file',
-                             type=str,
-                             nargs='?',
-                             help="GSD file to read.")
-    parser_read.add_argument('-s',
-                             '--schema',
-                             type=str,
-                             default='hoomd',
-                             choices=['hoomd', 'none'],
-                             help="The file schema.")
-    parser_read.add_argument('-m',
-                             '--mode',
-                             type=str,
-                             default='r',
-                             choices=[
-                                 'rb',
-                                 'rb+',
-                                 'wb',
-                                 'wb+',
-                                 'xb',
-                                 'xb+',
-                                 'ab',
-                                 'w',
-                                 'r',
-                                 'r+',
-                                 'x',
-                                 'a',
-                             ],
-                             help="The file mode.")
+    parser_read.add_argument('file', type=str, nargs='?', help='GSD file to read.')
+    parser_read.add_argument(
+        '-s',
+        '--schema',
+        type=str,
+        default='hoomd',
+        choices=['hoomd', 'none'],
+        help='The file schema.',
+    )
+    parser_read.add_argument(
+        '-m',
+        '--mode',
+        type=str,
+        default='r',
+        choices=[
+            'rb',
+            'rb+',
+            'wb',
+            'wb+',
+            'xb',
+            'xb+',
+            'ab',
+            'w',
+            'r',
+            'r+',
+            'x',
+            'a',
+        ],
+        help='The file mode.',
+    )
     parser_read.set_defaults(func=main_read)
 
     # This is a hack, as argparse itself does not
@@ -153,12 +162,12 @@ def main():
         args.func(args)
     except KeyboardInterrupt:
         _print_err()
-        _print_err("Interrupted.")
+        _print_err('Interrupted.')
         if args.debug:
             raise
         sys.exit(1)
     except RuntimeWarning as warning:
-        _print_err(f"Warning: {warning}")
+        _print_err(f'Warning: {warning}')
         if args.debug:
             raise
         sys.exit(1)

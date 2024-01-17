@@ -46,7 +46,7 @@ def write_file(file, nframes, N, position, orientation):
 
     for i in range(0, nframes):
         if i % step == 0:
-            print(i, "/", nframes, file=sys.stderr, flush=True)
+            print(i, '/', nframes, file=sys.stderr, flush=True)
 
         write_frame(file, i, position, orientation)
 
@@ -60,7 +60,7 @@ def read_sequential_file(file, nframes, nframes_read, N, position, orientation):
 
     for i in range(0, nframes_read):
         if i % step == 0:
-            print(i, "/", nframes, file=sys.stderr, flush=True)
+            print(i, '/', nframes, file=sys.stderr, flush=True)
 
         read_frame(file, i, position, orientation)
 
@@ -77,7 +77,7 @@ def read_random_file(file, nframes, nframes_read, N, position, orientation):
 
     for i, f in enumerate(frames[:nframes_read]):
         if i % step == 0:
-            print(i, "/", nframes, file=sys.stderr, flush=True)
+            print(i, '/', nframes, file=sys.stderr, flush=True)
         read_frame(file, f, position, orientation)
 
 
@@ -113,7 +113,7 @@ def run_benchmarks(N, size):
         bmark_read_size = actual_size
 
     # first, write the file and time how long it takes
-    print("Writing file: ", file=sys.stderr, flush=True)
+    print('Writing file: ', file=sys.stderr, flush=True)
 
     # if the file size is small, write it once to warm up the disk
     if size < 64 * 1024**3:
@@ -134,20 +134,19 @@ def run_benchmarks(N, size):
     timings['write'] = actual_size / 1024**2 / (end - start)
 
     # time how long it takes to open the file
-    print("Opening file... ", file=sys.stderr, flush=True, end='')
+    print('Opening file... ', file=sys.stderr, flush=True, end='')
     start = time.time()
     with gsd.hoomd.open(name='test.gsd', mode='r') as hf:
         end = time.time()
 
-        print(end - start, "s", file=sys.stderr, flush=True)
+        print(end - start, 's', file=sys.stderr, flush=True)
 
-        timings['open_time'] = (end - start)
+        timings['open_time'] = end - start
 
         # Read the file sequentially and measure the time taken
-        print("Sequential read file:", file=sys.stderr, flush=True)
+        print('Sequential read file:', file=sys.stderr, flush=True)
         start = time.time()
-        read_sequential_file(hf, nframes, nframes_read, N, position,
-                             orientation)
+        read_sequential_file(hf, nframes, nframes_read, N, position, orientation)
         end = time.time()
 
         timings['seq_read'] = bmark_read_size / 1024**2 / (end - start)
@@ -157,7 +156,7 @@ def run_benchmarks(N, size):
         call(['sudo', '/sbin/sysctl', 'vm.drop_caches=3'], stdout=PIPE)
 
         # Read the file randomly and measure the time taken
-        print("Random read file:", file=sys.stderr, flush=True)
+        print('Random read file:', file=sys.stderr, flush=True)
         start = time.time()
         read_random_file(hf, nframes, nframes_read, N, position, orientation)
         end = time.time()
@@ -175,38 +174,59 @@ def run_sweep(size, size_str):
     if True:
         result = run_benchmarks(32 * 32, size)
 
-        print("{:<7} {:<6} {:<9.4g} {:<12.4g} "
-              "{:<11.4g} {:<13.4g} {:<11.3g}".format(
-                  size_str, "32^2", result['open_time'] * 1000, result['write'],
-                  result['seq_read'], result['random_read'],
-                  result['random_read_time']))
+        print(
+            '{:<7} {:<6} {:<9.4g} {:<12.4g} ' '{:<11.4g} {:<13.4g} {:<11.3g}'.format(
+                size_str,
+                '32^2',
+                result['open_time'] * 1000,
+                result['write'],
+                result['seq_read'],
+                result['random_read'],
+                result['random_read_time'],
+            )
+        )
         sys.stdout.flush()
 
     result = run_benchmarks(128 * 128, size)
 
-    print("{:<7} {:<6} {:<9.4g} {:<12.4g} {:<11.4g} {:<13.4g} {:<11.3g}"
-          .format(size_str, "128^2", result['open_time'] * 1000,
-                  result['write'], result['seq_read'], result['random_read'],
-                  result['random_read_time']))
+    print(
+        '{:<7} {:<6} {:<9.4g} {:<12.4g} {:<11.4g} {:<13.4g} {:<11.3g}'.format(
+            size_str,
+            '128^2',
+            result['open_time'] * 1000,
+            result['write'],
+            result['seq_read'],
+            result['random_read'],
+            result['random_read_time'],
+        )
+    )
     sys.stdout.flush()
 
     result = run_benchmarks(1024 * 1024, size)
 
-    print("{:<7} {:<6} {:<9.4g} {:<12.4g} {:<11.4g} {:<13.4g} {:<11.3g}"
-          .format(size_str, "1024^2", result['open_time'] * 1000,
-                  result['write'], result['seq_read'], result['random_read'],
-                  result['random_read_time']))
+    print(
+        '{:<7} {:<6} {:<9.4g} {:<12.4g} {:<11.4g} {:<13.4g} {:<11.3g}'.format(
+            size_str,
+            '1024^2',
+            result['open_time'] * 1000,
+            result['write'],
+            result['seq_read'],
+            result['random_read'],
+            result['random_read_time'],
+        )
+    )
     sys.stdout.flush()
 
 
-print("""
+print(
+    """
 ======= ====== ========= ============ =========== ============= ===========
 Size    N      Open (ms) Write (MB/s) Read (MB/s) Random (MB/s) Random (ms)
-======= ====== ========= ============ =========== ============= ===========""")
+======= ====== ========= ============ =========== ============= ==========="""
+)
 
-run_sweep(128 * 1024**2, "128 MiB")
-run_sweep(1 * 1024**3, "1 GiB")
+run_sweep(128 * 1024**2, '128 MiB')
+run_sweep(1 * 1024**3, '1 GiB')
 # run_sweep(128*1024**3, "128 GiB");
 
-print("======= ====== ========= ============ "
-      "=========== ============= ===========")
+print('======= ====== ========= ============ ' '=========== ============= ===========')
