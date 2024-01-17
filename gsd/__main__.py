@@ -129,13 +129,6 @@ def main():
         type=str,
         default='r',
         choices=[
-            'rb',
-            'rb+',
-            'wb',
-            'wb+',
-            'xb',
-            'xb+',
-            'ab',
             'w',
             'r',
             'r+',
