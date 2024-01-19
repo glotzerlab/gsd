@@ -1150,8 +1150,13 @@ def test_file_exists_error():
 
 def test_pending_index_entries(tmp_path):
     """Ensure that gsd preserves pending index entries."""
-    with gsd.fl.open(tmp_path / 'test_pending_index_entries.gsd', 'w', application="My application",
-                     schema="My Schema", schema_version=[1,0]) as f:
+    with gsd.fl.open(
+        tmp_path / 'test_pending_index_entries.gsd',
+        'w',
+        application='My application',
+        schema='My Schema',
+        schema_version=[1, 0],
+    ) as f:
         # Frame 0 must be complete to trigger the bug.
         f.write_chunk(name='0', data=numpy.array([0]))
         f.end_frame()
