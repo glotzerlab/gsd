@@ -13,6 +13,11 @@ Change Log
 3.2.1 (not yet released)
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
+*Fixed:*
+
+* Readthedocs builds with pandas 2.2.0
+  (`#322 <https://github.com/glotzerlab/gsd/pull/322>`__).
+
 *Changed:*
 
 * Provide support via GitHub discussions
