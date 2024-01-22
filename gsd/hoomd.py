@@ -694,6 +694,9 @@ class HOOMDTrajectory:
         self._file = file
         self._initial_frame = None
 
+        # Used to cache positive results when chunks exist in frame 0.
+        self._chunk_exists_frame_0 = {}
+
         logger.info('opening HOOMDTrajectory: ' + str(self.file))
 
         if self.file.schema != 'hoomd':
@@ -829,8 +832,8 @@ class HOOMDTrajectory:
                 data, container._default_value[name]
             )
 
-        if matches_default_value and not self.file.chunk_exists(
-            frame=0, name=path + '/' + name
+        if matches_default_value and not self._chunk_exists_frame_0.get(
+            path + '/' + name, False
         ):
             logger.debug('skipping data chunk, default value: ' + path + '/' + name)
             return False
@@ -875,6 +878,9 @@ class HOOMDTrajectory:
         if self.file.chunk_exists(frame=idx, name='configuration/step'):
             step_arr = self.file.read_chunk(frame=idx, name='configuration/step')
             frame.configuration.step = step_arr[0]
+
+            if idx == 0:
+                self._chunk_exists_frame_0['configuration/step'] = True
         elif self._initial_frame is not None:
             frame.configuration.step = self._initial_frame.configuration.step
         else:
@@ -885,6 +891,9 @@ class HOOMDTrajectory:
                 frame=idx, name='configuration/dimensions'
             )
             frame.configuration.dimensions = dimensions_arr[0]
+
+            if idx == 0:
+                self._chunk_exists_frame_0['configuration/dimensions'] = True
         elif self._initial_frame is not None:
             frame.configuration.dimensions = (
                 self._initial_frame.configuration.dimensions
@@ -898,6 +907,9 @@ class HOOMDTrajectory:
             frame.configuration.box = self.file.read_chunk(
                 frame=idx, name='configuration/box'
             )
+
+            if idx == 0:
+                self._chunk_exists_frame_0['configuration/box'] = True
         elif self._initial_frame is not None:
             frame.configuration.box = copy.copy(self._initial_frame.configuration.box)
         else:
@@ -923,6 +935,9 @@ class HOOMDTrajectory:
             if self.file.chunk_exists(frame=idx, name=path + '/N'):
                 N_arr = self.file.read_chunk(frame=idx, name=path + '/N')
                 container.N = N_arr[0]
+
+                if idx == 0:
+                    self._chunk_exists_frame_0[path + '/N'] = True
             elif self._initial_frame is not None:
                 container.N = initial_frame_container.N
 
@@ -933,6 +948,9 @@ class HOOMDTrajectory:
                     tmp = tmp.view(dtype=numpy.dtype((bytes, tmp.shape[1])))
                     tmp = tmp.reshape([tmp.shape[0]])
                     container.types = list(a.decode('UTF-8') for a in tmp)
+
+                    if idx == 0:
+                        self._chunk_exists_frame_0[path + '/types'] = True
                 elif self._initial_frame is not None:
                     container.types = copy.copy(initial_frame_container.types)
                 else:
@@ -947,6 +965,9 @@ class HOOMDTrajectory:
                     container.type_shapes = list(
                         json.loads(json_string.decode('UTF-8')) for json_string in tmp
                     )
+
+                    if idx == 0:
+                        self._chunk_exists_frame_0[path + '/type_shapes'] = True
                 elif self._initial_frame is not None:
                     container.type_shapes = copy.copy(
                         initial_frame_container.type_shapes
@@ -965,6 +986,9 @@ class HOOMDTrajectory:
                     container.__dict__[name] = self.file.read_chunk(
                         frame=idx, name=path + '/' + name
                     )
+
+                    if idx == 0:
+                        self._chunk_exists_frame_0[path + '/' + name] = True
                 else:
                     if (
                         self._initial_frame is not None
@@ -996,6 +1020,9 @@ class HOOMDTrajectory:
         for log in logged_data_names:
             if self.file.chunk_exists(frame=idx, name=log):
                 frame.log[log[4:]] = self.file.read_chunk(frame=idx, name=log)
+
+                if idx == 0:
+                    self._chunk_exists_frame_0[log] = True
             elif self._initial_frame is not None:
                 frame.log[log[4:]] = self._initial_frame.log[log[4:]]
                 frame.log[log[4:]].flags.writeable = False
