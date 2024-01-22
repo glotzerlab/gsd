@@ -30,6 +30,8 @@ Change Log
   (`#308 <https://github.com/glotzerlab/gsd/issues/308>`__).
 * Use ruff
   (`#317 <https://github.com/glotzerlab/gsd/pull/317>`__).
+* Perform fewer implicit flushes when using the ``gsd.hoomd`` python API
+  (`#325 <https://github.com/glotzerlab/gsd/pull/325>`__).
 
 3.2.0 (2023-09-27)
 ^^^^^^^^^^^^^^^^^^
