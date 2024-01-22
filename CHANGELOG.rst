@@ -10,13 +10,14 @@ Change Log
 3.x
 ---
 
-3.2.1 (not yet released)
-^^^^^^^^^^^^^^^^^^^^^^^^
+3.2.1 (2024-01-22)
+^^^^^^^^^^^^^^^^^^
 
 *Fixed:*
 
-* Write all pending index entries to the file when `gsd_flush()` is called after `gsd_write_chunk()`
-  and before `gsd_end_frame()` (`#319 <https://github.com/glotzerlab/gsd/pull/319>`__).
+* Write all pending index entries to the file when ``gsd_flush()`` is called after
+  ``gsd_write_chunk()`` and before `gsd_end_frame()``
+  (`#319 <https://github.com/glotzerlab/gsd/pull/319>`__).
 * Readthedocs builds with pandas 2.2.0
   (`#322 <https://github.com/glotzerlab/gsd/pull/322>`__).
 * Import without seg fault when built with CMake on macOS.
