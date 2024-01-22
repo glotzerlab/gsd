@@ -1,8 +1,8 @@
-breathe
-cython
-furo
-ipython
-numpy
-pandas
-pyarrow
+breathe == 4.35.0
+cython == 3.0.8
+furo == 2023.9.10
+ipython == 8.20.0
+numpy == 1.26.3
+pandas == 2.2.0
+pyarrow == 15.0.0
 sphinx
