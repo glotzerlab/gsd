@@ -31,7 +31,7 @@ endif()
 
 if(WIN32)
     # Link to the Python libraries on windows
-    target_link_libraries(fl ${PYTHON_LIBRARIES})
+    target_link_libraries(fl ${PYTHON_LIBRARY})
 else()
     # Do not link to the Python libraries on Mac/Linux - symbols are provided by
     # the `python` executable. "-undefined dynamic_lookup" is needed on Mac
