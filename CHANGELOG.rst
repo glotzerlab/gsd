@@ -19,6 +19,7 @@ Change Log
   and before `gsd_end_frame()` (`#319 <https://github.com/glotzerlab/gsd/pull/319>`__).
 * Readthedocs builds with pandas 2.2.0
   (`#322 <https://github.com/glotzerlab/gsd/pull/322>`__).
+* Import without seg fault when built with CMake on macOS.
 
 *Changed:*
 
