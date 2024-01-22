@@ -3,16 +3,18 @@
 
 """Test the gsd.hoomd API."""
 
+import pickle
+
+import numpy
+import pytest
+
 import gsd.fl
 import gsd.hoomd
-import numpy
-import pickle
-import pytest
 
 
 def test_create(tmp_path):
     """Test that gsd files can be created."""
-    with gsd.hoomd.open(name=tmp_path / "test_create.gsd", mode='w') as hf:
+    with gsd.hoomd.open(name=tmp_path / 'test_create.gsd', mode='w') as hf:
         assert hf.file.schema == 'hoomd'
         assert hf.file.schema_version >= (1, 0)
 
@@ -22,14 +24,12 @@ def test_append(tmp_path, open_mode):
     frame = gsd.hoomd.Frame()
     frame.particles.N = 10
 
-    with gsd.hoomd.open(name=tmp_path / "test_append.gsd",
-                        mode=open_mode.write) as hf:
+    with gsd.hoomd.open(name=tmp_path / 'test_append.gsd', mode=open_mode.write) as hf:
         for i in range(5):
             frame.configuration.step = i + 1
             hf.append(frame)
 
-    with gsd.hoomd.open(name=tmp_path / "test_append.gsd",
-                        mode=open_mode.read) as hf:
+    with gsd.hoomd.open(name=tmp_path / 'test_append.gsd', mode=open_mode.read) as hf:
         assert len(hf) == 5
 
 
@@ -38,15 +38,14 @@ def test_flush(tmp_path, open_mode):
     frame = gsd.hoomd.Frame()
     frame.particles.N = 10
 
-    hf = gsd.hoomd.open(name=tmp_path / "test_append.gsd", mode=open_mode.write)
+    hf = gsd.hoomd.open(name=tmp_path / 'test_append.gsd', mode=open_mode.write)
     for i in range(5):
         frame.configuration.step = i + 1
         hf.append(frame)
 
     hf.flush()
 
-    with gsd.hoomd.open(name=tmp_path / "test_append.gsd",
-                        mode=open_mode.read) as hf:
+    with gsd.hoomd.open(name=tmp_path / 'test_append.gsd', mode=open_mode.read) as hf:
         assert len(hf) == 5
 
 
@@ -62,12 +61,10 @@ def test_extend(tmp_path, open_mode):
     frame = gsd.hoomd.Frame()
     frame.particles.N = 10
 
-    with gsd.hoomd.open(name=tmp_path / "test_extend.gsd",
-                        mode=open_mode.write) as hf:
-        hf.extend((create_frame(i) for i in range(5)))
+    with gsd.hoomd.open(name=tmp_path / 'test_extend.gsd', mode=open_mode.write) as hf:
+        hf.extend(create_frame(i) for i in range(5))
 
-    with gsd.hoomd.open(name=tmp_path / "test_extend.gsd",
-                        mode=open_mode.read) as hf:
+    with gsd.hoomd.open(name=tmp_path / 'test_extend.gsd', mode=open_mode.read) as hf:
         assert len(hf) == 5
 
 
@@ -82,103 +79,132 @@ def test_defaults(tmp_path, open_mode):
     frame.constraints.N = 4
     frame.pairs.N = 7
 
-    with gsd.hoomd.open(name=tmp_path / "test_defaults.gsd",
-                        mode=open_mode.write) as hf:
+    with gsd.hoomd.open(
+        name=tmp_path / 'test_defaults.gsd', mode=open_mode.write
+    ) as hf:
         hf.append(frame)
 
-    with gsd.hoomd.open(name=tmp_path / "test_defaults.gsd",
-                        mode=open_mode.read) as hf:
+    with gsd.hoomd.open(name=tmp_path / 'test_defaults.gsd', mode=open_mode.read) as hf:
         s = hf[0]
 
         assert s.configuration.step == 0
         assert s.configuration.dimensions == 3
         numpy.testing.assert_array_equal(
-            s.configuration.box,
-            numpy.array([1, 1, 1, 0, 0, 0], dtype=numpy.float32))
+            s.configuration.box, numpy.array([1, 1, 1, 0, 0, 0], dtype=numpy.float32)
+        )
         assert s.particles.N == 2
         assert s.particles.types == ['A']
         assert s.particles.type_shapes == [{}]
         numpy.testing.assert_array_equal(
-            s.particles.typeid, numpy.array([0, 0], dtype=numpy.uint32))
+            s.particles.typeid, numpy.array([0, 0], dtype=numpy.uint32)
+        )
         numpy.testing.assert_array_equal(
-            s.particles.mass, numpy.array([1, 1], dtype=numpy.float32))
+            s.particles.mass, numpy.array([1, 1], dtype=numpy.float32)
+        )
         numpy.testing.assert_array_equal(
-            s.particles.diameter, numpy.array([1, 1], dtype=numpy.float32))
+            s.particles.diameter, numpy.array([1, 1], dtype=numpy.float32)
+        )
         numpy.testing.assert_array_equal(
-            s.particles.body, numpy.array([-1, -1], dtype=numpy.int32))
+            s.particles.body, numpy.array([-1, -1], dtype=numpy.int32)
+        )
         numpy.testing.assert_array_equal(
-            s.particles.charge, numpy.array([0, 0], dtype=numpy.float32))
+            s.particles.charge, numpy.array([0, 0], dtype=numpy.float32)
+        )
         numpy.testing.assert_array_equal(
             s.particles.moment_inertia,
-            numpy.array([[0, 0, 0], [0, 0, 0]], dtype=numpy.float32))
+            numpy.array([[0, 0, 0], [0, 0, 0]], dtype=numpy.float32),
+        )
         numpy.testing.assert_array_equal(
             s.particles.position,
-            numpy.array([[0, 0, 0], [0, 0, 0]], dtype=numpy.float32))
+            numpy.array([[0, 0, 0], [0, 0, 0]], dtype=numpy.float32),
+        )
         numpy.testing.assert_array_equal(
             s.particles.orientation,
-            numpy.array([[1, 0, 0, 0], [1, 0, 0, 0]], dtype=numpy.float32))
+            numpy.array([[1, 0, 0, 0], [1, 0, 0, 0]], dtype=numpy.float32),
+        )
         numpy.testing.assert_array_equal(
             s.particles.velocity,
-            numpy.array([[0, 0, 0], [0, 0, 0]], dtype=numpy.float32))
+            numpy.array([[0, 0, 0], [0, 0, 0]], dtype=numpy.float32),
+        )
         numpy.testing.assert_array_equal(
             s.particles.angmom,
-            numpy.array([[0, 0, 0, 0], [0, 0, 0, 0]], dtype=numpy.float32))
+            numpy.array([[0, 0, 0, 0], [0, 0, 0, 0]], dtype=numpy.float32),
+        )
         numpy.testing.assert_array_equal(
-            s.particles.image,
-            numpy.array([[0, 0, 0], [0, 0, 0]], dtype=numpy.int32))
+            s.particles.image, numpy.array([[0, 0, 0], [0, 0, 0]], dtype=numpy.int32)
+        )
 
         assert s.bonds.N == 3
         assert s.bonds.types == []
         numpy.testing.assert_array_equal(
-            s.bonds.typeid, numpy.array([0, 0, 0], dtype=numpy.uint32))
+            s.bonds.typeid, numpy.array([0, 0, 0], dtype=numpy.uint32)
+        )
         numpy.testing.assert_array_equal(
-            s.bonds.group,
-            numpy.array([[0, 0], [0, 0], [0, 0]], dtype=numpy.uint32))
+            s.bonds.group, numpy.array([[0, 0], [0, 0], [0, 0]], dtype=numpy.uint32)
+        )
 
         assert s.angles.N == 4
         assert s.angles.types == []
         numpy.testing.assert_array_equal(
-            s.angles.typeid, numpy.array([0, 0, 0, 0], dtype=numpy.uint32))
+            s.angles.typeid, numpy.array([0, 0, 0, 0], dtype=numpy.uint32)
+        )
         numpy.testing.assert_array_equal(
             s.angles.group,
-            numpy.array([[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
-                        dtype=numpy.uint32))
+            numpy.array(
+                [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]], dtype=numpy.uint32
+            ),
+        )
 
         assert s.dihedrals.N == 5
         assert s.dihedrals.types == []
         numpy.testing.assert_array_equal(
-            s.dihedrals.typeid, numpy.array([0, 0, 0, 0, 0],
-                                            dtype=numpy.uint32))
+            s.dihedrals.typeid, numpy.array([0, 0, 0, 0, 0], dtype=numpy.uint32)
+        )
         numpy.testing.assert_array_equal(
             s.dihedrals.group,
-            numpy.array([[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0],
-                         [0, 0, 0, 0]],
-                        dtype=numpy.uint32))
+            numpy.array(
+                [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
+                dtype=numpy.uint32,
+            ),
+        )
 
         assert s.impropers.N == 6
         assert s.impropers.types == []
         numpy.testing.assert_array_equal(
-            s.impropers.typeid,
-            numpy.array([0, 0, 0, 0, 0, 0], dtype=numpy.uint32))
+            s.impropers.typeid, numpy.array([0, 0, 0, 0, 0, 0], dtype=numpy.uint32)
+        )
         numpy.testing.assert_array_equal(
             s.impropers.group,
-            numpy.array([[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0],
-                         [0, 0, 0, 0], [0, 0, 0, 0]],
-                        dtype=numpy.uint32))
+            numpy.array(
+                [
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0],
+                ],
+                dtype=numpy.uint32,
+            ),
+        )
 
         assert s.constraints.N == 4
         numpy.testing.assert_array_equal(
-            s.constraints.value, numpy.array([0, 0, 0, 0], dtype=numpy.float32))
+            s.constraints.value, numpy.array([0, 0, 0, 0], dtype=numpy.float32)
+        )
         numpy.testing.assert_array_equal(
             s.constraints.group,
-            numpy.array([[0, 0], [0, 0], [0, 0], [0, 0]], dtype=numpy.uint32))
+            numpy.array([[0, 0], [0, 0], [0, 0], [0, 0]], dtype=numpy.uint32),
+        )
 
         assert s.pairs.N == 7
         assert s.pairs.types == []
         numpy.testing.assert_array_equal(
-            s.pairs.typeid, numpy.array([0] * 7, dtype=numpy.uint32))
+            s.pairs.typeid, numpy.array([0] * 7, dtype=numpy.uint32)
+        )
         numpy.testing.assert_array_equal(
-            s.pairs.group, numpy.array([[0, 0]] * 7, dtype=numpy.uint32))
+            s.pairs.group, numpy.array([[0, 0]] * 7, dtype=numpy.uint32)
+        )
 
         assert len(s.state) == 0
 
@@ -192,18 +218,9 @@ def make_nondefault_frame():
     frame0.particles.N = 2
     frame0.particles.types = ['A', 'B', 'C']
     frame0.particles.type_shapes = [
-        {
-            "type": "Sphere",
-            "diameter": 2.0
-        },
-        {
-            "type": "Sphere",
-            "diameter": 3.0
-        },
-        {
-            "type": "Sphere",
-            "diameter": 4.0
-        },
+        {'type': 'Sphere', 'diameter': 2.0},
+        {'type': 'Sphere', 'diameter': 3.0},
+        {'type': 'Sphere', 'diameter': 4.0},
     ]
     frame0.particles.typeid = [1, 2]
     frame0.particles.mass = [2, 3]
@@ -256,30 +273,27 @@ def assert_frames_equal(s, frame0, check_position=True, check_step=True):
         assert s.configuration.step == frame0.configuration.step
 
     assert s.configuration.dimensions == frame0.configuration.dimensions
-    numpy.testing.assert_array_equal(s.configuration.box,
-                                     frame0.configuration.box)
+    numpy.testing.assert_array_equal(s.configuration.box, frame0.configuration.box)
     assert s.particles.N == frame0.particles.N
     assert s.particles.types == frame0.particles.types
     assert s.particles.type_shapes == frame0.particles.type_shapes
-    numpy.testing.assert_array_equal(s.particles.typeid,
-                                     frame0.particles.typeid)
+    numpy.testing.assert_array_equal(s.particles.typeid, frame0.particles.typeid)
     numpy.testing.assert_array_equal(s.particles.mass, frame0.particles.mass)
-    numpy.testing.assert_array_equal(s.particles.diameter,
-                                     frame0.particles.diameter)
+    numpy.testing.assert_array_equal(s.particles.diameter, frame0.particles.diameter)
     numpy.testing.assert_array_equal(s.particles.body, frame0.particles.body)
-    numpy.testing.assert_array_equal(s.particles.charge,
-                                     frame0.particles.charge)
-    numpy.testing.assert_array_equal(s.particles.moment_inertia,
-                                     frame0.particles.moment_inertia)
+    numpy.testing.assert_array_equal(s.particles.charge, frame0.particles.charge)
+    numpy.testing.assert_array_equal(
+        s.particles.moment_inertia, frame0.particles.moment_inertia
+    )
     if check_position:
-        numpy.testing.assert_array_equal(s.particles.position,
-                                         frame0.particles.position)
-    numpy.testing.assert_array_equal(s.particles.orientation,
-                                     frame0.particles.orientation)
-    numpy.testing.assert_array_equal(s.particles.velocity,
-                                     frame0.particles.velocity)
-    numpy.testing.assert_array_equal(s.particles.angmom,
-                                     frame0.particles.angmom)
+        numpy.testing.assert_array_equal(
+            s.particles.position, frame0.particles.position
+        )
+    numpy.testing.assert_array_equal(
+        s.particles.orientation, frame0.particles.orientation
+    )
+    numpy.testing.assert_array_equal(s.particles.velocity, frame0.particles.velocity)
+    numpy.testing.assert_array_equal(s.particles.angmom, frame0.particles.angmom)
     numpy.testing.assert_array_equal(s.particles.image, frame0.particles.image)
 
     assert s.bonds.N == frame0.bonds.N
@@ -294,21 +308,17 @@ def assert_frames_equal(s, frame0, check_position=True, check_step=True):
 
     assert s.dihedrals.N == frame0.dihedrals.N
     assert s.dihedrals.types == frame0.dihedrals.types
-    numpy.testing.assert_array_equal(s.dihedrals.typeid,
-                                     frame0.dihedrals.typeid)
+    numpy.testing.assert_array_equal(s.dihedrals.typeid, frame0.dihedrals.typeid)
     numpy.testing.assert_array_equal(s.dihedrals.group, frame0.dihedrals.group)
 
     assert s.impropers.N == frame0.impropers.N
     assert s.impropers.types == frame0.impropers.types
-    numpy.testing.assert_array_equal(s.impropers.typeid,
-                                     frame0.impropers.typeid)
+    numpy.testing.assert_array_equal(s.impropers.typeid, frame0.impropers.typeid)
     numpy.testing.assert_array_equal(s.impropers.group, frame0.impropers.group)
 
     assert s.constraints.N == frame0.constraints.N
-    numpy.testing.assert_array_equal(s.constraints.value,
-                                     frame0.constraints.value)
-    numpy.testing.assert_array_equal(s.constraints.group,
-                                     frame0.constraints.group)
+    numpy.testing.assert_array_equal(s.constraints.value, frame0.constraints.value)
+    numpy.testing.assert_array_equal(s.constraints.group, frame0.constraints.group)
 
     assert s.pairs.N == frame0.pairs.N
     assert s.pairs.types == frame0.pairs.types
@@ -333,8 +343,10 @@ def test_fallback(tmp_path, open_mode):
     frame2 = gsd.hoomd.Frame()
     frame2.particles.N = 3
     frame2.particles.types = ['q', 's']
-    frame2.particles.type_shapes = \
-        [{}, {"type": "Ellipsoid", "a": 7.0, "b": 5.0, "c": 3.0}]
+    frame2.particles.type_shapes = [
+        {},
+        {'type': 'Ellipsoid', 'a': 7.0, 'b': 5.0, 'c': 3.0},
+    ]
     frame2.bonds.N = 3
     frame2.angles.N = 4
     frame2.dihedrals.N = 5
@@ -342,12 +354,12 @@ def test_fallback(tmp_path, open_mode):
     frame2.constraints.N = 4
     frame2.pairs.N = 7
 
-    with gsd.hoomd.open(name=tmp_path / "test_fallback.gsd",
-                        mode=open_mode.write) as hf:
+    with gsd.hoomd.open(
+        name=tmp_path / 'test_fallback.gsd', mode=open_mode.write
+    ) as hf:
         hf.extend([frame0, frame1, frame2])
 
-    with gsd.hoomd.open(name=tmp_path / "test_fallback.gsd",
-                        mode=open_mode.read) as hf:
+    with gsd.hoomd.open(name=tmp_path / 'test_fallback.gsd', mode=open_mode.read) as hf:
         assert len(hf) == 3
         s = hf[0]
 
@@ -370,88 +382,120 @@ def test_fallback(tmp_path, open_mode):
         assert s.particles.types == ['q', 's']
         assert s.particles.type_shapes == frame2.particles.type_shapes
         numpy.testing.assert_array_equal(
-            s.particles.typeid, numpy.array([0, 0, 0], dtype=numpy.uint32))
+            s.particles.typeid, numpy.array([0, 0, 0], dtype=numpy.uint32)
+        )
         numpy.testing.assert_array_equal(
-            s.particles.mass, numpy.array([1, 1, 1], dtype=numpy.float32))
+            s.particles.mass, numpy.array([1, 1, 1], dtype=numpy.float32)
+        )
         numpy.testing.assert_array_equal(
-            s.particles.diameter, numpy.array([1, 1, 1], dtype=numpy.float32))
+            s.particles.diameter, numpy.array([1, 1, 1], dtype=numpy.float32)
+        )
         numpy.testing.assert_array_equal(
-            s.particles.body, numpy.array([-1, -1, -1], dtype=numpy.float32))
+            s.particles.body, numpy.array([-1, -1, -1], dtype=numpy.float32)
+        )
         numpy.testing.assert_array_equal(
-            s.particles.charge, numpy.array([0, 0, 0], dtype=numpy.float32))
+            s.particles.charge, numpy.array([0, 0, 0], dtype=numpy.float32)
+        )
         numpy.testing.assert_array_equal(
             s.particles.moment_inertia,
-            numpy.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]], dtype=numpy.float32))
+            numpy.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]], dtype=numpy.float32),
+        )
         numpy.testing.assert_array_equal(
             s.particles.position,
-            numpy.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]], dtype=numpy.float32))
+            numpy.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]], dtype=numpy.float32),
+        )
         numpy.testing.assert_array_equal(
             s.particles.orientation,
-            numpy.array([[1, 0, 0, 0], [1, 0, 0, 0], [1, 0, 0, 0]],
-                        dtype=numpy.float32))
+            numpy.array(
+                [[1, 0, 0, 0], [1, 0, 0, 0], [1, 0, 0, 0]], dtype=numpy.float32
+            ),
+        )
         numpy.testing.assert_array_equal(
             s.particles.velocity,
-            numpy.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]], dtype=numpy.float32))
+            numpy.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]], dtype=numpy.float32),
+        )
         numpy.testing.assert_array_equal(
             s.particles.angmom,
-            numpy.array([[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
-                        dtype=numpy.float32))
+            numpy.array(
+                [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]], dtype=numpy.float32
+            ),
+        )
         numpy.testing.assert_array_equal(
             s.particles.image,
-            numpy.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]], dtype=numpy.int32))
+            numpy.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]], dtype=numpy.int32),
+        )
 
         assert s.bonds.N == 3
         assert s.bonds.types == frame0.bonds.types
         numpy.testing.assert_array_equal(
-            s.bonds.typeid, numpy.array([0, 0, 0], dtype=numpy.uint32))
+            s.bonds.typeid, numpy.array([0, 0, 0], dtype=numpy.uint32)
+        )
         numpy.testing.assert_array_equal(
-            s.bonds.group,
-            numpy.array([[0, 0], [0, 0], [0, 0]], dtype=numpy.uint32))
+            s.bonds.group, numpy.array([[0, 0], [0, 0], [0, 0]], dtype=numpy.uint32)
+        )
 
         assert s.angles.N == 4
         assert s.angles.types == frame0.angles.types
         numpy.testing.assert_array_equal(
-            s.angles.typeid, numpy.array([0, 0, 0, 0], dtype=numpy.uint32))
+            s.angles.typeid, numpy.array([0, 0, 0, 0], dtype=numpy.uint32)
+        )
         numpy.testing.assert_array_equal(
             s.angles.group,
-            numpy.array([[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
-                        dtype=numpy.uint32))
+            numpy.array(
+                [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]], dtype=numpy.uint32
+            ),
+        )
 
         assert s.dihedrals.N == 5
         assert s.dihedrals.types == frame0.dihedrals.types
         numpy.testing.assert_array_equal(
-            s.dihedrals.typeid, numpy.array([0, 0, 0, 0, 0],
-                                            dtype=numpy.uint32))
+            s.dihedrals.typeid, numpy.array([0, 0, 0, 0, 0], dtype=numpy.uint32)
+        )
         numpy.testing.assert_array_equal(
             s.dihedrals.group,
-            numpy.array([[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0],
-                         [0, 0, 0, 0]],
-                        dtype=numpy.uint32))
+            numpy.array(
+                [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
+                dtype=numpy.uint32,
+            ),
+        )
 
         assert s.impropers.N == 6
         assert s.impropers.types == frame0.impropers.types
         numpy.testing.assert_array_equal(
-            s.impropers.typeid,
-            numpy.array([0, 0, 0, 0, 0, 0], dtype=numpy.uint32))
+            s.impropers.typeid, numpy.array([0, 0, 0, 0, 0, 0], dtype=numpy.uint32)
+        )
         numpy.testing.assert_array_equal(
             s.impropers.group,
-            numpy.array([[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0],
-                         [0, 0, 0, 0], [0, 0, 0, 0]],
-                        dtype=numpy.uint32))
+            numpy.array(
+                [
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0],
+                ],
+                dtype=numpy.uint32,
+            ),
+        )
 
         assert s.constraints.N == 4
         numpy.testing.assert_array_equal(
-            s.constraints.value, numpy.array([0, 0, 0, 0], dtype=numpy.float32))
+            s.constraints.value, numpy.array([0, 0, 0, 0], dtype=numpy.float32)
+        )
         numpy.testing.assert_array_equal(
             s.constraints.group,
-            numpy.array([[0, 0], [0, 0], [0, 0], [0, 0]], dtype=numpy.uint32))
+            numpy.array([[0, 0], [0, 0], [0, 0], [0, 0]], dtype=numpy.uint32),
+        )
 
         assert s.pairs.N == 7
         assert s.pairs.types == frame0.pairs.types
         numpy.testing.assert_array_equal(
-            s.pairs.typeid, numpy.array([0] * 7, dtype=numpy.uint32))
+            s.pairs.typeid, numpy.array([0] * 7, dtype=numpy.uint32)
+        )
         numpy.testing.assert_array_equal(
-            s.pairs.group, numpy.array([[0, 0]] * 7, dtype=numpy.uint32))
+            s.pairs.group, numpy.array([[0, 0]] * 7, dtype=numpy.uint32)
+        )
 
         assert 'value' in s.log
         numpy.testing.assert_array_equal(s.log['value'], frame0.log['value'])
@@ -471,12 +515,14 @@ def test_fallback_to_frame0(tmp_path, open_mode):
     frame1.constraints.N = None
     frame1.pairs.N = None
 
-    with gsd.hoomd.open(name=tmp_path / "test_fallback2.gsd",
-                        mode=open_mode.write) as hf:
+    with gsd.hoomd.open(
+        name=tmp_path / 'test_fallback2.gsd', mode=open_mode.write
+    ) as hf:
         hf.extend([frame0, frame1])
 
-    with gsd.hoomd.open(name=tmp_path / "test_fallback2.gsd",
-                        mode=open_mode.read) as hf:
+    with gsd.hoomd.open(
+        name=tmp_path / 'test_fallback2.gsd', mode=open_mode.read
+    ) as hf:
         assert len(hf) == 2
 
         s = hf[1]
@@ -538,12 +584,14 @@ def test_no_fallback(tmp_path, open_mode):
     frame1.pairs.typeid = [0] * frame0.pairs.N
     frame1.pairs.group = [[0, 0]] * frame0.pairs.N
 
-    with gsd.hoomd.open(name=tmp_path / "test_no_fallback.gsd",
-                        mode=open_mode.write) as hf:
+    with gsd.hoomd.open(
+        name=tmp_path / 'test_no_fallback.gsd', mode=open_mode.write
+    ) as hf:
         hf.extend([frame0, frame1])
 
-    with gsd.hoomd.open(name=tmp_path / "test_no_fallback.gsd",
-                        mode=open_mode.read) as hf:
+    with gsd.hoomd.open(
+        name=tmp_path / 'test_no_fallback.gsd', mode=open_mode.read
+    ) as hf:
         assert len(hf) == 2
 
         s = hf[1]
@@ -553,12 +601,14 @@ def test_no_fallback(tmp_path, open_mode):
 
 def test_iteration(tmp_path, open_mode):
     """Test the iteration protocols for hoomd trajectories."""
-    with gsd.hoomd.open(name=tmp_path / "test_iteration.gsd",
-                        mode=open_mode.write) as hf:
-        hf.extend((create_frame(i) for i in range(20)))
+    with gsd.hoomd.open(
+        name=tmp_path / 'test_iteration.gsd', mode=open_mode.write
+    ) as hf:
+        hf.extend(create_frame(i) for i in range(20))
 
-    with gsd.hoomd.open(name=tmp_path / "test_iteration.gsd",
-                        mode=open_mode.read) as hf:
+    with gsd.hoomd.open(
+        name=tmp_path / 'test_iteration.gsd', mode=open_mode.read
+    ) as hf:
         step = hf[-1].configuration.step
         assert step == 20
 
@@ -595,12 +645,10 @@ def test_iteration(tmp_path, open_mode):
 
 def test_slicing_and_iteration(tmp_path, open_mode):
     """Test that hoomd trajectories can be sliced."""
-    with gsd.hoomd.open(name=tmp_path / "test_slicing.gsd",
-                        mode=open_mode.write) as hf:
-        hf.extend((create_frame(i) for i in range(20)))
+    with gsd.hoomd.open(name=tmp_path / 'test_slicing.gsd', mode=open_mode.write) as hf:
+        hf.extend(create_frame(i) for i in range(20))
 
-    with gsd.hoomd.open(name=tmp_path / "test_slicing.gsd",
-                        mode=open_mode.read) as hf:
+    with gsd.hoomd.open(name=tmp_path / 'test_slicing.gsd', mode=open_mode.read) as hf:
         # Test len()-function on trajectory and sliced trajectory.
         assert len(hf) == 20
         assert len(hf[:10]) == 10
@@ -638,12 +686,10 @@ def test_slicing_and_iteration(tmp_path, open_mode):
 
 def test_view_slicing_and_iteration(tmp_path, open_mode):
     """Test that trajectories can be sliced."""
-    with gsd.hoomd.open(name=tmp_path / "test_slicing.gsd",
-                        mode=open_mode.write) as hf:
-        hf.extend((create_frame(i) for i in range(40)))
+    with gsd.hoomd.open(name=tmp_path / 'test_slicing.gsd', mode=open_mode.write) as hf:
+        hf.extend(create_frame(i) for i in range(40))
 
-    with gsd.hoomd.open(name=tmp_path / "test_slicing.gsd",
-                        mode=open_mode.read) as hf:
+    with gsd.hoomd.open(name=tmp_path / 'test_slicing.gsd', mode=open_mode.read) as hf:
         view = hf[::2]
 
         # Test len()-function on trajectory and sliced view.
@@ -681,14 +727,13 @@ def test_view_slicing_and_iteration(tmp_path, open_mode):
         with pytest.raises(IndexError):
             view[len(view)]
         assert view[0].configuration.step == view[0].configuration.step
-        assert view[len(view)
-                    - 1].configuration.step == view[-1].configuration.step
+        assert view[len(view) - 1].configuration.step == view[-1].configuration.step
 
 
 def test_truncate(tmp_path):
     """Test the truncate API."""
-    with gsd.hoomd.open(name=tmp_path / "test_iteration.gsd", mode='w') as hf:
-        hf.extend((create_frame(i) for i in range(20)))
+    with gsd.hoomd.open(name=tmp_path / 'test_iteration.gsd', mode='w') as hf:
+        hf.extend(create_frame(i) for i in range(20))
 
         assert len(hf) == 20
         s = hf[10]  # noqa
@@ -709,31 +754,36 @@ def test_state(tmp_path, open_mode):
     frame1 = gsd.hoomd.Frame()
 
     frame1.state['hpmc/convex_polyhedron/N'] = [3]
-    frame1.state['hpmc/convex_polyhedron/vertices'] = [[-1, -1, -1], [0, 1, 1],
-                                                       [1, 0, 0]]
+    frame1.state['hpmc/convex_polyhedron/vertices'] = [
+        [-1, -1, -1],
+        [0, 1, 1],
+        [1, 0, 0],
+    ]
 
-    with gsd.hoomd.open(name=tmp_path / "test_state.gsd",
-                        mode=open_mode.write) as hf:
+    with gsd.hoomd.open(name=tmp_path / 'test_state.gsd', mode=open_mode.write) as hf:
         hf.extend([frame0, frame1])
 
-    with gsd.hoomd.open(name=tmp_path / "test_state.gsd",
-                        mode=open_mode.read) as hf:
+    with gsd.hoomd.open(name=tmp_path / 'test_state.gsd', mode=open_mode.read) as hf:
         assert len(hf) == 2
         s = hf[0]
 
-        numpy.testing.assert_array_equal(s.state['hpmc/sphere/radius'],
-                                         frame0.state['hpmc/sphere/radius'])
-        numpy.testing.assert_array_equal(s.state['hpmc/sphere/orientable'],
-                                         frame0.state['hpmc/sphere/orientable'])
+        numpy.testing.assert_array_equal(
+            s.state['hpmc/sphere/radius'], frame0.state['hpmc/sphere/radius']
+        )
+        numpy.testing.assert_array_equal(
+            s.state['hpmc/sphere/orientable'], frame0.state['hpmc/sphere/orientable']
+        )
 
         s = hf[1]
 
         numpy.testing.assert_array_equal(
             s.state['hpmc/convex_polyhedron/N'],
-            frame1.state['hpmc/convex_polyhedron/N'])
+            frame1.state['hpmc/convex_polyhedron/N'],
+        )
         numpy.testing.assert_array_equal(
             s.state['hpmc/convex_polyhedron/vertices'],
-            frame1.state['hpmc/convex_polyhedron/vertices'])
+            frame1.state['hpmc/convex_polyhedron/vertices'],
+        )
 
 
 def test_log(tmp_path, open_mode):
@@ -750,58 +800,63 @@ def test_log(tmp_path, open_mode):
     frame1.log['particles/pair_lj_energy'] = [1, 2, -4, -10]
     frame1.log['value/pressure'] = [5]
 
-    with gsd.hoomd.open(name=tmp_path / "test_log.gsd",
-                        mode=open_mode.write) as hf:
+    with gsd.hoomd.open(name=tmp_path / 'test_log.gsd', mode=open_mode.write) as hf:
         hf.extend([frame0, frame1])
 
-    with gsd.hoomd.open(name=tmp_path / "test_log.gsd",
-                        mode=open_mode.read) as hf:
+    with gsd.hoomd.open(name=tmp_path / 'test_log.gsd', mode=open_mode.read) as hf:
         assert len(hf) == 2
         s = hf[0]
 
-        numpy.testing.assert_array_equal(s.log['particles/net_force'],
-                                         frame0.log['particles/net_force'])
-        numpy.testing.assert_array_equal(s.log['particles/pair_lj_energy'],
-                                         frame0.log['particles/pair_lj_energy'])
-        numpy.testing.assert_array_equal(s.log['value/potential_energy'],
-                                         frame0.log['value/potential_energy'])
-        numpy.testing.assert_array_equal(s.log['value/pressure'],
-                                         frame0.log['value/pressure'])
+        numpy.testing.assert_array_equal(
+            s.log['particles/net_force'], frame0.log['particles/net_force']
+        )
+        numpy.testing.assert_array_equal(
+            s.log['particles/pair_lj_energy'], frame0.log['particles/pair_lj_energy']
+        )
+        numpy.testing.assert_array_equal(
+            s.log['value/potential_energy'], frame0.log['value/potential_energy']
+        )
+        numpy.testing.assert_array_equal(
+            s.log['value/pressure'], frame0.log['value/pressure']
+        )
 
         s = hf[1]
 
         # unspecified entries pull from frame 0
-        numpy.testing.assert_array_equal(s.log['particles/net_force'],
-                                         frame0.log['particles/net_force'])
-        numpy.testing.assert_array_equal(s.log['value/potential_energy'],
-                                         frame0.log['value/potential_energy'])
+        numpy.testing.assert_array_equal(
+            s.log['particles/net_force'], frame0.log['particles/net_force']
+        )
+        numpy.testing.assert_array_equal(
+            s.log['value/potential_energy'], frame0.log['value/potential_energy']
+        )
 
         # specified entries are different in frame 1
-        numpy.testing.assert_array_equal(s.log['particles/pair_lj_energy'],
-                                         frame1.log['particles/pair_lj_energy'])
-        numpy.testing.assert_array_equal(s.log['value/pressure'],
-                                         frame1.log['value/pressure'])
+        numpy.testing.assert_array_equal(
+            s.log['particles/pair_lj_energy'], frame1.log['particles/pair_lj_energy']
+        )
+        numpy.testing.assert_array_equal(
+            s.log['value/pressure'], frame1.log['value/pressure']
+        )
 
 
 def test_pickle(tmp_path):
     """Test that hoomd trajectory objects can be pickled."""
-    with gsd.hoomd.open(name=tmp_path / "test_pickling.gsd", mode='w') as traj:
-        traj.extend((create_frame(i) for i in range(20)))
+    with gsd.hoomd.open(name=tmp_path / 'test_pickling.gsd', mode='w') as traj:
+        traj.extend(create_frame(i) for i in range(20))
         with pytest.raises(pickle.PickleError):
             pkl = pickle.dumps(traj)
-    with gsd.hoomd.open(name=tmp_path / "test_pickling.gsd", mode='r') as traj:
+    with gsd.hoomd.open(name=tmp_path / 'test_pickling.gsd', mode='r') as traj:
         pkl = pickle.dumps(traj)
         with pickle.loads(pkl) as hf:
             assert len(hf) == 20
 
 
 @pytest.mark.parametrize(
-    'container',
-    ['particles', 'bonds', 'angles', 'dihedrals', 'impropers', 'pairs'])
+    'container', ['particles', 'bonds', 'angles', 'dihedrals', 'impropers', 'pairs']
+)
 def test_no_duplicate_types(tmp_path, container):
     """Test that duplicate types raise an error."""
-    with gsd.hoomd.open(name=tmp_path / "test_create.gsd", mode='w') as hf:
-
+    with gsd.hoomd.open(name=tmp_path / 'test_create.gsd', mode='w') as hf:
         frame = gsd.hoomd.Frame()
 
         getattr(frame, container).types = ['A', 'B', 'B', 'C']
@@ -834,68 +889,73 @@ def test_read_log(tmp_path):
     ]
     frame1.log['value/pressure'] = [5]
 
-    with gsd.hoomd.open(name=tmp_path / "test_log.gsd", mode='w') as hf:
+    with gsd.hoomd.open(name=tmp_path / 'test_log.gsd', mode='w') as hf:
         hf.extend([frame0, frame1])
 
     # Test scalar_only = False
-    logged_data_dict = gsd.hoomd.read_log(name=tmp_path / "test_log.gsd",
-                                          scalar_only=False)
+    logged_data_dict = gsd.hoomd.read_log(
+        name=tmp_path / 'test_log.gsd', scalar_only=False
+    )
 
     assert len(logged_data_dict) == 5
     assert list(logged_data_dict.keys()) == [
-        'configuration/step', 'log/particles/pair_lj_energy',
-        'log/particles/pair_lj_force', 'log/value/potential_energy',
-        'log/value/pressure'
+        'configuration/step',
+        'log/particles/pair_lj_energy',
+        'log/particles/pair_lj_force',
+        'log/value/potential_energy',
+        'log/value/pressure',
     ]
 
-    numpy.testing.assert_array_equal(logged_data_dict['configuration/step'],
-                                     [0, 1])
+    numpy.testing.assert_array_equal(logged_data_dict['configuration/step'], [0, 1])
     numpy.testing.assert_array_equal(
-        logged_data_dict['log/particles/pair_lj_energy'], [
+        logged_data_dict['log/particles/pair_lj_energy'],
+        [
             frame0.log['particles/pair_lj_energy'],
-            frame1.log['particles/pair_lj_energy']
-        ])
+            frame1.log['particles/pair_lj_energy'],
+        ],
+    )
     numpy.testing.assert_array_equal(
-        logged_data_dict['log/particles/pair_lj_force'], [
-            frame0.log['particles/pair_lj_force'],
-            frame1.log['particles/pair_lj_force']
-        ])
+        logged_data_dict['log/particles/pair_lj_force'],
+        [frame0.log['particles/pair_lj_force'], frame1.log['particles/pair_lj_force']],
+    )
     numpy.testing.assert_array_equal(
-        logged_data_dict['log/value/potential_energy'], [
-            *frame0.log['value/potential_energy'],
-            *frame0.log['value/potential_energy']
-        ])
+        logged_data_dict['log/value/potential_energy'],
+        [*frame0.log['value/potential_energy'], *frame0.log['value/potential_energy']],
+    )
     numpy.testing.assert_array_equal(
         logged_data_dict['log/value/pressure'],
-        [*frame0.log['value/pressure'], *frame1.log['value/pressure']])
+        [*frame0.log['value/pressure'], *frame1.log['value/pressure']],
+    )
 
     # Test scalar_only = True
-    logged_data_dict = gsd.hoomd.read_log(name=tmp_path / "test_log.gsd",
-                                          scalar_only=True)
+    logged_data_dict = gsd.hoomd.read_log(
+        name=tmp_path / 'test_log.gsd', scalar_only=True
+    )
     assert len(logged_data_dict) == 3
     assert list(logged_data_dict.keys()) == [
-        'configuration/step', 'log/value/potential_energy', 'log/value/pressure'
+        'configuration/step',
+        'log/value/potential_energy',
+        'log/value/pressure',
     ]
-    numpy.testing.assert_array_equal(logged_data_dict['configuration/step'],
-                                     [0, 1])
+    numpy.testing.assert_array_equal(logged_data_dict['configuration/step'], [0, 1])
     numpy.testing.assert_array_equal(
-        logged_data_dict['log/value/potential_energy'], [
-            *frame0.log['value/potential_energy'],
-            *frame0.log['value/potential_energy']
-        ])
+        logged_data_dict['log/value/potential_energy'],
+        [*frame0.log['value/potential_energy'], *frame0.log['value/potential_energy']],
+    )
     numpy.testing.assert_array_equal(
         logged_data_dict['log/value/pressure'],
-        [*frame0.log['value/pressure'], *frame1.log['value/pressure']])
+        [*frame0.log['value/pressure'], *frame1.log['value/pressure']],
+    )
 
 
 def test_read_log_warning(tmp_path):
     """Test that read_log issues a warning."""
     frame = gsd.hoomd.Frame()
 
-    with gsd.hoomd.open(name=tmp_path / "test_log.gsd", mode='w') as hf:
+    with gsd.hoomd.open(name=tmp_path / 'test_log.gsd', mode='w') as hf:
         hf.extend([frame])
 
     with pytest.warns(RuntimeWarning):
-        log = gsd.hoomd.read_log(tmp_path / "test_log.gsd")
+        log = gsd.hoomd.read_log(tmp_path / 'test_log.gsd')
 
     assert list(log.keys()) == ['configuration/step']

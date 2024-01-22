@@ -13,12 +13,12 @@
     },
     "[python]": {
         "editor.rulers": [
-            80
+            88
         ]
     },
     "[cython]": {
         "editor.rulers": [
-            80
+            88
         ]
     },
     "[markdown]": {

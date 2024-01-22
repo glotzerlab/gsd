@@ -1,0 +1,59 @@
+target-version = "py38"
+
+extend-select = [
+    "A",
+    "B",
+    "D",
+    "E501",
+    "EM",
+    "I",
+    "ICN",
+    "ISC",
+    "N",
+    "NPY",
+    "PL",
+    "PT",
+    "RET",
+    "RUF",
+    "UP",
+    "W",
+]
+
+ignore = [
+  "N806", "N803",  # Allow occasional use of uppercase variable and argument names (e.g. N).
+  "D107", # Do not document __init__ separately from the class.
+  "PLR09", # Allow "too many" statements/arguments/etc...
+  "N816", # Allow mixed case names like kT.
+  "PT011", # PT011 insists that specific pytest.raises checks should impossibly more specific
+  "RUF012", # gsd does not use typing hints
+]
+
+[lint.per-file-ignores]
+
+"__init__.py" = ["F401", # __init__.py import submodules for use by the package importer.
+]
+
+"gsd/test/*.py" = ["PLR2004", # unit test value comparisons are not magic values
+]
+
+"doc/conf.py" = ["A001", # Allow copyright variable name
+                 "D", # conf.py does not need documentation
+    ]
+
+[pydocstyle]
+convention = "google"
+
+[format]
+quote-style = "single"
+
+[lint.flake8-import-conventions]
+# Prefer no import aliases
+aliases = {}
+# Always import hoomd and gsd without 'from'
+banned-from = ["hoomd", "gsd"]
+
+# Ban standard import conventions and force common packages to be imported by their actual name.
+[lint.flake8-import-conventions.banned-aliases]
+"numpy" = ["np"]
+"pandas" = ["pd"]
+"matplotlib" = ["mpl"]

@@ -3,8 +3,9 @@
 
 """Pytest fixtures common to all tests."""
 
-import pytest
 import collections
+
+import pytest
 
 Mode = collections.namedtuple('Mode', 'read write')
 mode_list = [Mode('r', 'w'), Mode('a', 'x'), Mode('r', 'a')]
