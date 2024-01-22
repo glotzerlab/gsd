@@ -16,11 +16,11 @@ Change Log
 *Fixed:*
 
 * Write all pending index entries to the file when ``gsd_flush()`` is called after
-  ``gsd_write_chunk()`` and before `gsd_end_frame()``
+  ``gsd_write_chunk()`` and before ``gsd_end_frame()``
   (`#319 <https://github.com/glotzerlab/gsd/pull/319>`__).
 * Readthedocs builds with pandas 2.2.0
   (`#322 <https://github.com/glotzerlab/gsd/pull/322>`__).
-* Import without seg fault when built with CMake on macOS.
+* Import without seg fault when built with CMake on macOS
   (`#323 <https://github.com/glotzerlab/gsd/pull/323>`__).
 * Internal cached data remains valid when users modify frames obtained by indexing trajectories
   (`#324 <https://github.com/glotzerlab/gsd/pull/324>`__).
