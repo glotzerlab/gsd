@@ -20,6 +20,7 @@ See Also:
     See :ref:`hoomd-examples` for full examples.
 """
 
+import copy
 import json
 import logging
 import warnings
@@ -859,7 +860,7 @@ class HOOMDTrajectory:
         Replace any data chunks not present in the given frame with either data
         from frame 0, or initialize from default values if not in frame 0. Cache
         frame 0 data to avoid file read overhead. Return any default data as
-        non-writable numpy arrays.
+        non-writeable numpy arrays.
         """
         if idx >= len(self):
             raise IndexError
@@ -898,9 +899,9 @@ class HOOMDTrajectory:
                 frame=idx, name='configuration/box'
             )
         elif self._initial_frame is not None:
-            frame.configuration.box = self._initial_frame.configuration.box
+            frame.configuration.box = copy.copy(self._initial_frame.configuration.box)
         else:
-            frame.configuration.box = frame.configuration._default_value['box']
+            frame.configuration.box = copy.copy(frame.configuration._default_value['box'])
 
         # then read all groups that have N, types, etc...
         for path in [
@@ -931,9 +932,9 @@ class HOOMDTrajectory:
                     tmp = tmp.reshape([tmp.shape[0]])
                     container.types = list(a.decode('UTF-8') for a in tmp)
                 elif self._initial_frame is not None:
-                    container.types = initial_frame_container.types
+                    container.types = copy.copy(initial_frame_container.types)
                 else:
-                    container.types = container._default_value['types']
+                    container.types = copy.copy(container._default_value['types'])
 
             # type shapes
             if 'type_shapes' in container._default_value and path == 'particles':
@@ -945,9 +946,9 @@ class HOOMDTrajectory:
                         json.loads(json_string.decode('UTF-8')) for json_string in tmp
                     )
                 elif self._initial_frame is not None:
-                    container.type_shapes = initial_frame_container.type_shapes
+                    container.type_shapes = copy.copy(initial_frame_container.type_shapes)
                 else:
-                    container.type_shapes = container._default_value['type_shapes']
+                    container.type_shapes = copy.copy(container._default_value['type_shapes'])
 
             for name in container._default_value:
                 if name in ('N', 'types', 'type_shapes'):
@@ -991,10 +992,11 @@ class HOOMDTrajectory:
                 frame.log[log[4:]] = self.file.read_chunk(frame=idx, name=log)
             elif self._initial_frame is not None:
                 frame.log[log[4:]] = self._initial_frame.log[log[4:]]
+                frame.log[log[4:]].flags.writeable = False
 
         # store initial frame
         if self._initial_frame is None and idx == 0:
-            self._initial_frame = frame
+            self._initial_frame = copy.deepcopy(frame)
 
         return frame
 
