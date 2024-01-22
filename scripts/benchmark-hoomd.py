@@ -20,13 +20,13 @@ import gsd.pygsd
 # logging.basicConfig(level=logging.DEBUG)
 
 
-def write_frame(file, frame, position, orientation):
+def write_frame(file, frame_idx, position, orientation):
     """Write a frame to the file."""
     frame = gsd.hoomd.Frame()
     frame.particles.N = position.shape[0]
-    frame.configuration.step = frame * 10
-    position[0][0] = frame
-    orientation[0][0] = frame
+    frame.configuration.step = frame_idx * 10
+    position[0][0] = frame_idx
+    orientation[0][0] = frame_idx
     frame.particles.position = position
     frame.particles.orientation = orientation
     file.append(frame)

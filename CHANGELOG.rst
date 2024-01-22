@@ -21,6 +21,8 @@ Change Log
   (`#322 <https://github.com/glotzerlab/gsd/pull/322>`__).
 * Import without seg fault when built with CMake on macOS.
   (`#323 <https://github.com/glotzerlab/gsd/pull/323>`__).
+* Internal cached data remains valid when users modify frames obtained by indexing trajectories
+  (`#324 <https://github.com/glotzerlab/gsd/pull/324>`__).
 
 *Changed:*
 

@@ -959,3 +959,96 @@ def test_read_log_warning(tmp_path):
         log = gsd.hoomd.read_log(tmp_path / 'test_log.gsd')
 
     assert list(log.keys()) == ['configuration/step']
+
+
+def test_initial_frame_copy(tmp_path, open_mode):
+    """Ensure that the user does not unintentionally modify _initial_frame."""
+    with gsd.hoomd.open(
+        name=tmp_path / 'test_initial_frame_copy.gsd', mode=open_mode.write
+    ) as hf:
+        frame = make_nondefault_frame()
+
+        hf.append(frame)
+
+        frame.configuration.step *= 2
+        del frame.log['value']
+        hf.append(frame)
+
+    with gsd.hoomd.open(
+        name=tmp_path / 'test_initial_frame_copy.gsd', mode=open_mode.read
+    ) as hf:
+        assert len(hf) == 2
+
+        # Verify that the user does not get a reference to the initial frame cache.
+        frame_0 = hf[0]
+        initial = hf._initial_frame
+        assert frame_0 is not initial
+
+        # Verify that no mutable objects from the initial frame cache are presented to
+        # the user.
+        frame_1 = hf[1]
+        assert frame_1.configuration.box is not initial.configuration.box
+        assert frame_1.particles.types is not initial.particles.types
+        assert frame_1.particles.type_shapes is not initial.particles.type_shapes
+        assert frame_1.particles.position is initial.particles.position
+        assert not frame_1.particles.position.flags.writeable
+        assert frame_1.particles.typeid is initial.particles.typeid
+        assert not frame_1.particles.typeid.flags.writeable
+        assert frame_1.particles.mass is initial.particles.mass
+        assert not frame_1.particles.mass.flags.writeable
+        assert frame_1.particles.diameter is initial.particles.diameter
+        assert not frame_1.particles.diameter.flags.writeable
+        assert frame_1.particles.body is initial.particles.body
+        assert not frame_1.particles.body.flags.writeable
+        assert frame_1.particles.charge is initial.particles.charge
+        assert not frame_1.particles.charge.flags.writeable
+        assert frame_1.particles.moment_inertia is initial.particles.moment_inertia
+        assert not frame_1.particles.moment_inertia.flags.writeable
+        assert frame_1.particles.orientation is initial.particles.orientation
+        assert not frame_1.particles.orientation.flags.writeable
+        assert frame_1.particles.velocity is initial.particles.velocity
+        assert not frame_1.particles.velocity.flags.writeable
+        assert frame_1.particles.angmom is initial.particles.angmom
+        assert not frame_1.particles.angmom.flags.writeable
+        assert frame_1.particles.image is initial.particles.image
+        assert not frame_1.particles.image.flags.writeable
+
+        assert frame_1.bonds.types is not initial.bonds.types
+        assert frame_1.bonds.typeid is initial.bonds.typeid
+        assert frame_1.bonds.group is initial.bonds.group
+        assert not frame_1.bonds.typeid.flags.writeable
+        assert not frame_1.bonds.group.flags.writeable
+
+        assert frame_1.angles.types is not initial.angles.types
+        assert frame_1.angles.typeid is initial.angles.typeid
+        assert frame_1.angles.group is initial.angles.group
+        assert not frame_1.angles.typeid.flags.writeable
+        assert not frame_1.angles.group.flags.writeable
+
+        assert frame_1.dihedrals.types is not initial.dihedrals.types
+        assert frame_1.dihedrals.typeid is initial.dihedrals.typeid
+        assert frame_1.dihedrals.group is initial.dihedrals.group
+        assert not frame_1.dihedrals.typeid.flags.writeable
+        assert not frame_1.dihedrals.group.flags.writeable
+
+        assert frame_1.impropers.types is not initial.impropers.types
+        assert frame_1.impropers.typeid is initial.impropers.typeid
+        assert frame_1.impropers.group is initial.impropers.group
+        assert not frame_1.impropers.typeid.flags.writeable
+        assert not frame_1.impropers.group.flags.writeable
+
+        assert frame_1.constraints.value is initial.constraints.value
+        assert frame_1.constraints.group is initial.constraints.group
+        assert not frame_1.constraints.value.flags.writeable
+        assert not frame_1.constraints.group.flags.writeable
+
+        assert frame_1.pairs.types is not initial.pairs.types
+        assert frame_1.pairs.typeid is initial.pairs.typeid
+        assert frame_1.pairs.group is initial.pairs.group
+        assert not frame_1.pairs.typeid.flags.writeable
+        assert not frame_1.pairs.group.flags.writeable
+
+        assert frame_1.log is not initial.log
+        for key in frame_1.log.keys():
+            assert frame_1.log[key] is initial.log[key]
+            assert not frame_1.log[key].flags.writeable
