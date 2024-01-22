@@ -15,6 +15,8 @@ Change Log
 
 *Fixed:*
 
+* Write all pending index entries to the file when `gsd_flush()` is called after `gsd_write_chunk()`
+  and before `gsd_end_frame()` (`#319 <https://github.com/glotzerlab/gsd/pull/319>`__).
 * Readthedocs builds with pandas 2.2.0
   (`#322 <https://github.com/glotzerlab/gsd/pull/322>`__).
 
