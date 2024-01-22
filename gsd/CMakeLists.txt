@@ -23,13 +23,21 @@ target_compile_definitions(fl PRIVATE NPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION)
 set_target_properties(fl PROPERTIES PREFIX "" OUTPUT_NAME "fl" MACOSX_RPATH "On")
 if(APPLE)
     set_target_properties(fl PROPERTIES SUFFIX ".so")
-    target_link_libraries(fl ${PYTHON_LIBRARY})
-    fix_conda_python(fl)
 endif(APPLE)
 
 if (WIN32)
-    target_link_libraries(fl ${PYTHON_LIBRARY})
     set_target_properties(fl PROPERTIES SUFFIX ".pyd")
+endif()
+
+if(WIN32)
+    # Link to the Python libraries on windows
+    target_link_libraries(fl ${PYTHON_LIBRARIES})
+else()
+    # Do not link to the Python libraries on Mac/Linux - symbols are provided by
+    # the `python` executable. "-undefined dynamic_lookup" is needed on Mac
+    target_link_options(
+        fl PRIVATE
+        "$<$<PLATFORM_ID:Darwin>:LINKER:-undefined,dynamic_lookup>")
 endif()
 
 ################ Python only modules

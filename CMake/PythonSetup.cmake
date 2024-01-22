@@ -83,23 +83,3 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS(cython DEFAULT_MSG CYTHON_EXECUTABLE)
 if (NOT CYTHON_EXECUTABLE)
     message(ERROR "cython not found")
 endif()
-
-#############################################################################################
-# Fixup conda linking, if this python appears to be a conda python
-if (${CMAKE_MAJOR_VERSION} GREATER 2)
-get_filename_component(_python_bin_dir ${PYTHON_EXECUTABLE} DIRECTORY)
-if (EXISTS "${_python_bin_dir}/conda")
-    message("-- Detected conda python, activating workaround")
-    set(_using_conda On)
-else()
-    set(_using_conda Off)
-endif()
-endif()
-
-macro(fix_conda_python target)
-if (_using_conda)
-get_filename_component(_python_lib_file ${PYTHON_LIBRARY} NAME)
-add_custom_command(TARGET ${target} POST_BUILD
-                          COMMAND install_name_tool ARGS -change ${_python_lib_file} ${PYTHON_LIBRARY} $<TARGET_FILE:${target}>)
-endif ()
-endmacro()
