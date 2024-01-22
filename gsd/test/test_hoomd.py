@@ -960,8 +960,12 @@ def test_read_log_warning(tmp_path):
 
     assert list(log.keys()) == ['configuration/step']
 
+
 def test_initial_frame_copy(tmp_path, open_mode):
-    with gsd.hoomd.open(name=tmp_path / 'test_initial_frame_copy.gsd', mode=open_mode.write) as hf:
+    """Ensure that the user does not unintentionally modify _initial_frame."""
+    with gsd.hoomd.open(
+        name=tmp_path / 'test_initial_frame_copy.gsd', mode=open_mode.write
+    ) as hf:
         frame = make_nondefault_frame()
 
         hf.append(frame)
@@ -970,7 +974,9 @@ def test_initial_frame_copy(tmp_path, open_mode):
         del frame.log['value']
         hf.append(frame)
 
-    with gsd.hoomd.open(name=tmp_path / 'test_initial_frame_copy.gsd', mode=open_mode.read) as hf:
+    with gsd.hoomd.open(
+        name=tmp_path / 'test_initial_frame_copy.gsd', mode=open_mode.read
+    ) as hf:
         assert len(hf) == 2
 
         # Verify that the user does not get a reference to the initial frame cache.
@@ -1018,7 +1024,6 @@ def test_initial_frame_copy(tmp_path, open_mode):
         assert frame_1.angles.group is initial.angles.group
         assert not frame_1.angles.typeid.flags.writeable
         assert not frame_1.angles.group.flags.writeable
-
 
         assert frame_1.dihedrals.types is not initial.dihedrals.types
         assert frame_1.dihedrals.typeid is initial.dihedrals.typeid

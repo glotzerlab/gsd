@@ -901,7 +901,9 @@ class HOOMDTrajectory:
         elif self._initial_frame is not None:
             frame.configuration.box = copy.copy(self._initial_frame.configuration.box)
         else:
-            frame.configuration.box = copy.copy(frame.configuration._default_value['box'])
+            frame.configuration.box = copy.copy(
+                frame.configuration._default_value['box']
+            )
 
         # then read all groups that have N, types, etc...
         for path in [
@@ -946,9 +948,13 @@ class HOOMDTrajectory:
                         json.loads(json_string.decode('UTF-8')) for json_string in tmp
                     )
                 elif self._initial_frame is not None:
-                    container.type_shapes = copy.copy(initial_frame_container.type_shapes)
+                    container.type_shapes = copy.copy(
+                        initial_frame_container.type_shapes
+                    )
                 else:
-                    container.type_shapes = copy.copy(container._default_value['type_shapes'])
+                    container.type_shapes = copy.copy(
+                        container._default_value['type_shapes']
+                    )
 
             for name in container._default_value:
                 if name in ('N', 'types', 'type_shapes'):
