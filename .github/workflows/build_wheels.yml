@@ -39,7 +39,7 @@ jobs:
         env:
           CIBW_PROJECT_REQUIRES_PYTHON: "==${{ matrix.python_version }}.*"
 
-      - uses: actions/upload-artifact@v4.2.0
+      - uses: actions/upload-artifact@v4.3.0
         with:
           name: dist-python-${{ matrix.python_version }}-${{ matrix.os }}
           path: ./wheelhouse/*.whl
@@ -68,7 +68,7 @@ jobs:
       - name: Build sdist
         run: python -m build --sdist --outdir dist/ .
 
-      - uses: actions/upload-artifact@v4.2.0
+      - uses: actions/upload-artifact@v4.3.0
         with:
           name: dist-sdist
           path: dist/*.tar.gz
