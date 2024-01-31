@@ -24,12 +24,18 @@ on:
 jobs:
   build_wheels:
     name: Build wheels [py${{ matrix.python_version }}, ${{ matrix.os }}]
-    runs-on: ${{ matrix.os }}-latest
+    runs-on: ${{ matrix.os }}-${{ matrix.os_version }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu, windows, macos]
         python_version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+
+        include:
+          - os_version: 'latest'
+
+          - os: 'macos'
+            os_version: '14'
 
     steps:
       - uses: actions/checkout@v4.1.1
