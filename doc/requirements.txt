@@ -1,6 +1,6 @@
 breathe == 4.35.0
 cython == 3.0.8
-furo == 2023.9.10
+furo == 2024.1.29
 ipython == 8.21.0
 numpy == 1.26.3
 pandas == 2.2.0
