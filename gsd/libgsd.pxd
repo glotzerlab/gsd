@@ -1,4 +1,4 @@
-# Copyright (c) 2016-2023 The Regents of the University of Michigan
+# Copyright (c) 2016-2024 The Regents of the University of Michigan
 # Part of GSD, released under the BSD 2-Clause License.
 
 from libc.stdint cimport uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t,\
