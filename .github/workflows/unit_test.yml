@@ -19,9 +19,6 @@ on:
   # Trigger on request.
   workflow_dispatch:
 
-env:
-  pytest_options: -p gsd.pytest_plugin_validate --validate
-
 defaults:
   run:
     shell: bash
@@ -56,7 +53,7 @@ jobs:
         run: ninja
         working-directory: build
       - name: Run tests
-        run: python3 -m pytest --pyargs gsd ${pytest_options} -v --log-level=DEBUG
+        run: python3 -m pytest --pyargs gsd -p gsd.pytest_plugin_validate --validate -v --log-level=DEBUG
         env:
           PYTHONPATH: ${{ github.workspace }}/build
 
@@ -77,8 +74,7 @@ jobs:
           python-version: '3.11'
       - name: Get pip cache dir
         id: pip-cache
-        run: |
-          echo "dir=$(pip cache dir)" >> $GITHUB_OUTPUT
+        run: echo dir="$(pip cache dir)" >> "$GITHUB_OUTPUT"
       - uses: actions/cache@v4.0.0
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
@@ -96,7 +92,7 @@ jobs:
         run: cp ./gsd/Release/*.pyd gsd/
         working-directory: build
       - name: Run tests
-        run: python3 -m pytest --pyargs gsd ${pytest_options} -v --log-level=DEBUG
+        run: python3 -m pytest --pyargs gsd -p gsd.pytest_plugin_validate --validate -v --log-level=DEBUG
         env:
           PYTHONPATH: ${{ github.workspace }}/build
 
