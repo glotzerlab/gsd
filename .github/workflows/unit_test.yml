@@ -19,9 +19,6 @@ on:
   # Trigger on request.
   workflow_dispatch:
 
-env:
-  pytest_options: (-p gsd.pytest_plugin_validate --validate)
-
 defaults:
   run:
     shell: bash
@@ -56,7 +53,7 @@ jobs:
         run: ninja
         working-directory: build
       - name: Run tests
-        run: python3 -m pytest --pyargs gsd "${pytest_options[@]}" -v --log-level=DEBUG
+        run: python3 -m pytest --pyargs gsd -p gsd.pytest_plugin_validate --validate -v --log-level=DEBUG
         env:
           PYTHONPATH: ${{ github.workspace }}/build
 
@@ -95,7 +92,7 @@ jobs:
         run: cp ./gsd/Release/*.pyd gsd/
         working-directory: build
       - name: Run tests
-        run: python3 -m pytest --pyargs gsd "${pytest_options[@]}" -v --log-level=DEBUG
+        run: python3 -m pytest --pyargs gsd -p gsd.pytest_plugin_validate --validate -v --log-level=DEBUG
         env:
           PYTHONPATH: ${{ github.workspace }}/build
 
