@@ -45,13 +45,13 @@ jobs:
 
       - name: Determine last tag via git describe
         if: ${{ ! startsWith(github.ref, 'refs/tags/v') }}
-        run: echo tag="\"$(git describe --abbrev=0)\"" >> "$GITHUB_ENV"
+        run: echo tag="$(git describe --abbrev=0)" >> "$GITHUB_ENV"
         working-directory: code
 
       # git describe does not return the current tag in tag pushes on GitHub Actions, use GITHUB_REF instead
       - name: Determine tag from GITHUB_REF
         if:  startsWith(github.ref, 'refs/tags/v')
-        run: echo tag="\"$(echo "${GITHUB_REF}" | sed  -e 's/refs\/tags\///g')\"" >> "$GITHUB_ENV"
+        run: echo tag="$(echo "${GITHUB_REF}" | sed  -e 's/refs\/tags\///g')" >> "$GITHUB_ENV"
 
       - name: Write version change log
         run: .github/workflows/make-changelog-md.sh  "${tag:1}" | tee "${GITHUB_WORKSPACE}/changelog.md"
