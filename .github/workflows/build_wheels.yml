@@ -61,7 +61,7 @@ jobs:
         with:
           python-version: '3.11'
 
-      - uses: actions/cache@v4.0.0
+      - uses: actions/cache@v4.0.1
         with:
           path: ~/.cache/pip
           key: gsd-build-wheels-pip-${{ hashFiles('.github/requirements-build-sdist.txt') }}
