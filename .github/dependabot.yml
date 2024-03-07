@@ -13,11 +13,11 @@ updates:
   reviewers:
   - joaander
   groups:
-    version:
+    actions-version:
       applies-to: version-updates
       patterns:
       - '*'
-    security:
+    actions-security:
       applies-to: security-updates
       patterns:
       - '*'
@@ -34,14 +34,14 @@ updates:
   reviewers:
   - joaander
   groups:
-    version:
+    pip-version:
       applies-to: version-updates
       patterns:
       - '*'
       update-types:
       - minor
       - patch
-    security:
+    pip-security:
       applies-to: security-updates
       patterns:
       - '*'
