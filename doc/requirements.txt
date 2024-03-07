@@ -1,5 +1,5 @@
 breathe == 4.35.0
-cython == 3.0.8
+cython == 3.0.9
 furo == 2024.1.29
 ipython == 8.22.2
 numpy == 1.26.4
