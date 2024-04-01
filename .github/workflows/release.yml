@@ -37,7 +37,7 @@ jobs:
       options: -u 0
 
     steps:
-      - uses: actions/checkout@v4.1.1
+      - uses: actions/checkout@v4.1.2
         with:
           fetch-depth: 0
           submodules: true
@@ -85,7 +85,7 @@ jobs:
           name: release
 
       - name: Create release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/v')
         with:
           files: "*.tar.gz"
