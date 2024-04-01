@@ -551,20 +551,21 @@ class Frame:
             ].reshape([NT])
             sumN = numpy.sum(self.state['hpmc/convex_spheropolyhedron/N'])
 
-            self.state[
-                'hpmc/convex_spheropolyhedron/sweep_radius'
-            ] = numpy.ascontiguousarray(
-                self.state['hpmc/convex_spheropolyhedron/sweep_radius'],
-                dtype=numpy.float32,
+            self.state['hpmc/convex_spheropolyhedron/sweep_radius'] = (
+                numpy.ascontiguousarray(
+                    self.state['hpmc/convex_spheropolyhedron/sweep_radius'],
+                    dtype=numpy.float32,
+                )
             )
             self.state['hpmc/convex_spheropolyhedron/sweep_radius'] = self.state[
                 'hpmc/convex_spheropolyhedron/sweep_radius'
             ].reshape([NT])
 
-            self.state[
-                'hpmc/convex_spheropolyhedron/vertices'
-            ] = numpy.ascontiguousarray(
-                self.state['hpmc/convex_spheropolyhedron/vertices'], dtype=numpy.float32
+            self.state['hpmc/convex_spheropolyhedron/vertices'] = (
+                numpy.ascontiguousarray(
+                    self.state['hpmc/convex_spheropolyhedron/vertices'],
+                    dtype=numpy.float32,
+                )
             )
             self.state['hpmc/convex_spheropolyhedron/vertices'] = self.state[
                 'hpmc/convex_spheropolyhedron/vertices'
@@ -595,11 +596,11 @@ class Frame:
             ].reshape([NT])
             sumN = numpy.sum(self.state['hpmc/convex_spheropolygon/N'])
 
-            self.state[
-                'hpmc/convex_spheropolygon/sweep_radius'
-            ] = numpy.ascontiguousarray(
-                self.state['hpmc/convex_spheropolygon/sweep_radius'],
-                dtype=numpy.float32,
+            self.state['hpmc/convex_spheropolygon/sweep_radius'] = (
+                numpy.ascontiguousarray(
+                    self.state['hpmc/convex_spheropolygon/sweep_radius'],
+                    dtype=numpy.float32,
+                )
             )
             self.state['hpmc/convex_spheropolygon/sweep_radius'] = self.state[
                 'hpmc/convex_spheropolygon/sweep_radius'
