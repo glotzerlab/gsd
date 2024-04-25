@@ -1,6 +1,6 @@
 target-version = "py38"
 
-extend-select = [
+lint.extend-select = [
     "A",
     "B",
     "D",
@@ -19,7 +19,7 @@ extend-select = [
     "W",
 ]
 
-ignore = [
+lint.ignore = [
   "N806", "N803",  # Allow occasional use of uppercase variable and argument names (e.g. N).
   "D107", # Do not document __init__ separately from the class.
   "PLR09", # Allow "too many" statements/arguments/etc...
@@ -40,7 +40,7 @@ ignore = [
                  "D", # conf.py does not need documentation
     ]
 
-[pydocstyle]
+[lint.pydocstyle]
 convention = "google"
 
 [format]

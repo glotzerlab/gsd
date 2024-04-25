@@ -101,8 +101,9 @@ def run_benchmarks(N, size):
     bmark_read_size = 0.25 * 1024**3
 
     timings = {}
-    position = numpy.random.random((N, 3)).astype('float32')
-    orientation = numpy.random.random((N, 4)).astype('float32')
+    rng = numpy.random.default_rng()
+    position = rng.random((N, 3)).astype('float32')
+    orientation = rng.random((N, 4)).astype('float32')
 
     nframes = compute_nframes(N, size)
     actual_size = compute_actual_size(N, nframes)
