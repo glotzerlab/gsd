@@ -405,9 +405,8 @@ def test_dtype_errors(tmp_path, open_mode):
 
 def test_truncate(tmp_path):
     """Test that the truncate method functions."""
-    data = numpy.ascontiguousarray(
-        numpy.random.random(size=(1000, 3)), dtype=numpy.float32
-    )
+    rng = numpy.random.default_rng()
+    data = numpy.ascontiguousarray(rng.random(size=(1000, 3)), dtype=numpy.float32)
     with gsd.fl.open(
         name=tmp_path / 'test_truncate.gsd',
         mode='w',
