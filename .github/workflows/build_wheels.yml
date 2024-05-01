@@ -38,14 +38,14 @@ jobs:
             os_version: '14'
 
     steps:
-      - uses: actions/checkout@v4.1.2
+      - uses: actions/checkout@v4.1.4
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.17.0
         env:
           CIBW_PROJECT_REQUIRES_PYTHON: "==${{ matrix.python_version }}.*"
 
-      - uses: actions/upload-artifact@v4.3.1
+      - uses: actions/upload-artifact@v4.3.3
         with:
           name: dist-python-${{ matrix.python_version }}-${{ matrix.os }}
           path: ./wheelhouse/*.whl
@@ -54,7 +54,7 @@ jobs:
     name: Build source distribution
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.1.2
+      - uses: actions/checkout@v4.1.4
 
       - uses: actions/setup-python@v5.1.0
         name: Install Python
@@ -74,7 +74,7 @@ jobs:
       - name: Build sdist
         run: python -m build --sdist --outdir dist/ .
 
-      - uses: actions/upload-artifact@v4.3.1
+      - uses: actions/upload-artifact@v4.3.3
         with:
           name: dist-sdist
           path: dist/*.tar.gz
@@ -86,7 +86,7 @@ jobs:
 
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v4.1.4
+        uses: actions/download-artifact@v4.1.7
         with:
           merge-multiple: 'true'
           pattern: dist-*
