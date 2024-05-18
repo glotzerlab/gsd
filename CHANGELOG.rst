@@ -10,6 +10,18 @@ Change Log
 3.x
 ---
 
+3.3.0 (not yet released)
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Changed:*
+
+* Navigate the documentation with arrow keys
+  (`#365 <https://github.com/glotzerlab/gsd/pull/365>`__).
+* Add button to copy code snippets from the documentation
+  (`#365 <https://github.com/glotzerlab/gsd/pull/365>`__).
+* Remove singularity reference from the documentation
+  (`#365 <https://github.com/glotzerlab/gsd/pull/365>`__).
+
 3.2.1 (2024-01-22)
 ^^^^^^^^^^^^^^^^^^
 
