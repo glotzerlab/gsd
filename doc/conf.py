@@ -4,7 +4,6 @@
 
 import datetime
 import os
-import subprocess
 import tempfile
 
 import gsd
@@ -20,9 +19,9 @@ extensions = [
     'sphinx_copybutton',
 ]
 
-if os.getenv("READTHEDOCS"):
-    extensions.append("sphinxcontrib.googleanalytics")
-    googleanalytics_id = "G-25TF48HJ76"
+if os.getenv('READTHEDOCS'):
+    extensions.append('sphinxcontrib.googleanalytics')
+    googleanalytics_id = 'G-25TF48HJ76'
 
 napoleon_include_special_with_doc = True
 
@@ -56,7 +55,7 @@ pygments_dark_style = 'native'
 html_theme = 'furo'
 html_static_path = ['_static']
 html_theme_options = {
-    "navigation_with_keys": True,
+    'navigation_with_keys': True,
     'dark_css_variables': {
         'color-brand-primary': '#5187b2',
         'color-brand-content': '#5187b2',
@@ -67,10 +66,11 @@ html_theme_options = {
     },
 }
 
-copybutton_prompt_text = r">>> |\.\.\. |\$ |In \[\d*\]: | {2,5}\.\.\.: | {5,8}: "
+copybutton_prompt_text = r'>>> |\.\.\. |\$ |In \[\d*\]: | {2,5}\.\.\.: | {5,8}: '
 copybutton_prompt_is_regexp = True
 copybutton_remove_prompts = True
-copybutton_line_continuation_character = "\\"
+copybutton_line_continuation_character = '\\'
+
 
 ### Add custom directives
 def setup(app):
@@ -100,8 +100,3 @@ breathe_default_project = 'gsd'
 breathe_domain_by_extension = {
     'h': 'c',
 }
-
-read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
-
-if read_the_docs_build:
-    subprocess.call('cd ..; doxygen', shell=True)
