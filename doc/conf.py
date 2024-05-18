@@ -56,6 +56,7 @@ html_theme = 'furo'
 html_static_path = ['_static']
 html_theme_options = {
     'navigation_with_keys': True,
+    'top_of_page_buttons': [],
     'dark_css_variables': {
         'color-brand-primary': '#5187b2',
         'color-brand-content': '#5187b2',
