@@ -55,8 +55,7 @@ body:
       description: How did you install GSD?
       options:
         - Compiled from source
-        - Conda package
-        - glotzerlab-software container
+        - Conda-forge package
         - PyPI package
     validations:
       required: true

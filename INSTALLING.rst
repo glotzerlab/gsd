@@ -4,13 +4,9 @@
 Installation
 ============
 
-**gsd** binaries are available in the glotzerlab-software_ Docker_/Singularity_ images and in
-packages on conda-forge_ and PyPI_. You can also compile **gsd** from source, embed ``gsd.c`` in
-your code, or read gsd files with a pure Python reader ``pygsd.py``.
+**gsd** binaries are available on conda-forge_ and PyPI_. You can also compile **gsd** from source,
+embed ``gsd.c`` in your code, or read gsd files with a pure Python reader ``pygsd.py``.
 
-.. _glotzerlab-software: https://glotzerlab-software.readthedocs.io
-.. _Docker: https://hub.docker.com/
-.. _Singularity: https://www.sylabs.io/
 .. _conda-forge: https://conda-forge.org/
 .. _PyPI: https://pypi.org/
 
@@ -21,20 +17,21 @@ Conda package
 ^^^^^^^^^^^^^
 
 **gsd** is available on conda-forge_ on the *linux-64*, *linux-aarch64*, *linux-ppc64le*, *osx-64*,
-*osx-arm64* and *win-64* platforms. To install, download and install miniforge_ or miniconda_ Then
-install **gsd** from the conda-forge_ channel:
-
-.. _miniforge: https://github.com/conda-forge/miniforge
-.. _miniconda: http://conda.pydata.org/miniconda.html
+*osx-arm64* and *win-64* platforms.
 
 .. code-block:: bash
 
-   $ conda install -c conda-forge gsd
+   $ conda install gsd
 
-Singularity / Docker images
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. tip::
 
-See the glotzerlab-software_ documentation for instructions to install and use the containers.
+    Use miniforge_, miniconda_, or any other *minimal* conda environment provider instead of the
+    full Anaconda distribution to avoid package conflicts with conda-forge_ packages. When using
+    miniconda_, follow the instructions provided in the conda-forge_ documentation to configure the
+    channel selection so that all packages are installed from the conda-forge_ channel.
+
+.. _miniforge: https://github.com/conda-forge/miniforge
+.. _miniconda: http://conda.pydata.org/miniconda.html
 
 PyPI
 ^^^^
@@ -77,7 +74,7 @@ To build the documentation from source (optional):
 
 1. `Install prerequisites`_::
 
-   $ <package-manager> install breathe doxygen sphinx furo ipython
+   $ <package-manager> install breathe doxygen sphinx furo ipython sphinx-copybutton
 
 2. `Build the documentation`_::
 
@@ -121,9 +118,10 @@ Install prerequisites
 
 * **breathe**
 * **Doxygen**
-* **Sphinx**
-* **IPython**
 * **furo**
+* **IPython**
+* **Sphinx**
+* **sphinx-copybutton**
 * an internet connection
 
 **To execute unit tests:**

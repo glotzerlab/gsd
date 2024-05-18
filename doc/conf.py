@@ -17,7 +17,12 @@ extensions = [
     'sphinx.ext.mathjax',
     'IPython.sphinxext.ipython_console_highlighting',
     'IPython.sphinxext.ipython_directive',
+    'sphinx_copybutton',
 ]
+
+if os.getenv("READTHEDOCS"):
+    extensions.append("sphinxcontrib.googleanalytics")
+    googleanalytics_id = "G-25TF48HJ76"
 
 napoleon_include_special_with_doc = True
 
@@ -51,6 +56,7 @@ pygments_dark_style = 'native'
 html_theme = 'furo'
 html_static_path = ['_static']
 html_theme_options = {
+    "navigation_with_keys": True,
     'dark_css_variables': {
         'color-brand-primary': '#5187b2',
         'color-brand-content': '#5187b2',
@@ -61,6 +67,10 @@ html_theme_options = {
     },
 }
 
+copybutton_prompt_text = r">>> |\.\.\. |\$ |In \[\d*\]: | {2,5}\.\.\.: | {5,8}: "
+copybutton_prompt_is_regexp = True
+copybutton_remove_prompts = True
+copybutton_line_continuation_character = "\\"
 
 ### Add custom directives
 def setup(app):
