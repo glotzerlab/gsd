@@ -39,20 +39,12 @@ requires = ["setuptools>=64.0.0",
             "oldest-supported-numpy"]
 
 [tool.cibuildwheel]
-# Build for cpython only
-skip =  "pp*"
-
 # Test the wheels.
 test-command = "pytest --pyargs gsd -v --log-level=DEBUG"
-test-skip = "*-macosx_arm64"
 test-requires = "pytest"
 
-# Build only on 64-bit architectures.
+# Build on 64-bit architectures.
 archs = ["auto64"]
-
-[tool.cibuildwheel.macos]
-# Build for x86_64 and arm64
-archs = ["x86_64", "arm64"]
 
 [tool.cibuildwheel.linux]
 # dependencies do not build for musl
