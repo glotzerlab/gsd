@@ -17,7 +17,7 @@ classifiers=[
     "License :: OSI Approved :: BSD License",
     "Topic :: Scientific/Engineering :: Physics",
     ]
-dependencies = ["numpy>=1.9.3"]
+dependencies = ["numpy>=1.19.0"]
 
 [project.scripts]
 gsd = "gsd.__main__:main"
@@ -36,12 +36,11 @@ packages = ["gsd", "gsd.test"]
 requires = ["setuptools>=64.0.0",
             "wheel",
             "Cython",
-            "oldest-supported-numpy"]
+            "numpy>=2.0.0rc1"]
 
 [tool.cibuildwheel]
 # Test the wheels.
 test-command = "pytest --pyargs gsd -v --log-level=DEBUG"
-test-requires = "pytest"
 
 # Build on 64-bit architectures.
 archs = ["auto64"]
