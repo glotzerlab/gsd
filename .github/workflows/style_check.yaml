@@ -1,0 +1,48 @@
+name: Style check
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  pull_request:
+
+  push:
+    branches:
+      - "trunk-*"
+
+  workflow_dispatch:
+
+env:
+  UV_VERSION: 0.2.2
+
+jobs:
+  clang-tidy:
+    name: Run clang-tidy
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4.1.6
+      - name: Set up Python
+        uses: actions/setup-python@v5.1.0
+        with:
+          python-version: 3.12
+      - name: Install uv
+        run: curl --proto '=https' --tlsv1.2 -LsSf https://github.com/astral-sh/uv/releases/download/${{ env.UV_VERSION }}/uv-installer.sh | bash
+      - name: Install prereqs
+        run: 'uv pip install -r .github/requirements-test.txt --only-binary :all: --system --reinstall'
+      - name: Configure
+        run: cmake -B build
+      - name: Execute clang-tidy
+        run: clang-tidy-14 -p=build gsd/*.c gsd/*.h scripts/*.cc --quiet --warnings-as-errors="*"
+
+  # This job is used to provide a single requirement for branch merge conditions.
+  checks_complete:
+    name: Style check
+    if: always()
+    needs: [clang-tidy]
+    runs-on: ubuntu-latest
+
+    steps:
+    - run: jq --exit-status 'all(.result == "success")' <<< '${{ toJson(needs) }}'
+    - name: Done
+      run: exit 0
