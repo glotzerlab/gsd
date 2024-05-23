@@ -5,21 +5,18 @@ concurrency:
   cancel-in-progress: true
 
 on:
-  # Trigger on pull requests.
   pull_request:
 
-  # Trigger on pushes to the mainline branches and version tags. This prevents building commits
-  # twice when the pull request source branch is in the same repository.
   push:
     branches:
-      - "trunk-patch"
-      - "trunk-minor"
-      - "trunk-major"
+      - "trunk-*"
     tags:
       - "v*"
 
-  # Trigger on request.
   workflow_dispatch:
+
+env:
+  UV_VERSION: 0.2.2
 
 jobs:
   build_wheels:
@@ -34,14 +31,11 @@ jobs:
         include:
           - os_version: 'latest'
 
-          - os: 'macos'
-            os_version: '14'
-
     steps:
-      - uses: actions/checkout@v4.1.4
+      - uses: actions/checkout@v4.1.6
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.17.0
+        uses: pypa/cibuildwheel@v2.18.1
         env:
           CIBW_PROJECT_REQUIRES_PYTHON: "==${{ matrix.python_version }}.*"
 
@@ -59,17 +53,13 @@ jobs:
       - uses: actions/setup-python@v5.1.0
         name: Install Python
         with:
-          python-version: '3.11'
+          python-version: '3.12'
 
-      - uses: actions/cache@v4.0.2
-        with:
-          path: ~/.cache/pip
-          key: gsd-build-wheels-pip-${{ hashFiles('.github/requirements-build-sdist.txt') }}
-          restore-keys: |
-            gsd-build-wheels-pip-
+      - name: Install uv
+        run: curl --proto '=https' --tlsv1.2 -LsSf https://github.com/astral-sh/uv/releases/download/${{ env.UV_VERSION }}/uv-installer.sh | bash
 
       - name: Install build
-        run: python3 -m pip --disable-pip-version-check install -r .github/requirements-build-sdist.txt --progress-bar=off
+        run: 'uv pip install -r .github/requirements-build-sdist.txt --only-binary :all: --system --reinstall'
 
       - name: Build sdist
         run: python -m build --sdist --outdir dist/ .
