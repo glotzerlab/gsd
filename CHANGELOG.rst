@@ -13,6 +13,11 @@ Change Log
 3.3.0 (not yet released)
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
+*Added:*
+
+* Support numpy 2.0
+  (`#367 <https://github.com/glotzerlab/gsd/pull/367>`__).
+
 *Changed:*
 
 * Navigate the documentation with arrow keys
@@ -21,6 +26,11 @@ Change Log
   (`#365 <https://github.com/glotzerlab/gsd/pull/365>`__).
 * Remove singularity reference from the documentation
   (`#365 <https://github.com/glotzerlab/gsd/pull/365>`__).
+
+*Removed:*
+
+* Support for Python 3.8
+  (`#367 <https://github.com/glotzerlab/gsd/pull/367>`__).
 
 3.2.1 (2024-01-22)
 ^^^^^^^^^^^^^^^^^^
