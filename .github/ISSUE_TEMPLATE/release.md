@@ -1,7 +1,7 @@
 ---
 name: Release checklist
 about: '[for maintainer use]'
-title: 'Release gsd 3.2.1'
+title: 'Release gsd 3.3.0'
 labels: ''
 assignees: 'joaander'
 
@@ -19,4 +19,3 @@ Release checklist:
   - [Output](https://gsd.readthedocs.io/en/latest/)
 - [ ] Tag and push.
 - [ ] Update conda-forge recipe.
-- [ ] Update glotzerlab-software.
