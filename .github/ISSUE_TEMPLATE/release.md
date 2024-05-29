@@ -1,7 +1,7 @@
 ---
 name: Release checklist
 about: '[for maintainer use]'
-title: 'Release gsd 3.2.1'
+title: 'Release gsd 3.3.0'
 labels: ''
 assignees: 'joaander'
 
