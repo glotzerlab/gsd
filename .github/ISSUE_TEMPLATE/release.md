@@ -19,4 +19,3 @@ Release checklist:
   - [Output](https://gsd.readthedocs.io/en/latest/)
 - [ ] Tag and push.
 - [ ] Update conda-forge recipe.
-- [ ] Update glotzerlab-software.
