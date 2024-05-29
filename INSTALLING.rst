@@ -16,22 +16,12 @@ Binaries
 Conda package
 ^^^^^^^^^^^^^
 
-**gsd** is available on conda-forge_ on the *linux-64*, *linux-aarch64*, *linux-ppc64le*, *osx-64*,
-*osx-arm64* and *win-64* platforms.
+**gsd** is available on conda-forge_ for the *linux-64*, *linux-aarch64*, *linux-ppc64le*, *osx-64*,
+*osx-arm64* and *win-64* architectures. Install with:
 
 .. code-block:: bash
 
-   $ conda install gsd
-
-.. tip::
-
-    Use miniforge_, miniconda_, or any other *minimal* conda environment provider instead of the
-    full Anaconda distribution to avoid package conflicts with conda-forge_ packages. When using
-    miniconda_, follow the instructions provided in the conda-forge_ documentation to configure the
-    channel selection so that all packages are installed from the conda-forge_ channel.
-
-.. _miniforge: https://github.com/conda-forge/miniforge
-.. _miniconda: http://conda.pydata.org/miniconda.html
+   $ mamba install gsd
 
 PyPI
 ^^^^
