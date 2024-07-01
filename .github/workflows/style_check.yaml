@@ -21,7 +21,7 @@ jobs:
     name: Run clang-tidy
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4.1.6
+      - uses: actions/checkout@v4.1.7
       - name: Set up Python
         uses: actions/setup-python@v5.1.0
         with:

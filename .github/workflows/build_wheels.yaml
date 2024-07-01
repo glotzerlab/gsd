@@ -50,10 +50,10 @@ jobs:
           oldest_numpy: '1.26.2'
 
     steps:
-      - uses: actions/checkout@v4.1.6
+      - uses: actions/checkout@v4.1.7
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.18.1
+        uses: pypa/cibuildwheel@v2.19.1
         env:
           CIBW_BUILD: "${{ matrix.python.version }}-*"
           CIBW_TEST_REQUIRES: pytest==8.2.1 numpy==${{ matrix.python.oldest_numpy }}
@@ -67,7 +67,7 @@ jobs:
     name: Build source distribution
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.1.6
+      - uses: actions/checkout@v4.1.7
 
       - uses: actions/setup-python@v5.1.0
         name: Install Python
@@ -107,7 +107,7 @@ jobs:
       - name: Upload to PyPI
         # upload to PyPI on every tag starting with 'v'
         if: startsWith(github.ref, 'refs/tags/v')
-        uses: pypa/gh-action-pypi-publish@v1.8.14
+        uses: pypa/gh-action-pypi-publish@v1.9.0
         with:
           user: __token__
           password: ${{ secrets.PYPI_API_TOKEN }}
@@ -115,7 +115,7 @@ jobs:
       - name: Upload to TestPyPI
         # otherwise, upload to TestPyPi
         if: ${{ !startsWith(github.ref, 'refs/tags/v') && (github.event_name != 'pull_request' || (github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]')) }}
-        uses: pypa/gh-action-pypi-publish@v1.8.14
+        uses: pypa/gh-action-pypi-publish@v1.9.0
         with:
           user: __token__
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}
