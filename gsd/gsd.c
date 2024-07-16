@@ -2335,6 +2335,10 @@ size_t gsd_sizeof_type(enum gsd_type type)
         {
         val = sizeof(double);
         }
+    else if (type == GSD_TYPE_CHARACTER)
+        {
+        val = sizeof(char);
+        }
     else
         {
         return 0;
