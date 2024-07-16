@@ -48,7 +48,10 @@ extern "C"
         GSD_TYPE_FLOAT,
 
         /// 64-bit floating point number.
-        GSD_TYPE_DOUBLE
+        GSD_TYPE_DOUBLE,
+
+        /// 8-bit character.
+        GSD_TYPE_CHARACTER
         };
 
     /// Flag for GSD file open options
