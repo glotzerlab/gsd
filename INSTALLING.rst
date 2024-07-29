@@ -21,7 +21,7 @@ Conda package
 
 .. code-block:: bash
 
-   $ mamba install gsd
+   mamba install gsd
 
 PyPI
 ^^^^
@@ -30,13 +30,13 @@ Use **uv** or **pip** to install **gsd** binaries from PyPI_:
 
 .. code-block:: bash
 
-   $ uv pip install gsd
+   uv pip install gsd
 
 **OR**
 
 .. code-block:: bash
 
-   $ python3 -m pip install gsd
+   python3 -m pip install gsd
 
 Compile from source
 -------------------
@@ -45,40 +45,40 @@ To build the **gsd** Python package from source:
 
 1. `Obtain the source`_::
 
-   $ git clone https://github.com/glotzerlab/gsd
+    git clone https://github.com/glotzerlab/gsd
 
 2. Change to the repository directory::
 
-   $ cd gsd
+    cd gsd
 
 3. `Install with uv`_::
 
-   $ python3 -m pip install .
+    python3 -m pip install .
 
 4. **OR** `Install prerequisites`_ and `Build with CMake for development`_::
 
-   $ {{ package-manager }} install cmake cython ninja numpy python pytest
-   $ cmake -B build -S . -GNinja
-   $ cd build
-   $ ninja
+    {{ package-manager }} install cmake cython ninja numpy python pytest
+    cmake -B build -S . -GNinja
+    cd build
+    ninja
 
 To run the tests:
 
 1. `Run tests`_::
 
-    $ python3 -m pytest gsd
+    python3 -m pytest gsd
 
 To build the documentation from source:
 
 1. `Install prerequisites`_::
 
-   $ {{ package-manager }} install breathe doxygen sphinx furo ipython sphinx-copybutton
+   {{ package-manager }} install breathe doxygen sphinx furo ipython sphinx-copybutton
 
 2. `Build the documentation`_::
 
-   $ cd {{ path/to/gsd/repository }}
-   $ doxygen
-   $ sphinx-build -b html doc html
+    cd {{ path/to/gsd/repository }}
+    doxygen
+    sphinx-build -b html doc html
 
 The sections below provide details on each of these steps.
 
@@ -124,7 +124,7 @@ Obtain the source
 
 Clone using Git_::
 
-   $ git clone https://github.com/glotzerlab/gsd
+   git clone https://github.com/glotzerlab/gsd
 
 Release tarballs are also available on the `GitHub release pages`_.
 
@@ -145,8 +145,8 @@ Use **uv** to install the Python module into your virtual environment:
 
 .. code-block:: bash
 
-   $ cd {{ path/to/gsd/repository }}
-   $ uv pip install .
+   cd {{ path/to/gsd/repository }}
+   uv pip install .
 
 .. Build with CMake for development:
 
@@ -154,21 +154,21 @@ Build with CMake for development
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 GSD also provides `CMake`_ scripts for development and testing that build a functional Python module
-in the given build directory. First, configure the build with ``cmake``.
+in the given build directory. First, configure the build with ``cmake``:
 
 .. code-block:: bash
 
-   $ cd {{ path/to/gsd/repository }}
-   $ cmake -B build -S . -GNinja
+   cd {{ path/to/gsd/repository }}
+   cmake -B build -S . -GNinja
 
 Then, build the code:
 
 .. code-block:: bash
 
-   $ cd build
-   $ ninja
+   cd build
+   ninja
 
-After you modify the code, execute ``ninja`` to rebuild. ``ninja`` will automatically reconfigure
+Execute ``ninja`` to rebuild after you modify the code. ``ninja`` will automatically reconfigure
 as needed.
 
 .. tip::
@@ -179,7 +179,7 @@ as needed.
 .. important::
 
     When using a virtual environment, activate the environment and set the cmake prefix path
-    before running CMake_: ``$ export CMAKE_PREFIX_PATH=<path-to-environment>``.
+    before running CMake_: ``export CMAKE_PREFIX_PATH=<path-to-environment>``.
 
 .. warning::
 
@@ -200,13 +200,13 @@ Use `pytest`_ to execute unit tests:
 
 .. code-block:: bash
 
-   $ python3 -m pytest gsd
+   python3 -m pytest gsd
 
 Add the ``--validate`` option to include longer-running validation tests:
 
 .. code-block:: bash
 
-   $ python3 -m pytest --pyargs gsd -p gsd.pytest_plugin_validate --validate
+   python3 -m pytest --pyargs gsd -p gsd.pytest_plugin_validate --validate
 
 .. _pytest: https://docs.pytest.org/
 
@@ -219,14 +219,14 @@ Run `Doxygen`_ to generate the C documentation:
 
 .. code-block:: bash
 
-   $ cd {{ path/to/gsd/repository }}
-   $ doxygen
+   cd {{ path/to/gsd/repository }}
+   doxygen
 
 Run `Sphinx`_ to build the HTML documentation:
 
 .. code-block:: bash
 
-   $ sphinx-build -b html doc html
+   sphinx-build -b html doc html
 
 Open the file :file:`html/index.html` in your web browser to view the documentation.
 
@@ -239,7 +239,7 @@ Open the file :file:`html/index.html` in your web browser to view the documentat
 
     When using CMake builds, set PYTHONPATH to the build directory before running ``sphinx-build``::
 
-        $ PYTHONPATH=build sphinx-build -b html doc html
+        PYTHONPATH=build sphinx-build -b html doc html
 
 .. _Sphinx: https://www.sphinx-doc.org/
 .. _Doxygen: https://www.doxygen.nl/
