@@ -26,39 +26,38 @@ Conda package
 PyPI
 ^^^^
 
-Use **pip** or **uv** to install **gsd** binaries from PyPI_:
-
-.. code-block:: bash
-
-   $ python3 -m pip install gsd
+Use **uv** or **pip** to install **gsd** binaries from PyPI_:
 
 .. code-block:: bash
 
    $ uv pip install gsd
+
+**OR**
+
+.. code-block:: bash
+
+   $ python3 -m pip install gsd
 
 Compile from source
 -------------------
 
 To build the **gsd** Python package from source:
 
-1. `Install prerequisites`_::
-
-   $ {{ package-manager }} install cmake cython git ninja numpy python pytest
-
-2. `Obtain the source`_::
+1. `Obtain the source`_::
 
    $ git clone https://github.com/glotzerlab/gsd
 
-3. Change to the repository directory::
+2. Change to the repository directory::
 
    $ cd gsd
 
-4. `Install with uv`_::
+3. `Install with uv`_::
 
    $ python3 -m pip install .
 
-   **OR** `Build with CMake for development`_::
+4. **OR** `Install prerequisites`_ and `Build with CMake for development`_::
 
+   $ {{ package-manager }} install cmake cython ninja numpy python pytest
    $ cmake -B build -S . -GNinja
    $ cd build
    $ ninja
