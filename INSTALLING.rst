@@ -230,7 +230,7 @@ Open the file :file:`html/index.html` in your web browser to view the documentat
 .. tip::
 
     Add the sphinx options ``-a -n -W -T --keep-going`` to produce docs with consistent links in
-    the side panel and provide more useful error messages::
+    the side panel and provide more useful error messages.
 
 .. tip::
 
