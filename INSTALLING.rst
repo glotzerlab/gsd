@@ -186,7 +186,7 @@ as needed.
     When using a ``conda`` environment for development, make sure that the environment does not
     contain ``clang``, ``gcc``, or any other compiler or linker. These interfere with the native
     compilers on your system and will result in compiler errors when building, linker errors when
-    running, or unexplainable segmentation faults.
+    running, or unexplainable faults.
 
 .. _CMake: https://cmake.org/
 .. _Ninja: https://ninja-build.org/
