@@ -26,11 +26,15 @@ Conda package
 PyPI
 ^^^^
 
-Use **pip** to install **gsd** binaries from PyPI_:
+Use **pip** or **uv** to install **gsd** binaries from PyPI_:
 
 .. code-block:: bash
 
    $ python3 -m pip install gsd
+
+.. code-block:: bash
+
+   $ uv pip install gsd
 
 Compile from source
 -------------------
@@ -49,7 +53,7 @@ To build the **gsd** Python package from source:
 
    $ cd gsd
 
-4. `Install with pip`_::
+4. `Install with uv`_::
 
    $ python3 -m pip install .
 
@@ -133,17 +137,17 @@ Release tarballs are also available on the `GitHub release pages`_.
 .. _git book: https://git-scm.com/book
 .. _Git: https://git-scm.com/
 
-.. _Install with pip:
+.. _Install with uv:
 
-Install with pip
-^^^^^^^^^^^^^^^^^^^^^^^
+Install with uv
+^^^^^^^^^^^^^^^^
 
-Use **pip** to install the Python module into your virtual environment:
+Use **uv** to install the Python module into your virtual environment:
 
 .. code-block:: bash
 
    $ cd {{ path/to/gsd/repository }}
-   $ python3 -m pip install .
+   $ uv pip install .
 
 .. Build with CMake for development:
 
