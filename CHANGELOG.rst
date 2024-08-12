@@ -10,6 +10,14 @@ Change Log
 3.x
 ---
 
+3.3.1 (not yet released)
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Changed:*
+
+* Improved build instructions
+  (`#376 <https://github.com/glotzerlab/gsd/pull/376>`__).
+
 3.3.0 (2024-05-29)
 ^^^^^^^^^^^^^^^^^^
 
