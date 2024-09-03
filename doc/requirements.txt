@@ -28,13 +28,13 @@ docutils==0.21.2
     #   sphinx
 executing==2.0.1
     # via stack-data
-furo==2024.7.18
+furo==2024.8.6
     # via -r doc/requirements.in
 idna==3.7
     # via requests
 imagesize==1.4.1
     # via sphinx
-ipython==8.26.0
+ipython==8.27.0
     # via -r doc/requirements.in
 jedi==0.19.1
     # via ipython
