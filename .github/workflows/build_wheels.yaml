@@ -49,7 +49,7 @@ jobs:
         - version: 'cp312'
           oldest_numpy: '1.26.2'
         - version: 'cp313'
-          oldest_numpy: '1.26.2'
+          oldest_numpy: '2.1.1'
 
     steps:
       - uses: actions/checkout@v4.1.7
