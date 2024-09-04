@@ -44,10 +44,6 @@ jobs:
         ##############
         # Ubuntu 24.04
         - os: ubuntu-24.04
-          python: '3.9'
-          c_compiler: gcc-13
-          cxx_compiler: g++-14
-        - os: ubuntu-24.04
           python: '3.10'
           c_compiler: gcc-14
           cxx_compiler: g++-14
@@ -70,10 +66,6 @@ jobs:
         ##############
         # Ubuntu 22.04
         - os: ubuntu-22.04
-          python: '3.9'
-          c_compiler: gcc-11
-          cxx_compiler: g++-11
-        - os: ubuntu-22.04
           python: '3.10'
           c_compiler: gcc-12
           cxx_compiler: g++-12
@@ -91,10 +83,6 @@ jobs:
           cxx_compiler: clang++-15
         ##############
         # Ubuntu 20.04
-        - os: ubuntu-20.04
-          python: '3.9'
-          c_compiler: gcc-10
-          cxx_compiler: g++-10
         - os: ubuntu-20.04
           python: '3.10'
           c_compiler: clang-10
