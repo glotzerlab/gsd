@@ -16,7 +16,7 @@ on:
   workflow_dispatch:
 
 env:
-  UV_VERSION: 0.2.2
+  UV_VERSION: 0.4.4
 
 jobs:
   build_wheels:
@@ -47,6 +47,8 @@ jobs:
         - version: 'cp311'
           oldest_numpy: '1.23.2'
         - version: 'cp312'
+          oldest_numpy: '1.26.2'
+        - version: 'cp313'
           oldest_numpy: '1.26.2'
 
     steps:
