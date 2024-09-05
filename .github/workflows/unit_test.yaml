@@ -17,9 +17,6 @@ defaults:
   run:
     shell: bash
 
-env:
-  UV_VERSION: 0.4.4
-
 jobs:
   unit_test:
     name: Unit test [py${{ matrix.python }} ${{ matrix.c_compiler }} ${{ matrix.os }}]
@@ -97,17 +94,17 @@ jobs:
           cxx_compiler: clang++-12
 
     steps:
-      - uses: actions/checkout@v4.1.7
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           path: code
       - name: Set up Python
-        uses: actions/setup-python@v5.2.0
+        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
         with:
           python-version: ${{ matrix.python }}
-      - name: Install uv
-        run: curl --proto '=https' --tlsv1.2 -LsSf https://github.com/astral-sh/uv/releases/download/${{ env.UV_VERSION }}/uv-installer.sh | bash
-      - name: Install prereqs
-        run: 'uv pip install -r code/.github/requirements-test.txt --only-binary :all: --system --reinstall'
+      - name: Set up Python environment
+        uses: glotzerlab/workflows/setup-uv@ae7e7c6931098a313ef8069ef04b88a55c3a40f6 # 0.3.0
+        with:
+          lockfile: "code/.github/requirements-test.txt"
       - name: Set Linux compiler
         if: ${{ startsWith(matrix.os, 'ubuntu') }}
         run: |

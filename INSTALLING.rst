@@ -108,7 +108,7 @@ Install prerequisites
 **General requirements:**
 
 * **C compiler** (tested with gcc 10-14, clang 10-18, Visual Studio 2019-2022)
-* **Python** >= 3.9
+* **Python** >= 3.10
 * **numpy** >= 1.19.0
 * **Cython** >= 0.22
 
