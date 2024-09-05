@@ -13,15 +13,17 @@ repos:
   - id: check-toml
   - id: check-yaml
   - id: check-case-conflict
-  - id: fix-encoding-pragma
-    args:
-    - --remove
   - id: mixed-line-ending
-# actionlint fails to build on mac...
-# - repo: https://github.com/rhysd/actionlint
-#   rev: v1.6.27
-#   hooks:
-#     - id: actionlint
+- repo: https://github.com/asottile/pyupgrade
+  rev: 'v3.16.0'
+  hooks:
+    - id: pyupgrade
+      args:
+        - --py39-plus
+- repo: https://github.com/rhysd/actionlint
+  rev: v1.7.1
+  hooks:
+    - id: actionlint
 - repo: https://github.com/glotzerlab/fix-license-header
   rev: v0.3.2
   hooks:

@@ -69,8 +69,7 @@ int main(int argc, char** argv) // NOLINT
 
     const double us = 1e-6;
     std::cout << "Write time: " << time_per_key / us << " microseconds/key." << '\n';
-    std::cout << "Write time: " << time_per_key / us * n_keys << " microseconds/frame."
-              << '\n';
+    std::cout << "Write time: " << time_per_key / us * n_keys << " microseconds/frame." << '\n';
 
     const double mb_per_second
         = double(key_size * 8 + static_cast<const size_t>(32) * static_cast<const size_t>(2))

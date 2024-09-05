@@ -28,9 +28,9 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
 
 #include "gsd.h"
 
@@ -163,9 +163,10 @@ inline static ssize_t gsd_io_pwrite_retry(int fd, const void* buf, size_t count,
         size_t to_write = count - total_bytes_written;
 #if defined(_WIN32) || defined(__APPLE__)
         // win32 and apple raise an error for writes greater than INT_MAX
-        if (to_write > INT_MAX / 2) {
+        if (to_write > INT_MAX / 2)
+            {
             to_write = INT_MAX / 2;
-}
+            }
 #endif
 
         errno = 0;
@@ -206,9 +207,10 @@ inline static ssize_t gsd_io_pread_retry(int fd, void* buf, size_t count, int64_
         size_t to_read = count - total_bytes_read;
 #if defined(_WIN32) || defined(__APPLE__)
         // win32 and apple raise errors for reads greater than INT_MAX
-        if (to_read > INT_MAX / 2) {
+        if (to_read > INT_MAX / 2)
+            {
             to_read = INT_MAX / 2;
-}
+            }
 #endif
 
         errno = 0;
