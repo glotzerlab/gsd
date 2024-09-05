@@ -22,6 +22,7 @@ jobs:
     name: Unit test [py${{ matrix.python }} ${{ matrix.c_compiler }} ${{ matrix.os }}]
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         include:
         ##############
