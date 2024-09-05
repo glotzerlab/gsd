@@ -37,8 +37,6 @@ jobs:
           arch: 'x86_64'
 
         python:
-        - version: 'cp39'
-          oldest_numpy: '1.21.6'
         - version: 'cp310'
           oldest_numpy: '1.21.6'
         - version: 'cp311'
