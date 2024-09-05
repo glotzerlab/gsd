@@ -14,4 +14,6 @@ Checks: 'bugprone-*,
          -readability-function-cognitive-complexity,
          -cert-dcl37-c,
          -cert-dcl51-cpp,
-         -bugprone-narrowing-conversions'
+         -bugprone-narrowing-conversions,
+         -misc-include-cleaner,
+         '
