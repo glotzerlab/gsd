@@ -13,27 +13,24 @@ on:
 
   workflow_dispatch:
 
-env:
-  UV_VERSION: 0.2.2
-
 jobs:
   clang-tidy:
     name: Run clang-tidy
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4.1.7
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
       - name: Set up Python
-        uses: actions/setup-python@v5.2.0
+        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
         with:
           python-version: 3.12
-      - name: Install uv
-        run: curl --proto '=https' --tlsv1.2 -LsSf https://github.com/astral-sh/uv/releases/download/${{ env.UV_VERSION }}/uv-installer.sh | bash
-      - name: Install prereqs
-        run: 'uv pip install -r .github/requirements-test.txt --only-binary :all: --system --reinstall'
+      - name: Set up Python environment
+        uses: glotzerlab/workflows/setup-uv@ae7e7c6931098a313ef8069ef04b88a55c3a40f6 # 0.3.0
+        with:
+          lockfile: ".github/requirements-test.txt"
       - name: Configure
         run: cmake -B build
       - name: Execute clang-tidy
-        run: clang-tidy-14 -p=build gsd/*.c gsd/*.h scripts/*.cc --quiet --warnings-as-errors="*"
+        run: clang-tidy-18 -p=build gsd/*.c gsd/*.h scripts/*.cc --quiet --warnings-as-errors="*"
 
   # This job is used to provide a single requirement for branch merge conditions.
   checks_complete:

@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <sstream>
+#include <string>
 #include <vector>
 
 #include "gsd.h"
@@ -22,7 +23,7 @@ int main(int argc, char** argv) // NOLINT
 
     gsd_handle handle;
     gsd_open(&handle, "test.gsd", GSD_OPEN_READONLY);
-    size_t n_frames = gsd_get_nframes(&handle);
+    size_t const n_frames = gsd_get_nframes(&handle);
     size_t n_read = n_frames;
     if (n_read > max_frames)
         {
@@ -30,7 +31,7 @@ int main(int argc, char** argv) // NOLINT
         }
 
     std::cout << "Reading test.gsd with: " << n_keys << " keys and " << n_frames << " frames."
-              << std::endl;
+              << '\n';
 
     auto t1 = std::chrono::high_resolution_clock::now();
 
@@ -50,12 +51,12 @@ int main(int argc, char** argv) // NOLINT
 
     auto t2 = std::chrono::high_resolution_clock::now();
 
-    std::chrono::duration<double> time_span
+    std::chrono::duration<double> const time_span
         = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
-    double time_per_key = time_span.count() / double(n_keys) / double(n_read);
+    double const time_per_key = time_span.count() / double(n_keys) / double(n_read);
 
     const double us = 1e-6;
-    std::cout << "Sequential read time: " << time_per_key / us << " microseconds/key." << std::endl;
+    std::cout << "Sequential read time: " << time_per_key / us << " microseconds/key." << '\n';
 
     gsd_close(&handle);
     }

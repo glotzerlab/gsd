@@ -3,8 +3,10 @@ __pycache__
 *.pyc
 *.pyo
 *.so
+.cache
 fl.c
 build
+compile_commands.json
 devdoc
 dist
 gsd.egg-info

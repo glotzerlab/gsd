@@ -8,28 +8,4 @@ on:
 
 jobs:
   stale:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/stale@v9.0.0
-      with:
-        days-before-close: 10
-        stale-issue-label: stale
-        stale-pr-label: stale
-        exempt-issue-labels: essential
-        exempt-pr-labels: essential
-
-        days-before-issue-stale: 170
-        stale-issue-message: >
-          This issue has been automatically marked as stale because it has not had
-          recent activity. It will be closed if no further activity occurs.
-        close-issue-message: >
-          This issue has been automatically closed because it has not had
-          recent activity.
-
-        days-before-pr-stale: 20
-        stale-pr-message: >
-          This pull request has been automatically marked as stale because it has not had
-          recent activity. It will be closed if no further activity occurs.
-        close-pr-message: >
-          This pull request has been automatically closed because it has not had
-          recent activity.
+    uses: glotzerlab/workflows/.github/workflows/stale.yaml@ae7e7c6931098a313ef8069ef04b88a55c3a40f6 # 0.3.0
