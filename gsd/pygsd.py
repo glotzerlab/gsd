@@ -63,6 +63,7 @@ gsd_type_mapping = {
     8: numpy.dtype('int64'),
     9: numpy.dtype('float32'),
     10: numpy.dtype('float64'),
+    11: numpy.dtype('str_'),
 }
 
 
@@ -352,7 +353,7 @@ class GSDFile:
 
         if len(data_raw) != size:
             raise OSError
-
+        # TODO: if gsd type is character, decode it here
         data_npy = numpy.frombuffer(data_raw, dtype=gsd_type_mapping[chunk.type])
 
         if chunk.M == 1:
