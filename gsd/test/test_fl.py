@@ -43,16 +43,12 @@ def test_create(tmp_path, open_mode):
         numpy.int64,
         numpy.float32,
         numpy.float64,
-        numpy.str_,
     ],
 )
-def test_dtype(tmp_path, typ):
-    """Test all supported data types."""
-    if typ is numpy.str_:
-        data1d = "test"
-    else:
-        data1d = numpy.array([950, 200, 3, 4, 5, 6, 7], dtype=typ)
-    data2d = numpy.array([[10, 20], [30, 40], [50, 80]], dtype=typ) # <-- don't use this with str
+def test_nonstring_dtypes(tmp_path, typ):
+    """Test all supported data types except for strings."""
+    data1d = numpy.array([1, 2, 3, 4, 5, 127], dtype=typ)
+    data2d = numpy.array([[10, 20], [30, 40], [50, 80]], dtype=typ)
     data_zero = numpy.array([], dtype=typ)
 
     gsd.fl.open(
@@ -71,9 +67,8 @@ def test_dtype(tmp_path, typ):
         schema_version=[1, 2],
     ) as f:
         f.write_chunk(name='data1d', data=data1d)
-        if typ is not numpy.str_:
-            f.write_chunk(name='data2d', data=data2d)
-            f.write_chunk(name='data_zero', data=data_zero)
+        f.write_chunk(name='data2d', data=data2d)
+        f.write_chunk(name='data_zero', data=data_zero)
         f.end_frame()
 
     with gsd.fl.open(
@@ -84,19 +79,15 @@ def test_dtype(tmp_path, typ):
         schema_version=[1, 2],
     ) as f:
         read_data1d = f.read_chunk(frame=0, name='data1d')
-        if typ is not numpy.str_:
-            read_data2d = f.read_chunk(frame=0, name='data2d')
-            read_data_zero = f.read_chunk(frame=0, name='data_zero')
+        read_data2d = f.read_chunk(frame=0, name='data2d')
+        read_data_zero = f.read_chunk(frame=0, name='data_zero')
 
-        if typ != numpy.str_:
-            assert data1d.dtype.type == read_data1d.dtype.type
-            assert data2d.dtype.type == read_data2d.dtype.type
-            numpy.testing.assert_array_equal(data2d, read_data2d)
-            assert data_zero.dtype.type == read_data_zero.dtype.type
-            assert data_zero.shape == (0,)
-        
+        assert data1d.dtype.type == read_data1d.dtype.type
         numpy.testing.assert_array_equal(data1d, read_data1d)
-
+        assert data2d.dtype.type == read_data2d.dtype.type
+        numpy.testing.assert_array_equal(data2d, read_data2d)
+        assert data_zero.dtype.type == read_data_zero.dtype.type
+        assert data_zero.shape == (0,)
 
     # test again with pygsd
     with gsd.pygsd.GSDFile(file=open(str(tmp_path / 'test_dtype.gsd'), mode='rb')) as f:
@@ -108,6 +99,46 @@ def test_dtype(tmp_path, typ):
         assert data2d.dtype.type == read_data2d.dtype.type
         numpy.testing.assert_array_equal(data2d, read_data2d)
 
+def test_string_dtype(tmp_path):
+    """Test string datatype.
+    
+    Note that the string datatype does not support 0-D or 2-D data."""
+    data1d = "test"
+
+    gsd.fl.open(
+        mode='x',
+        name=tmp_path / 'test_dtype.gsd',
+        application='test_dtype',
+        schema='none',
+        schema_version=[1, 2],
+    )
+
+    with gsd.fl.open(
+        name=tmp_path / 'test_dtype.gsd',
+        mode='w',
+        application='test_dtype',
+        schema='none',
+        schema_version=[1, 2],
+    ) as f:
+        f.write_chunk(name='data1d', data=data1d)
+        f.end_frame()
+
+    with gsd.fl.open(
+        name=tmp_path / 'test_dtype.gsd',
+        mode='r',
+        application='test_dtype',
+        schema='none',
+        schema_version=[1, 2],
+    ) as f:
+        read_data1d = f.read_chunk(frame=0, name='data1d')
+
+        numpy.testing.assert_string_equal(data1d, read_data1d)
+
+    # test again with pygsd
+    with gsd.pygsd.GSDFile(file=open(str(tmp_path / 'test_dtype.gsd'), mode='rb')) as f:
+        read_data1d = f.read_chunk(frame=0, name='data1d')
+
+        numpy.testing.assert_string_equal(data1d, read_data1d)
 
 def test_metadata(tmp_path, open_mode):
     """Test file metadata."""
