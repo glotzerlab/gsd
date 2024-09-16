@@ -99,11 +99,12 @@ def test_nonstring_dtypes(tmp_path, typ):
         assert data2d.dtype.type == read_data2d.dtype.type
         numpy.testing.assert_array_equal(data2d, read_data2d)
 
+
 def test_string_dtype(tmp_path):
     """Test string datatype.
-    
+
     Note that the string datatype does not support 0-D or 2-D data."""
-    data1d = "test"
+    data1d = 'test'
 
     gsd.fl.open(
         mode='x',
@@ -139,6 +140,7 @@ def test_string_dtype(tmp_path):
         read_data1d = f.read_chunk(frame=0, name='data1d')
 
         numpy.testing.assert_string_equal(data1d, read_data1d)
+
 
 def test_metadata(tmp_path, open_mode):
     """Test file metadata."""

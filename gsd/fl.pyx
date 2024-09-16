@@ -148,8 +148,8 @@ cdef void * __get_ptr_float64(data):
 
 cdef void * __get_ptr_char(data):
     # cdef numpy.ndarray[numpy.str_, ndim=2, mode="c", cast=True] data_array_char
-    cdef size_t address 
-    address = data.__array_interface__["data"][0] 
+    cdef size_t address
+    address = data.__array_interface__["data"][0]
     # data_array_char: cython.char[::1] = data.reshape(data.size)
     # data_array_char = data
     # cdef char *data_array_char
@@ -877,7 +877,7 @@ cdef class GSDFile:
                 bytes_array = data_array.view(dtype=numpy.dtype((bytes, data_array.shape[0])))
                 print(bytes_array[0].decode("UTF-8"))
                 return bytes_array[0].decode("UTF-8")
-            
+
             return data_array.reshape([index_entry.N])
         else:
             return data_array
