@@ -235,3 +235,6 @@ Data block
 A data block stores raw data bytes on the disk. For a given index entry
 ``entry``, the data starts at location ``entry.location`` and is the next
 ``entry.N * entry.M * gsd_sizeof_type(entry.type)`` bytes.
+
+The type fields are self-explanatory except for UTF-8 strings, for which
+null-termination is allowed but not required.
