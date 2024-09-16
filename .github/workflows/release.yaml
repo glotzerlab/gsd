@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4.1.6
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           fetch-depth: 0
           submodules: true
@@ -63,7 +63,10 @@ jobs:
       - name: Tar source
         run: tar -cvJf "${name}-${tag:1}.tar.xz" "${name}-${tag:1}"
 
-      - uses: actions/upload-artifact@v4.3.3
+      - name: Tar source
+        run: tar --zstd -cvf "${name}-${tag:1}.tar.xz" "${name}-${tag:1}"
+
+      - uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # v4.4.0
         with:
           name: release
           path: |
@@ -77,12 +80,12 @@ jobs:
 
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v4.1.7
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
         with:
           name: release
 
       - name: Create release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@c062e08bd532815e2082a85e87e3ef29c3e6d191 # v2.0.8
         if: startsWith(github.ref, 'refs/tags/v')
         with:
           files: "*.tar.*"

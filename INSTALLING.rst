@@ -13,63 +13,88 @@ embed ``gsd.c`` in your code, or read gsd files with a pure Python reader ``pygs
 Binaries
 --------
 
-Conda package
-^^^^^^^^^^^^^
+conda-forge package
+^^^^^^^^^^^^^^^^^^^
 
 **gsd** is available on conda-forge_ for the *linux-64*, *linux-aarch64*, *linux-ppc64le*, *osx-64*,
-*osx-arm64* and *win-64* architectures. Install with:
+*osx-arm64* and *win-64* architectures. Execute one of the following command to install **gsd**:
 
 .. code-block:: bash
 
-   $ mamba install gsd
+   micromamba install gsd
+
+**OR**
+
+.. code-block:: bash
+
+   mamba install gsd
 
 PyPI
 ^^^^
 
-Use **pip** to install **gsd** binaries:
+Use **uv** or **pip** to install **gsd** binaries from PyPI_ into a virtual environment:
 
 .. code-block:: bash
 
-   $ python3 -m pip install gsd
+   uv pip install gsd
+
+**OR**
+
+.. code-block:: bash
+
+   python3 -m pip install gsd
 
 Compile from source
 -------------------
 
-To build the **gsd** Python package from source:
+To build **gsd** from source:
 
-1. `Install prerequisites`_::
+1. `Obtain the source`_:
 
-   $ <package-manager> install cmake cython git numpy python pytest
+   .. code-block:: bash
 
-2. `Obtain the source`_::
+      git clone git@github.com:glotzerlab/gsd.git
 
-   $ git clone https://github.com/glotzerlab/gsd
+2. Change to the repository directory::
 
-3. `Install with setuptools`_::
+    cd gsd
 
-   $ python3 -m pip install -e gsd
+3. `Install with uv`_::
 
-   **OR** `Build with CMake for development`_::
+    uv pip install .
 
-   $ cmake -B build/gsd -S gsd
-   $ cmake --build build/gsd
+4. **OR** `Install prerequisites`_ and `Build with CMake for development`_:
 
-To run the tests (optional):
+   .. code-block:: bash
+
+      micromamba install cmake cython ninja numpy python pytest
+
+   .. code-block:: bash
+
+      cmake -B build -S . -GNinja
+      cd build
+      ninja
+
+To run the tests:
 
 1. `Run tests`_::
 
-    $ pytest --pyargs gsd
+    python3 -m pytest gsd
 
-To build the documentation from source (optional):
+To build the documentation from source:
 
 1. `Install prerequisites`_::
 
-   $ <package-manager> install breathe doxygen sphinx furo ipython sphinx-copybutton
+    micromamba install breathe doxygen sphinx furo ipython sphinx-copybutton
 
 2. `Build the documentation`_::
 
-   $ cd gsd && doxygen && cd ..
-   $ sphinx-build -b html gsd/doc build/gsd-documentation
+    cd {{ path/to/gsd/repository }}
+
+.. code-block:: bash
+
+    doxygen
+    sphinx-build -b html doc html
 
 The sections below provide details on each of these steps.
 
@@ -80,29 +105,16 @@ Install prerequisites
 
 **gsd** requires a number of tools and libraries to build.
 
-.. note::
-
-    This documentation is generic. Replace ``<package-manager>`` with your package or module
-    manager. You may need to adjust package names and/or install additional packages, such as
-    ``-dev`` packages that provide headers needed to build **gsd**.
-
-.. tip::
-
-    Create or use an existing `virtual environment`_, one place where you can install dependencies
-    and **gsd**::
-
-        $ python3 -m venv gsd-venv
-
-    You will need to activate your environment before installing or configuring **gsd**::
-
-        $ source gsd-venv/bin/activate
-
 **General requirements:**
 
 * **C compiler** (tested with gcc 10-14, clang 10-18, Visual Studio 2019-2022)
-* **Python** >= 3.9
+* **Python** >= 3.10
 * **numpy** >= 1.19.0
 * **Cython** >= 0.22
+
+**To execute unit tests:**
+
+* **pytest** >= 3.9.0
 
 **To build the documentation**:
 
@@ -114,20 +126,17 @@ Install prerequisites
 * **sphinx-copybutton**
 * an internet connection
 
-**To execute unit tests:**
-
-* **pytest** >= 3.9.0
-
-.. _virtual environment: https://docs.python.org/3/library/venv.html
 
 .. _Obtain the source:
 
 Obtain the source
 ^^^^^^^^^^^^^^^^^
 
-Clone using Git_::
+Clone using Git_:
 
-   $ git clone https://github.com/glotzerlab/gsd
+.. code-block:: bash
+
+   git clone git@github.com:glotzerlab/gsd.git
 
 Release tarballs are also available on the `GitHub release pages`_.
 
@@ -139,59 +148,58 @@ Release tarballs are also available on the `GitHub release pages`_.
 .. _git book: https://git-scm.com/book
 .. _Git: https://git-scm.com/
 
-.. _Install with setuptools:
+.. _Install with uv:
 
-Install with setuptools
-^^^^^^^^^^^^^^^^^^^^^^^
+Install with uv
+^^^^^^^^^^^^^^^^
 
-Use **pip** to install the Python module into your virtual environment:
+Use **uv** to install the Python module into your virtual environment:
 
 .. code-block:: bash
 
-   $ python3 -m pip install -e gsd
+   cd {{ path/to/gsd/repository }}
+
+.. code-block:: bash
+
+   uv pip install .
 
 .. Build with CMake for development:
 
 Build with CMake for development
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In addition to the setuptools build system. GSD also provides a `CMake`_ configuration for
-development and testing. You can assemble a functional Python module in the given build directory.
-First, configure the build with ``cmake``.
+GSD also provides `CMake`_ scripts for development and testing that build a functional Python module
+in the build directory. First, configure the build with ``cmake``:
 
 .. code-block:: bash
 
-   $ cmake -B build/gsd -S gsd
+   cd {{ path/to/gsd/repository }}
+
+.. code-block:: bash
+
+   cmake -B build -S . -GNinja
 
 Then, build the code:
 
 .. code-block:: bash
 
-   $ cmake --build build/gsd
+   cd build
+   ninja
 
-When modifying code, you only need to repeat the build step to update your build - it will
-automatically reconfigure as needed.
-
-.. tip::
-
-    Use Ninja_ to perform incremental builds in less time::
-
-        $ cmake -B build/gsd -S gsd -GNinja
-
-.. tip::
-
-    Place your build directory in ``/tmp`` or ``/scratch`` for faster builds. CMake_ performs
-    out-of-source builds, so the build directory can be anywhere on the filesystem.
+Execute ``ninja`` to rebuild after you modify the code. ``ninja`` will automatically reconfigure
+as needed.
 
 .. tip::
 
     Pass the following options to ``cmake`` to optimize the build for your processor:
     ``-DCMAKE_CXX_FLAGS=-march=native -DCMAKE_C_FLAGS=-march=native``.
 
-.. important::
+.. warning::
 
-    When using a virtual environment, activate the environment and set the cmake prefix path
-    before running CMake_: ``$ export CMAKE_PREFIX_PATH=<path-to-environment>``.
+    When using a ``conda-forge`` environment for development, make sure that the environment does
+    not contain ``clang``, ``gcc``, or any other compiler or linker. These interfere with the native
+    compilers on your system and will result in compiler errors when building, linker errors when
+    running, or segmentation faults.
 
 .. _CMake: https://cmake.org/
 .. _Ninja: https://ninja-build.org/
@@ -205,19 +213,13 @@ Use `pytest`_ to execute unit tests:
 
 .. code-block:: bash
 
-   $ python3 -m pytest --pyargs gsd
+   python3 -m pytest gsd
 
 Add the ``--validate`` option to include longer-running validation tests:
 
 .. code-block:: bash
 
-   $ python3 -m pytest --pyargs gsd -p gsd.pytest_plugin_validate --validate
-
-.. tip::
-
-    When using CMake builds, change to the build directory before running ``pytest``::
-
-        $ cd build/gsd
+   python3 -m pytest --pyargs gsd -p gsd.pytest_plugin_validate --validate
 
 .. _pytest: https://docs.pytest.org/
 
@@ -230,32 +232,24 @@ Run `Doxygen`_ to generate the C documentation:
 
 .. code-block:: bash
 
-   $ cd gsd
-   $ doxygen
-   $ cd ..
+   cd {{ path/to/gsd/repository }}
+
+.. code-block:: bash
+
+   doxygen
 
 Run `Sphinx`_ to build the HTML documentation:
 
 .. code-block:: bash
 
-   $ sphinx-build -b html gsd/doc build/gsd-documentation
+   PYTHONPATH=build sphinx-build -b html doc html
 
-Open the file :file:`build/gsd-documentation/index.html` in your web browser to view the
-documentation.
-
-.. tip::
-
-    When iteratively modifying the documentation, the sphinx options ``-a -n -W -T --keep-going``
-    are helpful to produce docs with consistent links in the side panel and to see more useful error
-    messages::
-
-        $ sphinx-build -a -n -W -T --keep-going -b html gsd/doc build/gsd-documentation
+Open the file :file:`html/index.html` in your web browser to view the documentation.
 
 .. tip::
 
-    When using CMake builds, set PYTHONPATH to the build directory before running ``sphinx-build``::
-
-        $ PYTHONPATH=build/gsd sphinx-build -b html gsd/doc build/gsd-documentation
+    Add the sphinx options ``-a -n -W -T --keep-going`` to produce docs with consistent links in
+    the side panel and provide more useful error messages.
 
 .. _Sphinx: https://www.sphinx-doc.org/
 .. _Doxygen: https://www.doxygen.nl/
@@ -271,6 +265,5 @@ Using the C library
 Using the pure Python reader
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If you only need to read files, you can skip installing and just extract the module modules
-``gsd/pygsd.py`` and ``gsd/hoomd.py``. Together, these implement a pure Python reader for **gsd**
-and **HOOMD** files - no C compiler required.
+The Python modules ``gsd/pygsd.py`` and ``gsd/hoomd.py`` implement a pure Python reader for **gsd**
+and **HOOMD** files.

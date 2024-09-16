@@ -14,7 +14,7 @@ beautifulsoup4==4.12.3
     # via furo
 breathe==4.35.0
     # via -r doc/requirements.in
-certifi==2024.2.2
+certifi==2024.7.4
     # via requests
 charset-normalizer==3.3.2
     # via requests
@@ -28,13 +28,13 @@ docutils==0.21.2
     #   sphinx
 executing==2.0.1
     # via stack-data
-furo==2024.5.6
+furo==2024.8.6
     # via -r doc/requirements.in
 idna==3.7
     # via requests
 imagesize==1.4.1
     # via sphinx
-ipython==8.24.0
+ipython==8.27.0
     # via -r doc/requirements.in
 jedi==0.19.1
     # via ipython
@@ -63,7 +63,7 @@ ptyprocess==0.7.0
     # via pexpect
 pure-eval==0.2.2
     # via stack-data
-pyarrow==16.0.0
+pyarrow==17.0.0
     # via -r doc/requirements.in
 pygments==2.17.2
     # via
@@ -84,7 +84,7 @@ snowballstemmer==2.2.0
     # via sphinx
 soupsieve==2.5
     # via beautifulsoup4
-sphinx==7.3.7
+sphinx==7.4.7
     # via
     #   -r doc/requirements.in
     #   breathe
@@ -118,7 +118,7 @@ traitlets==5.14.3
     #   matplotlib-inline
 tzdata==2024.1
     # via pandas
-urllib3==2.2.1
+urllib3==2.2.2
     # via requests
 wcwidth==0.2.13
     # via prompt-toolkit

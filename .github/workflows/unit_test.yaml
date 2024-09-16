@@ -17,14 +17,12 @@ defaults:
   run:
     shell: bash
 
-env:
-  UV_VERSION: 0.2.2
-
 jobs:
   unit_test:
     name: Unit test [py${{ matrix.python }} ${{ matrix.c_compiler }} ${{ matrix.os }}]
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         include:
         ##############
@@ -32,21 +30,17 @@ jobs:
         - os: windows-2019
           python: '3.12'
         - os: windows-2022
-          python: '3.12'
+          python: '3.13.0-rc.1'
         ##############
         # Mac
         # macos-x86_64
-        - os: macos-12
+        - os: macos-13
           python: '3.12'
         # macos-arm64
         - os: macos-14
-          python: '3.12'
+          python: '3.13.0-rc.1'
         ##############
         # Ubuntu 24.04
-        - os: ubuntu-24.04
-          python: '3.9'
-          c_compiler: gcc-13
-          cxx_compiler: g++-14
         - os: ubuntu-24.04
           python: '3.10'
           c_compiler: gcc-14
@@ -63,12 +57,12 @@ jobs:
           python: '3.12'
           c_compiler: clang-18
           cxx_compiler: clang++-18
+        - os: ubuntu-24.04
+          python: '3.13.0-rc.1'
+          c_compiler: clang-18
+          cxx_compiler: clang++-18
         ##############
         # Ubuntu 22.04
-        - os: ubuntu-22.04
-          python: '3.9'
-          c_compiler: gcc-11
-          cxx_compiler: g++-11
         - os: ubuntu-22.04
           python: '3.10'
           c_compiler: gcc-12
@@ -88,10 +82,6 @@ jobs:
         ##############
         # Ubuntu 20.04
         - os: ubuntu-20.04
-          python: '3.9'
-          c_compiler: gcc-10
-          cxx_compiler: g++-10
-        - os: ubuntu-20.04
           python: '3.10'
           c_compiler: clang-10
           cxx_compiler: clang++-10
@@ -105,17 +95,17 @@ jobs:
           cxx_compiler: clang++-12
 
     steps:
-      - uses: actions/checkout@v4.1.6
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           path: code
       - name: Set up Python
-        uses: actions/setup-python@v5.1.0
+        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
         with:
           python-version: ${{ matrix.python }}
-      - name: Install uv
-        run: curl --proto '=https' --tlsv1.2 -LsSf https://github.com/astral-sh/uv/releases/download/${{ env.UV_VERSION }}/uv-installer.sh | bash
-      - name: Install prereqs
-        run: 'uv pip install -r code/.github/requirements-test.txt --only-binary :all: --system --reinstall'
+      - name: Set up Python environment
+        uses: glotzerlab/workflows/setup-uv@ae7e7c6931098a313ef8069ef04b88a55c3a40f6 # 0.3.0
+        with:
+          lockfile: "code/.github/requirements-test.txt"
       - name: Set Linux compiler
         if: ${{ startsWith(matrix.os, 'ubuntu') }}
         run: |

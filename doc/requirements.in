@@ -1,10 +1,10 @@
 breathe == 4.35.0
 cython == 3.0.10
-furo == 2024.5.6
-ipython == 8.24.0
+furo == 2024.8.6
+ipython == 8.27.0
 numpy == 1.26.4
 pandas == 2.2.2
-pyarrow == 16.0.0
-sphinx == 7.3.7
+pyarrow == 17.0.0
+sphinx == 7.4.7
 sphinxcontrib-googleanalytics==0.4
 sphinx-copybutton==0.5.2

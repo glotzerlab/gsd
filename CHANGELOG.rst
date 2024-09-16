@@ -10,6 +10,27 @@ Change Log
 3.x
 ---
 
+3.3.2 (2024-09-06)
+^^^^^^^^^^^^^^^^^^
+
+*Added:*
+
+* Support Python 3.13
+  (`#388 <https://github.com/glotzerlab/gsd/pull/388>`__).
+
+*Removed:*
+
+* Support for Python 3.9
+  (`#388 <https://github.com/glotzerlab/gsd/pull/388>`__).
+
+3.3.1 (2024-08-19)
+^^^^^^^^^^^^^^^^^^
+
+*Changed:*
+
+* Improved build instructions
+  (`#376 <https://github.com/glotzerlab/gsd/pull/376>`__).
+
 3.3.0 (2024-05-29)
 ^^^^^^^^^^^^^^^^^^
 
