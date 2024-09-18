@@ -29,6 +29,7 @@ The :py:class:`GSDFile` in this module can be used with the
 
 """
 
+from enum import Enum
 import logging
 import struct
 import sys
