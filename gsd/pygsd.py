@@ -53,19 +53,22 @@ gsd_header_struct = struct.Struct('QQQQQII64s64s80s')
 gsd_index_entry = namedtuple('gsd_index_entry', 'frame N location M id type flags')
 gsd_index_entry_struct = struct.Struct('QQqIHBB')
 
-gsd_type_mapping = {
-    1: numpy.dtype('uint8'),
-    2: numpy.dtype('uint16'),
-    3: numpy.dtype('uint32'),
-    4: numpy.dtype('uint64'),
-    5: numpy.dtype('int8'),
-    6: numpy.dtype('int16'),
-    7: numpy.dtype('int32'),
-    8: numpy.dtype('int64'),
-    9: numpy.dtype('float32'),
-    10: numpy.dtype('float64'),
-    11: numpy.dtype('int8'),  # used for strings
-}
+gsd_type_mapping = Enum(
+    "gsd_type",
+    [
+        ["uint8", numpy.dtype('uint8')],
+        ["uint16", numpy.dtype('uint16')],
+        ["uint32", numpy.dtype('uint32')],
+        ["uint64", numpy.dtype('uint64')],
+        ["int8", numpy.dtype('int8')],
+        ["int16", numpy.dtype('int16')],
+        ["int32", numpy.dtype('int32')],
+        ["int64", numpy.dtype('int64')],
+        ["float32", numpy.dtype('float32')],
+        ["float64", numpy.dtype('float64')],
+        ["str", numpy.dtype('int8')],    # used for strings
+    ]
+)
 
 
 class GSDFile:
