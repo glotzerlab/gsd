@@ -1618,7 +1618,7 @@ inline static int gsd_initialize_handle(struct gsd_handle* handle)
     if ((handle->open_flags == GSD_OPEN_READWRITE || handle->open_flags == GSD_OPEN_APPEND)
         && (handle->header.gsd_version
             != gsd_make_version(GSD_CURRENT_FILE_VERSION_MAJOR, GSD_CURRENT_FILE_VERSION_MINOR))
-        && (handle->header.gsd_version >> 16 == GSD_CURRENT_FILE_VERSION_MAJOR))
+        && (handle->header.gsd_version >> (sizeof(uint32_t) * 4) == GSD_CURRENT_FILE_VERSION_MAJOR))
         {
         handle->header.gsd_version
             = gsd_make_version(GSD_CURRENT_FILE_VERSION_MAJOR, GSD_CURRENT_FILE_VERSION_MINOR);
