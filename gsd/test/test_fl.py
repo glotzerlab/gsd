@@ -17,6 +17,7 @@ import gsd.fl
 import gsd.pygsd
 
 test_path = pathlib.Path(os.path.realpath(__file__)).parent
+current_gsd_version = (2, 1)
 
 
 def test_create(tmp_path, open_mode):
@@ -172,7 +173,7 @@ def test_metadata(tmp_path, open_mode):
         assert f.schema == 'none'
         assert f.schema_version == (1, 2)
         assert f.nframes == 150
-        assert f.gsd_version == (2, 0)
+        assert f.gsd_version == current_gsd_version
 
     # test again with pygsd
     with gsd.pygsd.GSDFile(
@@ -184,7 +185,7 @@ def test_metadata(tmp_path, open_mode):
         assert f.schema == 'none'
         assert f.schema_version == (1, 2)
         assert f.nframes == 150
-        assert f.gsd_version == (2, 0)
+        assert f.gsd_version == current_gsd_version
 
 
 def test_append(tmp_path, open_mode):
@@ -815,14 +816,14 @@ def test_gsd_v1_upgrade_read(tmp_path, open_mode):
         schema='none',
         schema_version=[1, 2],
     ) as f:
-        assert f.gsd_version == (2, 0)
+        assert f.gsd_version == current_gsd_version
 
         check_v1_file_read(f)
 
     with gsd.pygsd.GSDFile(
         file=open(str(tmp_path / 'test_gsd_v1.gsd'), mode='rb')
     ) as f:
-        assert f.gsd_version == (2, 0)
+        assert f.gsd_version == current_gsd_version
 
         check_v1_file_read(f)
 
@@ -955,7 +956,7 @@ def test_gsd_v1_upgrade_write(tmp_path, open_mode):
 
         f.upgrade()
 
-        assert f.gsd_version == (2, 0)
+        assert f.gsd_version == current_gsd_version
 
         for value in values:
             if isinstance(value, int):
@@ -975,7 +976,7 @@ def test_gsd_v1_upgrade_write(tmp_path, open_mode):
         schema='none',
         schema_version=[1, 2],
     ) as f:
-        assert f.gsd_version == (2, 0)
+        assert f.gsd_version == current_gsd_version
 
         check_v1_file_read(f)
 
@@ -983,7 +984,7 @@ def test_gsd_v1_upgrade_write(tmp_path, open_mode):
     with gsd.pygsd.GSDFile(
         file=open(str(tmp_path / 'test_gsd_v1.gsd'), mode='rb')
     ) as f:
-        assert f.gsd_version == (2, 0)
+        assert f.gsd_version == current_gsd_version
 
         check_v1_file_read(f)
 
