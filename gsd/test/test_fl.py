@@ -102,10 +102,10 @@ def test_nonstring_dtypes(tmp_path, typ):
 
 def test_string_dtype(tmp_path):
     """Test string datatype.
-    
+
     Note that the string datatype does not support 0-D or 2-D data.
     """
-    data1d = "test"
+    data1d = 'test'
 
     gsd.fl.open(
         mode='x',
