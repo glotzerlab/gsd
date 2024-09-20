@@ -29,7 +29,6 @@ The :py:class:`GSDFile` in this module can be used with the
 
 """
 
-from enum import Enum
 import logging
 import struct
 import sys
@@ -356,7 +355,7 @@ class GSDFile:
             raise OSError
 
         # If gsd type is character, decode it here
-        if gsd_type_mapping[chunk.type][0] == "str":
+        if gsd_type_mapping[chunk.type][0] == 'str':
             data_npy = data_raw.decode('utf-8')
         else:
             data_npy = numpy.frombuffer(data_raw, dtype=gsd_type_mapping[chunk.type][1])
