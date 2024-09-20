@@ -10,6 +10,14 @@ Change Log
 3.x
 ---
 
+3.4.0 (not yet released)
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Added:*
+
+* New chunk type for string data - valid in file layer versions 2.1 and later
+  (`#391 <https://github.com/glotzerlab/gsd/pull/391>`__).
+
 3.3.2 (2024-09-06)
 ^^^^^^^^^^^^^^^^^^
 
