@@ -54,17 +54,17 @@ gsd_index_entry = namedtuple('gsd_index_entry', 'frame N location M id type flag
 gsd_index_entry_struct = struct.Struct('QQqIHBB')
 
 gsd_type_mapping = {
-    1: ("uint8", numpy.dtype('uint8')),
-    2: ("uint16", numpy.dtype('uint16')),
-    3: ("uint32", numpy.dtype('uint32')),
-    4: ("uint64", numpy.dtype('uint64')),
-    5: ("int8", numpy.dtype('int8')),
-    6: ("int16", numpy.dtype('int16')),
-    7: ("int32", numpy.dtype('int32')),
-    8: ("int64", numpy.dtype('int64')),
-    9: ("float32", numpy.dtype('float32')),
-    10: ("float64", numpy.dtype('float64')),
-    11: ("str", numpy.dtype('int8')),
+    1: ('uint8', numpy.dtype('uint8')),
+    2: ('uint16', numpy.dtype('uint16')),
+    3: ('uint32', numpy.dtype('uint32')),
+    4: ('uint64', numpy.dtype('uint64')),
+    5: ('int8', numpy.dtype('int8')),
+    6: ('int16', numpy.dtype('int16')),
+    7: ('int32', numpy.dtype('int32')),
+    8: ('int64', numpy.dtype('int64')),
+    9: ('float32', numpy.dtype('float32')),
+    10: ('float64', numpy.dtype('float64')),
+    11: ('str', numpy.dtype('int8')),
 }
 
 
