@@ -18,3 +18,4 @@ The following people contributed to GSD.
 * Alexander Stukowski, OVITO GmbH
 * Charlotte Shiqi Zhao, University of Michigan
 * Tim Moore, University of Michigan
+* Joseph Burkhart, University of Michigan
