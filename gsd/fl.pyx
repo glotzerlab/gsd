@@ -146,21 +146,6 @@ cdef void * __get_ptr_float64(data):
     else:
         return <void*>&data_array_float64[0, 0]
 
-cdef void * __get_ptr_char(data):
-    # cdef numpy.ndarray[numpy.str_, ndim=2, mode="c", cast=True] data_array_char
-    cdef size_t address
-    address = data.__array_interface__["data"][0]
-    # data_array_char: cython.char[::1] = data.reshape(data.size)
-    # data_array_char = data
-    # cdef char *data_array_char
-    # data_array_char = cython.address(data.data[0])
-    if (data.size == 0):
-        return NULL
-    else:
-        # return <void*>cython.address(data_array_char.data[0])
-        # return <void*>cython.address(data_array_char[0])
-        return <void*>address
-
 
 def open(name, mode, application=None, schema=None, schema_version=None):
     """open(name, mode, application=None, schema=None, schema_version=None)
