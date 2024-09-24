@@ -625,12 +625,6 @@ cdef class GSDFile:
             elif data_array.dtype == numpy.float64:
                 gsd_type = libgsd.GSD_TYPE_DOUBLE
                 data_ptr = __get_ptr_float64(data_array)
-            # elif data_array.dtype.type is numpy.str_:
-            #     if N != 0:
-            #         M = int(data_array.dtype.itemsize/4)
-            #     print(f"Wrote: {N=}, {M=}, {data_array=}")
-            #     gsd_type = libgsd.GSD_TYPE_CHARACTER
-            #     data_ptr = __get_ptr_char(data_array)
             else:
                 raise ValueError("invalid type for chunk: " + name)
 
