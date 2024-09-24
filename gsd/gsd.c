@@ -2583,7 +2583,7 @@ int gsd_upgrade(struct gsd_handle* handle)
                 }
             }
 
-        // label the file as a v2.1 file
+        // GSD always writes files matching the current major and minor version.
         handle->header.gsd_version
             = gsd_make_version(GSD_CURRENT_FILE_VERSION_MAJOR, GSD_CURRENT_FILE_VERSION_MINOR);
 
