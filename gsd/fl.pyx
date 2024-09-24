@@ -22,7 +22,6 @@ from libc.stdint cimport uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t,\
 from libc.errno cimport errno
 cimport gsd.libgsd as libgsd
 cimport numpy
-cimport cython
 
 logger = logging.getLogger('gsd.fl')
 
