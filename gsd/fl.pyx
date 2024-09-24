@@ -853,7 +853,6 @@ cdef class GSDFile:
             if gsd_type == libgsd.GSD_TYPE_CHARACTER:
                 data_array = data_array.flatten()
                 bytes_array = data_array.view(dtype=numpy.dtype((bytes, data_array.shape[0])))
-                print(bytes_array[0].decode("UTF-8"))
                 return bytes_array[0].decode("UTF-8")
 
             return data_array.reshape([index_entry.N])
