@@ -128,7 +128,7 @@ There are four types of data blocks in a GSD file.
 
    * List of string names used by index entries.
    * v1.0 files: Each name is a 64-byte character string.
-   * v2.0 files: Names may have any length and are separated by 0 terminators.
+   * v2.x files: Names may have any length and are separated by 0 terminators.
    * The first name that starts with the 0 byte marks the end of the list
    * The header stores the total size of the name list block.
 
@@ -215,13 +215,13 @@ non-standard packing attributes or pragmas to enforce this.
 In v1.0 files, the frame index must monotonically increase from one index entry
 to the next. The GSD API ensures this.
 
-In v2.0 files, the entire index block is stored sorted first by frame, then
+In v2.x files, the entire index block is stored sorted first by frame, then
 by *id*.
 
 Namelist block
 ^^^^^^^^^^^^^^
 
-In v2.0 files, the namelist block stores a list of strings separated by 0
+In v2.x files, the namelist block stores a list of strings separated by 0
 terminators.
 
 In v1.0 files, the namelist block stores a list of 0-terminated strings in
@@ -237,7 +237,7 @@ A data block stores raw data bytes on the disk. For a given index entry
 ``entry.N * entry.M * gsd_sizeof_type(entry.type)`` bytes.
 
 Added in version 2.1
-^^^^^^^^^^^^^^^^^^^^
+--------------------
 
 * The ``GSD_CHARACTER`` chunk type represents a UTF-8 string (null termination is allowed, but not
   required).
