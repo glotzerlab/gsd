@@ -1613,15 +1613,12 @@ inline static int gsd_initialize_handle(struct gsd_handle* handle)
     handle->maximum_write_buffer_size = GSD_DEFAULT_MAXIMUM_WRITE_BUFFER_SIZE;
     handle->index_entries_to_buffer = GSD_DEFAULT_INDEX_ENTRIES_TO_BUFFER;
 
-    // When opening a file in a writeable mode, if the file's major version
-    // is identical to the current major version, silently upgrade the minor version
-    const unsigned int GSD_MAX_FILE_VERSION_MINOR = 0xFFFF;
+    // Silently upgrade writable files from a previous matching major version to the latest
+    // minor version.
     if ((handle->open_flags == GSD_OPEN_READWRITE || handle->open_flags == GSD_OPEN_APPEND)
         && (handle->header.gsd_version
             != gsd_make_version(GSD_CURRENT_FILE_VERSION_MAJOR, GSD_CURRENT_FILE_VERSION_MINOR))
-        && (handle->header.gsd_version >> (sizeof(uint32_t) * 4) == GSD_CURRENT_FILE_VERSION_MAJOR)
-        && (handle->header.gsd_version
-            & (GSD_MAX_FILE_VERSION_MINOR < GSD_CURRENT_FILE_VERSION_MINOR)))
+        && (handle->header.gsd_version >> (sizeof(uint32_t) * 4) == GSD_CURRENT_FILE_VERSION_MAJOR))
         {
         handle->header.gsd_version
             = gsd_make_version(GSD_CURRENT_FILE_VERSION_MAJOR, GSD_CURRENT_FILE_VERSION_MINOR);
