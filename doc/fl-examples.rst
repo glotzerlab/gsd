@@ -198,21 +198,15 @@ Store string chunks
                     application="My application",
                     schema="My Schema",
                     schema_version=[1,0])
-    f.mode
-    s = "This is a string"
-    b = numpy.array([s], dtype=numpy.dtype((bytes, len(s)+1)))
-    b = b.view(dtype=numpy.int8)
-    b
-    f.write_chunk(name='string', data=b)
+    f.write_chunk(name='string', data="This is a string")
     f.end_frame()
     r = f.read_chunk(frame=0, name='string')
     r
-    r = r.view(dtype=numpy.dtype((bytes, r.shape[0])));
-    r[0].decode('UTF-8')
     f.close()
 
-To store a string in a gsd file, convert it to a numpy array of bytes and store
-that data in the file. Decode the byte sequence to get back a string.
+Staring with GSD 3.4.0, the file layer can natively store strings in the file.
+In previous versions, you need to convert strings to a numpy array of bytes and store
+that data in the file.
 
 Truncate
 ^^^^^^^^
