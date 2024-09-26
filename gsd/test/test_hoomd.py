@@ -794,11 +794,13 @@ def test_log(tmp_path, open_mode):
     frame0.log['particles/pair_lj_energy'] = [0, -5, -8, -3]
     frame0.log['value/potential_energy'] = [10]
     frame0.log['value/pressure'] = [-3]
+    frame0.log['category'] = 'A'
 
     frame1 = gsd.hoomd.Frame()
 
     frame1.log['particles/pair_lj_energy'] = [1, 2, -4, -10]
     frame1.log['value/pressure'] = [5]
+    frame1.log['category'] = 'B'
 
     with gsd.hoomd.open(name=tmp_path / 'test_log.gsd', mode=open_mode.write) as hf:
         hf.extend([frame0, frame1])
@@ -819,6 +821,7 @@ def test_log(tmp_path, open_mode):
         numpy.testing.assert_array_equal(
             s.log['value/pressure'], frame0.log['value/pressure']
         )
+        assert s.log['category'] == frame0.log['category']
 
         s = hf[1]
 
@@ -837,6 +840,7 @@ def test_log(tmp_path, open_mode):
         numpy.testing.assert_array_equal(
             s.log['value/pressure'], frame1.log['value/pressure']
         )
+        assert s.log['category'] == frame1.log['category']
 
 
 def test_pickle(tmp_path):
@@ -877,6 +881,7 @@ def test_read_log(tmp_path):
     ]
     frame0.log['value/potential_energy'] = [10]
     frame0.log['value/pressure'] = [-3]
+    frame0.log['category'] = 'A'
 
     frame1 = gsd.hoomd.Frame()
     frame1.configuration.step = 1
@@ -888,6 +893,7 @@ def test_read_log(tmp_path):
         (4, 4, 4),
     ]
     frame1.log['value/pressure'] = [5]
+    frame1.log['category'] = 'B'
 
     with gsd.hoomd.open(name=tmp_path / 'test_log.gsd', mode='w') as hf:
         hf.extend([frame0, frame1])
@@ -897,13 +903,14 @@ def test_read_log(tmp_path):
         name=tmp_path / 'test_log.gsd', scalar_only=False
     )
 
-    assert len(logged_data_dict) == 5
+    assert len(logged_data_dict) == 6
     assert list(logged_data_dict.keys()) == [
         'configuration/step',
         'log/particles/pair_lj_energy',
         'log/particles/pair_lj_force',
         'log/value/potential_energy',
         'log/value/pressure',
+        'log/category',
     ]
 
     numpy.testing.assert_array_equal(logged_data_dict['configuration/step'], [0, 1])
@@ -926,16 +933,21 @@ def test_read_log(tmp_path):
         logged_data_dict['log/value/pressure'],
         [*frame0.log['value/pressure'], *frame1.log['value/pressure']],
     )
+    numpy.testing.assert_array_equal(
+        logged_data_dict['log/category'],
+        [*frame0.log['category'], *frame1.log['category']],
+    )
 
     # Test scalar_only = True
     logged_data_dict = gsd.hoomd.read_log(
         name=tmp_path / 'test_log.gsd', scalar_only=True
     )
-    assert len(logged_data_dict) == 3
+    assert len(logged_data_dict) == 4
     assert list(logged_data_dict.keys()) == [
         'configuration/step',
         'log/value/potential_energy',
         'log/value/pressure',
+        'log/category',
     ]
     numpy.testing.assert_array_equal(logged_data_dict['configuration/step'], [0, 1])
     numpy.testing.assert_array_equal(
@@ -945,6 +957,10 @@ def test_read_log(tmp_path):
     numpy.testing.assert_array_equal(
         logged_data_dict['log/value/pressure'],
         [*frame0.log['value/pressure'], *frame1.log['value/pressure']],
+    )
+    numpy.testing.assert_array_equal(
+        logged_data_dict['log/category'],
+        [*frame0.log['category'], *frame1.log['category']],
     )
 
 
