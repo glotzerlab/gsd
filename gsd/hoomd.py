@@ -1195,6 +1195,9 @@ def read_log(name, scalar_only=False):
                     tmp = numpy.array([0], dtype=numpy.uint64)
                 else:
                     tmp = gsdfileobj.read_chunk(frame=0, name=log)
+                    # if chunk contains string, put it in the numpy array
+                    if isinstance(tmp, str):
+                        tmp = numpy.array([tmp])
 
                 if scalar_only and not tmp.shape[0] == 1:
                     continue
