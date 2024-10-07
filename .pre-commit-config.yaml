@@ -5,7 +5,7 @@ ci:
 
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: 'v4.6.0'
+  rev: 'v5.0.0'
   hooks:
   - id: end-of-file-fixer
   - id: trailing-whitespace
@@ -21,7 +21,7 @@ repos:
       args:
         - --py310-plus
 - repo: https://github.com/rhysd/actionlint
-  rev: v1.7.1
+  rev: v1.7.3
   hooks:
     - id: actionlint
 - repo: https://github.com/glotzerlab/fix-license-header
@@ -36,12 +36,12 @@ repos:
     - --keep-before=#!
     - --keep-after=.. include
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: 'v0.6.3'
+  rev: 'v0.6.9'
   hooks:
   - id: ruff-format
   - id: ruff
 - repo: https://github.com/pre-commit/mirrors-clang-format
-  rev: v18.1.8
+  rev: v19.1.1
   hooks:
   - id: clang-format
     types_or: [c, c++]
