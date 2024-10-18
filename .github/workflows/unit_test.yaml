@@ -95,7 +95,7 @@ jobs:
           cxx_compiler: clang++-12
 
     steps:
-      - uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
+      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
         with:
           path: code
       - name: Set up Python
@@ -103,7 +103,7 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
       - name: Set up Python environment
-        uses: glotzerlab/workflows/setup-uv@ae7e7c6931098a313ef8069ef04b88a55c3a40f6 # 0.3.0
+        uses: glotzerlab/workflows/setup-uv@0d90feacda686e08bfecc451fc04a8596bd295f5 # 0.4.0
         with:
           lockfile: "code/.github/requirements-test.txt"
       - name: Set Linux compiler
