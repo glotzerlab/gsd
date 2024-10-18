@@ -15,7 +15,7 @@ repos:
   - id: check-case-conflict
   - id: mixed-line-ending
 - repo: https://github.com/asottile/pyupgrade
-  rev: 'v3.17.0'
+  rev: 'v3.18.0'
   hooks:
     - id: pyupgrade
       args:
@@ -36,12 +36,12 @@ repos:
     - --keep-before=#!
     - --keep-after=.. include
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: 'v0.6.9'
+  rev: 'v0.7.0'
   hooks:
   - id: ruff-format
   - id: ruff
 - repo: https://github.com/pre-commit/mirrors-clang-format
-  rev: v19.1.1
+  rev: v19.1.2
   hooks:
   - id: clang-format
     types_or: [c, c++]

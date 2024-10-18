@@ -5,7 +5,7 @@
 #---------------------------------------------------------------------------
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = "GSD"
-PROJECT_NUMBER         = v3.3.2
+PROJECT_NUMBER         = v3.4.0
 PROJECT_BRIEF          = "General simulation data"
 PROJECT_LOGO           =
 OUTPUT_DIRECTORY       = devdoc

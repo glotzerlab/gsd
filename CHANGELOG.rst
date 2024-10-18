@@ -10,16 +10,19 @@ Change Log
 3.x
 ---
 
-3.4.0 (not yet released)
-^^^^^^^^^^^^^^^^^^^^^^^^
+3.4.0 (2024-10-18)
+^^^^^^^^^^^^^^^^^^
 
 *Added:*
 
-* New chunk type for string data - valid in file layer versions 2.1 and later
+* ``GSD_TYPE_CHARACTER`` chunk type for string data - valid in file layer versions 2.1 and later
   (`#391 <https://github.com/glotzerlab/gsd/pull/391>`__).
 
 *Changed:*
 
+* The ``log`` dictionary in a hoomd frame now accepts string values. ``read_log`` correspondingly
+  produces a NumPy array of variable length strings
+  (`#391 <https://github.com/glotzerlab/gsd/pull/391>`__).
 * Require NumPy >= 2.0
   (`#391 <https://github.com/glotzerlab/gsd/pull/391>`__).
 
