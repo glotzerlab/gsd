@@ -800,7 +800,7 @@ def test_log(tmp_path, open_mode):
 
     frame1.log['particles/pair_lj_energy'] = [1, 2, -4, -10]
     frame1.log['value/pressure'] = [5]
-    frame1.log['category'] = 'B'
+    frame1.log['category'] = 'BBB'
 
     with gsd.hoomd.open(name=tmp_path / 'test_log.gsd', mode=open_mode.write) as hf:
         hf.extend([frame0, frame1])
@@ -893,7 +893,7 @@ def test_read_log(tmp_path):
         (4, 4, 4),
     ]
     frame1.log['value/pressure'] = [5]
-    frame1.log['category'] = 'B'
+    frame1.log['category'] = 'BBB'
 
     with gsd.hoomd.open(name=tmp_path / 'test_log.gsd', mode='w') as hf:
         hf.extend([frame0, frame1])
@@ -935,7 +935,10 @@ def test_read_log(tmp_path):
     )
     numpy.testing.assert_array_equal(
         logged_data_dict['log/category'],
-        [*frame0.log['category'], *frame1.log['category']],
+        numpy.array(
+            [frame0.log['category'], frame1.log['category']],
+            dtype=numpy.dtypes.StringDType,
+        ),
     )
 
     # Test scalar_only = True
@@ -960,7 +963,10 @@ def test_read_log(tmp_path):
     )
     numpy.testing.assert_array_equal(
         logged_data_dict['log/category'],
-        [*frame0.log['category'], *frame1.log['category']],
+        numpy.array(
+            [frame0.log['category'], frame1.log['category']],
+            dtype=numpy.dtypes.StringDType,
+        ),
     )
 
 

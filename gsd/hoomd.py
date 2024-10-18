@@ -1197,13 +1197,15 @@ def read_log(name, scalar_only=False):
                     tmp = gsdfileobj.read_chunk(frame=0, name=log)
                     # if chunk contains string, put it in the numpy array
                     if isinstance(tmp, str):
-                        tmp = numpy.array([tmp])
+                        tmp = numpy.array([tmp], dtype=numpy.dtypes.StringDType)
 
                 if scalar_only and not tmp.shape[0] == 1:
                     continue
                 if tmp.shape[0] == 1:
                     logged_data_dict[log] = numpy.full(
-                        fill_value=tmp[0], shape=(gsdfileobj.nframes,)
+                        fill_value=tmp[0],
+                        shape=(gsdfileobj.nframes,),
+                        dtype=tmp.dtype,
                     )
                 else:
                     logged_data_dict[log] = numpy.tile(
@@ -1215,7 +1217,12 @@ def read_log(name, scalar_only=False):
                     if not gsdfileobj.chunk_exists(frame=idx, name=key):
                         continue
                     data = gsdfileobj.read_chunk(frame=idx, name=key)
-                    if len(logged_data_dict[key][idx].shape) == 0:
+                    if (
+                        not isinstance(
+                            logged_data_dict[key].dtype, numpy.dtypes.StringDType
+                        )
+                        and len(logged_data_dict[key][idx].shape) == 0
+                    ):
                         logged_data_dict[key][idx] = data[0]
                     else:
                         logged_data_dict[key][idx] = data
