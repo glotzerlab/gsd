@@ -47,15 +47,15 @@ jobs:
           oldest_numpy: '2.1.1'
 
     steps:
-      - uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
+      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@d4a2945fcc8d13f20a1b99d461b8e844d5fc6e23 # v2.21.1
+        uses: pypa/cibuildwheel@7940a4c0e76eb2030e473a5f864f291f63ee879b # v2.21.3
         env:
           CIBW_BUILD: "${{ matrix.python.version }}-*"
           CIBW_TEST_REQUIRES: pytest==8.3.3 numpy==${{ matrix.python.oldest_numpy }}
 
-      - uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # v4.4.0
+      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
         with:
           name: dist-python-${{ matrix.python.version }}-${{ matrix.os.base }}-${{ matrix.os.arch }}
           path: ./wheelhouse/*.whl
@@ -64,21 +64,21 @@ jobs:
     name: Build source distribution
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
+      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
 
       - name: Set up Python
         uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
         with:
           python-version: 3.12
       - name: Set up Python environment
-        uses: glotzerlab/workflows/setup-uv@ae7e7c6931098a313ef8069ef04b88a55c3a40f6 # 0.3.0
+        uses: glotzerlab/workflows/setup-uv@0d90feacda686e08bfecc451fc04a8596bd295f5 # 0.4.0
         with:
           lockfile: ".github/requirements-build-sdist.txt"
 
       - name: Build sdist
         run: python -m build --sdist --outdir dist/ .
 
-      - uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # v4.4.0
+      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
         with:
           name: dist-sdist
           path: dist/*.tar.gz
@@ -102,7 +102,7 @@ jobs:
       - name: Upload to PyPI
         # upload to PyPI on every tag starting with 'v'
         if: startsWith(github.ref, 'refs/tags/v')
-        uses: pypa/gh-action-pypi-publish@897895f1e160c830e369f9779632ebc134688e1b # v1.10.2
+        uses: pypa/gh-action-pypi-publish@f7600683efdcb7656dec5b29656edb7bc586e597 # v1.10.3
         with:
           user: __token__
           password: ${{ secrets.PYPI_API_TOKEN }}
@@ -111,7 +111,7 @@ jobs:
         # otherwise, upload to TestPyPi
         continue-on-error: true
         if: ${{ !startsWith(github.ref, 'refs/tags/v') && (github.event_name != 'pull_request' || (github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]')) }}
-        uses: pypa/gh-action-pypi-publish@897895f1e160c830e369f9779632ebc134688e1b # v1.10.2
+        uses: pypa/gh-action-pypi-publish@f7600683efdcb7656dec5b29656edb7bc586e597 # v1.10.3
         with:
           user: __token__
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}
