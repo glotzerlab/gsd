@@ -9,7 +9,7 @@ Attributes:
                    not the file layer version it reads/writes.
 """
 
-version = '3.3.2'
+version = '3.4.0'
 
 __all__ = [
     'version',
