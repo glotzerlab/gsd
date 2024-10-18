@@ -86,7 +86,12 @@ enum
 /// Current GSD file specification
 enum
     {
-    GSD_CURRENT_FILE_VERSION = 2
+    GSD_CURRENT_FILE_VERSION_MAJOR = 2
+    };
+
+enum
+    {
+    GSD_CURRENT_FILE_VERSION_MINOR = 1
     };
 
 // define windows wrapper functions
@@ -1384,7 +1389,8 @@ gsd_initialize_file(int fd, const char* application, const char* schema, uint32_
     gsd_util_zero_memory(&header, sizeof(header));
 
     header.magic = GSD_MAGIC_ID;
-    header.gsd_version = gsd_make_version(GSD_CURRENT_FILE_VERSION, 0);
+    header.gsd_version
+        = gsd_make_version(GSD_CURRENT_FILE_VERSION_MAJOR, GSD_CURRENT_FILE_VERSION_MINOR);
     strncpy(header.application, application, sizeof(header.application) - 1);
     header.application[sizeof(header.application) - 1] = 0;
     strncpy(header.schema, schema, sizeof(header.schema) - 1);
@@ -1606,6 +1612,24 @@ inline static int gsd_initialize_handle(struct gsd_handle* handle)
     handle->pending_index_entries = 0;
     handle->maximum_write_buffer_size = GSD_DEFAULT_MAXIMUM_WRITE_BUFFER_SIZE;
     handle->index_entries_to_buffer = GSD_DEFAULT_INDEX_ENTRIES_TO_BUFFER;
+
+    // Silently upgrade writable files from a previous matching major version to the latest
+    // minor version.
+    if ((handle->open_flags == GSD_OPEN_READWRITE || handle->open_flags == GSD_OPEN_APPEND)
+        && (handle->header.gsd_version
+            != gsd_make_version(GSD_CURRENT_FILE_VERSION_MAJOR, GSD_CURRENT_FILE_VERSION_MINOR))
+        && (handle->header.gsd_version >> (sizeof(uint32_t) * 4) == GSD_CURRENT_FILE_VERSION_MAJOR))
+        {
+        handle->header.gsd_version
+            = gsd_make_version(GSD_CURRENT_FILE_VERSION_MAJOR, GSD_CURRENT_FILE_VERSION_MINOR);
+        size_t bytes_written
+            = gsd_io_pwrite_retry(handle->fd, &(handle->header), sizeof(struct gsd_header), 0);
+
+        if (bytes_written != sizeof(struct gsd_header))
+            {
+            return GSD_ERROR_IO;
+            }
+        }
 
     return GSD_SUCCESS;
     }
@@ -2342,6 +2366,10 @@ size_t gsd_sizeof_type(enum gsd_type type)
         {
         val = sizeof(double);
         }
+    else if (type == GSD_TYPE_CHARACTER)
+        {
+        val = sizeof(char);
+        }
     else
         {
         return 0;
@@ -2554,8 +2582,9 @@ int gsd_upgrade(struct gsd_handle* handle)
                 }
             }
 
-        // label the file as a v2.0 file
-        handle->header.gsd_version = gsd_make_version(GSD_CURRENT_FILE_VERSION, 0);
+        // GSD always writes files matching the current major and minor version.
+        handle->header.gsd_version
+            = gsd_make_version(GSD_CURRENT_FILE_VERSION_MAJOR, GSD_CURRENT_FILE_VERSION_MINOR);
 
         // write the new header out
         ssize_t bytes_written

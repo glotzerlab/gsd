@@ -17,6 +17,7 @@ import gsd.fl
 import gsd.pygsd
 
 test_path = pathlib.Path(os.path.realpath(__file__)).parent
+current_gsd_version = (2, 1)
 
 
 def test_create(tmp_path, open_mode):
@@ -45,8 +46,8 @@ def test_create(tmp_path, open_mode):
         numpy.float64,
     ],
 )
-def test_dtype(tmp_path, typ):
-    """Test all supported data types."""
+def test_nonstring_dtypes(tmp_path, typ):
+    """Test all supported data types except for strings."""
     data1d = numpy.array([1, 2, 3, 4, 5, 127], dtype=typ)
     data2d = numpy.array([[10, 20], [30, 40], [50, 80]], dtype=typ)
     data_zero = numpy.array([], dtype=typ)
@@ -82,11 +83,11 @@ def test_dtype(tmp_path, typ):
         read_data2d = f.read_chunk(frame=0, name='data2d')
         read_data_zero = f.read_chunk(frame=0, name='data_zero')
 
-        assert data1d.dtype == read_data1d.dtype
+        assert data1d.dtype.type == read_data1d.dtype.type
         numpy.testing.assert_array_equal(data1d, read_data1d)
-        assert data2d.dtype == read_data2d.dtype
+        assert data2d.dtype.type == read_data2d.dtype.type
         numpy.testing.assert_array_equal(data2d, read_data2d)
-        assert data_zero.dtype == read_data_zero.dtype
+        assert data_zero.dtype.type == read_data_zero.dtype.type
         assert data_zero.shape == (0,)
 
     # test again with pygsd
@@ -94,10 +95,53 @@ def test_dtype(tmp_path, typ):
         read_data1d = f.read_chunk(frame=0, name='data1d')
         read_data2d = f.read_chunk(frame=0, name='data2d')
 
-        assert data1d.dtype == read_data1d.dtype
+        assert data1d.dtype.type == read_data1d.dtype.type
         numpy.testing.assert_array_equal(data1d, read_data1d)
-        assert data2d.dtype == read_data2d.dtype
+        assert data2d.dtype.type == read_data2d.dtype.type
         numpy.testing.assert_array_equal(data2d, read_data2d)
+
+
+def test_string_dtype(tmp_path):
+    """Test string datatype.
+
+    Note that the string datatype does not support 0-D or 2-D data.
+    """
+    data1d = 'test'
+
+    gsd.fl.open(
+        mode='x',
+        name=tmp_path / 'test_dtype.gsd',
+        application='test_dtype',
+        schema='none',
+        schema_version=[1, 2],
+    )
+
+    with gsd.fl.open(
+        name=tmp_path / 'test_dtype.gsd',
+        mode='w',
+        application='test_dtype',
+        schema='none',
+        schema_version=[1, 2],
+    ) as f:
+        f.write_chunk(name='data1d', data=data1d)
+        f.end_frame()
+
+    with gsd.fl.open(
+        name=tmp_path / 'test_dtype.gsd',
+        mode='r',
+        application='test_dtype',
+        schema='none',
+        schema_version=[1, 2],
+    ) as f:
+        read_data1d = f.read_chunk(frame=0, name='data1d')
+
+        numpy.testing.assert_string_equal(data1d, read_data1d)
+
+    # test again with pygsd
+    with gsd.pygsd.GSDFile(file=open(str(tmp_path / 'test_dtype.gsd'), mode='rb')) as f:
+        read_data1d = f.read_chunk(frame=0, name='data1d')
+
+        numpy.testing.assert_string_equal(data1d, read_data1d)
 
 
 def test_metadata(tmp_path, open_mode):
@@ -129,7 +173,7 @@ def test_metadata(tmp_path, open_mode):
         assert f.schema == 'none'
         assert f.schema_version == (1, 2)
         assert f.nframes == 150
-        assert f.gsd_version == (2, 0)
+        assert f.gsd_version == current_gsd_version
 
     # test again with pygsd
     with gsd.pygsd.GSDFile(
@@ -141,7 +185,7 @@ def test_metadata(tmp_path, open_mode):
         assert f.schema == 'none'
         assert f.schema_version == (1, 2)
         assert f.nframes == 150
-        assert f.gsd_version == (2, 0)
+        assert f.gsd_version == current_gsd_version
 
 
 def test_append(tmp_path, open_mode):
@@ -772,14 +816,14 @@ def test_gsd_v1_upgrade_read(tmp_path, open_mode):
         schema='none',
         schema_version=[1, 2],
     ) as f:
-        assert f.gsd_version == (2, 0)
+        assert f.gsd_version == current_gsd_version
 
         check_v1_file_read(f)
 
     with gsd.pygsd.GSDFile(
         file=open(str(tmp_path / 'test_gsd_v1.gsd'), mode='rb')
     ) as f:
-        assert f.gsd_version == (2, 0)
+        assert f.gsd_version == current_gsd_version
 
         check_v1_file_read(f)
 
@@ -912,7 +956,7 @@ def test_gsd_v1_upgrade_write(tmp_path, open_mode):
 
         f.upgrade()
 
-        assert f.gsd_version == (2, 0)
+        assert f.gsd_version == current_gsd_version
 
         for value in values:
             if isinstance(value, int):
@@ -932,7 +976,7 @@ def test_gsd_v1_upgrade_write(tmp_path, open_mode):
         schema='none',
         schema_version=[1, 2],
     ) as f:
-        assert f.gsd_version == (2, 0)
+        assert f.gsd_version == current_gsd_version
 
         check_v1_file_read(f)
 
@@ -940,7 +984,7 @@ def test_gsd_v1_upgrade_write(tmp_path, open_mode):
     with gsd.pygsd.GSDFile(
         file=open(str(tmp_path / 'test_gsd_v1.gsd'), mode='rb')
     ) as f:
-        assert f.gsd_version == (2, 0)
+        assert f.gsd_version == current_gsd_version
 
         check_v1_file_read(f)
 

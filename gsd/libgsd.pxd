@@ -16,6 +16,7 @@ cdef extern from "gsd.h" nogil:
         GSD_TYPE_INT64
         GSD_TYPE_FLOAT
         GSD_TYPE_DOUBLE
+        GSD_TYPE_CHARACTER
 
     cdef enum gsd_open_flag:
         GSD_OPEN_READWRITE=1

@@ -557,59 +557,78 @@ cdef class GSDFile:
         if not self.__is_open:
             raise ValueError("File is not open")
 
-        data_array = numpy.ascontiguousarray(data)
-        if data_array is not data:
-            logger.warning('implicit data copy when writing chunk: ' + name)
-        data_array = data_array.view()
-
         cdef uint64_t N
         cdef uint32_t M
 
-        if len(data_array.shape) > 2:
-            raise ValueError("GSD can only write 1 or 2 dimensional arrays: "
-                             + name)
-
-        if len(data_array.shape) == 1:
-            data_array = data_array.reshape([data_array.shape[0], 1])
-
-        N = data_array.shape[0]
-        M = data_array.shape[1]
-
         cdef libgsd.gsd_type gsd_type
         cdef void *data_ptr
-        if data_array.dtype == numpy.uint8:
-            gsd_type = libgsd.GSD_TYPE_UINT8
-            data_ptr = __get_ptr_uint8(data_array)
-        elif data_array.dtype == numpy.uint16:
-            gsd_type = libgsd.GSD_TYPE_UINT16
-            data_ptr = __get_ptr_uint16(data_array)
-        elif data_array.dtype == numpy.uint32:
-            gsd_type = libgsd.GSD_TYPE_UINT32
-            data_ptr = __get_ptr_uint32(data_array)
-        elif data_array.dtype == numpy.uint64:
-            gsd_type = libgsd.GSD_TYPE_UINT64
-            data_ptr = __get_ptr_uint64(data_array)
-        elif data_array.dtype == numpy.int8:
-            gsd_type = libgsd.GSD_TYPE_INT8
-            data_ptr = __get_ptr_int8(data_array)
-        elif data_array.dtype == numpy.int16:
-            gsd_type = libgsd.GSD_TYPE_INT16
-            data_ptr = __get_ptr_int16(data_array)
-        elif data_array.dtype == numpy.int32:
-            gsd_type = libgsd.GSD_TYPE_INT32
-            data_ptr = __get_ptr_int32(data_array)
-        elif data_array.dtype == numpy.int64:
-            gsd_type = libgsd.GSD_TYPE_INT64
-            data_ptr = __get_ptr_int64(data_array)
-        elif data_array.dtype == numpy.float32:
-            gsd_type = libgsd.GSD_TYPE_FLOAT
-            data_ptr = __get_ptr_float32(data_array)
-        elif data_array.dtype == numpy.float64:
-            gsd_type = libgsd.GSD_TYPE_DOUBLE
-            data_ptr = __get_ptr_float64(data_array)
-        else:
-            raise ValueError("invalid type for chunk: " + name)
 
+        # Special behavior for handling strings
+        if type(data) is str:
+            bytes_array = numpy.array([data], dtype=numpy.dtype((bytes, len(data))))
+            bytes_view = bytes_array.view(dtype=numpy.int8).reshape((len(data),1))
+
+            N = len(data)
+            M = 1
+
+            gsd_type = libgsd.GSD_TYPE_CHARACTER
+            data_ptr = __get_ptr_int8(bytes_view)
+
+        # Non-string behavior
+        else:
+            data_array = numpy.ascontiguousarray(data)
+
+            if data_array is not data:
+                logger.warning('implicit data copy when writing chunk: ' + name)
+            data_array = data_array.view()
+
+
+
+            if len(data_array.shape) > 2:
+                raise ValueError("GSD can only write 1 or 2 dimensional arrays: "
+                                + name)
+
+            if len(data_array.shape) == 1:
+                data_array = data_array.reshape([data_array.shape[0], 1])
+
+            N = data_array.shape[0]
+            M = data_array.shape[1]
+
+            if data_array.dtype == numpy.uint8:
+                gsd_type = libgsd.GSD_TYPE_UINT8
+                data_ptr = __get_ptr_uint8(data_array)
+            elif data_array.dtype == numpy.uint16:
+                gsd_type = libgsd.GSD_TYPE_UINT16
+                data_ptr = __get_ptr_uint16(data_array)
+            elif data_array.dtype == numpy.uint32:
+                gsd_type = libgsd.GSD_TYPE_UINT32
+                data_ptr = __get_ptr_uint32(data_array)
+            elif data_array.dtype == numpy.uint64:
+                gsd_type = libgsd.GSD_TYPE_UINT64
+                data_ptr = __get_ptr_uint64(data_array)
+            elif data_array.dtype == numpy.int8:
+                gsd_type = libgsd.GSD_TYPE_INT8
+                data_ptr = __get_ptr_int8(data_array)
+            elif data_array.dtype == numpy.int16:
+                gsd_type = libgsd.GSD_TYPE_INT16
+                data_ptr = __get_ptr_int16(data_array)
+            elif data_array.dtype == numpy.int32:
+                gsd_type = libgsd.GSD_TYPE_INT32
+                data_ptr = __get_ptr_int32(data_array)
+            elif data_array.dtype == numpy.int64:
+                gsd_type = libgsd.GSD_TYPE_INT64
+                data_ptr = __get_ptr_int64(data_array)
+            elif data_array.dtype == numpy.float32:
+                gsd_type = libgsd.GSD_TYPE_FLOAT
+                data_ptr = __get_ptr_float32(data_array)
+            elif data_array.dtype == numpy.float64:
+                gsd_type = libgsd.GSD_TYPE_DOUBLE
+                data_ptr = __get_ptr_float64(data_array)
+            else:
+                raise ValueError("invalid type for chunk: " + name)
+
+        # Once we have the data pointer, the behavior should be identical
+        # for all data types
         logger.debug('write chunk: ' + self.name + ' - ' + name)
 
         cdef char * c_name
@@ -787,6 +806,9 @@ cdef class GSDFile:
         elif gsd_type == libgsd.GSD_TYPE_DOUBLE:
             data_array = numpy.empty(dtype=numpy.float64,
                                      shape=[index_entry.N, index_entry.M])
+        elif gsd_type == libgsd.GSD_TYPE_CHARACTER:
+            data_array = numpy.empty(dtype=numpy.int8,
+                                     shape=[index_entry.M, index_entry.N])
         else:
             raise ValueError("invalid type for chunk: " + name)
 
@@ -815,6 +837,8 @@ cdef class GSDFile:
                 data_ptr = __get_ptr_float32(data_array)
             elif gsd_type == libgsd.GSD_TYPE_DOUBLE:
                 data_ptr = __get_ptr_float64(data_array)
+            elif gsd_type == libgsd.GSD_TYPE_CHARACTER:
+                data_ptr = __get_ptr_int8(data_array)
             else:
                 raise ValueError("invalid type for chunk: " + name)
 
@@ -826,6 +850,11 @@ cdef class GSDFile:
             __raise_on_error(retval, self.name)
 
         if index_entry.M == 1:
+            if gsd_type == libgsd.GSD_TYPE_CHARACTER:
+                data_array = data_array.flatten()
+                bytes_array = data_array.view(dtype=numpy.dtype((bytes, data_array.shape[0])))
+                return bytes_array[0].decode("UTF-8")
+
             return data_array.reshape([index_entry.N])
         else:
             return data_array
