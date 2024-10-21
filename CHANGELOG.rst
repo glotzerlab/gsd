@@ -10,6 +10,13 @@ Change Log
 3.x
 ---
 
+3.4.1 (2024-10-21)
+^^^^^^^^^^^^^^^^^^
+
+*Fixed:*
+
+* Prevent downgrading file versions when opening in write mode.
+
 3.4.0 (2024-10-18)
 ^^^^^^^^^^^^^^^^^^
 
