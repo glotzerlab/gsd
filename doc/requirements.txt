@@ -44,7 +44,6 @@ numpy==2.1.2
     # via
     #   -r doc/requirements.in
     #   pandas
-    #   pyarrow
 packaging==24.1
     # via sphinx
 pandas==2.2.3
@@ -59,7 +58,7 @@ ptyprocess==0.7.0
     # via pexpect
 pure-eval==0.2.3
     # via stack-data
-pyarrow==17.0.0
+pyarrow==18.0.0
     # via -r doc/requirements.in
 pygments==2.18.0
     # via
