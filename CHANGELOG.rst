@@ -10,6 +10,14 @@ Change Log
 3.x
 ---
 
+3.4.2 (2024-11-13)
+^^^^^^^^^^^^^^^^^^
+
+*Fixed:*
+
+* Make NumPy 2.0 requirement optional
+  (`#405 <https://github.com/glotzerlab/gsd/pull/405>`__).
+
 3.4.1 (2024-10-21)
 ^^^^^^^^^^^^^^^^^^
 
