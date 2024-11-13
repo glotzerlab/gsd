@@ -1169,6 +1169,11 @@ def read_log(name, scalar_only=False):
         msg = 'gsd module is not available'
         raise RuntimeError(msg)
 
+    min_supported_numpy = 2
+    if int(numpy.version.version.split('.')[0]) < min_supported_numpy:
+        msg = 'read_log requires numpy >= 2.0'
+        raise RuntimeError(msg)
+
     with gsd.fl.open(
         name=str(name),
         mode='r',
