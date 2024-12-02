@@ -1,7 +1,7 @@
 breathe == 4.35.0
 cython == 3.0.11
 furo == 2024.8.6
-ipython == 8.29.0
+ipython == 8.30.0
 numpy == 2.1.2
 pandas == 2.2.3
 sphinx == 8.1.3
