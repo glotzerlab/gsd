@@ -10,6 +10,7 @@ build:
 
 sphinx:
   fail_on_warning: true
+  configuration: doc/conf.py
 
 python:
   install:
