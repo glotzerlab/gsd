@@ -3,7 +3,6 @@ MACRO(copy_file file)
     add_custom_command (
         OUTPUT ${file}
         DEPENDS ${file}
-        POST_BUILD
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${file} ${CMAKE_CURRENT_BINARY_DIR}/${file}
         COMMENT    "Copy gsd/test/${file}"
