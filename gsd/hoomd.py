@@ -1218,18 +1218,16 @@ def read_log(name, scalar_only=False):
                     )
 
             for idx in range(1, gsdfileobj.nframes):
-                for key in logged_data_dict.keys():
+                for key, item in logged_data_dict.items():
                     if not gsdfileobj.chunk_exists(frame=idx, name=key):
                         continue
                     data = gsdfileobj.read_chunk(frame=idx, name=key)
                     if (
-                        not isinstance(
-                            logged_data_dict[key].dtype, numpy.dtypes.StringDType
-                        )
-                        and len(logged_data_dict[key][idx].shape) == 0
+                        not isinstance(item.dtype, numpy.dtypes.StringDType)
+                        and len(item[idx].shape) == 0
                     ):
-                        logged_data_dict[key][idx] = data[0]
+                        item[idx] = data[0]
                     else:
-                        logged_data_dict[key][idx] = data
+                        item[idx] = data
 
     return logged_data_dict
