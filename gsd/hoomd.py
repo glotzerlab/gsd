@@ -859,7 +859,7 @@ class HOOMDTrajectory:
             idx (int): Frame index to read.
 
         Returns:
-            `Frame` with the frame data
+            Frame : The frame data
 
         Replace any data chunks not present in the given frame with either data
         from frame 0, or initialize from default values if not in frame 0. Cache
