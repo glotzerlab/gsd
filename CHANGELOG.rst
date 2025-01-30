@@ -9,7 +9,8 @@ Change Log
 
 3.x
 ---
-
+next (not yet released)
+^^^^^^^^^^^^^^^^^^^^^^^
 *Fixed:*
 
 * Type hints for ``HoomdTrajectory._read_frame`` and downstream methods are now correct.
