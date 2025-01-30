@@ -19,3 +19,4 @@ The following people contributed to GSD.
 * Charlotte Shiqi Zhao, University of Michigan
 * Tim Moore, University of Michigan
 * Joseph Burkhart, University of Michigan
+* Jenna Bradley, University of Michigan
