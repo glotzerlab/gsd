@@ -55,7 +55,7 @@ jobs:
           CIBW_BUILD: "${{ matrix.python.version }}-*"
           CIBW_TEST_REQUIRES: pytest==8.3.3 numpy==${{ matrix.python.oldest_numpy }}
 
-      - uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
+      - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
         with:
           name: dist-python-${{ matrix.python.version }}-${{ matrix.os.base }}-${{ matrix.os.arch }}
           path: ./wheelhouse/*.whl
@@ -67,7 +67,7 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Set up Python
-        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
         with:
           python-version: 3.12
       - name: Set up Python environment
@@ -78,7 +78,7 @@ jobs:
       - name: Build sdist
         run: python -m build --sdist --outdir dist/ .
 
-      - uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
+      - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
         with:
           name: dist-sdist
           path: dist/*.tar.gz
@@ -102,7 +102,7 @@ jobs:
       - name: Upload to PyPI
         # upload to PyPI on every tag starting with 'v'
         if: startsWith(github.ref, 'refs/tags/v')
-        uses: pypa/gh-action-pypi-publish@67339c736fd9354cd4f8cb0b744f2b82a74b5c70 # v1.12.3
+        uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc # v1.12.4
         with:
           user: __token__
           password: ${{ secrets.PYPI_API_TOKEN }}
@@ -111,7 +111,7 @@ jobs:
         # otherwise, upload to TestPyPi
         continue-on-error: true
         if: ${{ !startsWith(github.ref, 'refs/tags/v') && (github.event_name != 'pull_request' || (github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]')) }}
-        uses: pypa/gh-action-pypi-publish@67339c736fd9354cd4f8cb0b744f2b82a74b5c70 # v1.12.3
+        uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc # v1.12.4
         with:
           user: __token__
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}
