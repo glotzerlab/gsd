@@ -15,6 +15,11 @@ next (not yet released)
 
 * Type hints for ``HoomdTrajectory._read_frame`` and downstream methods are now correct.
 
+*Changed:*
+
+* No longer test with clang 10, 11, or 12
+  (`#422 <https://github.com/glotzerlab/gsd/pull/422>`__).
+
 3.4.2 (2024-11-13)
 ^^^^^^^^^^^^^^^^^^
 
