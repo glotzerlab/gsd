@@ -79,20 +79,6 @@ jobs:
           python: '3.12'
           c_compiler: clang-15
           cxx_compiler: clang++-15
-        ##############
-        # Ubuntu 20.04
-        - os: ubuntu-20.04
-          python: '3.10'
-          c_compiler: clang-10
-          cxx_compiler: clang++-10
-        - os: ubuntu-20.04
-          python: '3.11'
-          c_compiler: clang-11
-          cxx_compiler: clang++-11
-        - os: ubuntu-20.04
-          python: '3.12'
-          c_compiler: clang-12
-          cxx_compiler: clang++-12
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2

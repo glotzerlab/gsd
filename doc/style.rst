@@ -54,7 +54,7 @@ Python code should be documented with docstrings and added to the Sphinx documen
 C
 ---
 
-* Style is set by clang-format=11
+* Style is set by clang-format
 
   * Whitesmith's indentation style.
   * 100 character line width.
