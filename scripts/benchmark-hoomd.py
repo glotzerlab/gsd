@@ -84,7 +84,7 @@ def read_random_file(file, nframes, nframes_read, N, position, orientation):
 def compute_nframes(N, size):
     """Compute the number of frames to write to the file."""
     bytes_per_frame = (3 + 4) * 4 * N
-    return int(math.ceil(size / bytes_per_frame))
+    return math.ceil(size / bytes_per_frame)
 
 
 def compute_actual_size(N, nframes):
