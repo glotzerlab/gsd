@@ -20,7 +20,6 @@ Cpp11BracedListStyle: 'true'
 FixNamespaceComments: 'true'
 IndentWidth: '4'
 KeepEmptyLinesAtTheStartOfBlocks: false
-Language: Cpp
 NamespaceIndentation: None
 PointerAlignment: Left
 SortIncludes: 'true'
@@ -32,5 +31,4 @@ SpaceInEmptyParentheses: false
 Standard: Cpp11
 TabWidth: '4'
 UseTab: Never
-
 ...
