@@ -40,7 +40,7 @@ master_doc = 'index'
 
 project = 'GSD'
 year = datetime.date.today().year
-copyright = f'2016-{ year } The Regents of the University of Michigan'
+copyright = f'2016-{year} The Regents of the University of Michigan'
 
 version = gsd.version.version
 release = version
