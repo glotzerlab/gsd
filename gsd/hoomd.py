@@ -845,7 +845,7 @@ class HOOMDTrajectory:
         """Append each item of the iterable to the file.
 
         Args:
-            iterable: An iterable object the provides :py:class:`Frame`
+            iterable: An iterable object that provides :py:class:`Frame`
                 instances. This could be another HOOMDTrajectory, a generator
                 that modifies frames, or a list of frames.
         """
