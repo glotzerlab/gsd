@@ -4,7 +4,6 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include <fcntl.h>
 
 #ifdef _WIN32
 #include <io.h>
@@ -56,11 +55,6 @@ double benchmark(size_t buffer)
         gsd_end_frame(&handle);
         }
     gsd_flush(&handle);
-    #ifdef __APPLE__
-    fcntl(handle.fd, F_FULLFSYNC);
-    #else
-    fsync(handle.fd);
-    #endif
 
     auto t2 = std::chrono::high_resolution_clock::now();
 

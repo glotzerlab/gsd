@@ -1163,6 +1163,13 @@ inline static int gsd_flush_write_buffer(struct gsd_handle* handle)
     // clear the buffer index for new entries
     handle->buffer_index.size = 0;
 
+    // sync the data before writing the index
+    int retval = gsd_fsync(handle->fd);
+    if (retval != 0)
+        {
+        return GSD_ERROR_IO;
+        }
+
     return GSD_SUCCESS;
     }
 
@@ -1990,13 +1997,6 @@ int gsd_flush(struct gsd_handle* handle)
         return retval;
         }
 
-    // sync the data before writing the index
-    retval = gsd_fsync(handle->fd);
-    if (retval != 0)
-        {
-        return GSD_ERROR_IO;
-        }
-
     // Write the frame index to the file, excluding the index entries that are part of the current
     // frame.
     if (handle->pending_index_entries > handle->frame_index.size)
@@ -2029,6 +2029,11 @@ int gsd_flush(struct gsd_handle* handle)
             = gsd_io_pwrite_retry(handle->fd, handle->frame_index.data, bytes_to_write, write_pos);
 
         if (bytes_written == -1 || bytes_written != bytes_to_write)
+            {
+            return GSD_ERROR_IO;
+            }
+        retval = gsd_fsync(handle->fd);
+        if (retval != 0)
             {
             return GSD_ERROR_IO;
             }
