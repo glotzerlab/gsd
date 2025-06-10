@@ -98,13 +98,17 @@ enum
 #ifdef _WIN32
 #define lseek _lseeki64
 #define ftruncate _chsize
-#define gsd_fsync _commit
 typedef int64_t ssize_t;
 
 int S_IRUSR = _S_IREAD;
 int S_IWUSR = _S_IWRITE;
 int S_IRGRP = _S_IREAD;
 int S_IWGRP = _S_IWRITE;
+
+inline int gsd_fsync(int fd)
+    {
+    return _commit(fd);
+    }
 
 inline ssize_t pread(int fd, void* buf, size_t count, int64_t offset)
     {
@@ -137,8 +141,11 @@ inline int gsd_fsync(int fd)
     {
     return fcntl(fd, F_FULLFSYNC);
     }
-#elif
-#define gsd_fsync fsync
+#else
+inline int gsd_fsync(int fd)
+    {
+    return fsync(fd);
+    }
 #endif
 
 /** Zero memory
@@ -1163,13 +1170,6 @@ inline static int gsd_flush_write_buffer(struct gsd_handle* handle)
     // clear the buffer index for new entries
     handle->buffer_index.size = 0;
 
-    // sync the data before writing the index
-    int retval = gsd_fsync(handle->fd);
-    if (retval != 0)
-        {
-        return GSD_ERROR_IO;
-        }
-
     return GSD_SUCCESS;
     }
 
@@ -1995,6 +1995,13 @@ int gsd_flush(struct gsd_handle* handle)
     if (retval != GSD_SUCCESS)
         {
         return retval;
+        }
+
+    // sync the data before writing the index
+    retval = gsd_fsync(handle->fd);
+    if (retval != 0)
+        {
+        return GSD_ERROR_IO;
         }
 
     // Write the frame index to the file, excluding the index entries that are part of the current
