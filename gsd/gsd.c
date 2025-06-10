@@ -98,7 +98,7 @@ enum
 #ifdef _WIN32
 #define lseek _lseeki64
 #define ftruncate _chsize
-#define fsync _commit
+#define gsd_fsync _commit
 typedef int64_t ssize_t;
 
 int S_IRUSR = _S_IREAD;
@@ -132,6 +132,13 @@ inline ssize_t pwrite(int fd, const void* buf, size_t count, int64_t offset)
     return result;
     }
 
+#elif defined(__APPLE__)
+inline int gsd_fsync(int fd)
+    {
+    return fcntl(fd, F_FULLFSYNC);
+    }
+#elif
+#define gsd_fsync fsync
 #endif
 
 /** Zero memory
@@ -1050,7 +1057,7 @@ inline static int gsd_expand_file_index(struct gsd_handle* handle, size_t size_r
         }
 
     // sync the expanded index
-    retval = fsync(handle->fd);
+    retval = gsd_fsync(handle->fd);
     if (retval != 0)
         {
         free(buf);
@@ -1074,7 +1081,7 @@ inline static int gsd_expand_file_index(struct gsd_handle* handle, size_t size_r
         }
 
     // sync the updated header
-    retval = fsync(handle->fd);
+    retval = gsd_fsync(handle->fd);
     if (retval != 0)
         {
         return GSD_ERROR_IO;
@@ -1226,7 +1233,7 @@ inline static int gsd_flush_name_buffer(struct gsd_handle* handle)
             }
 
         // sync the updated name list
-        retval = fsync(handle->fd);
+        retval = gsd_fsync(handle->fd);
         if (retval != 0)
             {
             return GSD_ERROR_IO;
@@ -1260,7 +1267,7 @@ inline static int gsd_flush_name_buffer(struct gsd_handle* handle)
         }
 
     // sync the updated name list or header
-    retval = fsync(handle->fd);
+    retval = gsd_fsync(handle->fd);
     if (retval != 0)
         {
         return GSD_ERROR_IO;
@@ -1433,7 +1440,7 @@ gsd_initialize_file(int fd, const char* application, const char* schema, uint32_
         }
 
     // sync file
-    retval = fsync(fd);
+    retval = gsd_fsync(fd);
     if (retval != 0)
         {
         return GSD_ERROR_IO;
@@ -1984,7 +1991,7 @@ int gsd_flush(struct gsd_handle* handle)
         }
 
     // sync the data before writing the index
-    retval = fsync(handle->fd);
+    retval = gsd_fsync(handle->fd);
     if (retval != 0)
         {
         return GSD_ERROR_IO;
@@ -2516,7 +2523,7 @@ int gsd_upgrade(struct gsd_handle* handle)
                 }
 
             // sync the updated index
-            retval = fsync(handle->fd);
+            retval = gsd_fsync(handle->fd);
             if (retval != 0)
                 {
                 return GSD_ERROR_IO;
@@ -2574,7 +2581,7 @@ int gsd_upgrade(struct gsd_handle* handle)
             handle->file_names.data = new_name_buf;
 
             // sync the updated name list
-            retval = fsync(handle->fd);
+            retval = gsd_fsync(handle->fd);
             if (retval != 0)
                 {
                 gsd_byte_buffer_free(&new_name_buf);
@@ -2595,7 +2602,7 @@ int gsd_upgrade(struct gsd_handle* handle)
             }
 
         // sync the updated header
-        int retval = fsync(handle->fd);
+        int retval = gsd_fsync(handle->fd);
         if (retval != 0)
             {
             return GSD_ERROR_IO;
