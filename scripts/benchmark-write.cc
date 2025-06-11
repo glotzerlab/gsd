@@ -33,7 +33,7 @@ double benchmark(size_t buffer)
     for (size_t i = 0; i < n_keys; i++)
         {
         std::ostringstream s;
-        s << "log/hpmc/integrate/Sphere/quantity/" << i;
+        s << "key " << i;
         names.push_back(s.str());
         }
 

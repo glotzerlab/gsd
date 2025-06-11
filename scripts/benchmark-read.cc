@@ -17,7 +17,7 @@ int main(int argc, char** argv) // NOLINT
     for (size_t i = 0; i < n_keys; i++)
         {
         std::ostringstream s;
-        s << "log/hpmc/integrate/Sphere/quantity/" << i;
+        s << "key " << i;
         names.push_back(s.str());
         }
 
@@ -49,6 +49,11 @@ int main(int argc, char** argv) // NOLINT
             {
             const gsd_index_entry* e;
             e = gsd_find_chunk(&handle, frame, name.c_str());
+            if (e == nullptr)
+                {
+                std::cout << "ERROR: Chunk `" << name << "` not found\n";
+                exit(1);
+                }
             if (data.empty())
                 {
                 data.resize(e->N * e->M * gsd_sizeof_type((gsd_type)e->type));
