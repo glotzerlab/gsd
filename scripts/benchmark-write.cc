@@ -16,8 +16,8 @@
 
 double benchmark(size_t buffer)
     {
-    const size_t n_keys = 2048;
-    const size_t key_size = 2;
+    const size_t n_keys = 2;
+    const size_t key_size = 2048;
     const size_t target_file_size = 256 * 1024 * 1024;
 
     const size_t n_frames = target_file_size / key_size / n_keys / sizeof(double);
