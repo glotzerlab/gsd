@@ -1161,23 +1161,6 @@ def test_maximum_write_buffer_size(tmp_path, open_mode):
             f.maximum_write_buffer_size = 0
 
 
-def test_index_entries_to_buffer(tmp_path, open_mode):
-    """Test index_entries_to_buffer."""
-    with gsd.fl.open(
-        name=tmp_path / 'test_index_entries_to_buffer.gsd',
-        mode=open_mode.write,
-        application='test_index_entries_to_buffer',
-        schema='none',
-        schema_version=[1, 2],
-    ) as f:
-        assert f.index_entries_to_buffer > 0
-        f.index_entries_to_buffer = 1024
-        assert f.index_entries_to_buffer == 1024
-
-        with pytest.raises(RuntimeError):
-            f.index_entries_to_buffer = 0
-
-
 def test_file_exists_error():
     """Test that IO errors throw the correct Python Excetion."""
     with pytest.raises(FileExistsError):

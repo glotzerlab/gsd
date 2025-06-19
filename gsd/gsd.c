@@ -71,12 +71,6 @@ enum
     GSD_DEFAULT_MAXIMUM_WRITE_BUFFER_SIZE = 64 * 1024 * 1024
     };
 
-/// Default number of index entries to buffer
-enum
-    {
-    GSD_DEFAULT_INDEX_ENTRIES_TO_BUFFER = 256 * 1024
-    };
-
 /// Size of hash map
 enum
     {
@@ -992,7 +986,7 @@ inline static int gsd_expand_file_index(struct gsd_handle* handle, size_t size_r
 
     // allocate the copy buffer
     uint64_t copy_buffer_size
-        = GSD_DEFAULT_INDEX_ENTRIES_TO_BUFFER * sizeof(struct gsd_index_entry);
+        = GSD_DEFAULT_MAXIMUM_WRITE_BUFFER_SIZE;
     if (copy_buffer_size > size_old * sizeof(struct gsd_index_entry))
         {
         copy_buffer_size = size_old * sizeof(struct gsd_index_entry);
@@ -1625,7 +1619,6 @@ inline static int gsd_initialize_handle(struct gsd_handle* handle)
 
     handle->pending_index_entries = 0;
     handle->maximum_write_buffer_size = GSD_DEFAULT_MAXIMUM_WRITE_BUFFER_SIZE;
-    handle->index_entries_to_buffer = GSD_DEFAULT_INDEX_ENTRIES_TO_BUFFER;
 
     // Silently upgrade writable files from a previous matching major version to the latest
     // minor version.
@@ -1964,7 +1957,7 @@ int gsd_end_frame(struct gsd_handle* handle)
     handle->cur_frame++;
     handle->pending_index_entries = 0;
 
-    if (handle->frame_index.size > 0 || handle->buffer_index.size > handle->index_entries_to_buffer)
+    if (handle->frame_index.size > 0)
         {
         return gsd_flush(handle);
         }
@@ -2654,27 +2647,6 @@ int gsd_set_maximum_write_buffer_size(struct gsd_handle* handle, uint64_t size)
         }
 
     handle->maximum_write_buffer_size = size;
-
-    return GSD_SUCCESS;
-    }
-
-uint64_t gsd_get_index_entries_to_buffer(struct gsd_handle* handle)
-    {
-    if (handle == NULL)
-        {
-        return 0;
-        }
-    return handle->index_entries_to_buffer;
-    }
-
-int gsd_set_index_entries_to_buffer(struct gsd_handle* handle, uint64_t number)
-    {
-    if (handle == NULL || number == 0)
-        {
-        return GSD_ERROR_INVALID_ARGUMENT;
-        }
-
-    handle->index_entries_to_buffer = number;
 
     return GSD_SUCCESS;
     }

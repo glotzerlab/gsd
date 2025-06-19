@@ -323,9 +323,6 @@ extern "C"
 
         /// Maximum write buffer size (bytes).
         uint64_t maximum_write_buffer_size;
-
-        /// Number of index entries to buffer before flushing.
-        uint64_t index_entries_to_buffer;
         };
 
     /** Specify a version.
@@ -650,34 +647,6 @@ extern "C"
           - GSD_ERROR_INVALID_ARGUMENT: size == 0
     */
     int gsd_set_maximum_write_buffer_size(struct gsd_handle* handle, uint64_t size);
-
-    /** Get the number of index entries to buffer.
-
-        @param handle Handle to an open GSD file
-
-        @pre *handle* was opened by gsd_open().
-
-        @return The number of index entries to buffer, or 0 on error.
-    */
-    uint64_t gsd_get_index_entries_to_buffer(struct gsd_handle* handle);
-
-    /** Set the number of index entries to buffer.
-
-        @param handle Handle to an open GSD file
-        @param number Number of index entries to buffer before automatically flushing in
-        `gsd_end_frame()` (must be greater than 0).
-
-        @pre *handle* was opened by gsd_open().
-
-        @note GSD may allocate more than this number of entries in the buffer, as needed to store
-        all index entries for the already buffered frames and the current frame.
-
-        @return
-          - GSD_SUCCESS (0) on success. Negative value on failure:
-          - GSD_ERROR_INVALID_ARGUMENT: *handle* is NULL
-          - GSD_ERROR_INVALID_ARGUMENT: number == 0
-    */
-    int gsd_set_index_entries_to_buffer(struct gsd_handle* handle, uint64_t number);
 
 #ifdef __cplusplus
     }

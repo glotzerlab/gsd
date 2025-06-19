@@ -273,9 +273,6 @@ cdef class GSDFile:
         nframes (int): Number of frames.
 
         maximum_write_buffer_size (int): The Maximum write buffer size (bytes).
-
-        index_entries_to_buffer (int): Number of index entries to buffer before
-            flushing.
     """
 
     cdef libgsd.gsd_handle __handle
@@ -1005,20 +1002,6 @@ cdef class GSDFile:
                 raise ValueError("File is not open")
 
             retval = libgsd.gsd_set_maximum_write_buffer_size(&self.__handle, size)
-            __raise_on_error(retval, self.name)
-
-    property index_entries_to_buffer:
-        def __get__(self):
-            if not self.__is_open:
-                raise ValueError("File is not open")
-
-            return libgsd.gsd_get_index_entries_to_buffer(&self.__handle)
-
-        def __set__(self, number):
-            if not self.__is_open:
-                raise ValueError("File is not open")
-
-            retval = libgsd.gsd_set_index_entries_to_buffer(&self.__handle, number)
             __raise_on_error(retval, self.name)
 
     def __dealloc__(self):
