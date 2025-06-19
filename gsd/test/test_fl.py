@@ -463,6 +463,8 @@ def test_truncate(tmp_path):
             f.write_chunk(name='data', data=data)
             f.end_frame()
 
+        f.flush()
+
         assert f.nframes == 10
 
         f.truncate()
@@ -550,6 +552,7 @@ def test_open(tmp_path):
     ) as f:
         f.write_chunk(name='chunk1', data=data)
         f.end_frame()
+        f.flush()
         f.read_chunk(0, name='chunk1')
 
     with gsd.fl.open(
@@ -571,6 +574,7 @@ def test_open(tmp_path):
     ) as f:
         f.write_chunk(name='chunk1', data=data)
         f.end_frame()
+        f.flush()
         f.read_chunk(0, name='chunk1')
 
     with gsd.fl.open(
@@ -604,6 +608,7 @@ def test_open(tmp_path):
         f.end_frame()
         f.read_chunk(0, name='chunk1')
         f.read_chunk(1, name='chunk1')
+        f.flush()
         f.read_chunk(2, name='chunk1')
 
 
@@ -1097,6 +1102,8 @@ def test_read_write(tmp_path, mode):
             f.write_chunk(name='data10', data=data)
             f.end_frame()
 
+        f.flush()
+
         for i in range(nframes):
             data1 = f.read_chunk(frame=i, name='data1')
             data10 = f.read_chunk(frame=i, name='data10')
@@ -1194,6 +1201,7 @@ def test_pending_index_entries(tmp_path):
         f.flush()
 
         f.end_frame()
+        f.flush()
 
         # All test chunks should be present in the file.
         for i in range(16):

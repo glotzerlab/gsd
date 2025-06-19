@@ -1581,12 +1581,13 @@ inline static int gsd_initialize_handle(struct gsd_handle* handle)
     // determine the current frame counter
     if (handle->file_index.size == 0)
         {
-        handle->cur_frame = 0;
+        handle->file_frame = 0;
         }
     else
         {
-        handle->cur_frame = handle->file_index.data[handle->file_index.size - 1].frame + 1;
+        handle->file_frame = handle->file_index.data[handle->file_index.size - 1].frame + 1;
         }
+    handle->buffer_frame = handle->file_frame;
 
     // if this is a write mode, allocate the initial frame index and the name buffer
     if (handle->open_flags != GSD_OPEN_READONLY)
@@ -1954,13 +1955,8 @@ int gsd_end_frame(struct gsd_handle* handle)
         return GSD_ERROR_FILE_MUST_BE_WRITABLE;
         }
 
-    handle->cur_frame++;
+    handle->buffer_frame++;
     handle->pending_index_entries = 0;
-
-    if (handle->frame_index.size > 0)
-        {
-        return gsd_flush(handle);
-        }
 
     return GSD_SUCCESS;
     }
@@ -2062,6 +2058,8 @@ int gsd_flush(struct gsd_handle* handle)
         handle->frame_index.size = handle->pending_index_entries;
         }
 
+    handle->file_frame = handle->buffer_frame;
+
     return GSD_SUCCESS;
     }
 
@@ -2111,7 +2109,7 @@ int gsd_write_chunk(struct gsd_handle* handle,
     struct gsd_index_entry entry;
     // populate fields in the entry's data
     gsd_util_zero_memory(&entry, sizeof(struct gsd_index_entry));
-    entry.frame = handle->cur_frame;
+    entry.frame = handle->buffer_frame;
     entry.id = id;
     entry.type = (uint8_t)type;
     entry.N = N;
@@ -2185,7 +2183,7 @@ uint64_t gsd_get_nframes(struct gsd_handle* handle)
         {
         return 0;
         }
-    return handle->cur_frame;
+    return handle->file_frame;
     }
 
 const struct gsd_index_entry*
@@ -2202,14 +2200,6 @@ gsd_find_chunk(struct gsd_handle* handle, uint64_t frame, const char* name)
     if (frame >= gsd_get_nframes(handle))
         {
         return NULL;
-        }
-    if (handle->open_flags != GSD_OPEN_READONLY)
-        {
-        int retval = gsd_flush(handle);
-        if (retval != GSD_SUCCESS)
-            {
-            return NULL;
-            }
         }
 
     // find the id for the given name
@@ -2300,14 +2290,6 @@ int gsd_read_chunk(struct gsd_handle* handle, void* data, const struct gsd_index
     if (chunk == NULL)
         {
         return GSD_ERROR_INVALID_ARGUMENT;
-        }
-    if (handle->open_flags != GSD_OPEN_READONLY)
-        {
-        int retval = gsd_flush(handle);
-        if (retval != GSD_SUCCESS)
-            {
-            return retval;
-            }
         }
 
     size_t size = chunk->N * chunk->M * gsd_sizeof_type((enum gsd_type)chunk->type);
@@ -2403,14 +2385,6 @@ gsd_find_matching_chunk_name(struct gsd_handle* handle, const char* match, const
     if (handle->file_names.n_names == 0)
         {
         return NULL;
-        }
-    if (handle->open_flags != GSD_OPEN_READONLY)
-        {
-        int retval = gsd_flush(handle);
-        if (retval != GSD_SUCCESS)
-            {
-            return NULL;
-            }
         }
 
     // return nothing found if the name buffer is corrupt
