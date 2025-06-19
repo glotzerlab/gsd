@@ -752,7 +752,7 @@ def test_gsd_v1_read():
         chunk_names.sort()
         assert chunk_names == values_str
 
-    # test with the C implemantation
+    # test with the C implementation
     with gsd.fl.open(
         name=test_path / 'test_gsd_v1.gsd',
         mode='r',
@@ -893,7 +893,7 @@ def test_gsd_v1_write(tmp_path, open_mode):
 
         check_v1_file_read(f)
 
-    # test opening again with the C implemantation
+    # test opening again with the C implementation
     with gsd.fl.open(
         name=tmp_path / 'test_gsd_v1.gsd',
         mode=open_mode.read,
@@ -968,7 +968,7 @@ def test_gsd_v1_upgrade_write(tmp_path, open_mode):
 
         check_v1_file_read(f)
 
-    # test opening again with the C implemantation
+    # test opening again with the C implementation
     with gsd.fl.open(
         name=tmp_path / 'test_gsd_v1.gsd',
         mode=open_mode.read,
@@ -1162,7 +1162,7 @@ def test_maximum_write_buffer_size(tmp_path, open_mode):
 
 
 def test_file_exists_error():
-    """Test that IO errors throw the correct Python Excetion."""
+    """Test that IO errors throw the correct Python Exception."""
     with pytest.raises(FileExistsError):
         with gsd.fl.open(
             name=test_path / 'test_gsd_v1.gsd',
