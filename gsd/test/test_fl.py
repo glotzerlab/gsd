@@ -895,6 +895,7 @@ def test_gsd_v1_write(tmp_path, open_mode):
                 data = numpy.array([hash(value)], dtype=numpy.int64)
             f.write_chunk(name=str(value), data=data)
         f.end_frame()
+        f.flush()
 
         check_v1_file_read(f)
 
@@ -970,6 +971,7 @@ def test_gsd_v1_upgrade_write(tmp_path, open_mode):
                 data = numpy.array([hash(value)], dtype=numpy.int64)
             f.write_chunk(name=str(value), data=data)
         f.end_frame()
+        f.flush()
 
         check_v1_file_read(f)
 
@@ -1102,13 +1104,97 @@ def test_read_write(tmp_path, mode):
             f.write_chunk(name='data10', data=data)
             f.end_frame()
 
+        assert f.nframes == 0
         f.flush()
+        assert f.nframes == nframes
 
         for i in range(nframes):
             data1 = f.read_chunk(frame=i, name='data1')
             data10 = f.read_chunk(frame=i, name='data10')
             assert data1[0] == i
             assert data10[0] == i * 10
+
+
+@pytest.mark.parametrize('mode', ['w', 'x', 'a', 'r+'])
+def test_read_after_write(tmp_path, mode):
+    """Test that chunk names and data are not present until after flush."""
+    if mode[0] == 'r' or mode[0] == 'a':
+        with gsd.fl.open(
+            name=tmp_path / 'test_read_write.gsd',
+            mode='w',
+            application='test_read_write',
+            schema='none',
+            schema_version=[1, 2],
+        ):
+            pass
+
+    data = numpy.array([10], dtype=numpy.int64)
+    nframes = 1024
+
+    with gsd.fl.open(
+        name=tmp_path / 'test_read_write.gsd',
+        mode=mode,
+        application='test_read_write',
+        schema='none',
+        schema_version=[1, 2],
+    ) as f:
+        data[0] = 1
+        f.write_chunk(name='data1', data=data)
+        data[0] = 2
+        f.write_chunk(name='data2', data=data)
+        f.end_frame()
+
+        assert f.nframes == 0
+        assert not f.chunk_exists(frame=0, name='data1')
+        assert not f.chunk_exists(frame=0, name='data2')
+        assert len(f.find_matching_chunk_names('')) == 0
+        with pytest.raises(KeyError):
+            f.read_chunk(frame=0, name='data1')
+        with pytest.raises(KeyError):
+            f.read_chunk(frame=0, name='data2')
+
+        f.flush()
+
+        data[0] = 1
+        f.write_chunk(name='data1', data=data)
+        data[0] = 2
+        f.write_chunk(name='data2', data=data)
+        data[0] = 3
+        f.write_chunk(name='data3', data=data)
+        f.end_frame()
+
+        # frame 0 should now be available, but not frame 1
+        assert f.nframes == 1
+        assert f.chunk_exists(frame=0, name='data1')
+        assert f.chunk_exists(frame=0, name='data2')
+        assert len(f.find_matching_chunk_names('')) == 2
+        data1 = f.read_chunk(frame=0, name='data1')
+        assert data1[0] == 1
+        data2 = f.read_chunk(frame=0, name='data2')
+        assert data2[0] == 2
+
+        assert not f.chunk_exists(frame=1, name='data1')
+        assert not f.chunk_exists(frame=1, name='data2')
+        assert not f.chunk_exists(frame=1, name='data3')
+        with pytest.raises(KeyError):
+            f.read_chunk(frame=1, name='data1')
+        with pytest.raises(KeyError):
+            f.read_chunk(frame=1, name='data2')
+        with pytest.raises(KeyError):
+            f.read_chunk(frame=1, name='data3')
+
+        f.flush()
+        assert f.nframes == 2
+        assert f.chunk_exists(frame=1, name='data1')
+        assert f.chunk_exists(frame=1, name='data2')
+        assert f.chunk_exists(frame=1, name='data3')
+        assert len(f.find_matching_chunk_names('')) == 3
+        data1 = f.read_chunk(frame=1, name='data1')
+        assert data1[0] == 1
+        data2 = f.read_chunk(frame=1, name='data2')
+        assert data2[0] == 2
+        data3 = f.read_chunk(frame=1, name='data3')
+        assert data3[0] == 3
 
 
 @pytest.mark.parametrize('n_flush', [0, 1, 2])
