@@ -82,7 +82,7 @@ double benchmark(size_t buffer)
 
 int main(int argc, char** argv) // NOLINT
     {
-    size_t buffer = 1024 * 1024;
+    size_t buffer = 1024;
 
     std::cout << "[";
     while (buffer <= 64 * 1024 * 1024)
