@@ -20,7 +20,7 @@ Change Log
   (`#417 <https://github.com/glotzerlab/gsd/pull/417>`__).
 * Sync changes to disk on macOS
   (`#429 <https://github.com/glotzerlab/gsd/pull/429>`__).
-* Sync index entries to disk before returning from `flush`
+* Sync index entries to disk before returning from ``flush``
   (`#429 <https://github.com/glotzerlab/gsd/pull/429>`__).
 * Work around macOS bug that mysteriously allocated 16 MB of extra disk blocks beyond the end
   of the file
