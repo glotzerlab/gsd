@@ -25,10 +25,8 @@ int main(int argc, char** argv) // NOLINT
     auto t1 = std::chrono::high_resolution_clock::now();
     gsd_open(&handle, "test.gsd", GSD_OPEN_READONLY);
     auto t2 = std::chrono::high_resolution_clock::now();
-    auto const open_time
-        = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
+    auto const open_time = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
     std::cout << "Time to open: " << open_time.count() / 1e-6 << " microseconds\n";
-
 
     size_t const n_frames = gsd_get_nframes(&handle);
     size_t n_read = n_frames;
@@ -65,14 +63,14 @@ int main(int argc, char** argv) // NOLINT
 
     t2 = std::chrono::high_resolution_clock::now();
 
-    auto const time_span
-        = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
+    auto const time_span = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
     double const time_per_key = time_span.count() / double(n_keys) / double(n_read);
     double const us_per_key = time_per_key / 1e-6;
 
     std::cout << "Sequential latency   : " << us_per_key << " microseconds/key.\n";
 
-    std::cout << "Sequential throughput: " << double(total_bytes) / 1024.0 / 1024.0 / time_span.count() << " MB/s\n";
-    
+    std::cout << "Sequential throughput: "
+              << double(total_bytes) / 1024.0 / 1024.0 / time_span.count() << " MB/s\n";
+
     gsd_close(&handle);
     }

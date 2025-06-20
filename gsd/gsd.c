@@ -646,8 +646,8 @@ inline static int gsd_index_buffer_map(struct gsd_index_buffer* buf, struct gsd_
         return GSD_ERROR_IO;
         }
 
-    buf->data = (struct gsd_index_entry*)(((char*)buf->mapped_data)
-                                          + handle->header.index_location);
+    buf->data
+        = (struct gsd_index_entry*)(((char*)buf->mapped_data) + handle->header.index_location);
 
     buf->mapped_len = index_size + handle->header.index_location;
     buf->reserved = handle->header.index_allocated_entries;
@@ -995,14 +995,13 @@ inline static int gsd_expand_file_index(struct gsd_handle* handle, size_t size_r
         }
 
     // write the current index to the end of the file
-    uint64_t copy_buffer_size
-        = GSD_DEFAULT_MAXIMUM_WRITE_BUFFER_SIZE;
+    uint64_t copy_buffer_size = GSD_DEFAULT_MAXIMUM_WRITE_BUFFER_SIZE;
     if (copy_buffer_size > size_old * sizeof(struct gsd_index_entry))
         {
         copy_buffer_size = size_old * sizeof(struct gsd_index_entry);
         }
     char* buf = malloc(copy_buffer_size);
-    
+
     size_t total_bytes_written = 0;
     size_t old_index_bytes = size_old * sizeof(struct gsd_index_entry);
     while (total_bytes_written < old_index_bytes)

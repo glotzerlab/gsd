@@ -1129,7 +1129,6 @@ def test_read_after_write(tmp_path, mode):
             pass
 
     data = numpy.array([10], dtype=numpy.int64)
-    nframes = 1024
 
     with gsd.fl.open(
         name=tmp_path / 'test_read_write.gsd',
@@ -1260,27 +1259,28 @@ def test_maximum_write_buffer_size(tmp_path, open_mode):
         assert f.maximum_write_buffer_size == 1024
 
         initial_size = os.path.getsize(file_name)
-        f.write_chunk(name="data", data=data_256)
+        f.write_chunk(name='data', data=data_256)
         assert os.path.getsize(file_name) == initial_size
         f.end_frame()
 
-        f.write_chunk(name="data", data=data_256)
+        f.write_chunk(name='data', data=data_256)
         f.end_frame()
-        f.write_chunk(name="data", data=data_256)
+        f.write_chunk(name='data', data=data_256)
         f.end_frame()
-        f.write_chunk(name="data", data=data_256)
+        f.write_chunk(name='data', data=data_256)
         f.end_frame()
-        f.write_chunk(name="data", data=data_256)
+        f.write_chunk(name='data', data=data_256)
         assert os.path.getsize(file_name) == initial_size + 1024
         f.end_frame()
-        f.write_chunk(name="data", data=data_1024)
+        f.write_chunk(name='data', data=data_1024)
         assert os.path.getsize(file_name) == initial_size + 1024 + 256 + 1024
         f.end_frame()
 
         f.flush()
         for i in range(5):
-            numpy.testing.assert_array_equal(f.read_chunk(i, "data"), data_256)
-        numpy.testing.assert_array_equal(f.read_chunk(5, "data"), data_1024)
+            numpy.testing.assert_array_equal(f.read_chunk(i, 'data'), data_256)
+        numpy.testing.assert_array_equal(f.read_chunk(5, 'data'), data_1024)
+
 
 def test_file_exists_error():
     """Test that IO errors throw the correct Python Exception."""
@@ -1336,9 +1336,9 @@ def test_expand(tmp_path, open_mode, flush):
 
         for i in range(N_ENTRIES):
             data = numpy.array([i], dtype=numpy.int64)
-            f.write_chunk(name="data", data=data)
+            f.write_chunk(name='data', data=data)
             f.end_frame()
-            if flush and (i & 0xf == 0):
+            if flush and (i & 0xF == 0):
                 f.flush()
 
         f.flush()

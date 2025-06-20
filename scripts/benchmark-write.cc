@@ -40,7 +40,6 @@ double benchmark(size_t buffer)
     // std::cout << "Writing test.gsd with: " << n_keys << " keys, " << n_frames << " frames, "
     //           << "and " << key_size << " double(s) per key" << '\n';
 
-
     gsd_handle handle;
     gsd_create_and_open(&handle, "test.gsd", "app", "schema", 0, GSD_OPEN_APPEND, 0);
     gsd_set_maximum_write_buffer_size(&handle, buffer);
@@ -88,7 +87,7 @@ int main(int argc, char** argv) // NOLINT
     while (buffer <= 64 * 1024 * 1024)
         {
         std::cout << "[";
-        std::cout << buffer << ", " << benchmark(buffer) << "]," <<std::endl;
+        std::cout << buffer << ", " << benchmark(buffer) << "]," << std::endl;
         buffer *= 2;
         }
     std::cout << "]" << std::endl;

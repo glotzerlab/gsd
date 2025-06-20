@@ -793,7 +793,6 @@ class HOOMDTrajectory:
         if len(self) == 0:
             self.flush()
 
-
     def truncate(self):
         """Remove all frames from the file."""
         self.file.truncate()
