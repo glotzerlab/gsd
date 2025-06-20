@@ -1239,20 +1239,48 @@ def test_flush(tmp_path, open_mode, n_flush):
 
 def test_maximum_write_buffer_size(tmp_path, open_mode):
     """Test maximum_write_buffer_size."""
+    file_name = tmp_path / 'test_maximum_write_buffer_size.gsd'
+
+    data_256 = numpy.full(shape=(256,), fill_value=1, dtype=numpy.uint8)
+    data_1024 = numpy.full(shape=(1024,), fill_value=2, dtype=numpy.uint8)
+
     with gsd.fl.open(
-        name=tmp_path / 'test_maximum_write_buffer_size.gsd',
+        name=file_name,
         mode=open_mode.write,
         application='test_maximum_write_buffer_size',
         schema='none',
         schema_version=[1, 2],
     ) as f:
         assert f.maximum_write_buffer_size > 0
-        f.maximum_write_buffer_size = 1024
-        assert f.maximum_write_buffer_size == 1024
 
         with pytest.raises(RuntimeError):
             f.maximum_write_buffer_size = 0
 
+        f.maximum_write_buffer_size = 1024
+        assert f.maximum_write_buffer_size == 1024
+
+        initial_size = os.path.getsize(file_name)
+        f.write_chunk(name="data", data=data_256)
+        assert os.path.getsize(file_name) == initial_size
+        f.end_frame()
+
+        f.write_chunk(name="data", data=data_256)
+        f.end_frame()
+        f.write_chunk(name="data", data=data_256)
+        f.end_frame()
+        f.write_chunk(name="data", data=data_256)
+        f.end_frame()
+        f.write_chunk(name="data", data=data_256)
+        assert os.path.getsize(file_name) == initial_size + 1024
+        f.end_frame()
+        f.write_chunk(name="data", data=data_1024)
+        assert os.path.getsize(file_name) == initial_size + 1024 + 256 + 1024
+        f.end_frame()
+
+        f.flush()
+        for i in range(5):
+            numpy.testing.assert_array_equal(f.read_chunk(i, "data"), data_256)
+        numpy.testing.assert_array_equal(f.read_chunk(5, "data"), data_1024)
 
 def test_file_exists_error():
     """Test that IO errors throw the correct Python Exception."""
@@ -1292,3 +1320,29 @@ def test_pending_index_entries(tmp_path):
         # All test chunks should be present in the file.
         for i in range(16):
             assert f.chunk_exists(name=str(i), frame=1)
+
+
+@pytest.mark.parametrize('flush', [False, True])
+def test_expand(tmp_path, open_mode, flush):
+    """Test index expansion."""
+    with gsd.fl.open(
+        name=tmp_path / 'test_expand.gsd',
+        mode=open_mode.write,
+        application='test_expand',
+        schema='none',
+        schema_version=[1, 2],
+    ) as f:
+        N_ENTRIES = 1024
+
+        for i in range(N_ENTRIES):
+            data = numpy.array([i], dtype=numpy.int64)
+            f.write_chunk(name="data", data=data)
+            f.end_frame()
+            if flush and (i & 0xf == 0):
+                f.flush()
+
+        f.flush()
+        for i in range(N_ENTRIES):
+            expected_data = numpy.array([i], dtype=numpy.int64)
+            read_data = f.read_chunk(frame=i, name='data')
+            numpy.testing.assert_array_equal(read_data, expected_data)
