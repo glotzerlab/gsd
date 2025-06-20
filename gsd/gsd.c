@@ -185,6 +185,7 @@ inline static ssize_t gsd_io_pwrite_retry(int fd, const void* buf, size_t count,
         errno = 0;
         ssize_t bytes_written
             = pwrite(fd, ptr + total_bytes_written, to_write, offset + total_bytes_written);
+
         if (bytes_written == -1 || (bytes_written == 0 && errno != 0))
             {
             return GSD_ERROR_IO;
@@ -1032,29 +1033,12 @@ inline static int gsd_expand_file_index(struct gsd_handle* handle, size_t size_r
         }
 
     // fill the new index space with 0s
-    gsd_util_zero_memory(buf, copy_buffer_size);
-
     size_t new_index_bytes = size_new * sizeof(struct gsd_index_entry);
-    while (total_bytes_written < new_index_bytes)
+    retval = ftruncate(handle->fd, new_index_location + new_index_bytes);
+    if (retval != 0)
         {
-        size_t bytes_to_copy = copy_buffer_size;
-        if (new_index_bytes - total_bytes_written < copy_buffer_size)
-            {
-            bytes_to_copy = new_index_bytes - total_bytes_written;
-            }
-
-        ssize_t bytes_written = gsd_io_pwrite_retry(handle->fd,
-                                                    buf,
-                                                    bytes_to_copy,
-                                                    new_index_location + total_bytes_written);
-
-        if (bytes_written == -1 || bytes_written != bytes_to_copy)
-            {
-            free(buf);
-            return GSD_ERROR_IO;
-            }
-
-        total_bytes_written += bytes_written;
+        free(buf);
+        return GSD_ERROR_IO;
         }
 
     // sync the expanded index
@@ -1070,7 +1054,7 @@ inline static int gsd_expand_file_index(struct gsd_handle* handle, size_t size_r
 
     // update the header
     handle->header.index_location = new_index_location;
-    handle->file_size = handle->header.index_location + total_bytes_written;
+    handle->file_size = new_index_location + new_index_bytes;
     handle->header.index_allocated_entries = size_new;
 
     // write the new header out
