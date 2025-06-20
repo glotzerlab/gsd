@@ -16,4 +16,5 @@ Checks: 'bugprone-*,
          -cert-dcl51-cpp,
          -bugprone-narrowing-conversions,
          -misc-include-cleaner,
+         -readability-magic-numbers,
          '

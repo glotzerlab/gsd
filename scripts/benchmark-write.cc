@@ -18,7 +18,7 @@ double benchmark(size_t buffer)
     {
     const size_t n_keys = 2;
     const size_t key_size = 2048;
-    const size_t target_file_size = 256 * 1024 * 1024;
+    const size_t target_file_size = static_cast<size_t>(256) * 1024 * 1024;
 
     const size_t n_frames = target_file_size / key_size / n_keys / sizeof(double);
 
@@ -83,12 +83,12 @@ int main(int argc, char** argv) // NOLINT
     {
     size_t buffer = 1024;
 
-    std::cout << "[";
-    while (buffer <= 64 * 1024 * 1024)
+    std::cout << "[\n";
+    while (buffer <= static_cast<size_t>(64) * 1024 * 1024)
         {
         std::cout << "[";
-        std::cout << buffer << ", " << benchmark(buffer) << "]," << std::endl;
+        std::cout << buffer << ", " << benchmark(buffer) << "],\n";
         buffer *= 2;
         }
-    std::cout << "]" << std::endl;
+    std::cout << "]\n";
     }
