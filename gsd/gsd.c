@@ -68,7 +68,7 @@ enum
 /// Default maximum size of write buffer
 enum
     {
-    GSD_DEFAULT_MAXIMUM_WRITE_BUFFER_SIZE = 64 * 1024 * 1024
+    GSD_DEFAULT_MAXIMUM_WRITE_BUFFER_SIZE = 1024 * 1024
     };
 
 /// Size of hash map
