@@ -1102,10 +1102,9 @@ inline static int gsd_expand_file_index(struct gsd_handle* handle, size_t size_r
     @brief Flush the write buffer.
 
     gsd_write_frame() writes small data chunks into the write buffer. It adds index entries for
-    these chunks to gsd_handle::buffer_index with locations offset from the start of the write
-    buffer. gsd_flush_write_buffer() writes the buffer to the end of the file, moves the index
-    entries to gsd_handle::frame_index and updates the location to reference the beginning of the
-    file.
+    these chunks to gsd_handle::buffer_index with locations offset from the current end of file.
+    gsd_flush_write_buffer() writes the buffer to the end of the file. The entries in the buffered
+    index have valid locations because nothing else writes past the end of the file.
 
     @param handle Handle to flush the write buffer.
     @returns GSD_SUCCESS on success or GSD_* error codes on error
@@ -1117,16 +1116,10 @@ inline static int gsd_flush_write_buffer(struct gsd_handle* handle)
         return GSD_ERROR_INVALID_ARGUMENT;
         }
 
-    if (handle->write_buffer.size == 0 && handle->buffer_index.size == 0)
+    if (handle->write_buffer.size == 0)
         {
         // nothing to do
         return GSD_SUCCESS;
-        }
-
-    if (handle->write_buffer.size > 0 && handle->buffer_index.size == 0)
-        {
-        // error: bytes in buffer, but no index for them
-        return GSD_ERROR_INVALID_ARGUMENT;
         }
 
     // write the buffer to the end of the file
@@ -1145,24 +1138,6 @@ inline static int gsd_flush_write_buffer(struct gsd_handle* handle)
 
     // reset write_buffer for new data
     handle->write_buffer.size = 0;
-
-    // Move buffer_index entries to frame_index.
-    size_t i;
-    for (i = 0; i < handle->buffer_index.size; i++)
-        {
-        struct gsd_index_entry* new_index;
-        int retval = gsd_index_buffer_add(&handle->frame_index, &new_index);
-        if (retval != GSD_SUCCESS)
-            {
-            return retval;
-            }
-
-        *new_index = handle->buffer_index.data[i];
-        new_index->location += offset;
-        }
-
-    // clear the buffer index for new entries
-    handle->buffer_index.size = 0;
 
     return GSD_SUCCESS;
     }
@@ -1592,12 +1567,6 @@ inline static int gsd_initialize_handle(struct gsd_handle* handle)
     // if this is a write mode, allocate the initial frame index and the name buffer
     if (handle->open_flags != GSD_OPEN_READONLY)
         {
-        retval = gsd_index_buffer_allocate(&handle->frame_index, GSD_INITIAL_FRAME_INDEX_SIZE);
-        if (retval != GSD_SUCCESS)
-            {
-            return retval;
-            }
-
         retval = gsd_index_buffer_allocate(&handle->buffer_index, GSD_INITIAL_FRAME_INDEX_SIZE);
         if (retval != GSD_SUCCESS)
             {
@@ -1812,15 +1781,6 @@ int gsd_truncate(struct gsd_handle* handle)
         return retval;
         }
 
-    if (handle->frame_index.reserved > 0)
-        {
-        retval = gsd_index_buffer_free(&handle->frame_index);
-        if (retval != GSD_SUCCESS)
-            {
-            return retval;
-            }
-        }
-
     if (handle->buffer_index.reserved > 0)
         {
         retval = gsd_index_buffer_free(&handle->buffer_index);
@@ -1879,15 +1839,6 @@ int gsd_close(struct gsd_handle* handle)
     if (retval != GSD_SUCCESS)
         {
         return retval;
-        }
-
-    if (handle->frame_index.reserved > 0)
-        {
-        retval = gsd_index_buffer_free(&handle->frame_index);
-        if (retval != GSD_SUCCESS)
-            {
-            return retval;
-            }
         }
 
     if (handle->buffer_index.reserved > 0)
@@ -1972,15 +1923,15 @@ int gsd_flush(struct gsd_handle* handle)
         return GSD_ERROR_FILE_MUST_BE_WRITABLE;
         }
 
-    // flush the namelist buffer
-    int retval = gsd_flush_name_buffer(handle);
+    // flush the write buffer first so that all locations in the buffer_index are maintained.
+    int retval = gsd_flush_write_buffer(handle);
     if (retval != GSD_SUCCESS)
         {
         return retval;
         }
 
-    // flush the write buffer
-    retval = gsd_flush_write_buffer(handle);
+    // flush the namelist buffer
+    retval = gsd_flush_name_buffer(handle);
     if (retval != GSD_SUCCESS)
         {
         return retval;
@@ -1993,13 +1944,13 @@ int gsd_flush(struct gsd_handle* handle)
         return GSD_ERROR_IO;
         }
 
-    // Write the frame index to the file, excluding the index entries that are part of the current
+    // Write the buffer index to the file, excluding the index entries that are part of the current
     // frame.
-    if (handle->pending_index_entries > handle->frame_index.size)
+    if (handle->pending_index_entries > handle->buffer_index.size)
         {
         return GSD_ERROR_INVALID_ARGUMENT;
         }
-    uint64_t index_entries_to_write = handle->frame_index.size - handle->pending_index_entries;
+    uint64_t index_entries_to_write = handle->buffer_index.size - handle->pending_index_entries;
 
     if (index_entries_to_write > 0)
         {
@@ -2010,7 +1961,7 @@ int gsd_flush(struct gsd_handle* handle)
             }
 
         // sort the index before writing
-        retval = gsd_index_buffer_sort(&handle->frame_index);
+        retval = gsd_index_buffer_sort(&handle->buffer_index);
         if (retval != 0)
             {
             return retval;
@@ -2022,12 +1973,13 @@ int gsd_flush(struct gsd_handle* handle)
 
         size_t bytes_to_write = sizeof(struct gsd_index_entry) * index_entries_to_write;
         ssize_t bytes_written
-            = gsd_io_pwrite_retry(handle->fd, handle->frame_index.data, bytes_to_write, write_pos);
+            = gsd_io_pwrite_retry(handle->fd, handle->buffer_index.data, bytes_to_write, write_pos);
 
         if (bytes_written == -1 || bytes_written != bytes_to_write)
             {
             return GSD_ERROR_IO;
             }
+
         retval = gsd_fsync(handle->fd);
         if (retval != 0)
             {
@@ -2049,13 +2001,13 @@ int gsd_flush(struct gsd_handle* handle)
             {
             for (uint64_t i = 0; i < handle->pending_index_entries; i++)
                 {
-                handle->frame_index.data[i]
-                    = handle->frame_index
-                          .data[handle->frame_index.size - handle->pending_index_entries + i];
+                handle->buffer_index.data[i]
+                    = handle->buffer_index
+                          .data[handle->buffer_index.size - handle->pending_index_entries + i];
                 }
             }
 
-        handle->frame_index.size = handle->pending_index_entries;
+        handle->buffer_index.size = handle->pending_index_entries;
         }
 
     handle->file_frame = handle->buffer_frame;
@@ -2114,29 +2066,31 @@ int gsd_write_chunk(struct gsd_handle* handle,
     entry.type = (uint8_t)type;
     entry.N = N;
     entry.M = M;
+    entry.location = handle->file_size + handle->write_buffer.size;
     size_t size = N * M * gsd_sizeof_type(type);
 
-    // decide whether to write this chunk to the buffer or straight to disk
-    if (size < handle->maximum_write_buffer_size)
+    // flush the buffer if this entry won't fit
+    if (size > (handle->maximum_write_buffer_size - handle->write_buffer.size))
         {
-        // flush the buffer if this entry won't fit
-        if (size > (handle->maximum_write_buffer_size - handle->write_buffer.size))
-            {
-            gsd_flush_write_buffer(handle);
-            }
-
-        entry.location = handle->write_buffer.size;
-
-        // add an entry to the buffer index
-        struct gsd_index_entry* index_entry;
-
-        int retval = gsd_index_buffer_add(&handle->buffer_index, &index_entry);
+        int retval = gsd_flush_write_buffer(handle);
         if (retval != GSD_SUCCESS)
             {
             return retval;
             }
-        *index_entry = entry;
+        }
 
+    // add an entry to the buffer index
+    struct gsd_index_entry* index_entry;
+    int retval = gsd_index_buffer_add(&handle->buffer_index, &index_entry);
+    if (retval != GSD_SUCCESS)
+        {
+        return retval;
+        }
+    *index_entry = entry;
+
+    // decide whether to write this chunk to the buffer or straight to disk
+    if (size < handle->maximum_write_buffer_size)
+        {
         // add the data to the write buffer
         if (size > 0)
             {
@@ -2149,21 +2103,8 @@ int gsd_write_chunk(struct gsd_handle* handle,
         }
     else
         {
-        // add an entry to the frame index
-        struct gsd_index_entry* index_entry;
-
-        int retval = gsd_index_buffer_add(&handle->frame_index, &index_entry);
-        if (retval != GSD_SUCCESS)
-            {
-            return retval;
-            }
-        *index_entry = entry;
-
-        // find the location at the end of the file for the chunk
-        index_entry->location = handle->file_size;
-
         // write the data
-        ssize_t bytes_written = gsd_io_pwrite_retry(handle->fd, data, size, index_entry->location);
+        ssize_t bytes_written = gsd_io_pwrite_retry(handle->fd, data, size, entry.location);
         if (bytes_written == -1 || bytes_written != size)
             {
             return GSD_ERROR_IO;
