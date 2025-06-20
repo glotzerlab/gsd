@@ -7,18 +7,44 @@ Change Log
 `GSD <https://github.com/glotzerlab/gsd>`_ releases follow `semantic versioning
 <https://semver.org/>`_.
 
-3.x
+
+4.x
 ---
-next (not yet released)
-^^^^^^^^^^^^^^^^^^^^^^^
+
+4.0.0 (not yet released)
+^^^^^^^^^^^^^^^^^^^^^^^^
+
 *Fixed:*
 
-* Type hints for ``HoomdTrajectory._read_frame`` and downstream methods are now correct.
+* Type hints for ``HoomdTrajectory._read_frame`` and downstream methods are now correct
+  (`#417 <https://github.com/glotzerlab/gsd/pull/417>`__).
+* Sync changes to disk on macOS
+  (`#429 <https://github.com/glotzerlab/gsd/pull/429>`__).
+* Sync index entries to disk before returning from `flush`
+  (`#429 <https://github.com/glotzerlab/gsd/pull/429>`__).
+* Work around macOS bug that mysteriously allocated 16 MB of extra disk blocks beyond the end
+  of the file
+  (`#429 <https://github.com/glotzerlab/gsd/pull/429>`__).
 
 *Changed:*
 
 * No longer test with clang 10, 11, or 12
   (`#422 <https://github.com/glotzerlab/gsd/pull/422>`__).
+* [breaking] ``end_frame``, ``find_chunk``, ``find_matching_chunk_names``, and ``read_chunk`` no longer
+  implicitly call ``flush``. The caller must manually call ``flush`` (or close the file) before
+  chunks can be read. This behavior extends to the high level ``gsd.hoomd`` Python API
+  (`#429 <https://github.com/glotzerlab/gsd/pull/429>`__).
+* Set the default write buffer to 1 MB
+  (`#429 <https://github.com/glotzerlab/gsd/pull/429>`__).
+
+*Removed:*
+
+* ``index_entries_to_buffer``
+  (`#429 <https://github.com/glotzerlab/gsd/pull/429>`__).
+
+
+3.x
+---
 
 3.4.2 (2024-11-13)
 ^^^^^^^^^^^^^^^^^^
