@@ -454,6 +454,10 @@ cdef class GSDFile:
         future calls to :py:meth:`write_chunk()` will write to the **next**
         frame in the file.
 
+        :py:meth:`end_frame()` does NOT write frames to the underlying file.
+        Complete frames will be available to read from the file 1) after the
+        file is closed or 2) after a call to :py:meth:`flush()` completes.
+
         .. danger::
             Call :py:meth:`end_frame()` to complete the current frame
             **before** closing the file. If you fail to call
@@ -478,6 +482,7 @@ cdef class GSDFile:
                               data=numpy.array([13,14],
                                                dtype=numpy.float32))
                 f.end_frame()
+                f.flush()
                 f.nframes
                 f.close()
 
@@ -547,6 +552,7 @@ cdef class GSDFile:
                               data=numpy.array([70,80,90],
                                                dtype=numpy.int64))
                 f.end_frame()
+                f.flush()
                 f.nframes
                 f.close()
         """
