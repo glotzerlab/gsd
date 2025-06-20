@@ -633,15 +633,13 @@ inline static int gsd_index_buffer_map(struct gsd_index_buffer* buf, struct gsd_
 
 #if GSD_USE_MMAP
     // map the index in read only mode
-    size_t page_size = getpagesize();
     size_t index_size = sizeof(struct gsd_index_entry) * handle->header.index_allocated_entries;
-    size_t offset = (handle->header.index_location / page_size) * page_size;
     buf->mapped_data = mmap(NULL,
-                            index_size + (handle->header.index_location - offset),
+                            index_size + handle->header.index_location,
                             PROT_READ,
                             MAP_SHARED,
                             handle->fd,
-                            offset);
+                            0);
 
     if (buf->mapped_data == MAP_FAILED)
         {
@@ -649,9 +647,9 @@ inline static int gsd_index_buffer_map(struct gsd_index_buffer* buf, struct gsd_
         }
 
     buf->data = (struct gsd_index_entry*)(((char*)buf->mapped_data)
-                                          + (handle->header.index_location - offset));
+                                          + handle->header.index_location);
 
-    buf->mapped_len = index_size + (handle->header.index_location - offset);
+    buf->mapped_len = index_size + handle->header.index_location;
     buf->reserved = handle->header.index_allocated_entries;
 #else
     // mmap not supported, read the data from the disk
