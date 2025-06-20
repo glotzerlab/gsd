@@ -99,7 +99,7 @@ int S_IWUSR = _S_IWRITE;
 int S_IRGRP = _S_IREAD;
 int S_IWGRP = _S_IWRITE;
 
-inline int gsd_fsync(int fd)
+int gsd_fsync(int fd)
     {
     return _commit(fd);
     }
@@ -131,12 +131,12 @@ inline ssize_t pwrite(int fd, const void* buf, size_t count, int64_t offset)
     }
 
 #elif defined(__APPLE__)
-inline int gsd_fsync(int fd)
+int gsd_fsync(int fd)
     {
     return fcntl(fd, F_FULLFSYNC);
     }
 #else
-inline int gsd_fsync(int fd)
+int gsd_fsync(int fd)
     {
     return fsync(fd);
     }
@@ -1989,7 +1989,7 @@ int gsd_flush(struct gsd_handle* handle)
 #if !GSD_USE_MMAP
         // add the entries to the file index
         memcpy(handle->file_index.data + handle->file_index.size,
-               handle->frame_index.data,
+               handle->buffer_index.data,
                sizeof(struct gsd_index_entry) * index_entries_to_write);
 #endif
 
@@ -2395,7 +2395,7 @@ int gsd_upgrade(struct gsd_handle* handle)
         {
         return GSD_ERROR_INVALID_ARGUMENT;
         }
-    if (handle->frame_index.size > 0 || handle->frame_names.n_names > 0)
+    if (handle->buffer_index.size > 0 || handle->frame_names.n_names > 0)
         {
         return GSD_ERROR_INVALID_ARGUMENT;
         }

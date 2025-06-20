@@ -291,9 +291,6 @@ extern "C"
         /// Mapped data chunk index
         struct gsd_index_buffer file_index;
 
-        /// Index entries to append to the current frame
-        struct gsd_index_buffer frame_index;
-
         /// Buffered index entries to append to the current frame
         struct gsd_index_buffer buffer_index;
 
