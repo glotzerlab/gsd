@@ -985,7 +985,18 @@ inline static int gsd_expand_file_index(struct gsd_handle* handle, size_t size_r
         return retval;
         }
 
-    // allocate the copy buffer
+    int64_t new_index_location = lseek(handle->fd, 0, SEEK_END);
+    int64_t old_index_location = handle->header.index_location;
+
+    // fill the new index space with 0s
+    size_t new_index_bytes = size_new * sizeof(struct gsd_index_entry);
+    retval = ftruncate(handle->fd, new_index_location + new_index_bytes);
+    if (retval != 0)
+        {
+        return GSD_ERROR_IO;
+        }
+
+    // write the current index to the end of the file
     uint64_t copy_buffer_size
         = GSD_DEFAULT_MAXIMUM_WRITE_BUFFER_SIZE;
     if (copy_buffer_size > size_old * sizeof(struct gsd_index_entry))
@@ -993,10 +1004,7 @@ inline static int gsd_expand_file_index(struct gsd_handle* handle, size_t size_r
         copy_buffer_size = size_old * sizeof(struct gsd_index_entry);
         }
     char* buf = malloc(copy_buffer_size);
-
-    // write the current index to the end of the file
-    int64_t new_index_location = lseek(handle->fd, 0, SEEK_END);
-    int64_t old_index_location = handle->header.index_location;
+    
     size_t total_bytes_written = 0;
     size_t old_index_bytes = size_old * sizeof(struct gsd_index_entry);
     while (total_bytes_written < old_index_bytes)
@@ -1030,15 +1038,6 @@ inline static int gsd_expand_file_index(struct gsd_handle* handle, size_t size_r
             }
 
         total_bytes_written += bytes_written;
-        }
-
-    // fill the new index space with 0s
-    size_t new_index_bytes = size_new * sizeof(struct gsd_index_entry);
-    retval = ftruncate(handle->fd, new_index_location + new_index_bytes);
-    if (retval != 0)
-        {
-        free(buf);
-        return GSD_ERROR_IO;
         }
 
     // sync the expanded index
