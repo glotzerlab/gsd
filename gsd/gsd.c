@@ -65,10 +65,10 @@ enum
     GSD_INITIAL_WRITE_BUFFER_SIZE = 1024
     };
 
-/// Default maximum size of write buffer
+/// Default maximum size of write buffer (in bytes)
 enum
     {
-    GSD_DEFAULT_MAXIMUM_WRITE_BUFFER_SIZE = 1024 * 1024
+    GSD_DEFAULT_MAXIMUM_WRITE_BUFFER_BYTES = 1024 * 1024
     };
 
 /// Size of hash map
@@ -995,7 +995,7 @@ inline static int gsd_expand_file_index(struct gsd_handle* handle, size_t size_r
         }
 
     // write the current index to the end of the file
-    uint64_t copy_buffer_size = GSD_DEFAULT_MAXIMUM_WRITE_BUFFER_SIZE;
+    uint64_t copy_buffer_size = GSD_DEFAULT_MAXIMUM_WRITE_BUFFER_BYTES;
     if (copy_buffer_size > size_old * sizeof(struct gsd_index_entry))
         {
         copy_buffer_size = size_old * sizeof(struct gsd_index_entry);
@@ -1568,7 +1568,7 @@ inline static int gsd_initialize_handle(struct gsd_handle* handle)
         }
 
     handle->pending_index_entries = 0;
-    handle->maximum_write_buffer_size = GSD_DEFAULT_MAXIMUM_WRITE_BUFFER_SIZE;
+    handle->maximum_write_buffer_size = GSD_DEFAULT_MAXIMUM_WRITE_BUFFER_BYTES;
 
     // Silently upgrade writable files from a previous matching major version to the latest
     // minor version.
