@@ -37,9 +37,6 @@ double benchmark(size_t buffer)
         names.push_back(s.str());
         }
 
-    // std::cout << "Writing test.gsd with: " << n_keys << " keys, " << n_frames << " frames, "
-    //           << "and " << key_size << " double(s) per key" << '\n';
-
     gsd_handle handle;
     gsd_create_and_open(&handle, "test.gsd", "app", "schema", 0, GSD_OPEN_APPEND, 0);
     gsd_set_maximum_write_buffer_size(&handle, buffer);
@@ -61,20 +58,11 @@ double benchmark(size_t buffer)
         = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
     double const time_per_key = time_span.count() / double(n_keys) / double(n_frames);
 
-    // const double us = 1e-6;
-    // std::cout << "Write time: " << time_per_key / us << " microseconds/key." << '\n';
-    // std::cout << "Write time: " << time_per_key / us * n_keys << " microseconds/frame." << '\n';
-
     const double mb_per_second
         = double(key_size * 8 + static_cast<const size_t>(32) * static_cast<const size_t>(2))
           / 1048576.0 / time_per_key;
-    // std::cout << "MB/s: " << mb_per_second << " MB/s." << '\n';
 
     gsd_close(&handle);
-
-    // gsd_open(&handle, "test.gsd", GSD_OPEN_READONLY);
-    // std::cout << "Frames: " << gsd_get_nframes(&handle) << '\n';
-    // gsd_close(&handle);
 
     return mb_per_second;
     }
