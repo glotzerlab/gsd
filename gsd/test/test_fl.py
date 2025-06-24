@@ -1335,7 +1335,7 @@ def test_expand(tmp_path, open_mode, flush):
         N_ENTRIES = 1024
 
         for i in range(N_ENTRIES):
-            data = numpy.array([i], dtype=numpy.int64)
+            data = numpy.array([i] * i, dtype=numpy.int64)
             f.write_chunk(name='data', data=data)
             f.end_frame()
             if flush and (i & 0xF == 0):
@@ -1343,6 +1343,6 @@ def test_expand(tmp_path, open_mode, flush):
 
         f.flush()
         for i in range(N_ENTRIES):
-            expected_data = numpy.array([i], dtype=numpy.int64)
+            expected_data = numpy.array([i] * i, dtype=numpy.int64)
             read_data = f.read_chunk(frame=i, name='data')
             numpy.testing.assert_array_equal(read_data, expected_data)
