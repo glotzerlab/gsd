@@ -438,9 +438,11 @@ extern "C"
         @pre *handle* was opened by gsd_open().
 
         @post Writable files: All data and index entries buffered before the previous call to
-              gsd_end_frame() is written to the file (see gsd_flush()).
+              gsd_end_frame() is written to the file by implicitly calling gsd_flush().
         @post The file is closed.
         @post *handle* is freed and can no longer be used.
+
+        @note There is no need to manually call gsd_flush() before gsd_close().
 
         @warning Ensure that all gsd_write_chunk() calls are completed with gsd_end_frame() before
         closing the file.
