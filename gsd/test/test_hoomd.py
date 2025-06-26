@@ -734,6 +734,7 @@ def test_truncate(tmp_path):
     """Test the truncate API."""
     with gsd.hoomd.open(name=tmp_path / 'test_iteration.gsd', mode='w') as hf:
         hf.extend(create_frame(i) for i in range(20))
+        hf.flush()
 
         assert len(hf) == 20
         s = hf[10]  # noqa

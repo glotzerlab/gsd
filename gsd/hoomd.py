@@ -788,6 +788,11 @@ class HOOMDTrajectory:
 
         self.file.end_frame()
 
+        # This implementation must be able to read back frame 0, flush it.
+        # Allow the user to control when other frames are flushed.
+        if len(self) == 0:
+            self.flush()
+
     def truncate(self):
         """Remove all frames from the file."""
         self.file.truncate()
