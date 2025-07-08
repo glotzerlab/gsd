@@ -27,8 +27,6 @@ jobs:
         include:
         ##############
         # Windows
-        - os: windows-2019
-          python: '3.12'
         - os: windows-2022
           python: '3.13'
         ##############
