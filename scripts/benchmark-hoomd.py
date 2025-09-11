@@ -10,9 +10,9 @@ import sys
 import time
 from subprocess import PIPE, call
 
+import gsd.fl
 import numpy
 
-import gsd.fl
 import gsd.hoomd
 import gsd.pygsd
 
