@@ -5,10 +5,10 @@
 
 import pickle
 
+import gsd.fl
 import numpy
 import pytest
 
-import gsd.fl
 import gsd.hoomd
 
 

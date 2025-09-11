@@ -9,6 +9,7 @@ assignees: 'joaander'
 
 Release checklist:
 
+- [ ] run `prek autoupdate`
 - [ ] Run *bumpversion*.
 - [ ] Review the change log.
 - [ ] Check for new or duplicate contributors since the last release:

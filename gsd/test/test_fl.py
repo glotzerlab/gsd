@@ -10,10 +10,10 @@ import random
 import shutil
 import sys
 
+import gsd.fl
 import numpy
 import pytest
 
-import gsd.fl
 import gsd.pygsd
 
 test_path = pathlib.Path(os.path.realpath(__file__)).parent

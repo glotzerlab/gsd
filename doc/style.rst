@@ -7,13 +7,12 @@ Code style
 All code in GSD must follow a consistent style to ensure readability. We provide configuration files
 for linters (specified below) so that developers can automatically validate and format files.
 
-These tools are configured for use with `pre-commit`_ in ``.pre-commit-config.yaml``. You can
-install pre-commit hooks to validate your code. Checks will run on pull requests. Run checks
-manually with::
+These tools are configured for use with `prek`_ and checks will run on pull requests.
+Run checks manually with::
 
-    pre-commit run --all-files
+    prek run --all-files
 
-.. _pre-commit: https://pre-commit.com/
+.. _prek: https://prek.j178.dev/
 
 Python
 ------
@@ -38,9 +37,6 @@ Tools
   * Configure flake8 in your editor to see violations on save.
 
 * Autoformatter: `yapf <https://github.com/google/yapf>`_
-
-  * Run: ``pre-commit run --all-files`` to apply style changes to the whole
-    repository.
 
 Documentation
 ^^^^^^^^^^^^^

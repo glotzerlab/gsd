@@ -1,17 +1,13 @@
-ci:
-  autoupdate_schedule: quarterly
-  autoupdate_branch: 'trunk-patch'
-  autofix_prs: false
-
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: 'v5.0.0'
+  rev: 'v6.0.0'
   hooks:
   - id: end-of-file-fixer
   - id: trailing-whitespace
   - id: check-json
   - id: check-toml
   - id: check-yaml
+    exclude: "\\.clang-format"
   - id: check-case-conflict
   - id: mixed-line-ending
 - repo: https://github.com/asottile/pyupgrade
@@ -36,12 +32,12 @@ repos:
     - --keep-before=#!
     - --keep-after=.. include
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: 'v0.12.2'
+  rev: 'v0.13.0'
   hooks:
   - id: ruff-format
-  - id: ruff
+  - id: ruff-check
 - repo: https://github.com/pre-commit/mirrors-clang-format
-  rev: v20.1.7
+  rev: v21.1.0
   hooks:
   - id: clang-format
     types_or: [c, c++]
