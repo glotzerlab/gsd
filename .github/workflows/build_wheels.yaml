@@ -71,7 +71,7 @@ jobs:
         with:
           python-version: 3.13
       - name: Set up Python environment
-        uses: glotzerlab/workflows/setup-uv@246fa1f0b982584f30294eeb1bdeb23939c4484c # 0.8.0
+        uses: glotzerlab/workflows/setup-uv@1fe577d5430222a9793694a14cdb316cf8f720e1 # 0.9.0
       - name: Build sdist
         run: uv build --sdist --out-dir dist/ .
 
