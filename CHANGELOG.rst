@@ -11,7 +11,7 @@ Change Log
 4.x
 ---
 
-4.1.0 (not yet released)
+4.1.0 (2025-09-30)
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 * Build with the ``abi3`` for ``Python >=3.11``
