@@ -1,0 +1,43 @@
+[tool.bumpversion]
+current_version = "5.4.0"
+
+[[tool.bumpversion.files]]
+filename = "INSTALLING.rst"
+search = 'version = "{current_version}"'
+replace = 'version = "{new_version}"'
+
+[[tool.bumpversion.files]]
+filename = "gsd/version.py"
+search = "version = '{current_version}'"
+replace = "version = '{new_version}'"
+
+[[tool.bumpversion.files]]
+filename = "gsd/pygsd.py"
+search = "version = '{current_version}'"
+replace = "version = '{new_version}'"
+
+[[tool.bumpversion.files]]
+filename = "Doxyfile"
+search = 'v{current_version}'
+replace = 'v{new_version}'
+
+[[tool.bumpversion.files]]
+filename = ".github/ISSUE_TEMPLATE/bug_report.yml"
+search = """
+      description: What version of GSD are you using?
+      placeholder: {current_version}"""
+
+replace = """
+      description: What version of GSD are you using?
+      placeholder: {new_version}"""
+
+[[tool.bumpversion.files]]
+filename = ".github/ISSUE_TEMPLATE/release.md"
+search = "Release gsd {current_version}"
+replace = "Release gsd {new_version}"
+
+[[tool.bumpversion.files]]
+filename = "CHANGELOG.rst"
+regex = true
+search = '{new_version} [^\n]*$'
+replace = '{new_version} ({now:%Y-%m-%d})'

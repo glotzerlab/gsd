@@ -62,8 +62,7 @@ body:
   - type: input
     attributes:
       label: GSD
-      description: |
-        What version of GSD are you using?
+      description: What version of GSD are you using?
       placeholder: 4.0.0
     validations:
       required: true
