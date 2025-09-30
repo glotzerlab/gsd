@@ -12,8 +12,8 @@ include(LinterSetup)
 include(PythonSetup)
 include_directories(${PYTHON_INCLUDE_DIR})
 
-if (WIN32)
-add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
+if(WIN32)
+    add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
 endif()
 
 #############################################################################################

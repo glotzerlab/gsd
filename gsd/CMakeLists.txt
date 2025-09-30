@@ -1,35 +1,46 @@
 ############### cython based modules
 
-add_custom_command (
+add_custom_command(
     OUTPUT fl.c
     DEPENDS fl.pyx libgsd.pxd
-    COMMAND    ${CYTHON_EXECUTABLE}
-    ARGS       -${PYTHON_VERSION_MAJOR} -I ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/fl.pyx -o ${CMAKE_CURRENT_BINARY_DIR}/fl.c
-    COMMENT    "Cythonizing fl.pyx"
+    COMMAND ${CYTHON_EXECUTABLE}
+    ARGS
+        -${PYTHON_VERSION_MAJOR} -I ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}/fl.pyx -o ${CMAKE_CURRENT_BINARY_DIR}/fl.c
+    COMMENT "Cythonizing fl.pyx"
 )
 
-set_source_files_properties(gsd.c PROPERTIES COMPILE_DEFINITIONS NO_IMPORT_ARRAY)
+set_source_files_properties(
+    gsd.c
+    PROPERTIES COMPILE_DEFINITIONS NO_IMPORT_ARRAY
+)
 
 add_library(gsd_objects OBJECT gsd.c)
 set_target_properties(gsd_objects PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
-if (CLANG_TIDY_EXE)
-    set_target_properties(gsd_objects PROPERTIES C_CLANG_TIDY "${DO_CLANG_TIDY}")
+if(CLANG_TIDY_EXE)
+    set_target_properties(
+        gsd_objects
+        PROPERTIES C_CLANG_TIDY "${DO_CLANG_TIDY}"
+    )
 endif()
 
 add_library(fl SHARED fl.c gsd.c)
 target_compile_definitions(fl PRIVATE NPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION)
 
 if(!WIN32)
-target_compile_definitions(fl PRIVATE Py_LIMITED_API=0x030B0000)
+    target_compile_definitions(fl PRIVATE Py_LIMITED_API=0x030B0000)
 endif()
 
-set_target_properties(fl PROPERTIES PREFIX "" OUTPUT_NAME "fl" MACOSX_RPATH "On")
+set_target_properties(
+    fl
+    PROPERTIES PREFIX "" OUTPUT_NAME "fl" MACOSX_RPATH "On"
+)
 if(APPLE)
     set_target_properties(fl PROPERTIES SUFFIX ".so")
 endif(APPLE)
 
-if (WIN32)
+if(WIN32)
     set_target_properties(fl PROPERTIES SUFFIX ".pyd")
 endif()
 
@@ -40,29 +51,34 @@ else()
     # Do not link to the Python libraries on Mac/Linux - symbols are provided by
     # the `python` executable. "-undefined dynamic_lookup" is needed on Mac
     target_link_options(
-        fl PRIVATE
-        "$<$<PLATFORM_ID:Darwin>:LINKER:-undefined,dynamic_lookup>")
+        fl
+        PRIVATE "$<$<PLATFORM_ID:Darwin>:LINKER:-undefined,dynamic_lookup>"
+    )
 endif()
 
 ################ Python only modules
 # copy python modules to the build directory to make it a working python package
-MACRO(copy_file file)
-    add_custom_command (
+macro(copy_file file)
+    add_custom_command(
         OUTPUT ${file}
         DEPENDS ${file}
-        COMMAND    ${CMAKE_COMMAND}
-        ARGS       -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${file} ${CMAKE_CURRENT_BINARY_DIR}/${file}
-        COMMENT    "Copy gsd/${file}"
+        COMMAND ${CMAKE_COMMAND}
+        ARGS
+            -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+            ${CMAKE_CURRENT_BINARY_DIR}/${file}
+        COMMENT "Copy gsd/${file}"
     )
-ENDMACRO(copy_file)
+endmacro(copy_file)
 
-set(files __init__.py
-          __main__.py
-          hoomd.py
-          pygsd.py
-          version.py
-          conftest.py
-          pytest_plugin_validate.py)
+set(files
+    __init__.py
+    __main__.py
+    hoomd.py
+    pygsd.py
+    version.py
+    conftest.py
+    pytest_plugin_validate.py
+)
 
 foreach(file ${files})
     copy_file(${file})

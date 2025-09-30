@@ -19,6 +19,7 @@ pytest = "*"
 cmake = "*"
 ninja = "*"
 uv = "*"
+bump-my-version = "*"
 
 [pypi-dependencies]
 sphinx-copybutton = "*"

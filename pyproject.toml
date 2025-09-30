@@ -1,7 +1,7 @@
 [project]
 requires-python = ">=3.11"
 name = "gsd"
-version = "4.0.0"
+version = "4.1.0"
 description = "General simulation data file format."
 readme = "README.md"
 license = "BSD-2-Clause"
@@ -25,7 +25,6 @@ gsd = "gsd.__main__:main"
 [project.urls]
 Homepage = "https://gsd.readthedocs.io"
 Documentation = "https://gsd.readthedocs.io"
-Download = "https://github.com/glotzerlab/gsd/releases/download/v4.0.0/gsd-4.0.0.tar.gz"
 Source = "https://github.com/glotzerlab/gsd"
 Issues = "https://github.com/glotzerlab/gsd/issues"
 
