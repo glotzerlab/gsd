@@ -24,4 +24,7 @@ extensions = cythonize(
     compiler_directives={'language_level': 3},
 )
 
-setup(ext_modules=extensions)
+setup(
+    ext_modules=extensions,
+    options={'bdist_wheel': {'py_limited_api': 'cp311'}},
+)
