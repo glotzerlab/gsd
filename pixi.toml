@@ -18,6 +18,7 @@ doxygen = "*"
 pytest = "*"
 cmake = "*"
 ninja = "*"
+uv = "*"
 
 [pypi-dependencies]
 sphinx-copybutton = "*"
