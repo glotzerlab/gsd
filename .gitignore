@@ -11,3 +11,6 @@ devdoc
 dist
 gsd.egg-info
 html
+# pixi environments
+.pixi/*
+!.pixi/config.toml

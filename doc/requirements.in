@@ -7,3 +7,4 @@ pandas
 sphinx
 sphinxcontrib-googleanalytics
 sphinx-copybutton
+sphinx-inline-tabs
