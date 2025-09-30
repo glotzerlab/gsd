@@ -17,32 +17,42 @@ conda-forge package
 ^^^^^^^^^^^^^^^^^^^
 
 **gsd** is available on conda-forge_ for the *linux-64*, *linux-aarch64*, *linux-ppc64le*, *osx-64*,
-*osx-arm64* and *win-64* architectures. Execute one of the following command to install **gsd**:
+*osx-arm64* and *win-64* architectures:
 
-.. code-block:: bash
+.. tab:: Pixi
 
-   micromamba install gsd
+   .. code-block:: bash
 
-**OR**
+      pixi add gsd
 
-.. code-block:: bash
+.. tab:: Micromamba
 
-   mamba install gsd
+   .. code-block:: bash
+
+      micromamba install gsd
+
+.. tab:: Mamba
+
+   .. code-block:: bash
+
+      mamba install gsd
 
 PyPI
 ^^^^
 
-Use **uv** or **pip** to install **gsd** binaries from PyPI_ into a virtual environment:
+Install **gsd** binaries from PyPI_ into a virtual environment:
 
-.. code-block:: bash
+.. tab:: uv
 
-   uv pip install gsd
+   .. code-block:: bash
 
-**OR**
+      uv pip install gsd
 
-.. code-block:: bash
+.. tab:: pip
 
-   python3 -m pip install gsd
+   .. code-block:: bash
+
+      python3 -m pip install gsd
 
 Compile from source
 -------------------
@@ -59,21 +69,26 @@ To build **gsd** from source:
 
     cd gsd
 
-3. `Install with uv`_::
+3.
+   .. tab:: uv
 
-    uv pip install .
+      `Install with uv`_::
 
-4. **OR** `Install prerequisites`_ and `Build with CMake for development`_:
+          uv pip install .
 
-   .. code-block:: bash
+   .. tab:: CMake
 
-      micromamba install cmake cython ninja numpy python pytest
+      `Install prerequisites`_ and `Build with CMake for development`_:
 
-   .. code-block:: bash
+      .. code-block:: bash
 
-      cmake -B build -S . -GNinja
-      cd build
-      ninja
+         micromamba install cmake cython ninja numpy python pytest
+
+      .. code-block:: bash
+
+         cmake -B build -S . -GNinja
+         cd build
+         ninja
 
 To run the tests:
 
@@ -91,10 +106,10 @@ To build the documentation from source:
 
     cd {{ path/to/gsd/repository }}
 
-.. code-block:: bash
+   .. code-block:: bash
 
-    doxygen
-    sphinx-build -b html doc html
+       doxygen
+       sphinx-build -b html doc html
 
 The sections below provide details on each of these steps.
 
@@ -110,7 +125,7 @@ Install prerequisites
 * **C compiler** (tested with gcc 10-14, clang 10-18, Visual Studio 2019-2022)
 * **Python** >= 3.10
 * **numpy** >= 2.0.0
-* **Cython** >= 0.22
+* **Cython** >= 3.1
 
 **To execute unit tests:**
 
