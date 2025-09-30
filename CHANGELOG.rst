@@ -11,6 +11,14 @@ Change Log
 4.x
 ---
 
+4.1.0 (not yet released)
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+* Build with the ``abi3`` for ``Python >=3.11``
+  (`#459 <https://github.com/glotzerlab/gsd/pull/459>`__).
+* Remove support for ``Python <3.11`` following NEP29
+  (`#459 <https://github.com/glotzerlab/gsd/pull/459>`__).
+
 4.0.0 (2025-06-26)
 ^^^^^^^^^^^^^^^^^^
 
