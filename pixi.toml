@@ -1,0 +1,23 @@
+[workspace]
+channels = ["conda-forge"]
+name = "gsd"
+platforms = ["linux-64", "osx-arm64", "win-64"]
+
+[tasks]
+
+[dependencies]
+breathe = "*"
+cython = "*"
+furo = "*"
+ipython = "*"
+numpy = "*"
+pandas = "*"
+sphinx = "*"
+sphinx-inline-tabs = "*"
+doxygen = "*"
+pytest = "*"
+cmake = "*"
+ninja = "*"
+
+[pypi-dependencies]
+sphinx-copybutton = "*"
