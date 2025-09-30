@@ -17,7 +17,7 @@ on:
 
 jobs:
   build_wheels:
-    name: Build wheels [${{ matrix.python.version }}, ${{ matrix.os.base }}-${{ matrix.os.arch }}]
+    name: Build wheels [${{ matrix.os.base }}-${{ matrix.os.arch }}]
     runs-on: ${{ matrix.os.base }}-${{ matrix.os.version }}
     strategy:
       fail-fast: false
