@@ -46,15 +46,15 @@ test-requires = ["pytest==8.4.2", "numpy==2.3.3"]
 # Build on 64-bit architectures.
 archs = ["auto64"]
 
+# dependencies do not build for musl
+skip = ["pp*","*musllinux*","cp3??t-*"]
+
 # Use abi3audit to catch issues with Limited API wheels
 [tool.cibuildwheel.linux]
 repair-wheel-command = [
   "auditwheel repair -w {dest_dir} {wheel}",
   "pipx run abi3audit --strict --verbose {wheel}",
 ]
-
-# dependencies do not build for musl
-skip = ["pp* *musllinux*"]
 
 [tool.cibuildwheel.macos]
 repair-wheel-command = [
