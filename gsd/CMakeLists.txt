@@ -18,7 +18,11 @@ if (CLANG_TIDY_EXE)
 endif()
 
 add_library(fl SHARED fl.c gsd.c)
-target_compile_definitions(fl PRIVATE NPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION Py_LIMITED_API=0x030B0000)
+target_compile_definitions(fl PRIVATE NPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION)
+
+if(!WIN32)
+target_compile_definitions(fl PRIVATE Py_LIMITED_API=0x030B0000)
+endif()
 
 set_target_properties(fl PROPERTIES PREFIX "" OUTPUT_NAME "fl" MACOSX_RPATH "On")
 if(APPLE)
