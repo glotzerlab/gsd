@@ -100,8 +100,6 @@ class ConfigurationData:
             Array attributes that are not contiguous numpy arrays will be
             replaced with contiguous numpy arrays of the appropriate type.
         """
-        logger.debug('Validating ConfigurationData')
-
         if self.box is not None:
             self.box = numpy.ascontiguousarray(self.box, dtype=numpy.float32)
             self.box = self.box.reshape([6])
@@ -207,8 +205,6 @@ class ParticleData:
             Array attributes that are not contiguous numpy arrays will be
             replaced with contiguous numpy arrays of the appropriate type.
         """
-        logger.debug('Validating ParticleData')
-
         if self.position is not None:
             self.position = numpy.ascontiguousarray(self.position, dtype=numpy.float32)
             self.position = self.position.reshape([self.N, 3])
@@ -328,8 +324,6 @@ class BondData:
             Array attributes that are not contiguous numpy arrays will be
             replaced with contiguous numpy arrays of the appropriate type.
         """
-        logger.debug('Validating BondData')
-
         if self.typeid is not None:
             self.typeid = numpy.ascontiguousarray(self.typeid, dtype=numpy.uint32)
             self.typeid = self.typeid.reshape([self.N])
@@ -389,8 +383,6 @@ class ConstraintData:
             Array attributes that are not contiguous numpy arrays will be
             replaced with contiguous numpy arrays of the appropriate type.
         """
-        logger.debug('Validating ConstraintData')
-
         if self.value is not None:
             self.value = numpy.ascontiguousarray(self.value, dtype=numpy.float32)
             self.value = self.value.reshape([self.N])
@@ -461,8 +453,6 @@ class Frame:
 
     def validate(self):
         """Validate all contained frame data."""
-        logger.debug('Validating Frame')
-
         self.configuration.validate()
         self.particles.validate()
         self.bonds.validate()
@@ -738,9 +728,8 @@ class HOOMDTrajectory:
         frame. If it is the same, do not write it out as it can be instantiated
         either from the value at the initial frame or the default value.
         """
-        logger.debug('Appending frame to hoomd trajectory: ' + str(self.file))
-
-        frame.validate()
+        if isinstance(frame, Frame):
+            frame.validate()
 
         # want the initial frame specified as a reference to detect if chunks
         # need to be written
@@ -760,7 +749,6 @@ class HOOMDTrajectory:
             container = getattr(frame, path)
             for name in container._default_value:
                 if self._should_write(path, name, frame):
-                    logger.debug('writing data chunk: ' + path + '/' + name)
                     data = getattr(container, name)
 
                     if name == 'N':
@@ -825,9 +813,6 @@ class HOOMDTrajectory:
             initial_container = getattr(self._initial_frame, path)
             initial_data = getattr(initial_container, name)
             if numpy.array_equal(initial_data, data):
-                logger.debug(
-                    'skipping data chunk, matches frame 0: ' + path + '/' + name
-                )
                 return False
 
         matches_default_value = False
@@ -841,7 +826,6 @@ class HOOMDTrajectory:
         if matches_default_value and not self._chunk_exists_frame_0.get(
             path + '/' + name, False
         ):
-            logger.debug('skipping data chunk, default value: ' + path + '/' + name)
             return False
 
         return True
@@ -873,8 +857,6 @@ class HOOMDTrajectory:
         """
         if idx >= len(self):
             raise IndexError
-
-        logger.debug('reading frame ' + str(idx) + ' from: ' + str(self.file))
 
         if self._initial_frame is None and idx != 0:
             self._read_frame(0)
