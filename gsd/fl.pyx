@@ -447,12 +447,15 @@ cdef class GSDFile:
 
         __raise_on_error(retval, self.name)
 
-    def end_frame(self):
+    def end_frame(self, debug=True):
         """end_frame()
 
         Complete writing the current frame. After calling :py:meth:`end_frame()`
         future calls to :py:meth:`write_chunk()` will write to the **next**
         frame in the file.
+
+        Args:
+            debug (bool): Whether to enable debug logging. (Default value: True)
 
         :py:meth:`end_frame()` does NOT write frames to the underlying file.
         Complete frames will be available to read from the file 1) after the
@@ -491,7 +494,8 @@ cdef class GSDFile:
         if not self.__is_open:
             raise ValueError("File is not open")
 
-        logger.debug('end frame: ' + self.name)
+        if debug:
+            logger.debug('end frame: ' + self.name)
 
         with nogil:
             retval = libgsd.gsd_end_frame(&self.__handle)
@@ -514,7 +518,7 @@ cdef class GSDFile:
 
         __raise_on_error(retval, self.name)
 
-    def write_chunk(self, name, data):
+    def write_chunk(self, name, data, debug=True):
         """write_chunk(name, data)
 
         Write a data chunk to the file. After writing all chunks in the
@@ -525,6 +529,7 @@ cdef class GSDFile:
             data: Data to write into the chunk. Must be a numpy
                   array, or array-like, with 2 or fewer
                   dimensions.
+            debug (bool): Whether to enable debug logging. (Default value: True)
 
         Warning:
             :py:meth:`write_chunk()` will implicitly converts array-like and
@@ -630,9 +635,10 @@ cdef class GSDFile:
             else:
                 raise ValueError("invalid type for chunk: " + name)
 
-        # Once we have the data pointer, the behavior should be identical
-        # for all data types
-        logger.debug('write chunk: ' + self.name + ' - ' + name)
+        if debug:
+            # Once we have the data pointer, the behavior should be identical
+            # for all data types
+            logger.debug('write chunk: ' + self.name + ' - ' + name)
 
         cdef char * c_name
         name_e = name.encode('utf-8')
@@ -705,7 +711,7 @@ cdef class GSDFile:
 
         return index_entry != NULL
 
-    def read_chunk(self, frame, name):
+    def read_chunk(self, frame, name, debug=True):
         """read_chunk(frame, name)
 
         Read a data chunk from the file and return it as a numpy array.
@@ -713,6 +719,7 @@ cdef class GSDFile:
         Args:
             frame (int): Index of the frame to read
             name (str): Name of the chunk
+            debug (bool): Whether to enable debug logging. (Default value: True)
 
         Returns:
             ``(N,M)`` or ``(N,)`` `numpy.ndarray` of ``type``: Data read from
@@ -813,8 +820,9 @@ cdef class GSDFile:
         else:
             raise ValueError("invalid type for chunk: " + name)
 
-        logger.debug('read chunk: ' + self.name + ' - '
-                     + str(frame) + ' - ' + name)
+        if debug:
+            logger.debug('read chunk: ' + self.name + ' - '
+                         + str(frame) + ' - ' + name)
 
         # only read chunk if we have data
         if index_entry.N != 0 and index_entry.M != 0:
