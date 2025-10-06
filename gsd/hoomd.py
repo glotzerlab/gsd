@@ -21,11 +21,11 @@ See Also:
 """
 
 import copy
+import fnmatch.filter as fnfilter
 import json
 import logging
 import warnings
 from collections import OrderedDict
-from fnmatch import fnfilter
 
 import numpy
 
