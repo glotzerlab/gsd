@@ -1222,17 +1222,17 @@ def read_log(name, scalar_only=False):
                         tmp, (gsdfileobj.nframes, *tuple(1 for _ in tmp.shape))
                     )
 
-            for idx in range(1, gsdfileobj.nframes):
-                for key, item in logged_data_dict.items():
-                    if not gsdfileobj.chunk_exists(frame=idx, name=key):
-                        continue
-                    data = gsdfileobj.read_chunk(frame=idx, name=key)
-                    if (
-                        not isinstance(item.dtype, numpy.dtypes.StringDType)
-                        and len(item[idx].shape) == 0
-                    ):
-                        item[idx] = data[0]
-                    else:
-                        item[idx] = data
+        for idx in range(1, gsdfileobj.nframes):
+            for key, item in logged_data_dict.items():
+                if not gsdfileobj.chunk_exists(frame=idx, name=key):
+                    continue
+                data = gsdfileobj.read_chunk(frame=idx, name=key)
+                if (
+                    not isinstance(item.dtype, numpy.dtypes.StringDType)
+                    and len(item[idx].shape) == 0
+                ):
+                    item[idx] = data[0]
+                else:
+                    item[idx] = data
 
     return logged_data_dict
