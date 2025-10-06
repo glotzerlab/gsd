@@ -1129,7 +1129,7 @@ def read_log(name: str, scalar_only=False, glob_pattern='*'):
     The log data includes :chunk:`configuration/step` and all matching
     :chunk:`log/user_defined`, :chunk:`log/bonds/user_defined`, and
     :chunk:`log/particles/user_defined` quantities in the file that
-    match the provided `glob_pattern`.
+    match the provided ``glob_pattern``.
 
     Returns:
         `dict`
