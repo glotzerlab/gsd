@@ -291,6 +291,9 @@ cdef class GSDFile:
         cdef int exclusive_create = 0
         cdef int overwrite = 0
 
+        #: bool: Enable or disable debug mode for logging.
+        self.debug = debug
+
         self.mode = mode
 
         if mode == 'w':
@@ -373,8 +376,7 @@ cdef class GSDFile:
                                    + self.schema)
 
         self.__is_open = True
-        #: bool: Enable or disable debug mode for logging.
-        self.debug = debug
+
 
     def close(self):
         """close()
