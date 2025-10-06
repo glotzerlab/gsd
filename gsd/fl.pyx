@@ -285,7 +285,8 @@ cdef class GSDFile:
                  mode,
                  application,
                  schema,
-                 schema_version):
+                 schema_version,
+                 debug=True):
         cdef libgsd.gsd_open_flag c_flags
         cdef int exclusive_create = 0
         cdef int overwrite = 0
@@ -372,6 +373,8 @@ cdef class GSDFile:
                                    + self.schema)
 
         self.__is_open = True
+        #: bool: Enable or disable debug mode for logging.
+        self.debug = debug
 
     def close(self):
         """close()
@@ -447,15 +450,12 @@ cdef class GSDFile:
 
         __raise_on_error(retval, self.name)
 
-    def end_frame(self, debug=True):
+    def end_frame(self):
         """end_frame()
 
         Complete writing the current frame. After calling :py:meth:`end_frame()`
         future calls to :py:meth:`write_chunk()` will write to the **next**
         frame in the file.
-
-        Args:
-            debug (bool): Whether to enable debug logging. (Default value: True)
 
         :py:meth:`end_frame()` does NOT write frames to the underlying file.
         Complete frames will be available to read from the file 1) after the
@@ -494,7 +494,7 @@ cdef class GSDFile:
         if not self.__is_open:
             raise ValueError("File is not open")
 
-        if debug:
+        if self.debug:
             logger.debug('end frame: ' + self.name)
 
         with nogil:
@@ -518,7 +518,7 @@ cdef class GSDFile:
 
         __raise_on_error(retval, self.name)
 
-    def write_chunk(self, name, data, debug=True):
+    def write_chunk(self, name, data):
         """write_chunk(name, data)
 
         Write a data chunk to the file. After writing all chunks in the
@@ -529,7 +529,6 @@ cdef class GSDFile:
             data: Data to write into the chunk. Must be a numpy
                   array, or array-like, with 2 or fewer
                   dimensions.
-            debug (bool): Whether to enable debug logging. (Default value: True)
 
         Warning:
             :py:meth:`write_chunk()` will implicitly converts array-like and
@@ -590,8 +589,6 @@ cdef class GSDFile:
                 logger.warning('implicit data copy when writing chunk: ' + name)
             data_array = data_array.view()
 
-
-
             if len(data_array.shape) > 2:
                 raise ValueError("GSD can only write 1 or 2 dimensional arrays: "
                                 + name)
@@ -635,7 +632,7 @@ cdef class GSDFile:
             else:
                 raise ValueError("invalid type for chunk: " + name)
 
-        if debug:
+        if self.debug:
             # Once we have the data pointer, the behavior should be identical
             # for all data types
             logger.debug('write chunk: ' + self.name + ' - ' + name)
@@ -711,7 +708,7 @@ cdef class GSDFile:
 
         return index_entry != NULL
 
-    def read_chunk(self, frame, name, debug=True):
+    def read_chunk(self, frame, name):
         """read_chunk(frame, name)
 
         Read a data chunk from the file and return it as a numpy array.
@@ -719,7 +716,6 @@ cdef class GSDFile:
         Args:
             frame (int): Index of the frame to read
             name (str): Name of the chunk
-            debug (bool): Whether to enable debug logging. (Default value: True)
 
         Returns:
             ``(N,M)`` or ``(N,)`` `numpy.ndarray` of ``type``: Data read from
@@ -820,7 +816,7 @@ cdef class GSDFile:
         else:
             raise ValueError("invalid type for chunk: " + name)
 
-        if debug:
+        if self.debug:
             logger.debug('read chunk: ' + self.name + ' - '
                          + str(frame) + ' - ' + name)
 
