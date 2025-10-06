@@ -270,6 +270,8 @@ cdef class GSDFile:
         schema_version (tuple[int, int]): Schema version number
             (major, minor).
 
+        debug (bool): Whether to enable debug logging for the file. (Default ``True``)
+
         nframes (int): Number of frames.
 
         maximum_write_buffer_size (int): The Maximum write buffer size (bytes).
