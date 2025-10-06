@@ -278,7 +278,9 @@ cdef class GSDFile:
     cdef libgsd.gsd_handle __handle
     cdef bint __is_open
     cdef str mode
+    cdef bint debug
     cdef str name
+
 
     def __init__(self,
                  name,
