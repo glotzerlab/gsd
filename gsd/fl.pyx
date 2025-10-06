@@ -249,6 +249,8 @@ cdef class GSDFile:
 
         nframes (int): Number of frames.
 
+        debug (bool): Whether to enable debug logging for the file. (Default ``True``)
+
     :py:class:`GSDFile` implements an object oriented class interface to the GSD
     file layer. Use :py:func:`open` to open a GSD file and obtain a
     :py:class:`GSDFile` instance. :py:class:`GSDFile` can be used as a context
@@ -269,8 +271,6 @@ cdef class GSDFile:
 
         schema_version (tuple[int, int]): Schema version number
             (major, minor).
-
-        debug (bool): Whether to enable debug logging for the file. (Default ``True``)
 
         nframes (int): Number of frames.
 
