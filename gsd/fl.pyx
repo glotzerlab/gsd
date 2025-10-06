@@ -700,8 +700,6 @@ cdef class GSDFile:
         cdef int64_t c_frame
         c_frame = frame
 
-        logger.debug('chunk exists: ' + self.name + ' - ' + name)
-
         with nogil:
             index_entry = libgsd.gsd_find_chunk(&self.__handle, c_frame, c_name)
 
