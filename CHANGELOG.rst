@@ -8,8 +8,21 @@ Change Log
 <https://semver.org/>`_.
 
 
+
 4.x
 ---
+
+4.x.x (xxxx-xx-xx)
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Fixed:*
+
+* ``gsd.hoomd.read_log`` no longer iterates over the file more than necessary
+
+*Added:*
+
+* ``gsd.hoomd.read_log`` now accepts a "glob_pattern" filter to restrict the returned data
+
 
 4.1.0 (2025-09-30)
 ^^^^^^^^^^^^^^^^^^^^^^^^
