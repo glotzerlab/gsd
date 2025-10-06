@@ -1153,14 +1153,6 @@ def read_log(name: str, scalar_only=False, glob_pattern='*'):
                                                   scalar_only=True))
         df
 
-
-    To read only logs from HOOMD-Blue's ``ThermodynamicQuantities``:
-
-    .. ipython:: python
-
-        log = gsd.hoomd.read_log('log-example.gsd',
-                                  glob_pattern="*ThermodynamicQuantities*")
-        log.keys()
     """
     if not fl_imported:
         msg = 'file layer module is not available'
