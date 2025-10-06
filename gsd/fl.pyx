@@ -274,6 +274,8 @@ cdef class GSDFile:
 
         nframes (int): Number of frames.
 
+        debug (bool): Whether to enable debug logging for the file.
+
         maximum_write_buffer_size (int): The Maximum write buffer size (bytes).
     """
 
