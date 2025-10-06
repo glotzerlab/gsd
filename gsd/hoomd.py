@@ -25,6 +25,7 @@ import json
 import logging
 import warnings
 from collections import OrderedDict
+from fnmatch import fnfilter
 
 import numpy
 
@@ -1116,16 +1117,19 @@ def open(name, mode='r'):  # noqa: A001 - allow shadowing builtin open
     return HOOMDTrajectory(gsdfileobj)
 
 
-def read_log(name, scalar_only=False):
+def read_log(name: str, scalar_only=False, glob_pattern='*'):
     """Read log from a hoomd schema GSD file into a dict of time-series arrays.
 
     Args:
         name (str): File name to open.
         scalar_only (bool): Set to `True` to include only scalar log values.
+        glob_pattern (bool):
+            Apply a globbing wildcard filter to the log keys before reading.
 
     The log data includes :chunk:`configuration/step` and all matching
     :chunk:`log/user_defined`, :chunk:`log/bonds/user_defined`, and
-    :chunk:`log/particles/user_defined` quantities in the file.
+    :chunk:`log/particles/user_defined` quantities in the file that
+    match the provided `glob_pattern`.
 
     Returns:
         `dict`
@@ -1168,7 +1172,11 @@ def read_log(name, scalar_only=False):
         schema='hoomd',
         schema_version=[1, 4],
     ) as gsdfileobj:
-        logged_data_names = gsdfileobj.find_matching_chunk_names('log/')
+        logged_data_names = (
+            fnfilter(gsdfileobj.find_matching_chunk_names('log/'), glob_pattern)
+            if glob_pattern != '*'
+            else gsdfileobj.find_matching_chunk_names('log/')
+        )
         # Always log timestep associated with each log entry
         logged_data_names.insert(0, 'configuration/step')
         if len(logged_data_names) == 1:
@@ -1176,7 +1184,7 @@ def read_log(name, scalar_only=False):
                 'No logged data in file: ' + str(name), RuntimeWarning, stacklevel=2
             )
 
-        logged_data_dict = dict()
+        logged_data_dict: dict[str, numpy.ndarray] = {}
         for log in logged_data_names:
             log_exists_frame_0 = gsdfileobj.chunk_exists(frame=0, name=log)
             is_configuration_step = log == 'configuration/step'
@@ -1191,7 +1199,7 @@ def read_log(name, scalar_only=False):
                     if isinstance(tmp, str):
                         tmp = numpy.array([tmp], dtype=numpy.dtypes.StringDType)
 
-                if scalar_only and not tmp.shape[0] == 1:
+                if scalar_only and tmp.shape[0] != 1:
                     continue
                 if tmp.shape[0] == 1:
                     logged_data_dict[log] = numpy.full(
@@ -1206,9 +1214,10 @@ def read_log(name, scalar_only=False):
 
         for idx in range(1, gsdfileobj.nframes):
             for key, item in logged_data_dict.items():
-                if not gsdfileobj.chunk_exists(frame=idx, name=key):
-                    continue
-                data = gsdfileobj.read_chunk(frame=idx, name=key)
+                data = gsdfileobj.read_chunk(
+                    frame=idx if gsdfileobj.chunk_exists(frame=idx, name=key) else 0,
+                    name=key,
+                )
                 if (
                     not isinstance(item.dtype, numpy.dtypes.StringDType)
                     and len(item[idx].shape) == 0
