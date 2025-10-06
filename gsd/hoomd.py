@@ -1159,7 +1159,6 @@ def read_log(name: str, scalar_only=False, glob_pattern='*'):
 
         log = gsd.hoomd.read_log('log_example.gsd',
                                   glob_pattern="*ThermodynamicQuantities*")
-
         log.keys()
 
     """
