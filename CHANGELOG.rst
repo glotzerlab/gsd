@@ -18,10 +18,13 @@ Change Log
 *Fixed:*
 
 * ``gsd.hoomd.read_log`` no longer iterates over the file more than necessary
+* Debug log entries are no longer duplicated
 
 *Added:*
 
 * ``gsd.hoomd.read_log`` now accepts a "glob_pattern" filter to restrict the returned data
+
+* ``debug`` attribute for ``gsd.fl.GSDFile``, which toggles debug logging for performance-sensitive methods
 
 
 4.1.0 (2025-09-30)
