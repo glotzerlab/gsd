@@ -26,6 +26,7 @@ Change Log
   (`#459 <https://github.com/glotzerlab/gsd/pull/459>`__).
 * ``debug`` attribute for ``gsd.fl.GSDFile``, which toggles debug logging for performance-sensitive methods
   (`#459 <https://github.com/glotzerlab/gsd/pull/459>`__).
+* Provide linux aarch64 binary wheels on PyPI.
 
 
 4.1.0 (2025-09-30)
