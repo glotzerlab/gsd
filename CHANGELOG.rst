@@ -7,33 +7,34 @@ Change Log
 `GSD <https://github.com/glotzerlab/gsd>`_ releases follow `semantic versioning
 <https://semver.org/>`_.
 
-
-
 4.x
 ---
 
-4.x.x (xxxx-xx-xx)
-^^^^^^^^^^^^^^^^^^^^^^^^
+4.2.0 (xxxx-xx-xx)
+^^^^^^^^^^^^^^^^^^
 
 *Fixed:*
 
 * ``gsd.hoomd.read_log`` no longer iterates over the file more than necessary
+  (`#459 <https://github.com/glotzerlab/gsd/pull/459>`__).
 * Debug log entries are no longer duplicated
+  (`#459 <https://github.com/glotzerlab/gsd/pull/459>`__).
 
 *Added:*
 
 * ``gsd.hoomd.read_log`` now accepts a "glob_pattern" filter to restrict the returned data
-
+  (`#459 <https://github.com/glotzerlab/gsd/pull/459>`__).
 * ``debug`` attribute for ``gsd.fl.GSDFile``, which toggles debug logging for performance-sensitive methods
+  (`#459 <https://github.com/glotzerlab/gsd/pull/459>`__).
 
 
 4.1.0 (2025-09-30)
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 * Build with ``abi3`` for ``Python >=3.11``
-  (`#459 <https://github.com/glotzerlab/gsd/pull/459>`__).
+  (`#454 <https://github.com/glotzerlab/gsd/pull/454>`__).
 * Remove support for ``Python <3.11`` following NEP29
-  (`#459 <https://github.com/glotzerlab/gsd/pull/459>`__).
+  (`#454 <https://github.com/glotzerlab/gsd/pull/454>`__).
 
 4.0.0 (2025-06-26)
 ^^^^^^^^^^^^^^^^^^
