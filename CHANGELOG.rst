@@ -28,6 +28,9 @@ Change Log
   (`#459 <https://github.com/glotzerlab/gsd/pull/459>`__).
 * Provide linux aarch64 binary wheels on PyPI.
 
+*Changed:*
+
+* freud now requires Python >= 3.12.
 
 4.1.0 (2025-09-30)
 ^^^^^^^^^^^^^^^^^^^^^^^^
