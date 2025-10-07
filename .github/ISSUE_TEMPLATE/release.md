@@ -1,7 +1,7 @@
 ---
 name: Release checklist
 about: '[for maintainer use]'
-title: 'Release gsd 4.1.0'
+title: 'Release gsd 4.2.0'
 labels: ''
 assignees: 'joaander'
 
@@ -10,7 +10,7 @@ assignees: 'joaander'
 Release checklist:
 
 - [ ] run `prek autoupdate`
-- [ ] Run *bumpversion*.
+- [ ] Run *bump-my-version*.
 - [ ] Review the change log.
 - [ ] Check for new or duplicate contributors since the last release:
   `comm -13 (git log $(git describe --tags --abbrev=0) --format="%aN <%aE>" | sort | uniq | psub) (git log --format="%aN <%aE>" | sort | uniq | psub)`.

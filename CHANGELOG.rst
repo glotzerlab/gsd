@@ -10,7 +10,7 @@ Change Log
 4.x
 ---
 
-4.2.0 (xxxx-xx-xx)
+4.2.0 (2025-10-07)
 ^^^^^^^^^^^^^^^^^^
 
 *Fixed:*
@@ -22,12 +22,11 @@ Change Log
 
 *Added:*
 
-* ``gsd.hoomd.read_log`` now accepts a "glob_pattern" filter to restrict the returned data
+* ``gsd.hoomd.read_log`` now accepts ``glob_pattern`` to restrict the returned data
   (`#459 <https://github.com/glotzerlab/gsd/pull/459>`__).
 * ``debug`` attribute for ``gsd.fl.GSDFile``, which toggles debug logging for performance-sensitive methods
   (`#459 <https://github.com/glotzerlab/gsd/pull/459>`__).
-* Provide linux aarch64 binary wheels on PyPI.
-
+* Provide linux *aarch64* binary wheels on PyPI.
 
 4.1.0 (2025-09-30)
 ^^^^^^^^^^^^^^^^^^^^^^^^
