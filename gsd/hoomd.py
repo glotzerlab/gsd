@@ -25,6 +25,7 @@ import json
 import logging
 import warnings
 from collections import OrderedDict
+from fnmatch import filter as fnfilter
 
 import numpy
 
@@ -100,8 +101,6 @@ class ConfigurationData:
             Array attributes that are not contiguous numpy arrays will be
             replaced with contiguous numpy arrays of the appropriate type.
         """
-        logger.debug('Validating ConfigurationData')
-
         if self.box is not None:
             self.box = numpy.ascontiguousarray(self.box, dtype=numpy.float32)
             self.box = self.box.reshape([6])
@@ -207,8 +206,6 @@ class ParticleData:
             Array attributes that are not contiguous numpy arrays will be
             replaced with contiguous numpy arrays of the appropriate type.
         """
-        logger.debug('Validating ParticleData')
-
         if self.position is not None:
             self.position = numpy.ascontiguousarray(self.position, dtype=numpy.float32)
             self.position = self.position.reshape([self.N, 3])
@@ -328,8 +325,6 @@ class BondData:
             Array attributes that are not contiguous numpy arrays will be
             replaced with contiguous numpy arrays of the appropriate type.
         """
-        logger.debug('Validating BondData')
-
         if self.typeid is not None:
             self.typeid = numpy.ascontiguousarray(self.typeid, dtype=numpy.uint32)
             self.typeid = self.typeid.reshape([self.N])
@@ -389,8 +384,6 @@ class ConstraintData:
             Array attributes that are not contiguous numpy arrays will be
             replaced with contiguous numpy arrays of the appropriate type.
         """
-        logger.debug('Validating ConstraintData')
-
         if self.value is not None:
             self.value = numpy.ascontiguousarray(self.value, dtype=numpy.float32)
             self.value = self.value.reshape([self.N])
@@ -461,8 +454,6 @@ class Frame:
 
     def validate(self):
         """Validate all contained frame data."""
-        logger.debug('Validating Frame')
-
         self.configuration.validate()
         self.particles.validate()
         self.bonds.validate()
@@ -738,9 +729,8 @@ class HOOMDTrajectory:
         frame. If it is the same, do not write it out as it can be instantiated
         either from the value at the initial frame or the default value.
         """
-        logger.debug('Appending frame to hoomd trajectory: ' + str(self.file))
-
-        frame.validate()
+        if isinstance(frame, Frame):
+            frame.validate()
 
         # want the initial frame specified as a reference to detect if chunks
         # need to be written
@@ -760,7 +750,6 @@ class HOOMDTrajectory:
             container = getattr(frame, path)
             for name in container._default_value:
                 if self._should_write(path, name, frame):
-                    logger.debug('writing data chunk: ' + path + '/' + name)
                     data = getattr(container, name)
 
                     if name == 'N':
@@ -825,9 +814,6 @@ class HOOMDTrajectory:
             initial_container = getattr(self._initial_frame, path)
             initial_data = getattr(initial_container, name)
             if numpy.array_equal(initial_data, data):
-                logger.debug(
-                    'skipping data chunk, matches frame 0: ' + path + '/' + name
-                )
                 return False
 
         matches_default_value = False
@@ -841,7 +827,6 @@ class HOOMDTrajectory:
         if matches_default_value and not self._chunk_exists_frame_0.get(
             path + '/' + name, False
         ):
-            logger.debug('skipping data chunk, default value: ' + path + '/' + name)
             return False
 
         return True
@@ -873,8 +858,6 @@ class HOOMDTrajectory:
         """
         if idx >= len(self):
             raise IndexError
-
-        logger.debug('reading frame ' + str(idx) + ' from: ' + str(self.file))
 
         if self._initial_frame is None and idx != 0:
             self._read_frame(0)
@@ -1134,16 +1117,19 @@ def open(name, mode='r'):  # noqa: A001 - allow shadowing builtin open
     return HOOMDTrajectory(gsdfileobj)
 
 
-def read_log(name, scalar_only=False):
+def read_log(name: str, scalar_only=False, glob_pattern='*'):
     """Read log from a hoomd schema GSD file into a dict of time-series arrays.
 
     Args:
         name (str): File name to open.
         scalar_only (bool): Set to `True` to include only scalar log values.
+        glob_pattern (bool):
+            Apply a globbing wildcard filter to the log keys before reading.
 
     The log data includes :chunk:`configuration/step` and all matching
     :chunk:`log/user_defined`, :chunk:`log/bonds/user_defined`, and
-    :chunk:`log/particles/user_defined` quantities in the file.
+    :chunk:`log/particles/user_defined` quantities in the file that
+    match the provided ``glob_pattern``.
 
     Returns:
         `dict`
@@ -1166,6 +1152,7 @@ def read_log(name, scalar_only=False):
         df = pandas.DataFrame(gsd.hoomd.read_log('log-example.gsd',
                                                   scalar_only=True))
         df
+
     """
     if not fl_imported:
         msg = 'file layer module is not available'
@@ -1186,7 +1173,11 @@ def read_log(name, scalar_only=False):
         schema='hoomd',
         schema_version=[1, 4],
     ) as gsdfileobj:
-        logged_data_names = gsdfileobj.find_matching_chunk_names('log/')
+        logged_data_names = (
+            fnfilter(gsdfileobj.find_matching_chunk_names('log/'), glob_pattern)
+            if glob_pattern != '*'
+            else gsdfileobj.find_matching_chunk_names('log/')
+        )
         # Always log timestep associated with each log entry
         logged_data_names.insert(0, 'configuration/step')
         if len(logged_data_names) == 1:
@@ -1194,7 +1185,7 @@ def read_log(name, scalar_only=False):
                 'No logged data in file: ' + str(name), RuntimeWarning, stacklevel=2
             )
 
-        logged_data_dict = dict()
+        logged_data_dict: dict[str, numpy.ndarray] = {}
         for log in logged_data_names:
             log_exists_frame_0 = gsdfileobj.chunk_exists(frame=0, name=log)
             is_configuration_step = log == 'configuration/step'
@@ -1209,7 +1200,7 @@ def read_log(name, scalar_only=False):
                     if isinstance(tmp, str):
                         tmp = numpy.array([tmp], dtype=numpy.dtypes.StringDType)
 
-                if scalar_only and not tmp.shape[0] == 1:
+                if scalar_only and tmp.shape[0] != 1:
                     continue
                 if tmp.shape[0] == 1:
                     logged_data_dict[log] = numpy.full(
@@ -1222,17 +1213,18 @@ def read_log(name, scalar_only=False):
                         tmp, (gsdfileobj.nframes, *tuple(1 for _ in tmp.shape))
                     )
 
-            for idx in range(1, gsdfileobj.nframes):
-                for key, item in logged_data_dict.items():
-                    if not gsdfileobj.chunk_exists(frame=idx, name=key):
-                        continue
-                    data = gsdfileobj.read_chunk(frame=idx, name=key)
-                    if (
-                        not isinstance(item.dtype, numpy.dtypes.StringDType)
-                        and len(item[idx].shape) == 0
-                    ):
-                        item[idx] = data[0]
-                    else:
-                        item[idx] = data
+        for idx in range(1, gsdfileobj.nframes):
+            for key, item in logged_data_dict.items():
+                data = gsdfileobj.read_chunk(
+                    frame=idx if gsdfileobj.chunk_exists(frame=idx, name=key) else 0,
+                    name=key,
+                )
+                if (
+                    not isinstance(item.dtype, numpy.dtypes.StringDType)
+                    and len(item[idx].shape) == 0
+                ):
+                    item[idx] = data[0]
+                else:
+                    item[idx] = data
 
     return logged_data_dict
