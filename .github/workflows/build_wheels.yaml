@@ -26,6 +26,9 @@ jobs:
         - base: ubuntu
           version: 24.04
           arch: 'x86_64'
+        - base: ubuntu
+          version: 24.04-arm
+          arch: 'aarch64'
         - base: windows
           version: 2025
           arch: 'amd64'
@@ -35,10 +38,6 @@ jobs:
         - base: macos
           version: 13
           arch: 'x86_64'
-
-        python:
-        - version: 'cp311'
-          oldest_numpy: '2.1.1'
 
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
