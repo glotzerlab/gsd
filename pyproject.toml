@@ -46,7 +46,7 @@ test-requires = ["pytest==8.4.2", "numpy==2.3.3"]
 archs = ["auto64"]
 
 # dependencies do not build for musl
-skip = ["pp*","*musllinux*","cp3??t-*"]
+skip = ["*musllinux*","cp3??t-*"]
 
 # Use abi3audit to catch issues with Limited API wheels
 [tool.cibuildwheel.linux]
