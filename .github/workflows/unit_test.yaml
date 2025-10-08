@@ -30,14 +30,14 @@ jobs:
         - os: windows-2022
           python: '3.12'
         - os: windows-2025
-          python: '3.13'
+          python: '3.14'
         ##############
         # Mac
         # macos-arm64
         - os: macos-14
           python: '3.12'
         - os: macos-15
-          python: '3.13'
+          python: '3.14'
         ##############
         # Ubuntu 24.04
         - os: ubuntu-24.04
@@ -53,11 +53,11 @@ jobs:
           c_compiler: clang-17
           cxx_compiler: clang++-17
         - os: ubuntu-24.04
-          python: '3.12'
+          python: '3.13'
           c_compiler: clang-18
           cxx_compiler: clang++-18
         - os: ubuntu-24.04
-          python: '3.13.0'
+          python: '3.14'
           c_compiler: clang-18
           cxx_compiler: clang++-18
         ##############
