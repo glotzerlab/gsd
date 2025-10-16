@@ -8,13 +8,13 @@ asttokens==3.0.0
     # via stack-data
 babel==2.17.0
     # via sphinx
-beautifulsoup4==4.13.5
+beautifulsoup4==4.14.2
     # via furo
 breathe==4.36.0
     # via -r doc/requirements.in
-certifi==2025.8.3
+certifi==2025.10.5
     # via requests
-charset-normalizer==3.4.3
+charset-normalizer==3.4.4
     # via requests
 cython==3.1.4
     # via -r doc/requirements.in
@@ -24,13 +24,13 @@ docutils==0.21.2
     # via sphinx
 executing==2.2.1
     # via stack-data
-furo==2025.7.19
+furo==2025.9.25
     # via -r doc/requirements.in
-idna==3.10
+idna==3.11
     # via requests
 imagesize==1.4.1
     # via sphinx
-ipython==9.5.0
+ipython==9.6.0
     # via -r doc/requirements.in
 ipython-pygments-lexers==1.1.1
     # via ipython
@@ -38,17 +38,17 @@ jedi==0.19.2
     # via ipython
 jinja2==3.1.6
     # via sphinx
-markupsafe==3.0.2
+markupsafe==3.0.3
     # via jinja2
 matplotlib-inline==0.1.7
     # via ipython
-numpy==2.3.3
+numpy==2.3.4
     # via
     #   -r doc/requirements.in
     #   pandas
 packaging==25.0
     # via sphinx
-pandas==2.3.2
+pandas==2.3.3
     # via -r doc/requirements.in
 parso==0.8.5
     # via jedi
