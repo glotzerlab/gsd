@@ -4,7 +4,7 @@ cython==3.2.1
     # via -r .github/requirements-test.in
 iniconfig==2.3.0
     # via pytest
-numpy==2.3.4
+numpy==2.3.5
     # via -r .github/requirements-test.in
 packaging==25.0
     # via pytest
