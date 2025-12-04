@@ -8,7 +8,7 @@ asttokens==3.0.1
     # via stack-data
 babel==2.17.0
     # via sphinx
-beautifulsoup4==4.14.2
+beautifulsoup4==4.14.3
     # via furo
 breathe==4.36.0
     # via -r doc/requirements.in
@@ -16,7 +16,7 @@ certifi==2025.11.12
     # via requests
 charset-normalizer==3.4.4
     # via requests
-cython==3.2.1
+cython==3.2.2
     # via -r doc/requirements.in
 decorator==5.2.1
     # via ipython
@@ -30,7 +30,7 @@ idna==3.11
     # via requests
 imagesize==1.4.1
     # via sphinx
-ipython==9.7.0
+ipython==9.8.0
     # via -r doc/requirements.in
 ipython-pygments-lexers==1.1.1
     # via ipython
