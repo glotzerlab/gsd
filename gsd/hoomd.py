@@ -194,6 +194,14 @@ class ParticleData:
         self.image = None
         self.type_shapes = None
 
+    def validate_precision(self, data):
+        """Maintain floats in numpy arrays."""
+        if isinstance(data, list):
+            return numpy.float32
+        elif data.dtype == numpy.float64:
+            return numpy.float64
+        return numpy.float32
+
     def validate(self):
         """Validate all attributes.
 
@@ -207,31 +215,40 @@ class ParticleData:
             replaced with contiguous numpy arrays of the appropriate type.
         """
         if self.position is not None:
-            self.position = numpy.ascontiguousarray(self.position, dtype=numpy.float32)
+            # self.position = numpy.ascontiguousarray(self.position, dtype=numpy.float32)
+            self.position = numpy.ascontiguousarray(
+                self.position, dtype=self.validate_precision(self.position)
+            )
             self.position = self.position.reshape([self.N, 3])
         if self.orientation is not None:
             self.orientation = numpy.ascontiguousarray(
-                self.orientation, dtype=numpy.float32
+                self.orientation, dtype=self.validate_precision(self.orientation)
             )
             self.orientation = self.orientation.reshape([self.N, 4])
         if self.typeid is not None:
             self.typeid = numpy.ascontiguousarray(self.typeid, dtype=numpy.uint32)
             self.typeid = self.typeid.reshape([self.N])
         if self.mass is not None:
-            self.mass = numpy.ascontiguousarray(self.mass, dtype=numpy.float32)
+            self.mass = numpy.ascontiguousarray(
+                self.mass, dtype=self.validate_precision(self.mass)
+            )
             self.mass = self.mass.reshape([self.N])
         if self.charge is not None:
-            self.charge = numpy.ascontiguousarray(self.charge, dtype=numpy.float32)
+            self.charge = numpy.ascontiguousarray(
+                self.charge, dtype=self.validate_precision(self.charge)
+            )
             self.charge = self.charge.reshape([self.N])
         if self.diameter is not None:
-            self.diameter = numpy.ascontiguousarray(self.diameter, dtype=numpy.float32)
+            self.diameter = numpy.ascontiguousarray(
+                self.diameter, dtype=self.validate_precision(self.diameter)
+            )
             self.diameter = self.diameter.reshape([self.N])
         if self.body is not None:
             self.body = numpy.ascontiguousarray(self.body, dtype=numpy.int32)
             self.body = self.body.reshape([self.N])
         if self.moment_inertia is not None:
             self.moment_inertia = numpy.ascontiguousarray(
-                self.moment_inertia, dtype=numpy.float32
+                self.moment_inertia, dtype=self.validate_precision(self.moment_inertia)
             )
             self.moment_inertia = self.moment_inertia.reshape([self.N, 3])
         if self.velocity is not None:
@@ -674,17 +691,19 @@ class HOOMDTrajectory:
 
     Args:
         file (`gsd.fl.GSDFile`): File to access.
+        precision (str): Precision to use for floats on write.
 
     Open hoomd GSD files with `open`.
     """
 
-    def __init__(self, file):
+    def __init__(self, file, precision="single"):
         if file.mode == 'ab':
             msg = 'Append mode not yet supported'
             raise ValueError(msg)
 
         self._file = file
         self._initial_frame = None
+        self._precision = precision
 
         # Used to cache positive results when chunks exist in frame 0.
         self._chunk_exists_frame_0 = {}
@@ -711,6 +730,11 @@ class HOOMDTrajectory:
     def file(self):
         """:class:`gsd.fl.GSDFile`: The file handle."""
         return self._file
+    
+    @property
+    def precision(self):
+        """:class:str: The object write precision."""
+        return self._precision
 
     def __len__(self):
         """The number of frames in the trajectory."""
@@ -765,15 +789,15 @@ class HOOMDTrajectory:
                         b = numpy.array(data, dtype=numpy.dtype((bytes, wid)))
                         data = b.view(dtype=numpy.int8).reshape(len(b), wid)
 
-                    self.file.write_chunk(path + '/' + name, data)
+                    self.file.write_chunk(path + '/' + name, data, self.precision)
 
         # write state data
         for state, data in frame.state.items():
-            self.file.write_chunk('state/' + state, data)
+            self.file.write_chunk('state/' + state, data, self.precision)
 
         # write log data
         for log, data in frame.log.items():
-            self.file.write_chunk('log/' + log, data)
+            self.file.write_chunk('log/' + log, data, self.precision)
 
         self.file.end_frame()
 
@@ -1062,7 +1086,7 @@ class HOOMDTrajectory:
         self._file.flush()
 
 
-def open(name, mode='r'):  # noqa: A001 - allow shadowing builtin open
+def open(name, mode='r', precision="single"):  # noqa: A001 - allow shadowing builtin open
     """Open a hoomd schema GSD file.
 
     The return value of `open` can be used as a context manager.
@@ -1114,7 +1138,7 @@ def open(name, mode='r'):  # noqa: A001 - allow shadowing builtin open
         schema_version=[1, 4],
     )
 
-    return HOOMDTrajectory(gsdfileobj)
+    return HOOMDTrajectory(gsdfileobj, precision=precision)
 
 
 def read_log(name: str, scalar_only=False, glob_pattern='*'):

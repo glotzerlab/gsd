@@ -526,7 +526,7 @@ cdef class GSDFile:
 
         __raise_on_error(retval, self.name)
 
-    def write_chunk(self, name, data):
+    def write_chunk(self, name, data, precision=None):
         """write_chunk(name, data)
 
         Write a data chunk to the file. After writing all chunks in the
@@ -537,6 +537,8 @@ cdef class GSDFile:
             data: Data to write into the chunk. Must be a numpy
                   array, or array-like, with 2 or fewer
                   dimensions.
+            precision (str): Approach for setting the specificity of floats.
+                  If None, values are left as is. (Default ``None``)
 
         Warning:
             :py:meth:`write_chunk()` will implicitly converts array-like and
@@ -577,6 +579,12 @@ cdef class GSDFile:
 
         cdef libgsd.gsd_type gsd_type
         cdef void *data_ptr
+        if precision == "single":
+            float_type = numpy.float32
+        elif precision == "double":
+            float_type = numpy.float64
+        else:
+            float_type = None
 
         # Special behavior for handling strings
         if type(data) is str:
@@ -591,7 +599,15 @@ cdef class GSDFile:
 
         # Non-string behavior
         else:
-            data_array = numpy.ascontiguousarray(data)
+            if float_type is not None and isinstance(data, list) and isinstance(data[0], float):
+                data_array = numpy.ascontiguousarray(data, float_type)
+            elif (
+                float_type is not None and 
+                isinstance(data, numpy.ndarray) and data.dtype in (numpy.float32, numpy.float64)
+            ):
+                data_array = numpy.ascontiguousarray(data, float_type)
+            else:
+                data_array = numpy.ascontiguousarray(data)
 
             if data_array is not data:
                 logger.warning('implicit data copy when writing chunk: ' + name)
@@ -716,7 +732,7 @@ cdef class GSDFile:
 
         return index_entry != NULL
 
-    def read_chunk(self, frame, name):
+    def read_chunk(self, frame, name, precision="single"):
         """read_chunk(frame, name)
 
         Read a data chunk from the file and return it as a numpy array.
@@ -776,6 +792,11 @@ cdef class GSDFile:
         c_name = name_e
         cdef int64_t c_frame
         c_frame = frame
+
+        if precision == "single":
+            float_type = numpy.float32
+        elif precision == "double":
+            float_type = numpy.float64
 
         with nogil:
             index_entry = libgsd.gsd_find_chunk(&self.__handle, c_frame, c_name)

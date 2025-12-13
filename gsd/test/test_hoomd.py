@@ -1075,3 +1075,35 @@ def test_initial_frame_copy(tmp_path, open_mode):
         for key in frame_1.log.keys():
             assert frame_1.log[key] is initial.log[key]
             assert not frame_1.log[key].flags.writeable
+
+def test_demonstrate_buggy_behavior(tmp_path):
+    frame = gsd.hoomd.Frame()
+    frame.particles.N = 1
+    frame.particles.position = [[0.1, 0.2, 0.3]] # floats
+    with gsd.hoomd.open( # converts from python float to dtype float64
+        name=tmp_path / 'double.gsd', mode="w", precision="double"
+    ) as hf:
+        hf.append(frame)
+    with gsd.hoomd.open( # converts from float64 to float32
+        name=tmp_path / 'single.gsd', mode="w", precision="single"
+    ) as hf:
+        hf.append(frame)
+    
+    with gsd.hoomd.open(name=tmp_path / 'single.gsd', mode="r", precision="single") as hf:
+        s = hf[0] # read as a single precision
+        numpy.testing.assert_array_equal(
+            numpy.ascontiguousarray(frame.particles.position, dtype=numpy.float32),
+            s.particles.position 
+        )
+        assert s.particles.position.dtype == numpy.float32
+
+    with gsd.fl.open(name=tmp_path / 'double.gsd', mode='r') as f:
+        position = f.read_chunk(frame=0, name='particles/position')
+        assert position.dtype == numpy.float64
+    with gsd.hoomd.open(name=tmp_path / 'double.gsd', mode="r", precision="double") as hf:
+        s = hf[0] # read as double precision 
+        numpy.testing.assert_array_equal(
+            frame.particles.position, s.particles.position
+        )
+        assert s.particles.position.dtype == numpy.float64
+    assert frame.particles.position.dtype == numpy.float32
