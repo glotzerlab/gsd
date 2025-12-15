@@ -602,7 +602,7 @@ cdef class GSDFile:
             if float_type is not None and isinstance(data, list) and isinstance(data[0], float):
                 data_array = numpy.ascontiguousarray(data, float_type)
             elif (
-                float_type is not None and 
+                float_type is not None and
                 isinstance(data, numpy.ndarray) and data.dtype in (numpy.float32, numpy.float64)
             ):
                 data_array = numpy.ascontiguousarray(data, float_type)

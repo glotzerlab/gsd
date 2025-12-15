@@ -696,7 +696,7 @@ class HOOMDTrajectory:
     Open hoomd GSD files with `open`.
     """
 
-    def __init__(self, file, precision="single"):
+    def __init__(self, file, precision='single'):
         if file.mode == 'ab':
             msg = 'Append mode not yet supported'
             raise ValueError(msg)
@@ -730,7 +730,7 @@ class HOOMDTrajectory:
     def file(self):
         """:class:`gsd.fl.GSDFile`: The file handle."""
         return self._file
-    
+
     @property
     def precision(self):
         """:class:str: The object write precision."""
@@ -1086,7 +1086,7 @@ class HOOMDTrajectory:
         self._file.flush()
 
 
-def open(name, mode='r', precision="single"):  # noqa: A001 - allow shadowing builtin open
+def open(name, mode='r', precision='single'):  # noqa: A001 - allow shadowing builtin open
     """Open a hoomd schema GSD file.
 
     The return value of `open` can be used as a context manager.
