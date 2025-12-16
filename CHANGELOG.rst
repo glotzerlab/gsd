@@ -7,8 +7,11 @@ Change Log
 `GSD <https://github.com/glotzerlab/gsd>`_ releases follow `semantic versioning
 <https://semver.org/>`_.
 
-4.x (2025-12-12)
+5.x
 ---
+
+5.0.0 (Not yet released)
+------------------------
 
 *Added:*
 
@@ -16,6 +19,9 @@ Change Log
   (`#495 <https://github.com/glotzerlab/gsd/pull/495>`__).
 * ``gsd.fl.write_chunk`` will take precision arguments, rounding any floats to 32 or 64 precision with `"double"` or `"single"`
   (`#495 <https://github.com/glotzerlab/gsd/pull/495>`__).
+
+4.x
+---
 
 4.2.0 (2025-10-07)
 ^^^^^^^^^^^^^^^^^^
