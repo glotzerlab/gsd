@@ -196,11 +196,12 @@ class ParticleData:
 
     def validate_precision(self, data):
         """Maintain floats in numpy arrays."""
+        outFloat = numpy.float32
         if isinstance(data, list):
-            return numpy.float32
+            outFloat = numpy.float64
         elif data.dtype == numpy.float64:
-            return numpy.float64
-        return numpy.float32
+            outFloat = numpy.float64
+        return outFloat
 
     def validate(self):
         """Validate all attributes.
@@ -215,7 +216,6 @@ class ParticleData:
             replaced with contiguous numpy arrays of the appropriate type.
         """
         if self.position is not None:
-            # self.position = numpy.ascontiguousarray(self.position, dtype=numpy.float32)
             self.position = numpy.ascontiguousarray(
                 self.position, dtype=self.validate_precision(self.position)
             )
@@ -761,6 +761,8 @@ class HOOMDTrajectory:
         if self._initial_frame is None and len(self) > 0:
             self._read_frame(0)
 
+        float_type = numpy.float64 if self.precision == 'double' else numpy.float32
+
         for path in [
             'configuration',
             'particles',
@@ -788,16 +790,27 @@ class HOOMDTrajectory:
                         wid = max(len(w) for w in data) + 1
                         b = numpy.array(data, dtype=numpy.dtype((bytes, wid)))
                         data = b.view(dtype=numpy.int8).reshape(len(b), wid)
+                    if name in [
+                        'position',
+                        'orientation',
+                        'velocity',
+                        'angmom',
+                        'charge',
+                        'box',
+                        'value',
+                    ]:
+                        # convert using float specified precision
+                        data = numpy.ascontiguousarray(data, dtype=float_type)
 
-                    self.file.write_chunk(path + '/' + name, data, self.precision)
+                    self.file.write_chunk(path + '/' + name, data)
 
         # write state data
         for state, data in frame.state.items():
-            self.file.write_chunk('state/' + state, data, self.precision)
+            self.file.write_chunk('state/' + state, data)
 
         # write log data
         for log, data in frame.log.items():
-            self.file.write_chunk('log/' + log, data, self.precision)
+            self.file.write_chunk('log/' + log, data)
 
         self.file.end_frame()
 
@@ -1094,6 +1107,7 @@ def open(name, mode='r', precision='single'):  # noqa: A001 - allow shadowing bu
     Args:
         name (str): File name to open.
         mode (str): File open mode.
+        precision (str): Float precision to expect in File. Can be 'single' or 'double'.
 
     Returns:
         `HOOMDTrajectory` instance that accesses the file **name** with the

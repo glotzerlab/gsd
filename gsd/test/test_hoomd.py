@@ -1133,13 +1133,14 @@ def test_precision(tmp_path, open_mode):
 
 
 def test_all_precision(tmp_path, open_mode):
+    """Test both single and double precision on default Frame."""
     frame0 = make_nondefault_frame()
-    with gsd.hoomd.open(  # keeps at 64 bit
+    with gsd.hoomd.open(
         name=tmp_path / 'double.gsd', mode=open_mode.write, precision='double'
     ) as hf:
         hf.append(frame0)
 
-    with gsd.hoomd.open(  # fails if second, converts to 32 bit
+    with gsd.hoomd.open(
         name=tmp_path / 'single.gsd', mode=open_mode.write, precision='single'
     ) as hf:
         hf.append(frame0)
@@ -1158,21 +1159,25 @@ def test_all_precision(tmp_path, open_mode):
         s = hf[0]
         for name in ['position', 'orientation', 'velocity', 'angmom', 'charge']:
             numpy.testing.assert_array_equal(
-                getattr(frame0.particles, name), getattr(s.particles, name)
+                numpy.ascontiguousarray(
+                    getattr(frame0.particles, name), dtype=numpy.float32
+                ),
+                getattr(s.particles, name),
             )
             assert getattr(s.particles, name).dtype == numpy.float32
 
 
 def test_write_multiple_precision(tmp_path):
+    """Test single, then double precision writing on the particles position."""
     frame = gsd.hoomd.Frame()
-    frame.particles.N = int(1)
+    frame.particles.N = 1
     frame.particles.position = [[0.1, 0.2, 0.3]]  # is a list of list of floats
-    with gsd.hoomd.open(  # converts from python float to dtype float64
-        name=tmp_path / 'double.gsd', mode='w', precision='double'
-    ) as hf:
-        hf.append(frame)
     with gsd.hoomd.open(  # converts from float64 to float32
         name=tmp_path / 'single.gsd', mode='w', precision='single'
+    ) as hf:
+        hf.append(frame)
+    with gsd.hoomd.open(  # converts from python float to dtype float64
+        name=tmp_path / 'double.gsd', mode='w', precision='double'
     ) as hf:
         hf.append(frame)
 
@@ -1181,12 +1186,17 @@ def test_write_multiple_precision(tmp_path):
         name=tmp_path / 'single.gsd', mode='r', precision='single'
     ) as hf:
         s = hf[0]  # read as a single precision
-        numpy.testing.assert_array_equal(frame.particles.position, s.particles.position)
+        numpy.testing.assert_array_equal(
+            numpy.ascontiguousarray(frame.particles.position, dtype=numpy.float32),
+            s.particles.position,
+        )
+        assert s.particles.position.dtype == numpy.float32
     with gsd.hoomd.open(
         name=tmp_path / 'double.gsd', mode='r', precision='double'
     ) as hf:
         s = hf[0]  # read as double precision
         numpy.testing.assert_array_equal(
             frame.particles.position,
-            s.particles.position,  # will fail since frame is now single precision
+            s.particles.position,
         )
+        assert s.particles.position.dtype == numpy.float64
