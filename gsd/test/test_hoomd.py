@@ -355,7 +355,7 @@ def test_fallback(tmp_path, open_mode):
     frame2.pairs.N = 7
 
     with gsd.hoomd.open(
-        name=tmp_path / 'test_fallback.gsd', mode=open_mode.write
+        name=tmp_path / 'test_fallback.gsd', mode=open_mode.write, precision='double'
     ) as hf:
         hf.extend([frame0, frame1, frame2])
 
@@ -516,7 +516,7 @@ def test_fallback_to_frame0(tmp_path, open_mode):
     frame1.pairs.N = None
 
     with gsd.hoomd.open(
-        name=tmp_path / 'test_fallback2.gsd', mode=open_mode.write
+        name=tmp_path / 'test_fallback2.gsd', mode=open_mode.write, precision='double'
     ) as hf:
         hf.extend([frame0, frame1])
 
@@ -987,7 +987,9 @@ def test_read_log_warning(tmp_path):
 def test_initial_frame_copy(tmp_path, open_mode):
     """Ensure that the user does not unintentionally modify _initial_frame."""
     with gsd.hoomd.open(
-        name=tmp_path / 'test_initial_frame_copy.gsd', mode=open_mode.write
+        name=tmp_path / 'test_initial_frame_copy.gsd',
+        mode=open_mode.write,
+        precision='double',
     ) as hf:
         frame = make_nondefault_frame()
 
