@@ -17,7 +17,7 @@ Change Log
 
 * ``gsd.hoomd`` schema now accepts float64 in validate, ``gsd.hoomd.open`` will take precision arguments
   (`#495 <https://github.com/glotzerlab/gsd/pull/495>`__).
-* ``gsd.fl.write_chunk`` will take precision arguments, rounding any floats to 32 or 64 precision with `"double"` or `"single"`
+* ``gsd.fl.write_chunk`` will take precision arguments, rounding any floats to 32 or 64 precision with ``double`` or ``single``
   (`#495 <https://github.com/glotzerlab/gsd/pull/495>`__).
 
 4.x
