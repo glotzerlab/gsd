@@ -20,11 +20,11 @@ cython==3.2.3
     # via -r doc/requirements.in
 decorator==5.2.1
     # via ipython
-docutils==0.21.2
+docutils==0.22.4
     # via sphinx
 executing==2.2.1
     # via stack-data
-furo==2025.9.25
+furo==2025.12.19
     # via -r doc/requirements.in
 idna==3.11
     # via requests
@@ -42,7 +42,7 @@ markupsafe==3.0.3
     # via jinja2
 matplotlib-inline==0.2.1
     # via ipython
-numpy==2.3.5
+numpy==2.4.0
     # via
     #   -r doc/requirements.in
     #   pandas
@@ -74,16 +74,14 @@ pytz==2025.2
 requests==2.32.5
     # via sphinx
 roman-numerals==4.1.0
-    # via roman-numerals-py
-roman-numerals-py==4.1.0
     # via sphinx
 six==1.17.0
     # via python-dateutil
 snowballstemmer==3.0.1
     # via sphinx
-soupsieve==2.8
+soupsieve==2.8.1
     # via beautifulsoup4
-sphinx==8.2.3
+sphinx==9.1.0
     # via
     #   -r doc/requirements.in
     #   breathe
@@ -96,7 +94,7 @@ sphinx-basic-ng==1.0.0b2
     # via furo
 sphinx-copybutton==0.5.2
     # via -r doc/requirements.in
-sphinx-inline-tabs==2023.4.21
+sphinx-inline-tabs==2025.12.21.14
     # via -r doc/requirements.in
 sphinxcontrib-applehelp==2.0.0
     # via sphinx
