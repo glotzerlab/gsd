@@ -7,6 +7,16 @@ Change Log
 `GSD <https://github.com/glotzerlab/gsd>`_ releases follow `semantic versioning
 <https://semver.org/>`_.
 
+5.x
+___
+
+Next release
+^^^^^^^^^^^^^^^^^^
+
+*Removed*:
+
+* ``SIGTERM`` handler (#501)
+
 4.x
 ---
 
