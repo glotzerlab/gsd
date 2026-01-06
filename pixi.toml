@@ -16,6 +16,7 @@ sphinx = "*"
 sphinx-inline-tabs = "*"
 doxygen = "*"
 pytest = "*"
+python = { version = "3.14.*", build = "*_cp314" }
 cmake = "*"
 ninja = "*"
 uv = "*"
