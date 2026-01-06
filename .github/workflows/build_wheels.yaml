@@ -36,7 +36,7 @@ jobs:
           version: 15
           arch: 'arm64'
         - base: macos
-          version: 13
+          version: '15-intel'
           arch: 'x86_64'
 
     steps:
