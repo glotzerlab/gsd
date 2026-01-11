@@ -89,7 +89,24 @@ class ConfigurationData:
             if self.dimensions is None:
                 self.dimensions = 2 if Lz == 0 else 3
 
-    def validate(self):
+    def cast(self):
+        """Lazy cast attributes to writeable dictionary.
+
+        Convert every array attribute to a `numpy.ndarray` of the proper
+        type and check that all attributes have the correct dimensions.
+
+        Ignore any attributes that are ``None``.
+
+        Returns:
+            castedDict (dict): Stored attributes by attribute string name.
+        """
+        castedDict = {}
+        if self.box is not None:
+            castedDict['box'] = numpy.ascontiguousarray(self.box, dtype=numpy.float32)
+            castedDict['box'] = castedDict['box'].reshape([6])
+        return castedDict
+
+    def validate(self, inplace=False):
         """Validate all attributes.
 
         Convert every array attribute to a `numpy.ndarray` of the proper
@@ -97,13 +114,18 @@ class ConfigurationData:
 
         Ignore any attributes that are ``None``.
 
+        Args:
+            inplace (bool): Whether or not the arrays are modified in place.
+
         Warning:
             Array attributes that are not contiguous numpy arrays will be
-            replaced with contiguous numpy arrays of the appropriate type.
+            replaced with contiguous numpy arrays of the appropriate type
+            if inplace is ``True``.
         """
-        if self.box is not None:
-            self.box = numpy.ascontiguousarray(self.box, dtype=numpy.float32)
-            self.box = self.box.reshape([6])
+        if inplace:
+            if self.box is not None:
+                self.box = numpy.ascontiguousarray(self.box, dtype=numpy.float32)
+                self.box = self.box.reshape([6])
 
 
 class ParticleData:
@@ -194,7 +216,7 @@ class ParticleData:
         self.image = None
         self.type_shapes = None
 
-    def validate_precision(self, data):
+    def _validate_precision(self, data):
         """Maintain floats in numpy arrays."""
         outFloat = numpy.float32
         if isinstance(data, list):
@@ -203,7 +225,78 @@ class ParticleData:
             outFloat = numpy.float64
         return outFloat
 
-    def validate(self):
+    def cast(self):
+        """Lazy cast attributes to writeable dictionary.
+
+        Convert every array attribute to a `numpy.ndarray` of the proper
+        type and check that all attributes have the correct dimensions.
+
+        Ignore any attributes that are ``None``.
+
+        Returns:
+            castedDict (dict): Stored attributes by attribute string name.
+        """
+        castedDict = {}
+        if self.position is not None:
+            castedDict['position'] = numpy.ascontiguousarray(
+                self.position, dtype=self._validate_precision(self.position)
+            )
+            castedDict['position'] = castedDict['position'].reshape([self.N, 3])
+        if self.orientation is not None:
+            castedDict['orientation'] = numpy.ascontiguousarray(
+                self.orientation, dtype=self._validate_precision(self.orientation)
+            )
+            castedDict['orientation'] = castedDict['orientation'].reshape([self.N, 4])
+        if self.typeid is not None:
+            castedDict['typeid'] = numpy.ascontiguousarray(
+                self.typeid, dtype=numpy.uint32
+            )
+            castedDict['typeid'].reshape([self.N])
+        if self.mass is not None:
+            castedDict['mass'] = numpy.ascontiguousarray(
+                self.mass, dtype=self._validate_precision(self.mass)
+            )
+            castedDict['mass'] = castedDict['mass'].reshape([self.N])
+        if self.charge is not None:
+            castedDict['charge'] = numpy.ascontiguousarray(
+                self.charge, dtype=self._validate_precision(self.charge)
+            )
+            castedDict['charge'] = castedDict['charge'].reshape([self.N])
+        if self.diameter is not None:
+            castedDict['diameter'] = numpy.ascontiguousarray(
+                self.diameter, dtype=self._validate_precision(self.diameter)
+            )
+            castedDict['diameter'] = castedDict['diameter'].reshape([self.N])
+        if self.body is not None:
+            castedDict['body'] = numpy.ascontiguousarray(self.body, dtype=numpy.int32)
+            castedDict['body'] = castedDict['body'].reshape([self.N])
+        if self.moment_inertia is not None:
+            castedDict['moment_inertia'] = numpy.ascontiguousarray(
+                self.moment_inertia, dtype=self._validate_precision(self.moment_inertia)
+            )
+            castedDict['moment_inertia'] = castedDict['moment_inertia'].reshape(
+                [self.N, 3]
+            )
+        if self.velocity is not None:
+            castedDict['velocity'] = numpy.ascontiguousarray(
+                self.velocity, dtype=self._validate_precision(self.velocity)
+            )
+            castedDict['velocity'] = castedDict['velocity'].reshape([self.N, 3])
+        if self.angmom is not None:
+            castedDict['angmom'] = numpy.ascontiguousarray(
+                self.angmom, dtype=self._validate_precision(self.angmom)
+            )
+            castedDict['angmom'] = castedDict['angmom'].reshape([self.N, 4])
+        if self.image is not None:
+            castedDict['image'] = numpy.ascontiguousarray(self.image, dtype=numpy.int32)
+            castedDict['image'] = castedDict['image'].reshape([self.N, 3])
+
+        if self.types is not None and (not len(set(self.types)) == len(self.types)):
+            msg = 'Type names must be unique.'
+            raise ValueError(msg)
+        return castedDict
+
+    def validate(self, inplace=False):
         """Validate all attributes.
 
         Convert every array attribute to a `numpy.ndarray` of the proper
@@ -211,55 +304,65 @@ class ParticleData:
 
         Ignore any attributes that are ``None``.
 
+        Args:
+            inplace (bool): Whether or not the arrays are modified in place.
+
         Warning:
             Array attributes that are not contiguous numpy arrays will be
-            replaced with contiguous numpy arrays of the appropriate type.
+            replaced with contiguous numpy arrays of the appropriate type
+            if inplace is ``True``.
         """
-        if self.position is not None:
-            self.position = numpy.ascontiguousarray(
-                self.position, dtype=self.validate_precision(self.position)
-            )
-            self.position = self.position.reshape([self.N, 3])
-        if self.orientation is not None:
-            self.orientation = numpy.ascontiguousarray(
-                self.orientation, dtype=self.validate_precision(self.orientation)
-            )
-            self.orientation = self.orientation.reshape([self.N, 4])
-        if self.typeid is not None:
-            self.typeid = numpy.ascontiguousarray(self.typeid, dtype=numpy.uint32)
-            self.typeid = self.typeid.reshape([self.N])
-        if self.mass is not None:
-            self.mass = numpy.ascontiguousarray(
-                self.mass, dtype=self.validate_precision(self.mass)
-            )
-            self.mass = self.mass.reshape([self.N])
-        if self.charge is not None:
-            self.charge = numpy.ascontiguousarray(
-                self.charge, dtype=self.validate_precision(self.charge)
-            )
-            self.charge = self.charge.reshape([self.N])
-        if self.diameter is not None:
-            self.diameter = numpy.ascontiguousarray(
-                self.diameter, dtype=self.validate_precision(self.diameter)
-            )
-            self.diameter = self.diameter.reshape([self.N])
-        if self.body is not None:
-            self.body = numpy.ascontiguousarray(self.body, dtype=numpy.int32)
-            self.body = self.body.reshape([self.N])
-        if self.moment_inertia is not None:
-            self.moment_inertia = numpy.ascontiguousarray(
-                self.moment_inertia, dtype=self.validate_precision(self.moment_inertia)
-            )
-            self.moment_inertia = self.moment_inertia.reshape([self.N, 3])
-        if self.velocity is not None:
-            self.velocity = numpy.ascontiguousarray(self.velocity, dtype=numpy.float32)
-            self.velocity = self.velocity.reshape([self.N, 3])
-        if self.angmom is not None:
-            self.angmom = numpy.ascontiguousarray(self.angmom, dtype=numpy.float32)
-            self.angmom = self.angmom.reshape([self.N, 4])
-        if self.image is not None:
-            self.image = numpy.ascontiguousarray(self.image, dtype=numpy.int32)
-            self.image = self.image.reshape([self.N, 3])
+        if inplace:
+            if self.position is not None:
+                self.position = numpy.ascontiguousarray(
+                    self.position, dtype=self._validate_precision(self.position)
+                )
+                self.position = self.position.reshape([self.N, 3])
+            if self.orientation is not None:
+                self.orientation = numpy.ascontiguousarray(
+                    self.orientation, dtype=self._validate_precision(self.orientation)
+                )
+                self.orientation = self.orientation.reshape([self.N, 4])
+            if self.typeid is not None:
+                self.typeid = numpy.ascontiguousarray(self.typeid, dtype=numpy.uint32)
+                self.typeid = self.typeid.reshape([self.N])
+            if self.mass is not None:
+                self.mass = numpy.ascontiguousarray(
+                    self.mass, dtype=self._validate_precision(self.mass)
+                )
+                self.mass = self.mass.reshape([self.N])
+            if self.charge is not None:
+                self.charge = numpy.ascontiguousarray(
+                    self.charge, dtype=self._validate_precision(self.charge)
+                )
+                self.charge = self.charge.reshape([self.N])
+            if self.diameter is not None:
+                self.diameter = numpy.ascontiguousarray(
+                    self.diameter, dtype=self._validate_precision(self.diameter)
+                )
+                self.diameter = self.diameter.reshape([self.N])
+            if self.body is not None:
+                self.body = numpy.ascontiguousarray(self.body, dtype=numpy.int32)
+                self.body = self.body.reshape([self.N])
+            if self.moment_inertia is not None:
+                self.moment_inertia = numpy.ascontiguousarray(
+                    self.moment_inertia,
+                    dtype=self._validate_precision(self.moment_inertia),
+                )
+                self.moment_inertia = self.moment_inertia.reshape([self.N, 3])
+            if self.velocity is not None:
+                self.velocity = numpy.ascontiguousarray(
+                    self.velocity, dtype=self._validate_precision(self.velocity)
+                )
+                self.velocity = self.velocity.reshape([self.N, 3])
+            if self.angmom is not None:
+                self.angmom = numpy.ascontiguousarray(
+                    self.angmom, dtype=self._validate_precision(self.angmom)
+                )
+                self.angmom = self.angmom.reshape([self.N, 4])
+            if self.image is not None:
+                self.image = numpy.ascontiguousarray(self.image, dtype=numpy.int32)
+                self.image = self.image.reshape([self.N, 3])
 
         if self.types is not None and (not len(set(self.types)) == len(self.types)):
             msg = 'Type names must be unique.'
@@ -330,7 +433,33 @@ class BondData:
         self._default_value['typeid'] = numpy.uint32(0)
         self._default_value['group'] = numpy.array([0] * M, dtype=numpy.int32)
 
-    def validate(self):
+    def cast(self):
+        """Lazy cast attributes to writeable dictionary.
+
+        Convert every array attribute to a `numpy.ndarray` of the proper
+        type and check that all attributes have the correct dimensions.
+
+        Ignore any attributes that are ``None``.
+
+        Returns:
+            castedDict (dict): Stored attributes by attribute string name.
+        """
+        castedDict = {}
+        if self.typeid is not None:
+            castedDict['typeid'] = numpy.ascontiguousarray(
+                self.typeid, dtype=numpy.uint32
+            )
+            castedDict['typeid'] = castedDict['typeid'].reshape([self.N])
+        if self.group is not None:
+            castedDict['group'] = numpy.ascontiguousarray(self.group, dtype=numpy.int32)
+            castedDict['group'] = castedDict['group'].reshape([self.N, self.M])
+
+        if self.types is not None and (not len(set(self.types)) == len(self.types)):
+            msg = 'Type names must be unique.'
+            raise ValueError(msg)
+        return castedDict
+
+    def validate(self, inplace=False):
         """Validate all attributes.
 
         Convert every array attribute to a `numpy.ndarray` of the proper
@@ -338,16 +467,21 @@ class BondData:
 
         Ignore any attributes that are ``None``.
 
+        Args:
+            inplace (bool): Whether or not the arrays are modified in place.
+
         Warning:
             Array attributes that are not contiguous numpy arrays will be
-            replaced with contiguous numpy arrays of the appropriate type.
+            replaced with contiguous numpy arrays of the appropriate type
+            if inplace is ``True``.
         """
-        if self.typeid is not None:
-            self.typeid = numpy.ascontiguousarray(self.typeid, dtype=numpy.uint32)
-            self.typeid = self.typeid.reshape([self.N])
-        if self.group is not None:
-            self.group = numpy.ascontiguousarray(self.group, dtype=numpy.int32)
-            self.group = self.group.reshape([self.N, self.M])
+        if inplace:
+            if self.typeid is not None:
+                self.typeid = numpy.ascontiguousarray(self.typeid, dtype=numpy.uint32)
+                self.typeid = self.typeid.reshape([self.N])
+            if self.group is not None:
+                self.group = numpy.ascontiguousarray(self.group, dtype=numpy.int32)
+                self.group = self.group.reshape([self.N, self.M])
 
         if self.types is not None and (not len(set(self.types)) == len(self.types)):
             msg = 'Type names must be unique.'
@@ -389,7 +523,38 @@ class ConstraintData:
         self._default_value['value'] = numpy.float32(0)
         self._default_value['group'] = numpy.array([0] * self.M, dtype=numpy.int32)
 
-    def validate(self):
+    def _validate_precision(self, data):
+        """Maintain floats in numpy arrays."""
+        outFloat = numpy.float32
+        if isinstance(data, list):
+            outFloat = numpy.float64
+        elif data.dtype == numpy.float64:
+            outFloat = numpy.float64
+        return outFloat
+
+    def cast(self):
+        """Lazy cast attributes to writeable dictionary.
+
+        Convert every array attribute to a `numpy.ndarray` of the proper
+        type and check that all attributes have the correct dimensions.
+
+        Ignore any attributes that are ``None``.
+
+        Returns:
+            castedDict (dict): Stored attributes by attribute string name.
+        """
+        castedDict = {}
+        if self.value is not None:
+            castedDict['value'] = numpy.ascontiguousarray(
+                self.value, dtype=self._validate_precision(self.value)
+            )
+            castedDict['value'] = castedDict['value'].reshape([self.N])
+        if self.group is not None:
+            castedDict['group'] = numpy.ascontiguousarray(self.group, dtype=numpy.int32)
+            castedDict['group'] = castedDict['group'].reshape([self.N, self.M])
+        return castedDict
+
+    def validate(self, inplace=False):
         """Validate all attributes.
 
         Convert every array attribute to a `numpy.ndarray` of the proper
@@ -397,16 +562,21 @@ class ConstraintData:
 
         Ignore any attributes that are ``None``.
 
+        Args:
+            inplace (bool): Whether or not the arrays are modified in place.
+
         Warning:
             Array attributes that are not contiguous numpy arrays will be
-            replaced with contiguous numpy arrays of the appropriate type.
+            replaced with contiguous numpy arrays of the appropriate type
+            if inplace is ``True``.
         """
-        if self.value is not None:
-            self.value = numpy.ascontiguousarray(self.value, dtype=numpy.float32)
-            self.value = self.value.reshape([self.N])
-        if self.group is not None:
-            self.group = numpy.ascontiguousarray(self.group, dtype=numpy.int32)
-            self.group = self.group.reshape([self.N, self.M])
+        if inplace:
+            if self.value is not None:
+                self.value = numpy.ascontiguousarray(self.value, dtype=numpy.float32)
+                self.value = self.value.reshape([self.N])
+            if self.group is not None:
+                self.group = numpy.ascontiguousarray(self.group, dtype=numpy.int32)
+                self.group = self.group.reshape([self.N, self.M])
 
 
 class Frame:
@@ -469,16 +639,25 @@ class Frame:
             'hpmc/simple_polygon/vertices',
         ]
 
-    def validate(self):
-        """Validate all contained frame data."""
-        self.configuration.validate()
-        self.particles.validate()
-        self.bonds.validate()
-        self.angles.validate()
-        self.dihedrals.validate()
-        self.impropers.validate()
-        self.constraints.validate()
-        self.pairs.validate()
+    def validate(self, inplace=False):
+        """Validate all contained data.
+
+        Args:
+            inplace (bool): Whether or not the arrays are modified in place.
+
+        Warning:
+            Array attributes that are not contiguous numpy arrays will be
+            replaced with contiguous numpy arrays of the appropriate type
+            if inplace is ``True``.
+        """
+        self.configuration.validate(inplace)
+        self.particles.validate(inplace)
+        self.bonds.validate(inplace)
+        self.angles.validate(inplace)
+        self.dihedrals.validate(inplace)
+        self.impropers.validate(inplace)
+        self.constraints.validate(inplace)
+        self.pairs.validate(inplace)
 
         # validate HPMC state
         if self.particles.types is not None:
@@ -692,6 +871,7 @@ class HOOMDTrajectory:
     Args:
         file (`gsd.fl.GSDFile`): File to access.
         precision (str): Precision to use for floats on write.
+        Can be `'single'` or `'double'`.
 
     Open hoomd GSD files with `open`.
     """
@@ -714,7 +894,7 @@ class HOOMDTrajectory:
             raise RuntimeError('GSD file is not a hoomd schema file: ' + str(self.file))
         valid = False
         version = self.file.schema_version
-        if version < (2, 0) and version >= (1, 0):
+        if version < (3, 0) and version >= (1, 0):
             valid = True
         if not valid:
             raise RuntimeError(
@@ -774,9 +954,14 @@ class HOOMDTrajectory:
             'pairs',
         ]:
             container = getattr(frame, path)
+            dataDict = container.cast()
             for name in container._default_value:
                 if self._should_write(path, name, frame):
-                    data = getattr(container, name)
+                    data = dataDict.get(name, getattr(container, name))
+                    if isinstance(data, numpy.ndarray) and numpy.issubdtype(
+                        data.dtype, numpy.floating
+                    ):
+                        data = data.astype(float_type)
 
                     if name == 'N':
                         data = numpy.array([data], dtype=numpy.uint32)
@@ -790,17 +975,6 @@ class HOOMDTrajectory:
                         wid = max(len(w) for w in data) + 1
                         b = numpy.array(data, dtype=numpy.dtype((bytes, wid)))
                         data = b.view(dtype=numpy.int8).reshape(len(b), wid)
-                    if name in [
-                        'position',
-                        'orientation',
-                        'velocity',
-                        'angmom',
-                        'charge',
-                        'box',
-                        'value',
-                    ]:
-                        # convert using float specified precision
-                        data = numpy.ascontiguousarray(data, dtype=float_type)
 
                     self.file.write_chunk(path + '/' + name, data)
 
@@ -1149,7 +1323,7 @@ def open(name, mode='r', precision='single'):  # noqa: A001 - allow shadowing bu
         mode=mode,
         application='gsd.hoomd ' + gsd.version.version,
         schema='hoomd',
-        schema_version=[1, 4],
+        schema_version=[2, 0],
     )
 
     return HOOMDTrajectory(gsdfileobj, precision=precision)
@@ -1209,7 +1383,7 @@ def read_log(name: str, scalar_only=False, glob_pattern='*'):
         mode='r',
         application='gsd.hoomd ' + gsd.version.version,
         schema='hoomd',
-        schema_version=[1, 4],
+        schema_version=[2, 0],
     ) as gsdfileobj:
         logged_data_names = (
             fnfilter(gsdfileobj.find_matching_chunk_names('log/'), glob_pattern)

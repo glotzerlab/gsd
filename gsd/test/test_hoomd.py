@@ -214,7 +214,9 @@ def make_nondefault_frame():
     frame0 = gsd.hoomd.Frame()
     frame0.configuration.step = 10000
     frame0.configuration.dimensions = 2
-    frame0.configuration.box = [4, 5, 6, 1.0, 0.5, 0.25]
+    frame0.configuration.box = numpy.array(
+        [4, 5, 6, 1.0, 0.5, 0.25], dtype=numpy.float64
+    )
     frame0.particles.N = 2
     frame0.particles.types = ['A', 'B', 'C']
     frame0.particles.type_shapes = [
@@ -222,53 +224,66 @@ def make_nondefault_frame():
         {'type': 'Sphere', 'diameter': 3.0},
         {'type': 'Sphere', 'diameter': 4.0},
     ]
-    frame0.particles.typeid = [1, 2]
-    frame0.particles.mass = [2, 3]
-    frame0.particles.diameter = [3, 4]
-    frame0.particles.body = [10, 20]
-    frame0.particles.charge = [0.5, 0.25]
-    frame0.particles.moment_inertia = [[1, 2, 3], [3, 2, 1]]
-    frame0.particles.position = [[0.1, 0.2, 0.3], [-1.0, -2.0, -3.0]]
-    frame0.particles.orientation = [[1, 0.1, 0.2, 0.3], [0, -1.0, -2.0, -3.0]]
-    frame0.particles.velocity = [[1.1, 2.2, 3.3], [-3.3, -2.2, -1.1]]
-    frame0.particles.angmom = [[1, 1.1, 2.2, 3.3], [-1, -3.3, -2.2, -1.1]]
-    frame0.particles.image = [[10, 20, 30], [5, 6, 7]]
+    frame0.particles.typeid = numpy.array([1, 2])
+    frame0.particles.mass = numpy.array([2, 3], dtype=numpy.float64)
+    frame0.particles.diameter = numpy.array([3, 4], dtype=numpy.float64)
+    frame0.particles.body = numpy.array([10, 20])
+    frame0.particles.charge = numpy.array([0.5, 0.25], dtype=numpy.float64)
+    frame0.particles.moment_inertia = numpy.array(
+        [[1, 2, 3], [3, 2, 1]], dtype=numpy.float64
+    )
+    frame0.particles.position = numpy.array(
+        [[0.1, 0.2, 0.3], [-1.0, -2.0, -3.0]], dtype=numpy.float64
+    )
+    frame0.particles.orientation = numpy.array(
+        [[1, 0.1, 0.2, 0.3], [0, -1.0, -2.0, -3.0]], dtype=numpy.float64
+    )
+    frame0.particles.velocity = numpy.array(
+        [[1.1, 2.2, 3.3], [-3.3, -2.2, -1.1]], dtype=numpy.float64
+    )
+    frame0.particles.angmom = numpy.array(
+        [[1, 1.1, 2.2, 3.3], [-1, -3.3, -2.2, -1.1]], dtype=numpy.float64
+    )
+    frame0.particles.image = numpy.array([[10, 20, 30], [5, 6, 7]])
 
     frame0.bonds.N = 1
     frame0.bonds.types = ['bondA', 'bondB']
-    frame0.bonds.typeid = [1]
-    frame0.bonds.group = [[0, 1]]
+    frame0.bonds.typeid = numpy.array([1])
+    frame0.bonds.group = numpy.array([[0, 1]])
 
     frame0.angles.N = 1
-    frame0.angles.typeid = [2]
+    frame0.angles.typeid = numpy.array([2])
     frame0.angles.types = ['angleA', 'angleB']
-    frame0.angles.group = [[0, 1, 0]]
+    frame0.angles.group = numpy.array([[0, 1, 0]])
 
     frame0.dihedrals.N = 1
-    frame0.dihedrals.typeid = [3]
+    frame0.dihedrals.typeid = numpy.array([3])
     frame0.dihedrals.types = ['dihedralA', 'dihedralB']
-    frame0.dihedrals.group = [[0, 1, 1, 0]]
+    frame0.dihedrals.group = numpy.array([[0, 1, 1, 0]])
 
     frame0.impropers.N = 1
-    frame0.impropers.typeid = [4]
+    frame0.impropers.typeid = numpy.array([4])
     frame0.impropers.types = ['improperA', 'improperB']
-    frame0.impropers.group = [[1, 0, 0, 1]]
+    frame0.impropers.group = numpy.array([[1, 0, 0, 1]])
 
     frame0.constraints.N = 1
-    frame0.constraints.value = [1.1]
-    frame0.constraints.group = [[0, 1]]
+    frame0.constraints.value = numpy.array([1.1])
+    frame0.constraints.group = numpy.array([[0, 1]])
 
     frame0.pairs.N = 1
     frame0.pairs.types = ['pairA', 'pairB']
-    frame0.pairs.typeid = [1]
-    frame0.pairs.group = [[0, 3]]
+    frame0.pairs.typeid = numpy.array([1])
+    frame0.pairs.group = numpy.array([[0, 3]])
 
-    frame0.log['value'] = [1, 2, 4, 10, 12, 18, 22]
+    frame0.log['value'] = numpy.array([1, 2, 4, 10, 12, 18, 22])
     return frame0
 
 
-def assert_frames_equal(s, frame0, check_position=True, check_step=True):
+def assert_frames_equal(
+    s, frame0, check_position=True, check_step=True, precision='single'
+):
     """Assert that two frames are equal."""
+    dtype = numpy.float32 if precision == 'single' else numpy.float64
     if check_step:
         assert s.configuration.step == frame0.configuration.step
 
@@ -278,22 +293,40 @@ def assert_frames_equal(s, frame0, check_position=True, check_step=True):
     assert s.particles.types == frame0.particles.types
     assert s.particles.type_shapes == frame0.particles.type_shapes
     numpy.testing.assert_array_equal(s.particles.typeid, frame0.particles.typeid)
-    numpy.testing.assert_array_equal(s.particles.mass, frame0.particles.mass)
-    numpy.testing.assert_array_equal(s.particles.diameter, frame0.particles.diameter)
-    numpy.testing.assert_array_equal(s.particles.body, frame0.particles.body)
-    numpy.testing.assert_array_equal(s.particles.charge, frame0.particles.charge)
     numpy.testing.assert_array_equal(
-        s.particles.moment_inertia, frame0.particles.moment_inertia
+        s.particles.mass.astype(dtype),
+        numpy.asarray(frame0.particles.mass).astype(dtype),
+    )
+    numpy.testing.assert_array_equal(
+        s.particles.diameter.astype(dtype),
+        numpy.asarray(frame0.particles.diameter).astype(dtype),
+    )
+    numpy.testing.assert_array_equal(s.particles.body, frame0.particles.body)
+    numpy.testing.assert_array_equal(
+        s.particles.charge.astype(dtype),
+        numpy.asarray(frame0.particles.charge).astype(dtype),
+    )
+    numpy.testing.assert_array_equal(
+        s.particles.moment_inertia.astype(dtype),
+        numpy.asarray(frame0.particles.moment_inertia).astype(dtype),
     )
     if check_position:
         numpy.testing.assert_array_equal(
-            s.particles.position, frame0.particles.position
+            s.particles.position.astype(dtype),
+            numpy.asarray(frame0.particles.position).astype(dtype),
         )
     numpy.testing.assert_array_equal(
-        s.particles.orientation, frame0.particles.orientation
+        s.particles.orientation.astype(dtype),
+        numpy.asarray(frame0.particles.orientation).astype(dtype),
     )
-    numpy.testing.assert_array_equal(s.particles.velocity, frame0.particles.velocity)
-    numpy.testing.assert_array_equal(s.particles.angmom, frame0.particles.angmom)
+    numpy.testing.assert_array_equal(
+        s.particles.velocity.astype(dtype),
+        numpy.asarray(frame0.particles.velocity).astype(dtype),
+    )
+    numpy.testing.assert_array_equal(
+        s.particles.angmom.astype(dtype),
+        numpy.asarray(frame0.particles.angmom).astype(dtype),
+    )
     numpy.testing.assert_array_equal(s.particles.image, frame0.particles.image)
 
     assert s.bonds.N == frame0.bonds.N
@@ -317,7 +350,10 @@ def assert_frames_equal(s, frame0, check_position=True, check_step=True):
     numpy.testing.assert_array_equal(s.impropers.group, frame0.impropers.group)
 
     assert s.constraints.N == frame0.constraints.N
-    numpy.testing.assert_array_equal(s.constraints.value, frame0.constraints.value)
+    numpy.testing.assert_array_equal(
+        s.constraints.value, numpy.asarray(frame0.constraints.value).astype(dtype)
+    )
+    # numpy.testing.assert_array_equal(s.constraints.value, frame0.constraints.value)
     numpy.testing.assert_array_equal(s.constraints.group, frame0.constraints.group)
 
     assert s.pairs.N == frame0.pairs.N
@@ -326,13 +362,15 @@ def assert_frames_equal(s, frame0, check_position=True, check_step=True):
     numpy.testing.assert_array_equal(s.pairs.group, frame0.pairs.group)
 
 
-def test_fallback(tmp_path, open_mode):
+@pytest.mark.parametrize('precision', ['single', 'double'])
+def test_fallback(tmp_path, open_mode, precision):
     """Test that properties fall back to defaults when the N changes."""
+    floatType = numpy.float32 if precision == 'single' else numpy.float64
     frame0 = make_nondefault_frame()
 
     frame1 = gsd.hoomd.Frame()
     frame1.particles.N = 2
-    frame1.particles.position = [[-2, -1, 0], [1, 3.0, 0.5]]
+    frame1.particles.position = numpy.array([[-2, -1, 0], [1, 3.0, 0.5]])
     frame1.bonds.N = None
     frame1.angles.N = None
     frame1.dihedrals.N = None
@@ -355,7 +393,7 @@ def test_fallback(tmp_path, open_mode):
     frame2.pairs.N = 7
 
     with gsd.hoomd.open(
-        name=tmp_path / 'test_fallback.gsd', mode=open_mode.write, precision='double'
+        name=tmp_path / 'test_fallback.gsd', mode=open_mode.write, precision=precision
     ) as hf:
         hf.extend([frame0, frame1, frame2])
 
@@ -363,14 +401,14 @@ def test_fallback(tmp_path, open_mode):
         assert len(hf) == 3
         s = hf[0]
 
-        assert_frames_equal(s, frame0)
+        assert_frames_equal(s, frame0, precision=precision)
         assert 'value' in s.log
         numpy.testing.assert_array_equal(s.log['value'], frame0.log['value'])
 
         # test that everything but position remained the same in frame 1
         s = hf[1]
 
-        assert_frames_equal(s, frame0, check_position=False)
+        assert_frames_equal(s, frame0, check_position=False, precision=precision)
         assert 'value' in s.log
         numpy.testing.assert_array_equal(s.log['value'], frame0.log['value'])
 
@@ -385,40 +423,36 @@ def test_fallback(tmp_path, open_mode):
             s.particles.typeid, numpy.array([0, 0, 0], dtype=numpy.uint32)
         )
         numpy.testing.assert_array_equal(
-            s.particles.mass, numpy.array([1, 1, 1], dtype=numpy.float32)
+            s.particles.mass, numpy.array([1, 1, 1], dtype=floatType)
         )
         numpy.testing.assert_array_equal(
-            s.particles.diameter, numpy.array([1, 1, 1], dtype=numpy.float32)
+            s.particles.diameter, numpy.array([1, 1, 1], dtype=floatType)
         )
         numpy.testing.assert_array_equal(
-            s.particles.body, numpy.array([-1, -1, -1], dtype=numpy.float32)
+            s.particles.body, numpy.array([-1, -1, -1], dtype=floatType)
         )
         numpy.testing.assert_array_equal(
-            s.particles.charge, numpy.array([0, 0, 0], dtype=numpy.float32)
+            s.particles.charge, numpy.array([0, 0, 0], dtype=floatType)
         )
         numpy.testing.assert_array_equal(
             s.particles.moment_inertia,
-            numpy.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]], dtype=numpy.float32),
+            numpy.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]], dtype=floatType),
         )
         numpy.testing.assert_array_equal(
             s.particles.position,
-            numpy.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]], dtype=numpy.float32),
+            numpy.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]], dtype=floatType),
         )
         numpy.testing.assert_array_equal(
             s.particles.orientation,
-            numpy.array(
-                [[1, 0, 0, 0], [1, 0, 0, 0], [1, 0, 0, 0]], dtype=numpy.float32
-            ),
+            numpy.array([[1, 0, 0, 0], [1, 0, 0, 0], [1, 0, 0, 0]], dtype=floatType),
         )
         numpy.testing.assert_array_equal(
             s.particles.velocity,
-            numpy.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]], dtype=numpy.float32),
+            numpy.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]], dtype=floatType),
         )
         numpy.testing.assert_array_equal(
             s.particles.angmom,
-            numpy.array(
-                [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]], dtype=numpy.float32
-            ),
+            numpy.array([[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]], dtype=floatType),
         )
         numpy.testing.assert_array_equal(
             s.particles.image,
@@ -481,7 +515,7 @@ def test_fallback(tmp_path, open_mode):
 
         assert s.constraints.N == 4
         numpy.testing.assert_array_equal(
-            s.constraints.value, numpy.array([0, 0, 0, 0], dtype=numpy.float32)
+            s.constraints.value, numpy.array([0, 0, 0, 0], dtype=floatType)
         )
         numpy.testing.assert_array_equal(
             s.constraints.group,
@@ -527,7 +561,7 @@ def test_fallback_to_frame0(tmp_path, open_mode):
 
         s = hf[1]
         assert s.configuration.step == frame1.configuration.step
-        assert_frames_equal(s, frame0, check_step=False)
+        assert_frames_equal(s, frame0, check_step=False, precision='double')
         assert 'value' in s.log
         numpy.testing.assert_array_equal(s.log['value'], frame0.log['value'])
 
@@ -1173,7 +1207,9 @@ def test_write_multiple_precision(tmp_path):
     """Test single, then double precision writing on the particles position."""
     frame = gsd.hoomd.Frame()
     frame.particles.N = 1
-    frame.particles.position = [[0.1, 0.2, 0.3]]  # is a list of list of floats
+    frame.particles.position = numpy.array(
+        [[0.1, 0.2, 0.3]], dtype=numpy.float64
+    )  # is a list of list of floats
     with gsd.hoomd.open(  # converts from float64 to float32
         name=tmp_path / 'single.gsd', mode='w', precision='single'
     ) as hf:
@@ -1198,7 +1234,8 @@ def test_write_multiple_precision(tmp_path):
     ) as hf:
         s = hf[0]  # read as double precision
         numpy.testing.assert_array_equal(
-            frame.particles.position,
+            # frame.particles.position,
+            numpy.array([[0.1, 0.2, 0.3]], dtype=numpy.float64),
             s.particles.position,
         )
         assert s.particles.position.dtype == numpy.float64
