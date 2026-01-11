@@ -18,13 +18,13 @@ jobs:
     name: Run clang-tidy
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - name: Set up Python
-        uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
+        uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 # v6.1.0
         with:
-          python-version: 3.13
+          python-version: 3.14
       - name: Set up Python environment
-        uses: glotzerlab/workflows/setup-uv@894d9678188a02b06560fdeb2b9ba98d016cd371 # 0.10.0
+        uses: glotzerlab/workflows/setup-uv@2245be9e78600bf7846aaf9555da322446f46110 # 0.11.0
         with:
           lockfile: ".github/requirements-test.txt"
       - name: Configure
@@ -36,9 +36,9 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
     - name: Checkout
-      uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
     - name: prek
-      uses: glotzerlab/workflows/prek@894d9678188a02b06560fdeb2b9ba98d016cd371 # 0.10.0
+      uses: glotzerlab/workflows/prek@2245be9e78600bf7846aaf9555da322446f46110 # 0.11.0
 
   # This job is used to provide a single requirement for branch merge conditions.
   tests_complete:

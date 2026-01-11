@@ -19,6 +19,14 @@ Change Log
   (`#495 <https://github.com/glotzerlab/gsd/pull/495>`__).
 * ``gsd.fl.write_chunk`` will take precision arguments, rounding any floats to 32 or 64 precision with ``double`` or ``single``
   (`#495 <https://github.com/glotzerlab/gsd/pull/495>`__).
+___
+
+Next release
+^^^^^^^^^^^^^^^^^^
+
+*Removed*:
+
+* ``SIGTERM`` handler (#501)
 
 4.x
 ---
