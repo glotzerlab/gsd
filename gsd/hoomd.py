@@ -123,9 +123,9 @@ class ConfigurationData:
             if inplace is ``True``.
         """
         if inplace:
+            dataDict = self.cast()
             if self.box is not None:
-                self.box = numpy.ascontiguousarray(self.box, dtype=numpy.float32)
-                self.box = self.box.reshape([6])
+                self.box = dataDict["box"]
 
 
 class ParticleData:
@@ -313,56 +313,29 @@ class ParticleData:
             if inplace is ``True``.
         """
         if inplace:
+            dataDict = self.cast()
             if self.position is not None:
-                self.position = numpy.ascontiguousarray(
-                    self.position, dtype=self._validate_precision(self.position)
-                )
-                self.position = self.position.reshape([self.N, 3])
+                self.position = dataDict["position"]
             if self.orientation is not None:
-                self.orientation = numpy.ascontiguousarray(
-                    self.orientation, dtype=self._validate_precision(self.orientation)
-                )
-                self.orientation = self.orientation.reshape([self.N, 4])
+                self.orientation = dataDict["orientation"]
             if self.typeid is not None:
-                self.typeid = numpy.ascontiguousarray(self.typeid, dtype=numpy.uint32)
-                self.typeid = self.typeid.reshape([self.N])
+                self.typeid = dataDict["typeid"]
             if self.mass is not None:
-                self.mass = numpy.ascontiguousarray(
-                    self.mass, dtype=self._validate_precision(self.mass)
-                )
-                self.mass = self.mass.reshape([self.N])
+                self.mass = dataDict["mass"]
             if self.charge is not None:
-                self.charge = numpy.ascontiguousarray(
-                    self.charge, dtype=self._validate_precision(self.charge)
-                )
-                self.charge = self.charge.reshape([self.N])
+                self.charge = dataDict["charge"]
             if self.diameter is not None:
-                self.diameter = numpy.ascontiguousarray(
-                    self.diameter, dtype=self._validate_precision(self.diameter)
-                )
-                self.diameter = self.diameter.reshape([self.N])
+                self.diameter = dataDict['diameter']
             if self.body is not None:
-                self.body = numpy.ascontiguousarray(self.body, dtype=numpy.int32)
-                self.body = self.body.reshape([self.N])
+                self.body = dataDict["body"]
             if self.moment_inertia is not None:
-                self.moment_inertia = numpy.ascontiguousarray(
-                    self.moment_inertia,
-                    dtype=self._validate_precision(self.moment_inertia),
-                )
-                self.moment_inertia = self.moment_inertia.reshape([self.N, 3])
+                self.moment_inertia = dataDict["moment_inertia"]
             if self.velocity is not None:
-                self.velocity = numpy.ascontiguousarray(
-                    self.velocity, dtype=self._validate_precision(self.velocity)
-                )
-                self.velocity = self.velocity.reshape([self.N, 3])
+                self.velocity = dataDict["velocity"]
             if self.angmom is not None:
-                self.angmom = numpy.ascontiguousarray(
-                    self.angmom, dtype=self._validate_precision(self.angmom)
-                )
-                self.angmom = self.angmom.reshape([self.N, 4])
+                self.angmom = dataDict["angmom"]
             if self.image is not None:
-                self.image = numpy.ascontiguousarray(self.image, dtype=numpy.int32)
-                self.image = self.image.reshape([self.N, 3])
+                self.image = dataDict["image"]
 
         if self.types is not None and (not len(set(self.types)) == len(self.types)):
             msg = 'Type names must be unique.'
@@ -476,12 +449,11 @@ class BondData:
             if inplace is ``True``.
         """
         if inplace:
+            dataDict = self.cast()
             if self.typeid is not None:
-                self.typeid = numpy.ascontiguousarray(self.typeid, dtype=numpy.uint32)
-                self.typeid = self.typeid.reshape([self.N])
+                self.typeid = dataDict["typeid"]
             if self.group is not None:
-                self.group = numpy.ascontiguousarray(self.group, dtype=numpy.int32)
-                self.group = self.group.reshape([self.N, self.M])
+                self.group = dataDict["group"]
 
         if self.types is not None and (not len(set(self.types)) == len(self.types)):
             msg = 'Type names must be unique.'
