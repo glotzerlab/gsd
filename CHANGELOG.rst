@@ -10,19 +10,20 @@ Change Log
 5.x
 ---
 
-5.0.0 (Not yet released)
-------------------------
+Next release
+^^^^^^^^^^^^^^^^^^
 
 *Added:*
 
-* ``gsd.hoomd`` schema now accepts float64 in validate, ``gsd.hoomd.open`` will take precision arguments
-  (`#495 <https://github.com/glotzerlab/gsd/pull/495>`__).
-* ``gsd.fl.write_chunk`` will take precision arguments, rounding any floats to 32 or 64 precision with ``double`` or ``single``
-  (`#495 <https://github.com/glotzerlab/gsd/pull/495>`__).
-___
+* ``gsd.hoomd`` schema now supports ``float64`` and ``float32`` values.
+  Choose the desired precision with the ``precision`` argument to ``open`` (#495).
 
-Next release
-^^^^^^^^^^^^^^^^^^
+*Changed:*
+
+* ``Frame.validate`` no longer modifies its contents in place by default.
+  Pass ``inplace=True`` to recover the previous behavior (#495).
+* New files created by ``gsd`` 5.0 are schema version 2.0 and may not
+  be readable by older software (#495).
 
 *Removed*:
 
