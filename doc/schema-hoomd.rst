@@ -14,12 +14,20 @@ chunks. Any newer reader will initialize new data chunks with default values
 when they are not present in an older version file.
 
 :Schema name: ``hoomd``
-:Schema version: 1.4
+:Schema version: 2.0
 
 .. seealso::
 
     `hoomd.State` for a full description of how HOOMD interprets this
     data.
+
+Changes
+-------
+
+Version 2.0
+^^^^^^^^^^^
+
+* Each ``float`` data chunk in 2.0 schema files may be either *float32* or *float64*.
 
 Use-cases
 ---------
@@ -138,7 +146,7 @@ Configuration
 
 .. chunk:: configuration/box
 
-    :Type: float
+    :Type: float32 *or* float64
     :Size: 6x1
     :Default: [1,1,1,0,0,0]
     :Units: *varies*
@@ -208,7 +216,7 @@ Attributes
 
 .. chunk:: particles/mass
 
-    :Type: float (32-bit)
+    :Type: float32 *or* float64
     :Size: Nx1
     :Default: 1.0
     :Units: mass
@@ -217,7 +225,7 @@ Attributes
 
 .. chunk:: particles/charge
 
-    :Type: float (32-bit)
+    :Type: float32 *or* float64
     :Size: Nx1
     :Default: 0.0
     :Units: charge
@@ -226,7 +234,7 @@ Attributes
 
 .. chunk:: particles/diameter
 
-    :Type: float (32-bit)
+    :Type: float32 *or* float64
     :Size: Nx1
     :Default: 1.0
     :Units: length
@@ -246,7 +254,7 @@ Attributes
 
 .. chunk:: particles/moment_inertia
 
-    :Type: float (32-bit)
+    :Type: float32 *or* float64
     :Size: Nx3
     :Default: 0,0,0
     :Units: mass * length^2
@@ -260,7 +268,7 @@ Properties
 
 .. chunk:: particles/position
 
-    :Type: float (32-bit)
+    :Type: float32 *or* float64
     :Size: Nx3
     :Default: 0,0,0
     :Units: length
@@ -283,7 +291,7 @@ Properties
 
 .. chunk:: particles/orientation
 
-    :Type: float (32-bit)
+    :Type: float32 *or* float64
     :Size: Nx4
     :Default: 1,0,0,0
     :Units: unit quaternion
@@ -298,7 +306,7 @@ Momenta
 
 .. chunk:: particles/velocity
 
-    :Type: float (32-bit)
+    :Type: float32 *or* float64
     :Size: Nx3
     :Default: 0,0,0
     :Units: length/time
@@ -307,7 +315,7 @@ Momenta
 
 .. chunk:: particles/angmom
 
-    :Type: float (32-bit)
+    :Type: float32 *or* float64
     :Size: Nx4
     :Default: 0,0,0,0
     :Units: quaternion
@@ -509,7 +517,7 @@ Topology
 
 .. chunk:: constraints/value
 
-    :Type: float
+    :Type: float32 *or* float64
     :Size: Nx1
     :Default: 0
     :Units: length
