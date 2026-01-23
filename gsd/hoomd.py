@@ -125,7 +125,7 @@ class ConfigurationData:
         if inplace:
             dataDict = self.cast()
             if self.box is not None:
-                self.box = dataDict["box"]
+                self.box = dataDict['box']
 
 
 class ParticleData:
@@ -315,27 +315,27 @@ class ParticleData:
         if inplace:
             dataDict = self.cast()
             if self.position is not None:
-                self.position = dataDict["position"]
+                self.position = dataDict['position']
             if self.orientation is not None:
-                self.orientation = dataDict["orientation"]
+                self.orientation = dataDict['orientation']
             if self.typeid is not None:
-                self.typeid = dataDict["typeid"]
+                self.typeid = dataDict['typeid']
             if self.mass is not None:
-                self.mass = dataDict["mass"]
+                self.mass = dataDict['mass']
             if self.charge is not None:
-                self.charge = dataDict["charge"]
+                self.charge = dataDict['charge']
             if self.diameter is not None:
                 self.diameter = dataDict['diameter']
             if self.body is not None:
-                self.body = dataDict["body"]
+                self.body = dataDict['body']
             if self.moment_inertia is not None:
-                self.moment_inertia = dataDict["moment_inertia"]
+                self.moment_inertia = dataDict['moment_inertia']
             if self.velocity is not None:
-                self.velocity = dataDict["velocity"]
+                self.velocity = dataDict['velocity']
             if self.angmom is not None:
-                self.angmom = dataDict["angmom"]
+                self.angmom = dataDict['angmom']
             if self.image is not None:
-                self.image = dataDict["image"]
+                self.image = dataDict['image']
 
         if self.types is not None and (not len(set(self.types)) == len(self.types)):
             msg = 'Type names must be unique.'
@@ -451,9 +451,9 @@ class BondData:
         if inplace:
             dataDict = self.cast()
             if self.typeid is not None:
-                self.typeid = dataDict["typeid"]
+                self.typeid = dataDict['typeid']
             if self.group is not None:
-                self.group = dataDict["group"]
+                self.group = dataDict['group']
 
         if self.types is not None and (not len(set(self.types)) == len(self.types)):
             msg = 'Type names must be unique.'
@@ -856,7 +856,8 @@ class HOOMDTrajectory:
         self._file = file
         self._initial_frame = None
         if precision not in ('single', 'double'):
-            raise ValueError("precision must be 'single' or 'double'");
+            message = "precision must be 'single' or 'double'"
+            raise ValueError(message)
         self._precision = precision
 
         # Used to cache positive results when chunks exist in frame 0.
@@ -879,7 +880,8 @@ class HOOMDTrajectory:
             )
 
         if version < (2, 0) and precision == 'double':
-            raise RuntimeError("schema 1.x files may are not compatible with precision='double'")
+            message = "schema 1.x files may are not compatible with precision='double'"
+            raise RuntimeError(message)
 
         logger.info('found ' + str(len(self)) + ' frames')
 
