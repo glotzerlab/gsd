@@ -158,6 +158,8 @@ Configuration
     * ``box[0:3]``: :math:`(l_x, l_y, l_z)` the box length in each direction, in length units
     * ``box[3:]``: :math:`(xy, xz, yz)` the tilt factors, dimensionless values
 
+    .. versionchanged:: 2.0
+
 
 Particle data
 -------------
@@ -223,6 +225,8 @@ Attributes
 
     Store the mass of each particle.
 
+    .. versionchanged:: 2.0
+
 .. chunk:: particles/charge
 
     :Type: float32 *or* float64
@@ -232,6 +236,8 @@ Attributes
 
     Store the charge of each particle.
 
+    .. versionchanged:: 2.0
+
 .. chunk:: particles/diameter
 
     :Type: float32 *or* float64
@@ -240,6 +246,8 @@ Attributes
     :Units: length
 
     Store the diameter of each particle.
+
+    .. versionchanged:: 2.0
 
 .. chunk:: particles/body
 
@@ -262,6 +270,8 @@ Attributes
     Store the moment_inertia of each particle :math:`(I_{xx}, I_{yy}, I_{zz})`.
     This inertia tensor is diagonal in the body frame of the particle. The
     default value is for point particles.
+
+    .. versionchanged:: 2.0
 
 Properties
 ^^^^^^^^^^
@@ -289,6 +299,8 @@ Properties
     Where :math:`l_x`, :math:`l_y`, :math:`l_z`, :math:`xy`, :math:`xz`, and :math:`yz` are the
     simulation box parameters (:chunk:`configuration/box`).
 
+    .. versionchanged:: 2.0
+
 .. chunk:: particles/orientation
 
     :Type: float32 *or* float64
@@ -300,6 +312,8 @@ Properties
     :math:`(r, a_x, a_y, a_z)`,
     where the quaternion is :math:`q = r + a_xi + a_yj + a_zk`. A unit
     quaternion has the property: :math:`\sqrt{r^2 + a_x^2 + a_y^2 + a_z^2} = 1`.
+
+    .. versionchanged:: 2.0
 
 Momenta
 ^^^^^^^^
@@ -313,6 +327,8 @@ Momenta
 
     Store the velocity of each particle :math:`(v_x, v_y, v_z)`.
 
+    .. versionchanged:: 2.0
+
 .. chunk:: particles/angmom
 
     :Type: float32 *or* float64
@@ -322,6 +338,8 @@ Momenta
 
     Store the angular momentum of each particle as a quaternion. See the HOOMD
     documentation for information on how to convert to a vector representation.
+
+    .. versionchanged:: 2.0
 
 .. chunk:: particles/image
 
@@ -524,6 +542,8 @@ Topology
 
     Store the distance of each constraint. Each constraint defines a fixed
     distance between two particles.
+
+    .. versionchanged:: 2.0
 
 .. chunk:: constraints/group
 
