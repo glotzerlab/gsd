@@ -855,6 +855,8 @@ class HOOMDTrajectory:
 
         self._file = file
         self._initial_frame = None
+        if precision not in ('single', 'double'):
+            raise ValueError("precision must be 'single' or 'double'");
         self._precision = precision
 
         # Used to cache positive results when chunks exist in frame 0.
@@ -875,6 +877,9 @@ class HOOMDTrajectory:
                 + ' in: '
                 + str(self.file)
             )
+
+        if version < (2, 0) and precision == 'double':
+            raise RuntimeError("schema 1.x files may are not compatible with precision='double'")
 
         logger.info('found ' + str(len(self)) + ' frames')
 
