@@ -880,7 +880,7 @@ class HOOMDTrajectory:
             )
 
         if version < (2, 0) and precision == 'double':
-            message = "schema 1.x files may are not compatible with precision='double'"
+            message = "schema 1.x files are not compatible with precision='double'"
             raise RuntimeError(message)
 
         logger.info('found ' + str(len(self)) + ' frames')
