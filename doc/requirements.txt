@@ -14,7 +14,7 @@ breathe==4.36.0
     # via -r doc/requirements.in
 certifi==2026.2.25
     # via requests
-charset-normalizer==3.4.5
+charset-normalizer==3.4.6
     # via requests
 cython==3.2.4
     # via -r doc/requirements.in
