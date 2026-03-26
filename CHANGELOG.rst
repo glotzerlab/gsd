@@ -27,7 +27,8 @@ Next release
 
 *Removed*:
 
-* ``SIGTERM`` handler (#501)
+* ``SIGTERM`` handler (#501).
+* Removed ``state/*`` data chunks from the ``hoomd`` schema (#532).
 
 4.x
 ---
