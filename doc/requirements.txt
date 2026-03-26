@@ -6,15 +6,15 @@ alabaster==1.0.0
     # via sphinx
 asttokens==3.0.1
     # via stack-data
-babel==2.17.0
+babel==2.18.0
     # via sphinx
 beautifulsoup4==4.14.3
     # via furo
 breathe==4.36.0
     # via -r doc/requirements.in
-certifi==2026.1.4
+certifi==2026.2.25
     # via requests
-charset-normalizer==3.4.4
+charset-normalizer==3.4.6
     # via requests
 cython==3.2.4
     # via -r doc/requirements.in
@@ -28,9 +28,9 @@ furo==2025.12.19
     # via -r doc/requirements.in
 idna==3.11
     # via requests
-imagesize==1.4.1
+imagesize==2.0.0
     # via sphinx
-ipython==9.9.0
+ipython==9.11.0
     # via -r doc/requirements.in
 ipython-pygments-lexers==1.1.1
     # via ipython
@@ -42,15 +42,15 @@ markupsafe==3.0.3
     # via jinja2
 matplotlib-inline==0.2.1
     # via ipython
-numpy==2.4.1
+numpy==2.4.3
     # via
     #   -r doc/requirements.in
     #   pandas
 packaging==26.0
     # via sphinx
-pandas==3.0.0
+pandas==3.0.1
     # via -r doc/requirements.in
-parso==0.8.5
+parso==0.8.6
     # via jedi
 pexpect==4.9.0
     # via ipython
@@ -118,5 +118,5 @@ typing-extensions==4.15.0
     # via beautifulsoup4
 urllib3==2.6.3
     # via requests
-wcwidth==0.3.0
+wcwidth==0.6.0
     # via prompt-toolkit
