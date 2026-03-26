@@ -606,6 +606,7 @@ class Frame:
         self.constraints.validate(inplace)
         self.pairs.validate(inplace)
 
+
 class _HOOMDTrajectoryIterable:
     """Iterable over a HOOMDTrajectory object."""
 

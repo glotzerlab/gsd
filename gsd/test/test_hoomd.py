@@ -776,6 +776,7 @@ def test_truncate(tmp_path):
         assert len(hf) == 0
         assert hf._initial_frame is None
 
+
 def test_log(tmp_path, open_mode):
     """Test the log chunks."""
     frame0 = gsd.hoomd.Frame()
