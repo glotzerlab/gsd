@@ -1260,7 +1260,8 @@ def open(name, mode='r', precision='single'):  # noqa: A001 - allow shadowing bu
     Args:
         name (str): File name to open.
         mode (str): File open mode.
-        precision (str): Float precision to write when appending new frames. Can be 'single' or 'double'.
+        precision (str): Float precision to write when appending new frames. Can be
+          'single' or 'double'.
 
     Returns:
         `HOOMDTrajectory` instance that accesses the file **name** with the
