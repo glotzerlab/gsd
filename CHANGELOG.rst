@@ -8,10 +8,22 @@ Change Log
 <https://semver.org/>`_.
 
 5.x
-___
+---
 
 Next release
 ^^^^^^^^^^^^^^^^^^
+
+*Added:*
+
+* ``gsd.hoomd`` schema now supports ``float64`` and ``float32`` values.
+  Choose the desired precision with the ``precision`` argument to ``open`` (#495).
+
+*Changed:*
+
+* ``Frame.validate`` no longer modifies its contents in place by default.
+  Pass ``inplace=True`` to recover the previous behavior (#495).
+* New files created by ``gsd`` 5.0 are schema version 2.0 and may not
+  be readable by older software (#495).
 
 *Removed*:
 

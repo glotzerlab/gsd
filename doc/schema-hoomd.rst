@@ -14,12 +14,20 @@ chunks. Any newer reader will initialize new data chunks with default values
 when they are not present in an older version file.
 
 :Schema name: ``hoomd``
-:Schema version: 1.4
+:Schema version: 2.0
 
 .. seealso::
 
     `hoomd.State` for a full description of how HOOMD interprets this
     data.
+
+Changes
+-------
+
+Version 2.0
+^^^^^^^^^^^
+
+* Each ``float`` data chunk in 2.0 schema files may be either *float32* or *float64*.
 
 Use-cases
 ---------
@@ -138,7 +146,7 @@ Configuration
 
 .. chunk:: configuration/box
 
-    :Type: float
+    :Type: float32 *or* float64
     :Size: 6x1
     :Default: [1,1,1,0,0,0]
     :Units: *varies*
@@ -149,6 +157,8 @@ Configuration
 
     * ``box[0:3]``: :math:`(l_x, l_y, l_z)` the box length in each direction, in length units
     * ``box[3:]``: :math:`(xy, xz, yz)` the tilt factors, dimensionless values
+
+    .. versionchanged:: 2.0
 
 
 Particle data
@@ -208,30 +218,36 @@ Attributes
 
 .. chunk:: particles/mass
 
-    :Type: float (32-bit)
+    :Type: float32 *or* float64
     :Size: Nx1
     :Default: 1.0
     :Units: mass
 
     Store the mass of each particle.
 
+    .. versionchanged:: 2.0
+
 .. chunk:: particles/charge
 
-    :Type: float (32-bit)
+    :Type: float32 *or* float64
     :Size: Nx1
     :Default: 0.0
     :Units: charge
 
     Store the charge of each particle.
 
+    .. versionchanged:: 2.0
+
 .. chunk:: particles/diameter
 
-    :Type: float (32-bit)
+    :Type: float32 *or* float64
     :Size: Nx1
     :Default: 1.0
     :Units: length
 
     Store the diameter of each particle.
+
+    .. versionchanged:: 2.0
 
 .. chunk:: particles/body
 
@@ -246,7 +262,7 @@ Attributes
 
 .. chunk:: particles/moment_inertia
 
-    :Type: float (32-bit)
+    :Type: float32 *or* float64
     :Size: Nx3
     :Default: 0,0,0
     :Units: mass * length^2
@@ -255,12 +271,14 @@ Attributes
     This inertia tensor is diagonal in the body frame of the particle. The
     default value is for point particles.
 
+    .. versionchanged:: 2.0
+
 Properties
 ^^^^^^^^^^
 
 .. chunk:: particles/position
 
-    :Type: float (32-bit)
+    :Type: float32 *or* float64
     :Size: Nx3
     :Default: 0,0,0
     :Units: length
@@ -281,9 +299,11 @@ Properties
     Where :math:`l_x`, :math:`l_y`, :math:`l_z`, :math:`xy`, :math:`xz`, and :math:`yz` are the
     simulation box parameters (:chunk:`configuration/box`).
 
+    .. versionchanged:: 2.0
+
 .. chunk:: particles/orientation
 
-    :Type: float (32-bit)
+    :Type: float32 *or* float64
     :Size: Nx4
     :Default: 1,0,0,0
     :Units: unit quaternion
@@ -293,27 +313,33 @@ Properties
     where the quaternion is :math:`q = r + a_xi + a_yj + a_zk`. A unit
     quaternion has the property: :math:`\sqrt{r^2 + a_x^2 + a_y^2 + a_z^2} = 1`.
 
+    .. versionchanged:: 2.0
+
 Momenta
 ^^^^^^^^
 
 .. chunk:: particles/velocity
 
-    :Type: float (32-bit)
+    :Type: float32 *or* float64
     :Size: Nx3
     :Default: 0,0,0
     :Units: length/time
 
     Store the velocity of each particle :math:`(v_x, v_y, v_z)`.
 
+    .. versionchanged:: 2.0
+
 .. chunk:: particles/angmom
 
-    :Type: float (32-bit)
+    :Type: float32 *or* float64
     :Size: Nx4
     :Default: 0,0,0,0
     :Units: quaternion
 
     Store the angular momentum of each particle as a quaternion. See the HOOMD
     documentation for information on how to convert to a vector representation.
+
+    .. versionchanged:: 2.0
 
 .. chunk:: particles/image
 
@@ -509,13 +535,15 @@ Topology
 
 .. chunk:: constraints/value
 
-    :Type: float
+    :Type: float32 *or* float64
     :Size: Nx1
     :Default: 0
     :Units: length
 
     Store the distance of each constraint. Each constraint defines a fixed
     distance between two particles.
+
+    .. versionchanged:: 2.0
 
 .. chunk:: constraints/group
 
