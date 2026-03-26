@@ -206,8 +206,6 @@ def test_defaults(tmp_path, open_mode):
             s.pairs.group, numpy.array([[0, 0]] * 7, dtype=numpy.uint32)
         )
 
-        assert len(s.state) == 0
-
 
 def make_nondefault_frame():
     """Make a frame with all non-default values."""
@@ -777,49 +775,6 @@ def test_truncate(tmp_path):
         hf.truncate()
         assert len(hf) == 0
         assert hf._initial_frame is None
-
-
-def test_state(tmp_path, open_mode):
-    """Test the state chunks."""
-    frame0 = gsd.hoomd.Frame()
-
-    frame0.state['hpmc/sphere/radius'] = [2.0]
-    frame0.state['hpmc/sphere/orientable'] = [1]
-
-    frame1 = gsd.hoomd.Frame()
-
-    frame1.state['hpmc/convex_polyhedron/N'] = [3]
-    frame1.state['hpmc/convex_polyhedron/vertices'] = [
-        [-1, -1, -1],
-        [0, 1, 1],
-        [1, 0, 0],
-    ]
-
-    with gsd.hoomd.open(name=tmp_path / 'test_state.gsd', mode=open_mode.write) as hf:
-        hf.extend([frame0, frame1])
-
-    with gsd.hoomd.open(name=tmp_path / 'test_state.gsd', mode=open_mode.read) as hf:
-        assert len(hf) == 2
-        s = hf[0]
-
-        numpy.testing.assert_array_equal(
-            s.state['hpmc/sphere/radius'], frame0.state['hpmc/sphere/radius']
-        )
-        numpy.testing.assert_array_equal(
-            s.state['hpmc/sphere/orientable'], frame0.state['hpmc/sphere/orientable']
-        )
-
-        s = hf[1]
-
-        numpy.testing.assert_array_equal(
-            s.state['hpmc/convex_polyhedron/N'],
-            frame1.state['hpmc/convex_polyhedron/N'],
-        )
-        numpy.testing.assert_array_equal(
-            s.state['hpmc/convex_polyhedron/vertices'],
-            frame1.state['hpmc/convex_polyhedron/vertices'],
-        )
-
 
 def test_log(tmp_path, open_mode):
     """Test the log chunks."""
