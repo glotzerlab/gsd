@@ -9,7 +9,7 @@ on:
 
   push:
     branches:
-      - "trunk-*"
+      - "trunk"
 
   workflow_dispatch:
 

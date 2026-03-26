@@ -1,8 +1,3 @@
-<!-- Please confirm that your work is based on the correct branch. -->
-<!-- Base backwards compatible bug fixes on `trunk-patch`. -->
-<!-- Base additional functionality on `trunk-minor`. -->
-<!-- Base API incompatible changes on `trunk-major`. -->
-
 ## Description
 
 <!-- Describe your changes in detail. -->
@@ -23,7 +18,7 @@ Resolves #???
 
 ## Checklist:
 
-- [ ] I have reviewed the [**Contributor Guidelines**](https://github.com/glotzerlab/gsd/blob/trunk-patch/CONTRIBUTING.rst).
-- [ ] I agree with the terms of the [**GSD Contributor Agreement**](https://github.com/glotzerlab/gsd/blob/trunk-patch/ContributorAgreement.md).
+- [ ] I have reviewed the [**Contributor Guidelines**](https://github.com/glotzerlab/gsd/blob/trunk/CONTRIBUTING.rst).
+- [ ] I agree with the terms of the [**GSD Contributor Agreement**](https://github.com/glotzerlab/gsd/blob/trunk/ContributorAgreement.md).
 - [ ] My name is on the list of contributors (`doc/credits.rst`) in the pull request source branch.
 - [ ] I have added a change log entry to ``CHANGELOG.rst``.
