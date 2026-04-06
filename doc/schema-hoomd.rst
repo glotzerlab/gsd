@@ -673,4 +673,5 @@ Name                                                       Type   Size      Unit
 State data
 ------------
 
-``state/*`` data chunks do not exist in schema versions 2.0 and newer.
+.. versionremoved:: 2.0
+   ``state/*`` data chunks do not exist in schema versions 2.0 and newer.
