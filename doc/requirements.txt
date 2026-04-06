@@ -14,7 +14,7 @@ breathe==4.36.0
     # via -r doc/requirements.in
 certifi==2026.2.25
     # via requests
-charset-normalizer==3.4.6
+charset-normalizer==3.4.7
     # via requests
 cython==3.2.4
     # via -r doc/requirements.in
@@ -30,7 +30,7 @@ idna==3.11
     # via requests
 imagesize==2.0.0
     # via sphinx
-ipython==9.11.0
+ipython==9.12.0
     # via -r doc/requirements.in
 ipython-pygments-lexers==1.1.1
     # via ipython
@@ -42,13 +42,13 @@ markupsafe==3.0.3
     # via jinja2
 matplotlib-inline==0.2.1
     # via ipython
-numpy==2.4.3
+numpy==2.4.4
     # via
     #   -r doc/requirements.in
     #   pandas
 packaging==26.0
     # via sphinx
-pandas==3.0.1
+pandas==3.0.2
     # via -r doc/requirements.in
 parso==0.8.6
     # via jedi
@@ -60,7 +60,7 @@ ptyprocess==0.7.0
     # via pexpect
 pure-eval==0.2.3
     # via stack-data
-pygments==2.19.2
+pygments==2.20.0
     # via
     #   accessible-pygments
     #   furo
@@ -69,7 +69,7 @@ pygments==2.19.2
     #   sphinx
 python-dateutil==2.9.0.post0
     # via pandas
-requests==2.33.0
+requests==2.33.1
     # via sphinx
 roman-numerals==4.1.0
     # via sphinx
