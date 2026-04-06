@@ -10,7 +10,7 @@ Change Log
 5.x
 ---
 
-Next release
+5.0.0 (2026-04-06)
 ^^^^^^^^^^^^^^^^^^
 
 *Added:*
