@@ -10,6 +10,19 @@ Change Log
 5.x
 ---
 
+Next release
+^^^^^^^^^^^^^^^^^^^^
+
+*Added*
+
+*Changed*
+
+*Deprecated*
+
+*Removed*
+
+*Fixed*
+
 5.0.0 (2026-04-06)
 ^^^^^^^^^^^^^^^^^^
 
