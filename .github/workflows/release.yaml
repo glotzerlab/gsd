@@ -74,6 +74,20 @@ jobs:
             changelog.md
 
   publish:
+    name: Check [GitHub]
+    needs: [release]
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: release
+
+      - name: Check files
+        run: ls -lR dist
+
+  publish:
     name: Publish [GitHub]
     if: startsWith(github.ref, 'refs/tags/')
     needs: [release]
