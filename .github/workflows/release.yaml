@@ -64,7 +64,7 @@ jobs:
         run: tar -cvJf "${name}-${tag:1}.tar.xz" "${name}-${tag:1}"
 
       - name: Tar source (zstd)
-        run: tar --zstd -cvf "${name}-${tag:1}.tar.zst" "${name}-${tag:1}"
+        run: tar -cv "${name}-${tag:1}" | zstd -19 -T0 -o "${name}-${tag:1}.tar.zst"
 
       - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
