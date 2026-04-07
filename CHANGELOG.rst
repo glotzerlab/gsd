@@ -13,15 +13,9 @@ Change Log
 Next release
 ^^^^^^^^^^^^^^^^^^^^
 
-*Added*
-
-*Changed*
-
-*Deprecated*
-
-*Removed*
-
 *Fixed*
+
+* Fixed invalid data type when ``gsd.hoomd`` wrote ``*/group`` data chunks (#541).
 
 5.0.0 (2026-04-06)
 ^^^^^^^^^^^^^^^^^^
