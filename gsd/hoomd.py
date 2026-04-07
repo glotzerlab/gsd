@@ -404,7 +404,7 @@ class BondData:
         self._default_value['N'] = numpy.uint32(0)
         self._default_value['types'] = []
         self._default_value['typeid'] = numpy.uint32(0)
-        self._default_value['group'] = numpy.array([0] * M, dtype=numpy.int32)
+        self._default_value['group'] = numpy.array([0] * M, dtype=numpy.uint32)
 
     def cast(self):
         """Lazy cast attributes to writeable dictionary.
@@ -424,7 +424,9 @@ class BondData:
             )
             castedDict['typeid'] = castedDict['typeid'].reshape([self.N])
         if self.group is not None:
-            castedDict['group'] = numpy.ascontiguousarray(self.group, dtype=numpy.int32)
+            castedDict['group'] = numpy.ascontiguousarray(
+                self.group, dtype=numpy.uint32
+            )
             castedDict['group'] = castedDict['group'].reshape([self.N, self.M])
 
         if self.types is not None and (not len(set(self.types)) == len(self.types)):
@@ -493,7 +495,7 @@ class ConstraintData:
         self._default_value = OrderedDict()
         self._default_value['N'] = numpy.uint32(0)
         self._default_value['value'] = numpy.float32(0)
-        self._default_value['group'] = numpy.array([0] * self.M, dtype=numpy.int32)
+        self._default_value['group'] = numpy.array([0] * self.M, dtype=numpy.uint32)
 
     def _validate_precision(self, data):
         """Maintain floats in numpy arrays."""
@@ -522,7 +524,9 @@ class ConstraintData:
             )
             castedDict['value'] = castedDict['value'].reshape([self.N])
         if self.group is not None:
-            castedDict['group'] = numpy.ascontiguousarray(self.group, dtype=numpy.int32)
+            castedDict['group'] = numpy.ascontiguousarray(
+                self.group, dtype=numpy.uint32
+            )
             castedDict['group'] = castedDict['group'].reshape([self.N, self.M])
         return castedDict
 
@@ -547,7 +551,7 @@ class ConstraintData:
                 self.value = numpy.ascontiguousarray(self.value, dtype=numpy.float32)
                 self.value = self.value.reshape([self.N])
             if self.group is not None:
-                self.group = numpy.ascontiguousarray(self.group, dtype=numpy.int32)
+                self.group = numpy.ascontiguousarray(self.group, dtype=numpy.uint32)
                 self.group = self.group.reshape([self.N, self.M])
 
 

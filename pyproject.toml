@@ -1,7 +1,7 @@
 [project]
 requires-python = ">=3.11"
 name = "gsd"
-version = "5.0.0"
+version = "5.0.1"
 description = "General simulation data file format."
 readme = "README.md"
 license = "BSD-2-Clause"

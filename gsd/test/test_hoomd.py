@@ -142,6 +142,7 @@ def test_defaults(tmp_path, open_mode):
         numpy.testing.assert_array_equal(
             s.bonds.group, numpy.array([[0, 0], [0, 0], [0, 0]], dtype=numpy.uint32)
         )
+        assert s.bonds.group.dtype == numpy.uint32
 
         assert s.angles.N == 4
         assert s.angles.types == []
@@ -154,6 +155,7 @@ def test_defaults(tmp_path, open_mode):
                 [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]], dtype=numpy.uint32
             ),
         )
+        assert s.angles.group.dtype == numpy.uint32
 
         assert s.dihedrals.N == 5
         assert s.dihedrals.types == []
@@ -167,6 +169,7 @@ def test_defaults(tmp_path, open_mode):
                 dtype=numpy.uint32,
             ),
         )
+        assert s.dihedrals.group.dtype == numpy.uint32
 
         assert s.impropers.N == 6
         assert s.impropers.types == []
@@ -187,6 +190,7 @@ def test_defaults(tmp_path, open_mode):
                 dtype=numpy.uint32,
             ),
         )
+        assert s.impropers.group.dtype == numpy.uint32
 
         assert s.constraints.N == 4
         numpy.testing.assert_array_equal(
@@ -196,6 +200,7 @@ def test_defaults(tmp_path, open_mode):
             s.constraints.group,
             numpy.array([[0, 0], [0, 0], [0, 0], [0, 0]], dtype=numpy.uint32),
         )
+        assert s.constraints.group.dtype == numpy.uint32
 
         assert s.pairs.N == 7
         assert s.pairs.types == []
@@ -205,6 +210,7 @@ def test_defaults(tmp_path, open_mode):
         numpy.testing.assert_array_equal(
             s.pairs.group, numpy.array([[0, 0]] * 7, dtype=numpy.uint32)
         )
+        assert s.pairs.group.dtype == numpy.uint32
 
 
 def make_nondefault_frame():

@@ -36,7 +36,7 @@ from collections import namedtuple
 
 import numpy
 
-version = '5.0.0'
+version = '5.0.1'
 
 logger = logging.getLogger('gsd.pygsd')
 
