@@ -3,7 +3,6 @@ name: Release checklist
 about: '[for maintainer use]'
 title: 'Release gsd 5.0.0'
 labels: ''
-assignees: 'joaander'
 
 ---
 
