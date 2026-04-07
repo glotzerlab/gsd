@@ -73,7 +73,7 @@ jobs:
             *.tar.*
             changelog.md
 
-  publish:
+  check:
     name: Check [GitHub]
     needs: [release]
     runs-on: ubuntu-24.04
@@ -85,7 +85,7 @@ jobs:
           name: release
 
       - name: Check files
-        run: ls -lR dist
+        run: ls -lR
 
   publish:
     name: Publish [GitHub]
