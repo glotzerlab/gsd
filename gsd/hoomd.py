@@ -424,7 +424,9 @@ class BondData:
             )
             castedDict['typeid'] = castedDict['typeid'].reshape([self.N])
         if self.group is not None:
-            castedDict['group'] = numpy.ascontiguousarray(self.group, dtype=numpy.uint32)
+            castedDict['group'] = numpy.ascontiguousarray(
+                self.group, dtype=numpy.uint32
+            )
             castedDict['group'] = castedDict['group'].reshape([self.N, self.M])
 
         if self.types is not None and (not len(set(self.types)) == len(self.types)):
@@ -522,7 +524,9 @@ class ConstraintData:
             )
             castedDict['value'] = castedDict['value'].reshape([self.N])
         if self.group is not None:
-            castedDict['group'] = numpy.ascontiguousarray(self.group, dtype=numpy.uint32)
+            castedDict['group'] = numpy.ascontiguousarray(
+                self.group, dtype=numpy.uint32
+            )
             castedDict['group'] = castedDict['group'].reshape([self.N, self.M])
         return castedDict
 

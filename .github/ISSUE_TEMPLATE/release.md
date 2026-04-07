@@ -65,4 +65,3 @@ the new release.
 > [!NOTE]
 > Paste `Next release` exactly as shown. `bump-my-version` will replace that
 > string with the version number and date.
-
