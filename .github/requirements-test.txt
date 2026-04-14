@@ -12,5 +12,5 @@ pluggy==1.6.0
     # via pytest
 pygments==2.20.0
     # via pytest
-pytest==9.0.2
+pytest==9.0.3
     # via -r .github/requirements-test.in
