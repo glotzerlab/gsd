@@ -46,7 +46,7 @@ numpy==2.4.4
     # via
     #   -r doc/requirements.in
     #   pandas
-packaging==26.0
+packaging==26.1
     # via sphinx
 pandas==3.0.2
     # via -r doc/requirements.in

@@ -6,7 +6,7 @@ iniconfig==2.3.0
     # via pytest
 numpy==2.4.4
     # via -r .github/requirements-test.in
-packaging==26.0
+packaging==26.1
     # via pytest
 pluggy==1.6.0
     # via pytest
