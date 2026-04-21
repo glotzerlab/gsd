@@ -95,8 +95,8 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/prompt_toolkit-3.0.52-hd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/ptyprocess-0.7.0-pyhd8ed1ab_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pure_eval-0.2.3-pyhd8ed1ab_1.conda
-      - conda: https://conda.anaconda.org/conda-forge/noarch/pydantic-2.13.2-pyhcf101f3_0.conda
-      - conda: https://conda.anaconda.org/conda-forge/linux-64/pydantic-core-2.46.2-py314h2e6c369_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/pydantic-2.13.3-pyhcf101f3_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/linux-64/pydantic-core-2.46.3-py314h2e6c369_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pydantic-settings-2.14.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pygments-2.20.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pysocks-1.7.1-pyha55dd90_7.conda
@@ -223,8 +223,8 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/prompt_toolkit-3.0.52-hd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/ptyprocess-0.7.0-pyhd8ed1ab_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pure_eval-0.2.3-pyhd8ed1ab_1.conda
-      - conda: https://conda.anaconda.org/conda-forge/noarch/pydantic-2.13.2-pyhcf101f3_0.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/pydantic-core-2.46.2-py314h54f3292_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/pydantic-2.13.3-pyhcf101f3_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/pydantic-core-2.46.3-py314h54f3292_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pydantic-settings-2.14.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pygments-2.20.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pysocks-1.7.1-pyha55dd90_7.conda
@@ -343,8 +343,8 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/prompt-toolkit-3.0.52-pyha770c72_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/prompt_toolkit-3.0.52-hd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pure_eval-0.2.3-pyhd8ed1ab_1.conda
-      - conda: https://conda.anaconda.org/conda-forge/noarch/pydantic-2.13.2-pyhcf101f3_0.conda
-      - conda: https://conda.anaconda.org/conda-forge/win-64/pydantic-core-2.46.2-py314h9f07db2_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/pydantic-2.13.3-pyhcf101f3_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/win-64/pydantic-core-2.46.3-py314h9f07db2_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pydantic-settings-2.14.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pygments-2.20.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pysocks-1.7.1-pyh09c184e_7.conda
@@ -2571,42 +2571,40 @@ packages:
   - pkg:pypi/pure-eval?source=hash-mapping
   size: 16668
   timestamp: 1733569518868
-- conda: https://conda.anaconda.org/conda-forge/noarch/pydantic-2.13.2-pyhcf101f3_0.conda
-  sha256: 551e58cc83b15ba1eb1edc71faa9c6001817faebb485f935d1198c27d934d754
-  md5: e6a5d825488a61785db20effeaac2f69
+- conda: https://conda.anaconda.org/conda-forge/noarch/pydantic-2.13.3-pyhcf101f3_0.conda
+  sha256: 12909d5c2bfb31492667dd4132ac900dd47f8162bd8b1dd9e5973ce8ea28ca1a
+  md5: f690e6f204efd2e5c06b57518a383d98
   depends:
   - typing-inspection >=0.4.2
   - typing_extensions >=4.14.1
   - python >=3.10
   - annotated-types >=0.6.0
-  - pydantic-core ==2.46.2
+  - pydantic-core ==2.46.3
   - python
   license: MIT
-  license_family: MIT
   purls:
   - pkg:pypi/pydantic?source=compressed-mapping
-  size: 346401
-  timestamp: 1776436761923
-- conda: https://conda.anaconda.org/conda-forge/linux-64/pydantic-core-2.46.2-py314h2e6c369_0.conda
-  sha256: fc44e4441c27dd72f5d094a70628cd496f54150d86d7fe547cb76f64abe49abb
-  md5: 6d93a9670fbdfa9793f5c9374ff4d200
+  size: 346352
+  timestamp: 1776728341165
+- conda: https://conda.anaconda.org/conda-forge/linux-64/pydantic-core-2.46.3-py314h2e6c369_0.conda
+  sha256: 686007c384679c7c3cd1b76f1b7429fb3ad1aca895ec84e51f5ffd63631b5bb1
+  md5: 1f3fd537f929b8d3236f9f0f0e7f7a32
   depends:
   - python
   - typing-extensions >=4.6.0,!=4.7.0
-  - libgcc >=14
   - __glibc >=2.17,<3.0.a0
+  - libgcc >=14
   - python_abi 3.14.* *_cp314
   constrains:
   - __glibc >=2.17
   license: MIT
-  license_family: MIT
   purls:
   - pkg:pypi/pydantic-core?source=hash-mapping
-  size: 1908885
-  timestamp: 1776426312503
-- conda: https://conda.anaconda.org/conda-forge/osx-arm64/pydantic-core-2.46.2-py314h54f3292_0.conda
-  sha256: a11d5a631a8d9ed53300615297e6da6fb83ecb89422e79209c5faa9cbfb43440
-  md5: bb3bbfe13b0428895e3e3766320fb57a
+  size: 1908522
+  timestamp: 1776704321819
+- conda: https://conda.anaconda.org/conda-forge/osx-arm64/pydantic-core-2.46.3-py314h54f3292_0.conda
+  sha256: fc262861a0c73b1aa95c17563bdf85e28f56cd999980515c5fdb5ee0ecfc2ade
+  md5: dca4fba919cbc8cf50045f474e90bd99
   depends:
   - python
   - typing-extensions >=4.6.0,!=4.7.0
@@ -2616,14 +2614,13 @@ packages:
   constrains:
   - __osx >=11.0
   license: MIT
-  license_family: MIT
   purls:
   - pkg:pypi/pydantic-core?source=hash-mapping
-  size: 1729036
-  timestamp: 1776426450364
-- conda: https://conda.anaconda.org/conda-forge/win-64/pydantic-core-2.46.2-py314h9f07db2_0.conda
-  sha256: 3682f396994c66a6e6d0f6ae48e769fc98cf8c76485b4ebf6c45419595f9bd6a
-  md5: c5bc1a6516c118bb64e7be7425134b7d
+  size: 1729029
+  timestamp: 1776704375454
+- conda: https://conda.anaconda.org/conda-forge/win-64/pydantic-core-2.46.3-py314h9f07db2_0.conda
+  sha256: 6f9b042f8ac5485ae8ebc08350087b8434588638d755d34b17cb24885524caf3
+  md5: 4abc18339071a7caebb3b66a44fa405a
   depends:
   - python
   - typing-extensions >=4.6.0,!=4.7.0
@@ -2632,11 +2629,10 @@ packages:
   - ucrt >=10.0.20348.0
   - python_abi 3.14.* *_cp314
   license: MIT
-  license_family: MIT
   purls:
   - pkg:pypi/pydantic-core?source=hash-mapping
-  size: 1896708
-  timestamp: 1776426396503
+  size: 1895483
+  timestamp: 1776704357200
 - conda: https://conda.anaconda.org/conda-forge/noarch/pydantic-settings-2.14.0-pyhd8ed1ab_0.conda
   sha256: ee52c2b651493bbebfe7c38548113c5c4ce0ada0c65ea6f30ac21d321fee5370
   md5: 0552800b10a426db8f5068d6e5adcf54
