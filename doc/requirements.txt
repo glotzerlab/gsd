@@ -12,13 +12,13 @@ beautifulsoup4==4.14.3
     # via furo
 breathe==4.36.0
     # via -r doc/requirements.in
-certifi==2026.2.25
+certifi==2026.5.20
     # via requests
 charset-normalizer==3.4.7
     # via requests
-cython==3.2.4
+cython==3.2.5
     # via -r doc/requirements.in
-decorator==5.2.1
+decorator==5.3.1
     # via ipython
 docutils==0.22.4
     # via sphinx
@@ -26,35 +26,37 @@ executing==2.2.1
     # via stack-data
 furo==2025.12.19
     # via -r doc/requirements.in
-idna==3.11
+idna==3.16
     # via requests
 imagesize==2.0.0
     # via sphinx
-ipython==9.12.0
+ipython==9.13.0
     # via -r doc/requirements.in
 ipython-pygments-lexers==1.1.1
     # via ipython
-jedi==0.19.2
+jedi==0.20.0
     # via ipython
 jinja2==3.1.6
     # via sphinx
 markupsafe==3.0.3
     # via jinja2
-matplotlib-inline==0.2.1
+matplotlib-inline==0.2.2
     # via ipython
-numpy==2.4.4
+numpy==2.4.6
     # via
     #   -r doc/requirements.in
     #   pandas
-packaging==26.1
+packaging==26.2
     # via sphinx
-pandas==3.0.2
+pandas==3.0.3
     # via -r doc/requirements.in
-parso==0.8.6
+parso==0.8.7
     # via jedi
 pexpect==4.9.0
     # via ipython
 prompt-toolkit==3.0.52
+    # via ipython
+psutil==7.2.2
     # via ipython
 ptyprocess==0.7.0
     # via pexpect
@@ -69,15 +71,15 @@ pygments==2.20.0
     #   sphinx
 python-dateutil==2.9.0.post0
     # via pandas
-requests==2.33.1
+requests==2.34.2
     # via sphinx
 roman-numerals==4.1.0
     # via sphinx
 six==1.17.0
     # via python-dateutil
-snowballstemmer==3.0.1
+snowballstemmer==3.1.0
     # via sphinx
-soupsieve==2.8.3
+soupsieve==2.8.4
     # via beautifulsoup4
 sphinx==9.1.0
     # via
@@ -110,13 +112,13 @@ sphinxcontrib-serializinghtml==2.0.0
     # via sphinx
 stack-data==0.6.3
     # via ipython
-traitlets==5.14.3
+traitlets==5.15.0
     # via
     #   ipython
     #   matplotlib-inline
 typing-extensions==4.15.0
     # via beautifulsoup4
-urllib3==2.6.3
+urllib3==2.7.0
     # via requests
-wcwidth==0.6.0
+wcwidth==0.7.0
     # via prompt-toolkit
