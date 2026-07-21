@@ -41,11 +41,11 @@ jobs:
         ##############
         # Ubuntu 24.04
         - os: ubuntu-24.04
-          python: '3.11'
+          python: '3.12'
           c_compiler: gcc-14
           cxx_compiler: g++-14
         - os: ubuntu-24.04
-          python: '3.11'
+          python: '3.12'
           c_compiler: clang-16
           cxx_compiler: clang++-16
         - os: ubuntu-24.04
@@ -63,11 +63,11 @@ jobs:
         ##############
         # Ubuntu 22.04
         - os: ubuntu-22.04
-          python: '3.11'
+          python: '3.12'
           c_compiler: gcc-12
           cxx_compiler: g++-12
         - os: ubuntu-22.04
-          python: '3.11'
+          python: '3.12'
           c_compiler: clang-13
           cxx_compiler: clang++-13
         - os: ubuntu-22.04
