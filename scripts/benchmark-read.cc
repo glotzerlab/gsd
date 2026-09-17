@@ -29,7 +29,7 @@ int main(int argc, char** argv) // NOLINT
     std::cout << "Time to open: " << open_time.count() / 1e-6 << " microseconds\n";
 
     size_t const n_frames = gsd_get_nframes(&handle);
-    size_t n_read = std::min(n_read, max_frames);
+    const size_t n_read = std::min(n_read, max_frames);
 
     std::cout << "Reading test.gsd with: " << n_keys << " keys and " << n_frames << " frames."
               << '\n';
