@@ -40,8 +40,8 @@ jobs:
         # Ubuntu 26.04
         - os: ubuntu-26.04
           python: '3.14'
-          c_compiler: gcc-16
-          cxx_compiler: g++-16
+          c_compiler: gcc-15
+          cxx_compiler: g++-15
         - os: ubuntu-26.04
           python: '3.13'
           c_compiler: clang-20
