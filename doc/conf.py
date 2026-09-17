@@ -39,7 +39,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 project = 'GSD'
-year = datetime.datetime.now().date().year
+year = datetime.datetime.now(tz=datetime.UTC).date().year
 copyright = f'2016-{year} The Regents of the University of Michigan'
 
 version = gsd.version.version
