@@ -1284,15 +1284,14 @@ def test_maximum_write_buffer_size(tmp_path, open_mode):
 
 def test_file_exists_error():
     """Test that IO errors throw the correct Python Exception."""
-    with pytest.raises(FileExistsError):
-        with gsd.fl.open(
-            name=test_path / 'test_gsd_v1.gsd',
-            mode='x',
-            application='test_gsd_v1',
-            schema='none',
-            schema_version=[1, 2],
-        ):
-            pass
+    with pytest.raises(FileExistsError), gsd.fl.open(
+        name=test_path / 'test_gsd_v1.gsd',
+        mode='x',
+        application='test_gsd_v1',
+        schema='none',
+        schema_version=[1, 2],
+    ):
+        pass
 
 
 def test_pending_index_entries(tmp_path):

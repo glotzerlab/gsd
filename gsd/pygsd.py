@@ -186,10 +186,7 @@ class GSDFile:
         if entry.id >= len(self.__namelist):
             return False
 
-        if entry.flags != 0:
-            return False
-
-        return True
+        return entry.flags == 0
 
     def close(self):
         """Close the file.
@@ -375,7 +372,7 @@ class GSDFile:
             list[str]: Matching chunk names
         """
         result = []
-        for key in self.__namelist.keys():
+        for key in self.__namelist:
             if key.startswith(match):
                 result.append(key)
 
@@ -383,11 +380,11 @@ class GSDFile:
 
     def __getstate__(self):
         """Implement the pickle protocol."""
-        return dict(name=self.name)
+        return {'name': self.name}
 
     def __setstate__(self, state):
         """Implement the pickle protocol."""
-        self.__init__(open(state['name'], 'rb'))
+        self.__init__(open(state['name'], 'rb'))  # noqa: SIM115
 
     def __enter__(self):
         """Implement the context manager protocol."""

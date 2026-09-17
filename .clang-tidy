@@ -17,4 +17,6 @@ Checks: 'bugprone-*,
          -bugprone-narrowing-conversions,
          -misc-include-cleaner,
          -readability-magic-numbers,
+         -readability-math-missing-parentheses,
+         -misc-use-internal-linkage,
          '

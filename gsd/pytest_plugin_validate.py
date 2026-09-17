@@ -25,9 +25,10 @@ def _skip_validate(request):
 
     Pass the command line option --validate to enable these tests.
     """
-    if request.node.get_closest_marker('validate'):
-        if not request.config.getoption('validate'):
-            pytest.skip('Validation tests not requested.')
+    if request.node.get_closest_marker('validate') and not request.config.getoption(
+        'validate'
+    ):
+        pytest.skip('Validation tests not requested.')
 
 
 def pytest_configure(config):

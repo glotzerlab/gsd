@@ -44,7 +44,7 @@ def write_file(file, nframes, N, position, orientation):
     if step == 0:
         step = 1
 
-    for i in range(0, nframes):
+    for i in range(nframes):
         if i % step == 0:
             print(i, '/', nframes, file=sys.stderr, flush=True)
 
@@ -58,7 +58,7 @@ def read_sequential_file(file, nframes, nframes_read, N, position, orientation):
     if step == 0:
         step = 1
 
-    for i in range(0, nframes_read):
+    for i in range(nframes_read):
         if i % step == 0:
             print(i, '/', nframes, file=sys.stderr, flush=True)
 
@@ -72,7 +72,7 @@ def read_random_file(file, nframes, nframes_read, N, position, orientation):
     if step == 0:
         step = 1
 
-    frames = list(range(0, nframes))
+    frames = list(range(nframes))
     random.shuffle(frames)
 
     for i, f in enumerate(frames[:nframes_read]):

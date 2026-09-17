@@ -77,15 +77,17 @@ Slice frames:
 
 ```python
 with gsd.fl.open(name='file.gsd', mode='w') as f:
-    f.write_chunk(name='position', data=numpy.array([[1,2,3],[4,5,6]], dtype=numpy.float32));
-    f.write_chunk(name='angle', data=numpy.array([0, 1], dtype=numpy.float32));
-    f.write_chunk(name='box', data=numpy.array([10, 10, 10], dtype=numpy.float32));
+    f.write_chunk(
+        name='position', data=numpy.array([[1, 2, 3], [4, 5, 6]], dtype=numpy.float32)
+    )
+    f.write_chunk(name='angle', data=numpy.array([0, 1], dtype=numpy.float32))
+    f.write_chunk(name='box', data=numpy.array([10, 10, 10], dtype=numpy.float32))
     f.end_frame()
 ```
 
 ```python
 with gsd.fl.open(name='file.gsd', mode='r') as f:
-    for i in range(1,f.nframes):
-        position = f.read_chunk(frame=i, name='position');
-        do_something(position);
+    for i in range(1, f.nframes):
+        position = f.read_chunk(frame=i, name='position')
+        do_something(position)
 ```

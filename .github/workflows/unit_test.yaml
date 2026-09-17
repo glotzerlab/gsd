@@ -27,17 +27,33 @@ jobs:
         include:
         ##############
         # Windows
-        - os: windows-2022
+        - os: windows-2025
           python: '3.12'
         - os: windows-2025
           python: '3.14'
         ##############
         # Mac
         # macos-arm64
-        - os: macos-14
-          python: '3.12'
-        - os: macos-15
+        - os: macos-26
           python: '3.14'
+        ##############
+        # Ubuntu 26.04
+        - os: ubuntu-26.04
+          python: '3.14'
+          c_compiler: gcc-15
+          cxx_compiler: g++-15
+        - os: ubuntu-26.04
+          python: '3.13'
+          c_compiler: clang-20
+          cxx_compiler: clang++-20
+        - os: ubuntu-26.04
+          python: '3.14'
+          c_compiler: clang-21
+          cxx_compiler: clang++-21
+        - os: ubuntu-26.04
+          python: '3.14'
+          c_compiler: clang-22
+          cxx_compiler: clang++-22
         ##############
         # Ubuntu 24.04
         - os: ubuntu-24.04
@@ -46,38 +62,8 @@ jobs:
           cxx_compiler: g++-14
         - os: ubuntu-24.04
           python: '3.12'
-          c_compiler: clang-16
-          cxx_compiler: clang++-16
-        - os: ubuntu-24.04
-          python: '3.12'
-          c_compiler: clang-17
-          cxx_compiler: clang++-17
-        - os: ubuntu-24.04
-          python: '3.13'
           c_compiler: clang-18
           cxx_compiler: clang++-18
-        - os: ubuntu-24.04
-          python: '3.14'
-          c_compiler: clang-18
-          cxx_compiler: clang++-18
-        ##############
-        # Ubuntu 22.04
-        - os: ubuntu-22.04
-          python: '3.12'
-          c_compiler: gcc-12
-          cxx_compiler: g++-12
-        - os: ubuntu-22.04
-          python: '3.12'
-          c_compiler: clang-13
-          cxx_compiler: clang++-13
-        - os: ubuntu-22.04
-          python: '3.12'
-          c_compiler: clang-14
-          cxx_compiler: clang++-14
-        - os: ubuntu-22.04
-          python: '3.12'
-          c_compiler: clang-15
-          cxx_compiler: clang++-15
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -114,7 +100,7 @@ jobs:
     name: Unit test
     if: always()
     needs: [unit_test]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
 
     steps:
     - run: jq --exit-status 'all(.result == "success")' <<< '${{ toJson(needs) }}'

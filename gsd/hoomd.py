@@ -219,9 +219,7 @@ class ParticleData:
     def _validate_precision(self, data):
         """Maintain floats in numpy arrays."""
         outFloat = numpy.float32
-        if isinstance(data, list):
-            outFloat = numpy.float64
-        elif data.dtype == numpy.float64:
+        if isinstance(data, list) or data.dtype == numpy.float64:
             outFloat = numpy.float64
         return outFloat
 
@@ -291,7 +289,7 @@ class ParticleData:
             castedDict['image'] = numpy.ascontiguousarray(self.image, dtype=numpy.int32)
             castedDict['image'] = castedDict['image'].reshape([self.N, 3])
 
-        if self.types is not None and (not len(set(self.types)) == len(self.types)):
+        if self.types is not None and (len(set(self.types)) != len(self.types)):
             msg = 'Type names must be unique.'
             raise ValueError(msg)
         return castedDict
@@ -337,7 +335,7 @@ class ParticleData:
             if self.image is not None:
                 self.image = dataDict['image']
 
-        if self.types is not None and (not len(set(self.types)) == len(self.types)):
+        if self.types is not None and (len(set(self.types)) != len(self.types)):
             msg = 'Type names must be unique.'
             raise ValueError(msg)
 
@@ -429,7 +427,7 @@ class BondData:
             )
             castedDict['group'] = castedDict['group'].reshape([self.N, self.M])
 
-        if self.types is not None and (not len(set(self.types)) == len(self.types)):
+        if self.types is not None and (len(set(self.types)) != len(self.types)):
             msg = 'Type names must be unique.'
             raise ValueError(msg)
         return castedDict
@@ -457,7 +455,7 @@ class BondData:
             if self.group is not None:
                 self.group = dataDict['group']
 
-        if self.types is not None and (not len(set(self.types)) == len(self.types)):
+        if self.types is not None and (len(set(self.types)) != len(self.types)):
             msg = 'Type names must be unique.'
             raise ValueError(msg)
 
@@ -500,9 +498,7 @@ class ConstraintData:
     def _validate_precision(self, data):
         """Maintain floats in numpy arrays."""
         outFloat = numpy.float32
-        if isinstance(data, list):
-            outFloat = numpy.float64
-        elif data.dtype == numpy.float64:
+        if isinstance(data, list) or data.dtype == numpy.float64:
             outFloat = numpy.float64
         return outFloat
 
@@ -828,12 +824,10 @@ class HOOMDTrajectory:
                 data, container._default_value[name]
             )
 
-        if matches_default_value and not self._chunk_exists_frame_0.get(
-            path + '/' + name, False
-        ):
-            return False
-
-        return True
+        return not (
+            matches_default_value
+            and not self._chunk_exists_frame_0.get(path + '/' + name, False)
+        )
 
     def extend(self, iterable):
         """Append each item of the iterable to the file.
@@ -940,7 +934,7 @@ class HOOMDTrajectory:
                     tmp = self.file.read_chunk(frame=idx, name=path + '/types')
                     tmp = tmp.view(dtype=numpy.dtype((bytes, tmp.shape[1])))
                     tmp = tmp.reshape([tmp.shape[0]])
-                    container.types = list(a.decode('UTF-8') for a in tmp)
+                    container.types = [a.decode('UTF-8') for a in tmp]
 
                     if idx == 0:
                         self._chunk_exists_frame_0[path + '/types'] = True
@@ -955,9 +949,9 @@ class HOOMDTrajectory:
                     tmp = self.file.read_chunk(frame=idx, name=path + '/type_shapes')
                     tmp = tmp.view(dtype=numpy.dtype((bytes, tmp.shape[1])))
                     tmp = tmp.reshape([tmp.shape[0]])
-                    container.type_shapes = list(
+                    container.type_shapes = [
                         json.loads(json_string.decode('UTF-8')) for json_string in tmp
-                    )
+                    ]
 
                     if idx == 0:
                         self._chunk_exists_frame_0[path + '/type_shapes'] = True
