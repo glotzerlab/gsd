@@ -1070,7 +1070,7 @@ def test_initial_frame_copy(tmp_path, open_mode):
         assert not frame_1.pairs.group.flags.writeable
 
         assert frame_1.log is not initial.log
-        for key in frame_1.log.keys():
+        for key in frame_1.log:
             assert frame_1.log[key] is initial.log[key]
             assert not frame_1.log[key].flags.writeable
 
