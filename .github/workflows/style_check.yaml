@@ -16,13 +16,13 @@ on:
 jobs:
   clang-tidy:
     name: Run clang-tidy
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Set up Python
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
-          python-version: 3.14
+          python-version: 3.15
       - name: Set up Python environment
         uses: glotzerlab/workflows/setup-uv@00c67cb577c36bdc2570845fc62d1a30e3383012 # 0.14.0
         with:
@@ -33,7 +33,7 @@ jobs:
         run: clang-tidy-18 -p=build gsd/*.c gsd/*.h scripts/*.cc --quiet --warnings-as-errors="*"
 
   prek:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
     - name: Checkout
       uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

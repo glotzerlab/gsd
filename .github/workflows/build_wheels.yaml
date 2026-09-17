@@ -24,19 +24,19 @@ jobs:
       matrix:
         os:
         - base: ubuntu
-          version: 24.04
+          version: 26.04
           arch: 'x86_64'
         - base: ubuntu
-          version: 24.04-arm
+          version: 26.04-arm
           arch: 'aarch64'
         - base: windows
           version: 2025
           arch: 'amd64'
         - base: macos
-          version: 15
+          version: 26
           arch: 'arm64'
         - base: macos
-          version: '15-intel'
+          version: '26-intel'
           arch: 'x86_64'
 
     steps:
@@ -52,14 +52,14 @@ jobs:
 
   build_sdist:
     name: Build source distribution
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Set up Python
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
-          python-version: 3.14
+          python-version: 3.15
       - name: Set up Python environment
         uses: glotzerlab/workflows/setup-uv@00c67cb577c36bdc2570845fc62d1a30e3383012 # 0.14.0
       - name: Build sdist
@@ -73,7 +73,7 @@ jobs:
   check_pypi:
     name: Check [PyPI]
     needs: [build_wheels, build_sdist]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
 
     steps:
       - name: Download artifacts
@@ -91,7 +91,7 @@ jobs:
     name: Publish [PyPI]
     if: startsWith(github.ref, 'refs/tags/')
     needs: [build_wheels, build_sdist]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     environment: release
     permissions:
       id-token: write
