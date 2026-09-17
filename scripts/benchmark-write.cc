@@ -14,7 +14,7 @@
 
 #include "gsd.h"
 
-static double benchmark(size_t buffer)
+double benchmark(size_t buffer)
     {
     const size_t n_keys = 2;
     const size_t key_size = 2048;
