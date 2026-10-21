@@ -8,7 +8,7 @@ numpy==2.5.4
     # via -r .github/requirements-test.in
 packaging==26.3
     # via pytest
-pluggy==1.6.0
+pluggy==1.7.0
     # via pytest
 pygments==2.21.0
     # via pytest

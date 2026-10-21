@@ -19,6 +19,21 @@ classifiers=[
     ]
 dependencies = ["numpy"]
 
+[project.optional-dependencies]
+docs = [
+    "breathe",
+    "cython",
+    "furo",
+    "ipython",
+    "numpy",
+    "pandas",
+    "setuptools<=80.10.2", # sphinx or some transitive dep still uses pkg_resources
+    "sphinx",
+    "sphinxcontrib-googleanalytics",
+    "sphinx-copybutton",
+    "sphinx-inline-tabs",
+    ]
+
 [project.scripts]
 gsd = "gsd.__main__:main"
 
