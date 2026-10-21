@@ -991,15 +991,15 @@ wheels = [
 
 [[package]]
 name = "sphinxcontrib-googleanalytics"
-version = "0.5"
+version = "0.6"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "sphinx", version = "9.1.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13'" },
     { name = "sphinx", version = "9.2.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/b5/78/ad9a210c24499ccfd97f0eccc902576b587af82ae2dc27021e0662929940/sphinxcontrib_googleanalytics-0.5.tar.gz", hash = "sha256:a2ac6df9d16b9c124febf6b44e714c1fd9725e692b73ee84ec6b52b377ff5561", size = 4650, upload-time = "2025-05-26T15:31:42.937Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/84/24/bdd9ae42b7017fcea870fe24ee1815793289219644010a015253b9b21ce6/sphinxcontrib_googleanalytics-0.6.tar.gz", hash = "sha256:dc8740342331ff523b5eda8f5d1ea6176acfa86bbd195e8d67f642db8f2b22c7", size = 3697, upload-time = "2026-10-21T18:18:35.984Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/6b/c7/e68a33ba7b8a4a697c8ad278a37d7bc8521c4175b0f9248fec80ae6fed4f/sphinxcontrib_googleanalytics-0.5-py3-none-any.whl", hash = "sha256:437e529c33c441bcccceabe3ead1585115e6ba83fe90e23bd42e42521333cc0a", size = 4246, upload-time = "2025-05-26T15:32:03.111Z" },
+    { url = "https://files.pythonhosted.org/packages/ca/4a/516e8cfabfe1760ac1ea5e310779e2a0986174c2f7ba95499f9d5bf46e1c/sphinxcontrib_googleanalytics-0.6-py3-none-any.whl", hash = "sha256:9264640a9a0449a088cadaca6794946e60059345752221dae2c6ad986723d3d4", size = 3800, upload-time = "2026-10-21T18:18:35.037Z" },
 ]
 
 [[package]]
