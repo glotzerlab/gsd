@@ -17,4 +17,3 @@ python:
     - method: uv
       command: pip
       requirements: doc/requirements.txt
-      path: .
