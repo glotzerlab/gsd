@@ -27,7 +27,7 @@ docs = [
     "ipython",
     "numpy",
     "pandas",
-    "setuptools<=84.1.0", # sphinx or some transitive dep still uses pkg_resources
+    "setuptools",
     "sphinx",
     "sphinxcontrib-googleanalytics",
     "sphinx-copybutton",
