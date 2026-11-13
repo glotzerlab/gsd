@@ -103,10 +103,7 @@ jobs:
           name: release
 
       - name: Create release
-        uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3
-        if: startsWith(github.ref, 'refs/tags/v')
-        with:
-          files: "*.tar.*"
-          body_path: changelog.md
+        if: github.ref_type == 'tag'
+        run: gh release create "${GITHUB_REF_NAME}" ./*.tar.* -F changelog.md --verify-tag --repo "${GITHUB_REPOSITORY}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
